@@ -12,10 +12,10 @@
 $config['rootpath'] = '/srv/spxops';
 
 /* UCC Database NG */
-$config['mysql']['host'] = 'localhost';
-$config['mysql']['user'] = 'spxops';
-$config['mysql']['pass'] = 'jKGZPBHt8EaP4B7s';
-$config['mysql']['port'] = 5601;
+$config['mysql']['host'] = 'sql01.ach.espix.org';
+$config['mysql']['user'] = '<username>';
+$config['mysql']['pass'] = '<password>';
+$config['mysql']['port'] = 3306;
 $config['mysql']['db'] = 'spxopsNG';
 
 /* MySQL Debug mode, comment to disable. */
