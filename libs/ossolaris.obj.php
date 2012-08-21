@@ -1596,6 +1596,10 @@ class OSSolaris extends OSType
    */
   public static function update_zfs(&$s) {
 
+    if ($s->data('os:major') < 10) {
+      return 0;
+    }
+
     $zpool = $s->findBin('zpool');
 
     $cmd_zpool = "$zpool list -H -o name,size,free,capacity";
@@ -1661,10 +1665,14 @@ class OSSolaris extends OSType
     /* Update zpool devices */
 
     $cmd_status = "$zpool status %s";
+    $zfs = $s->findBin('zfs');
+    $cmd_dset = "$zfs list -H -r -t filesystem,volume -o name,used,quota,available %s";
 
     foreach($s->a_pool as $p) {
       $p->fetchJT('a_disk');
+      $p->fetchRL('a_dataset');
       $cmd_s = sprintf($cmd_status, $p->name);
+      $cmd_d = sprintf($cmd_dset, $p->name);
       $out_s = $s->exec($cmd_s);
 
       $lines = explode(PHP_EOL, $out_s);
@@ -1726,6 +1734,51 @@ class OSSolaris extends OSType
         }
         $s->log("Removing disk $d from pool $p", LLOG_INFO);
         $p->delFromJT('a_disk', $d);
+      }
+
+      /* dataset ndexation */
+      $found_d = array();
+      $out_d = $s->exec($cmd_d);
+      $lines = explode(PHP_EOL, $out_d);
+
+      foreach($lines as $line) {
+	$line = trim($line);
+	if (empty($line))
+	  continue;
+        
+        $f = preg_split("/\s+/", $line);
+        $name = $f[0];
+	$name = preg_replace("/^".$p->name."\//", '', $name);
+	$do = new Dataset();
+	$do->name = $name;
+	$do->fk_pool = $p->id;
+	$upd = false;
+	if ($do->fetchFromFields(array('fk_pool', 'name'))) {
+	  $s->log("Added dataset $do to $p", LLOG_INFO);
+	  $do->insert();
+	}
+	$used = Pool::formatSize($f['1']);
+	$quota = Pool::formatSize($f['2']);
+	$available = Pool::formatSize($f['3']);
+	if ($quota && $do->size != $quota) {
+	  $upd = true;
+	  $s->log("updated $do size => $quota", LLOG_DEBUG);
+	  $do->size = $quota;
+	}
+	if ($used && $do->used != $used) {
+	  $upd = true;
+	  $s->log("updated $do used => $used", LLOG_DEBUG);
+	  $do->used = $used;
+	}
+	if ($upd) $do->update();
+	$found_d[$do->name]  = $d;
+      }
+      foreach($p->a_dataset as $d) {
+        if (isset($found_d[$d->name])) {
+          continue;
+        }
+        $s->log("Removing dataset $d from pool $p", LLOG_INFO);
+        $d->delete();
       }
     }
   }

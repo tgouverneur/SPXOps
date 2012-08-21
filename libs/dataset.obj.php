@@ -22,7 +22,7 @@ class Dataset extends mysqlObj
   public $t_add = -1;
   public $t_upd = -1;
 
-  public $o_server = null;
+  public $o_pool = null;
 
   /* Logging */
   private $_log = null;

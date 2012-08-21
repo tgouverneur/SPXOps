@@ -64,6 +64,7 @@ class Pool extends mysqlObj
   }
 
   public static function formatSize($size) {
+    if (!strcmp($size, 'none')) return 0;
     $unit = strtoupper($size[strlen($size) - 1]);
     if (is_numeric($unit)) {
       return $size;
