@@ -1657,6 +1657,77 @@ class OSSolaris extends OSType
       $s->log("Removing pool $p", LLOG_INFO);
       $p->delete();
     }
+
+    /* Update zpool devices */
+
+    $cmd_status = "$zpool status %s";
+
+    foreach($s->a_pool as $p) {
+      $p->fetchJT('a_disk');
+      $cmd_s = sprintf($cmd_status, $p->name);
+      $out_s = $s->exec($cmd_s);
+
+      $lines = explode(PHP_EOL, $out_s);
+
+      $vdev_list = false;
+      $found_v = array();
+
+      foreach($lines as $line) {
+	$line = trim($line);
+	if (empty($line))
+	  continue;
+
+        if (!$vdev_list && preg_match('/^NAME/', $line)) {
+	  $vdev_list = true;
+	  continue;
+	}
+
+	if ($vdev_list && preg_match('/^errors:/', $line)) {
+	  $vdev_list = false;
+	  continue;
+	}
+
+        if ($vdev_list && !preg_match('/^mirror|^raid|^log|^spare|^cache/', $line)) {
+
+	  /* we should have a dev here... */
+          $f = preg_split("/\s+/", $line);
+	  $dev = $f[0];
+	  if (!strcmp($dev, $p->name))
+	    continue;
+
+	  $dev = preg_replace('/^\/dev\/rdsk\//', '', $dev);
+	  $dev = preg_replace('/^\/dev\/dsk\//', '', $dev);
+	  $slice = 2;
+	  if (preg_match('/s([0-9])$/', $dev, $m)) {
+	    $slice = $m[1];
+	    $dev = preg_replace('/s[0-9]$/', '', $dev);
+          }
+   	  $do = new Disk();
+	  $do->fk_server = $s->id;
+	  $do->dev = $dev;
+	  $do->slice[''.$p] = $slice;
+	  if ($do->fetchFromFields(array('fk_server', 'dev'))) {
+	    $s->log("Disk $do was not found on $s for pool $p", LLOG_ERR);
+	    continue;
+	  }
+	  
+ 	  if (!$p->isInJT('a_disk', $do, array('slice'))) {
+	    $s->log("add $do slice $slice to $p", LLOG_INFO);
+	    $p->addToJT('a_disk', $do);
+	  }
+          $found_v[$do->dev] = $do;
+	  
+	  continue;
+        }
+      }
+      foreach($p->a_disk as $d) {
+        if (isset($found_v[$d->dev])) {
+          continue;
+        }
+        $s->log("Removing disk $d from pool $p", LLOG_INFO);
+        $p->delFromJT('a_disk', $d);
+      }
+    }
   }
 
   /* Screening */

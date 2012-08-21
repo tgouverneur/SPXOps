@@ -14,12 +14,16 @@ class mJT {
    public $ar = '';
    public $oc = '';
    public $jt = '';
+   public $src = array();
+   public $dst = array();
    public $attrs = array();
 
-   public function __construct($ar, $oc, $jt, $attrs = array()) {
+   public function __construct($ar, $oc, $jt, $src, $dst, $attrs = array()) {
      $this->ar = $ar;
      $this->oc = $oc;
      $this->jt = $jt;
+     $this->src = $src;
+     $this->dst = $dst;
      $this->attrs = $attrs;
    }
 }
@@ -609,10 +613,10 @@ class mysqlObj
     return $my->delete($this->_table, $where);
   }
 
-  protected function _addJT($ar, $oc, $jt, $attrs = array()) {
+  protected function _addJT($ar, $oc, $jt, $src, $dst, $attrs = array()) {
     
     try {
-      $this->_jt[$ar] = new mJT($ar, $oc, $jt, $attrs);
+      $this->_jt[$ar] = new mJT($ar, $oc, $jt, $src, $dst, $attrs);
     } catch (Exception $e) {
       throw($e);
     }
@@ -669,15 +673,57 @@ class mysqlObj
   /*
    * @TODO: this function is a prototype, should be completed asap
    */
-  public function delFromJT($name, $obj) {
+  public function delFromJT($name, $fobj) {
 
-    if (!isset($this->_rel[$name])) {
+    if (!isset($this->_jt[$name])) {
       throw new SPXException('Rel association $name not found');
     }
 
     $my = mysqlCM::getInstance();
 
     try {
+     $rel = $this->_jt[$name];
+     $sc = get_called_class();
+     
+     $table = $rel->jt;
+     $where = '';
+     $w = 0;
+
+     foreach($rel->dst as $obj => $sql) {
+       if ($w++) { $where .= ' AND '; } else { $where .= 'WHERE '; }
+       $where .= '`'.$sql.'`=\''.$fobj->{$obj}.'\'';
+     }
+
+     foreach($rel->src as $obj => $sql) {
+       if ($w++) { $where .= ' AND '; } else { $where .= 'WHERE '; }
+       $where .= '`'.$sql.'`=\''.$this->{$obj}.'\'';
+     }
+
+     foreach($rel->attrs as $r) {
+       if (isset($fobj->{$r}[''.$this])) {
+         if ($w++) { $where .= ' AND '; } else { $where .= 'WHERE '; }
+         $where .= '`'.$r.'`=\''.$fobj->{$r}[''.$this].'\'';
+       }
+     }
+
+     $my->delete($table, $where);
+     for ($i=0;$i<count($this->{$rel->ar}); $i++) {
+       if ($this->{$rel->ar}[$i]->equals($fobj)) {
+	 $good = true;
+         foreach($rel->attrs as $name) {
+           if (isset($this->{$rel->ar}[$i]->{$name}[''.$this]) &&
+               isset($fobj->{$name}[''.$this]) &&
+               strcmp($this->{$rel->ar}[$i]->{$name}[''.$this], $fobj->{$name}[''.$this])) {
+	     $good = false;
+             break;
+           }
+         }
+	 if ($good) {
+	   unset($this->{$rel->ar}[$i]);
+	   break;
+	 }
+       }
+     }
 
     } catch (Exception $e) {
       throw($e);
@@ -687,15 +733,78 @@ class mysqlObj
   /*
    * @TODO: this function is a prototype, should be completed asap
    */
-  public function addToJT($name, $obj) {
+  public function addToJT($name, $fobj) {
 
-    if (!isset($this->_rel[$name])) {
+    if (!isset($this->_jt[$name])) {
       throw new SPXException('Rel association $name not found');
     }
 
     $my = mysqlCM::getInstance();
 
     try {
+     $rel = $this->_jt[$name];
+     $sc = get_called_class();
+     
+     $table = $rel->jt;
+     $names = '';
+     $values = '';
+     $i = 0;
+
+     foreach($rel->dst as $obj => $sql) {
+       if ($i++) { $names .= ','; $values .= ','; }
+       $names .= "`$sql`";
+       $values .= '\''.$fobj->{$obj}.'\'';
+     }
+
+     foreach($rel->src as $obj => $sql) {
+       if ($i++) { $names .= ','; $values .= ','; }
+       $names .= "`$sql`";
+       $values .= '\''.$this->{$obj}.'\'';
+     }
+
+     foreach($rel->attrs as $r) {
+       if (isset($fobj->{$r}[''.$this])) {
+         if ($i++) { $names .= ','; $values .= ','; }
+         $names .= '`'.$r.'`';
+         $values .= '\''.$fobj->{$r}[''.$this].'\'';
+       }
+     }
+
+     $my->insert($names, $values, $table);
+     array_push($this->{$rel->ar}, $fobj);
+
+    } catch (Exception $e) {
+      throw($e);
+    }
+  }
+
+  public function isInJT($name, $obj, $attrs = array()) {
+
+    if (!isset($this->_jt[$name])) {
+      throw new SPXException('Rel association $name not found');
+    }
+
+    $my = mysqlCM::getInstance();
+
+    try {
+
+      $rel = $this->_jt[$name];
+
+      foreach($this->{$rel->ar} as $o) {
+        if ($o->equals($obj)) {
+	  $good = true;
+	  foreach($attrs as $name) {
+	    if (isset($o->{$name}[''.$this]) &&
+	        isset($obj->{$name}[''.$this]) &&
+	        strcmp($o->{$name}[''.$this], $obj->{$name}[''.$this])) {
+	      $good = false;
+	      break;
+	    }
+	  }
+	  if ($good) return true;
+	}
+      }
+      return false;
 
     } catch (Exception $e) {
       throw($e);
@@ -704,47 +813,44 @@ class mysqlObj
 
   protected function _fetchJT($name, $f_fetch = true) {
 
-    if (!isset($this->_rel[$name])) {
+    if (!isset($this->_jt[$name])) {
       throw new SPXException('Rel association $name not found');
     }
 
     $my = mysqlCM::getInstance();
     
     try {
-     $rel = $this->_rel[$name];
+     $rel = $this->_jt[$name];
      $this->{$rel->ar} = array();
 
      $sc = get_called_class();
-     $fobj = new $rel->oc();
-     $sobj = new $sc();
      
      $table = $rel->jt;
-     $index = $fobj->getIdx();
-     $a_idx = $fobj->getIdx(true);
-     $a_whr = $sobj->getIdx();
-     
+     $index = '';
      $where = '';
      $w = 0;
+     $i = 0;
 
-
-     foreach($rel->attrs as $r) {
-       $index .= ', `'.$r.'`';
+     foreach($rel->dst as $obj => $sql) {
+       if ($i++) { $index .= ','; }
+       $index .= "`$sql`";
      }
 
-     foreach($a_whr as $whr) {
+     foreach($rel->attrs as $r) {
+       if ($i++) { $index .= ','; }
+       $index .= '`'.$r.'`';
+     }
+
+     foreach($rel->src as $obj => $sql) {
        if ($w) { $where .= " AND "; } else { $where .= "WHERE "; }
-       $where .= "`".$whr."`=".$my->quote($this->{$whr});
+       $where .= "`".$sql."`=".$my->quote($this->{$obj});
        $w++;
      }
      if (($idx = $my->fetchIndex($index, $table, $where))) {
        foreach($idx as $t) {
          $d = new $rel->oc();
-         foreach($a_idx as $idx) { 
-           /* TODO: we assume here that id obj == id sql, this is not necessarly true,
-	       but it's sunday, it's hot and I'm way too lazy to do it better now even
-	       if some copy paste would have taken more time than this silly comment
-	    */
-	   $d->{$idx} = $t[$idx];
+         foreach($rel->dst as $obj => $sql) {
+	   $d->{$obj} = $t[$sql];
 	 }
          if ($f_fetch) {
 	   $d->fetchFromId();

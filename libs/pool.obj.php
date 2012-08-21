@@ -123,7 +123,8 @@ class Pool extends mysqlObj
 
     $this->_addRL("a_dataset", "Dataset", array('id' => 'fk_pool'));
 
-    $this->_addJT('a_disk', 'Disk', 'jt_disk_pool', array('slice'));
+   	        /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
+    $this->_addJT('a_disk', 'Disk', 'jt_disk_pool', array('id' => 'fk_pool'), array('id' => 'fk_disk'), array('slice'));
 
     $this->_log = Logger::getInstance();
 
