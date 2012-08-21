@@ -2,3 +2,4 @@ logs/
 old/
 sql/
 tmp/
+libs/config.inc.php
