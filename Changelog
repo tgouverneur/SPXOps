@@ -1,0 +1,144 @@
+* 10/08/2012 *
+
+ - Forked UCC to SPXOps project
+ - Cleanup of /bin
+ - Changes in the future DB Schema
+ - /src created with sources and patches of dependancies
+ - Adapted some fl_ to f_ and not standard flags name in SQL
+
+* 03/08/2012 *
+
+ - Implemented AIX Os type
+
+* 30/07/2012 *
+
+ - Added pubkey auth in SSHSession
+
+* 12/10/2011 *
+
+ - Added jobs.obj.php
+ - Added joblogs.obj.php
+ - Added daemon.obj.php
+ - Added uccd daemon to handle jobs and store results
+ - Added jobList.php and viewJobLog.php
+
+* 13/04/2011 *
+
+ - Added Zpool inventory
+ - Added Dataset ZFS inventory
+ - Added cluster resources inventory
+ - Added Oracle DB version for resources
+ - Added oraList.php 
+ - Added zfsStats.php
+ - Added dbUsage script to find database usage on clusters
+
+* 08/03/2011 *
+
+ - Improved nfsImpact: added freetext server for non unix nfs server
+
+* 24/02/2011 *
+
+ - Fixed bug with checkresult insertion.
+
+* 23/02/2011 *
+
+ - Fixed bug with sanlun insertion when size is not set
+ - Added an error logging system for MySQL queries
+ - Fixed mysqlcm not to error queries that affects 0 rows..
+
+* 21/02/2011 *
+
+ - Fixed bug in LUN usage detection on solaris 10
+
+* 11/02/2011 *
+
+ - Fixed bug with mysql_real_escape_string
+ - Fixed bug with san lun inventory when there is no san.
+ - Implemented debug mode for SQL queries.
+ - Added view for Resources groups
+
+* 31/01/2011 *
+
+ - Fixed little bug inside performChecks
+
+* 21/01/2011 *
+
+ - Added check for Cluster Quorum
+ - Added check for Cluster Nodes
+ - Fixed bug inside serverEdit vs Groups
+ - Cosmetics: return link after server edition..
+ - Fixed bug inside CheckResult insertion
+
+* 20/01/2011 *
+
+ - Created vw_rgroups
+ - Fixed Huge !(#&!#%$ bug inside Sanitizehttpvar
+
+* 17/01/2011 *
+
+ - Re-added the CheckData obj
+ - Added the prjList for each serv
+ - Start working on a prjDiff web page to diff project state on clusters.
+ - Improved network interfaces failure detection
+ - Rewritten part of the check sys
+ - Added Log Book system for servers
+ - Added projects object
+ - Optimized list loading and cluster info
+ - Added time load indication at the bottom of the page
+
+* 05/01/2011 *
+
+ - Added SAN Lun Inventory
+ - Added SanDisk page
+ - Added SanUnused page
+ - Added San Statistics page
+ - Migrated show cluster resources function to new framework
+ - Bugfixes & cosmetics.
+
+* 22/10/2010 *
+
+ - Added Linux os support.
+ - Added NFS share/mount size check.
+ - Check groups assignments via GUI.
+
+* 04/09/2010 *
+
+ - Fixed some minor bugs
+ - Adapted a lot of www pages for new structures
+ - Dump of Sql schema structure
+ 
+
+* 27/09/2010 *
+
+ - Rewritten all the Object to use UCC-NG database
+ - Added the Admin users table to allow more than one administration
+  user to be defined.
+ - Locking system added to checks
+ - When doing a check, if the result is the same as previously,
+  don't insert check result, just update the last updated field...
+  This will save a lot of space inside check_results table.
+
+* 24/09/2010 *
+
+ - Added SAN linux support
+ - Added Linux support
+ - Added serverStats.php
+ - Added some filters to serverList.php
+
+* 23/09/2010 *
+
+ - Logs implemented
+ - Added SUN Cluster 3.1 support
+ - Added AUser table to allow multiple connection users
+ - Finished Export Data modules for CSV import
+
+* 06/09/2010 *
+
+ - tgo: Added updated & added field for servers/chassis/clusters/zones. (F. Camarata request)
+ - tgo: Added network interface check
+ - tgo: Added zlabel consistency check
+
+* earlier *
+
+ - tgo: First release
+

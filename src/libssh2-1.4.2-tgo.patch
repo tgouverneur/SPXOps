@@ -1,0 +1,53 @@
+diff -urN libssh2-1.4.2.orig/include/libssh2.h libssh2-1.4.2/include/libssh2.h
+--- libssh2-1.4.2.orig/include/libssh2.h	2012-05-18 23:31:03.000000000 +0200
++++ libssh2-1.4.2/include/libssh2.h	2012-08-10 14:08:25.987200024 +0200
+@@ -531,7 +531,7 @@
+                                        const char *privatekey,
+                                        const char *passphrase);
+ 
+-#define libssh2_userauth_publickey_fromfile(session, username, publickey, \
++#define libssh4_userauth_publickey_fromfile(session, username, publickey, \
+                                             privatekey, passphrase)     \
+   libssh2_userauth_publickey_fromfile_ex((session), (username), \
+                                          strlen(username), (publickey), \
+@@ -779,6 +779,8 @@
+ LIBSSH2_API int libssh2_channel_close(LIBSSH2_CHANNEL *channel);
+ LIBSSH2_API int libssh2_channel_wait_closed(LIBSSH2_CHANNEL *channel);
+ LIBSSH2_API int libssh2_channel_free(LIBSSH2_CHANNEL *channel);
++LIBSSH2_API int libssh2_channel_socket_fd(LIBSSH2_CHANNEL* channel);
++
+ 
+ LIBSSH2_API LIBSSH2_CHANNEL *libssh2_scp_recv(LIBSSH2_SESSION *session,
+                                               const char *path,
+diff -urN libssh2-1.4.2.orig/src/channel.c libssh2-1.4.2/src/channel.c
+--- libssh2-1.4.2.orig/src/channel.c	2012-05-18 23:29:03.000000000 +0200
++++ libssh2-1.4.2/src/channel.c	2012-08-10 14:08:14.128284476 +0200
+@@ -1870,6 +1870,20 @@
+ }
+ 
+ /*
++ * libssh2_channel_socket_fd
++ *
++ * Returns the session's socket_fd value from a channel
++ *
++ * This can help some developers who want to use anything which needs sockets
++ * casting.
++ */
++LIBSSH2_API int
++libssh2_channel_socket_fd(LIBSSH2_CHANNEL* channel)
++{
++	return channel->session->socket_fd;
++}
++
++/*
+  * libssh2_channel_read_ex
+  *
+  * Read data from a channel (blocking or non-blocking depending on set state)
+@@ -2501,6 +2515,7 @@
+     BLOCK_ADJUST(rc, channel->session, _libssh2_channel_free(channel));
+     return rc;
+ }
++
+ /*
+  * libssh2_channel_window_read_ex
+  *

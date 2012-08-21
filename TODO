@@ -1,0 +1,19 @@
+- Switch/online/offline resource group with web gui
+- Modif mysqlCM to include some stripslashes and mysql_escape_string directly
+- Add a check_config table to configure the variables of checks like minimal versions and so on...
+- !! Adapt all ajax/* files for new structure !!
+- Fix check_ifaces for HME duplex check
+- Remove old resources of clusters in the update_cl_rs (sc32.obj.php)
+
+- Add exceptions
+- Integration of linux clusters?
+- Find a way to script check directly from interface
+- find a way to inventorize custom metrics
+
+Linux checks:
+
+ - fragmentation / inodes left check for every fs
+ - diff of /etc/* plaintext files
+ - rpm -qVa
+ - proper sudo access enforcement
+ - permitrootlogin a NO
