@@ -29,6 +29,9 @@ class CDPPacket {
 
   public function treat() {
 
+    if ($this->_size <= 32) {
+      return;
+    }
     $pos = 0;
 
     // 6 bytes dst mac

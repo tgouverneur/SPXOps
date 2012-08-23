@@ -274,6 +274,7 @@ class Server extends mysqlObj
     $this->log(sprintf("%15s: %s", "Network", ($defrouter)?' (GW='.$defrouter.')':''), LLOG_INFO);
     if (count($this->a_net)) {
       foreach($this->a_net as $n) {
+	$n->fetchAll(1);
         $n->dump($this);
       }
     } 

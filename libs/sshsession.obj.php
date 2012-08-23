@@ -30,8 +30,8 @@ class SSHSession {
       throw new SPXException('Cannot connect');
     }
     $authDone = false;
-    if (!$this->o_user->pubkey()) {
-      if (($rc = @ssh2_auth_pubkey_file($this->_con, $this->o_user->username, $this->o_user->key_file.'.pub', $this->o_user->key_file))) {
+    if ($this->o_user->pubkey()) {
+      if (($rc = @ssh2_auth_pubkey_file($this->_con, $this->o_user->username, $this->o_user->pubkey.'.pub', $this->o_user->pubkey))) {
         $authDone = true;
       }
     }

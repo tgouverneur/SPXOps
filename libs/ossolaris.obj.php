@@ -31,6 +31,9 @@ class OSSolaris extends OSType
     "update_disk",
     "update_fcinfo",
     "update_zfs",
+    "update_sds",
+    "update_cdp",
+//    "update_swap",
   );
 
   /* Updates function for Solaris */
@@ -553,25 +556,34 @@ class OSSolaris extends OSType
 
         $ifname = $m[1];
 	$alias = '';
+	$flags = '';
 
         if (preg_match('/:/', $m[1])) {
           $ifname = explode(':', $m[1]);
 	  $alias = $ifname[1];
           $ifname = $ifname[0];
         }
+	if (preg_match('/flags=([0-9]*)<([A-Za-z0-9,]*)>/', $f[1], $m)) {
+          $flags = $m[2];
+        }
         if (empty($alias)) {
           // physical should match $ifname already
 	  if (isset($found_if[$ifname])) {
             $c_if = $found_if[$ifname];
+            if (!isset($found_if[$ifname]['flags']) ||
+                empty($found_if[$ifname]['flags'])) {
+              $found_if[$ifname]['flags'] = $flags;
+            }
+
 	  } else {
 	    $if = array();
 	    $if['ifname'] = $ifname;
+	    $if['flags'] = $flags;
             $if['layer'] = 2;
             $if['fk_server'] = $s->id;
 	    $found_if[$ifname] = $if;
 	  }
         }
-        /* handle flags= */
 
       } else if (!strcmp($f[0], 'ether')) {
         if (isset($found_if[$ifname])) {
@@ -635,7 +647,7 @@ class OSSolaris extends OSType
 	continue;
 
       $f = preg_split("/\s+/", $line);
-      if ($f[0] == 'LINK') {
+      if (count($f) != 5 || $f[0] == 'LINK') {
 	continue;
       }
       $pnet = array();
@@ -664,25 +676,35 @@ class OSSolaris extends OSType
 
         $ifname = $m[1];
 	$alias = '';
+	$flags = '';
 
         if (preg_match('/:/', $m[1])) {
           $ifname = explode(':', $m[1]);
 	  $alias = $ifname[1];
           $ifname = $ifname[0];
         }
+        if (preg_match('/flags=([0-9]*)<([A-Za-z0-9,]*)>/', $f[1], $m) &&
+	    !preg_match('/IPv6/', $f[1])) {
+          $flags = $m[2];
+        }
         if (empty($alias)) {
           // physical should match $ifname already
 	  if (isset($found_if[$ifname])) {
             $c_if = $found_if[$ifname];
+	    if (!isset($found_if[$ifname]['flags']) ||
+	        empty($found_if[$ifname]['flags'])) {
+	      $found_if[$ifname]['flags'] = $flags;
+	    }
+
 	  } else {
 	    $if = array();
 	    $if['ifname'] = $ifname;
             $if['layer'] = 2;
+            $if['flags'] = $flags;
             $if['fk_server'] = $s->id;
-	    $found_if[] = $if;
+	    $found_if[$ifname] = $if;
 	  }
         }
-        /* handle flags= */
 
       } else if (!strcmp($f[0], 'inet') && strcmp($f[1], '0.0.0.0') && $f[1] != 0) {
 
@@ -718,7 +740,7 @@ class OSSolaris extends OSType
         $found_if[] = $vif;
 
       } else if (!strcmp($f[0], 'groupname')) {
-        if ($found_if[$ifname]) {
+        if (isset($found_if[$ifname])) {
           $found_if[$ifname]['group'] = $f[1];
           $found_if[$ifname]['f_ipmp'] = 1;
         }
@@ -1584,10 +1606,123 @@ class OSSolaris extends OSType
   }
 
   /**
+   * CDP
+   */
+  public static function update_cdp(&$s) {
+ 
+
+    $sudo = $s->findBin('sudo');
+    $snoop = $s->findBin('snoop');
+    $cmd_snoop = "$sudo $snoop -P -x 0 -c 1 -r -s 1600 -d %s ether dst 01:00:0c:cc:cc:cc and greater 150";
+
+    $s->fetchRL('a_net');
+
+    foreach($s->a_net as $net) {
+      if ($net->layer != 2) {
+	continue;
+      }
+      if (!strncmp($net->ifname, 'lo', 2) || !strncmp($net->ifname, 'ipmp', 4)) {
+	continue;
+      }
+      if (!preg_match('/UP/i', $net->flags) || !preg_match('/RUNNING/i', $net->flags) ||
+	 preg_match('/FAILED/i', $net->flags)) {
+	continue;
+      }
+      $s->log("checking for CDP packet on $net", LLOG_INFO);
+      try {
+        $out_snoop = $s->exec($cmd_snoop, array($net->ifname), 100);
+      } catch (Exception $e) {
+	$s->log("Error checking CDP for $net: $e", LLOG_WARN);
+	continue;
+      }
+      if (!empty($out_snoop)) {
+        $cdpp = new CDPPacket('snoop', $out_snoop);
+        $cdpp->treat();
+        $ns = null;
+	/* check switch */
+	if (isset($cdpp->ent['deviceid']) && !empty($cdpp->ent['deviceid'])) {
+	  $ns = new NSwitch();
+	  $ns->did = $cdpp->ent['deviceid'];
+	  $upd = false;
+	  if ($ns->fetchFromField('did')) {
+	    $s->log("Added new switch $ns", LLOG_INFO);
+	    $ns->insert();
+	  }
+	  if (isset($cdpp->ent['sfversion']) &&
+	      !empty($cdpp->ent['sfversion']) &&
+	      strcmp($cdpp->ent['sfversion'], $ns->sfver)) {
+	    $upd = true;
+	    $ns->sfver = $cdpp->ent['sfversion'];
+	    $s->log("updated sfver of $ns", LLOG_DEBUG);
+	  }
+          if (isset($cdpp->ent['platform']) && 
+              !empty($cdpp->ent['platform']) &&
+              strcmp($cdpp->ent['platform'], $ns->platform)) {
+            $upd = true;
+            $ns->platform = $cdpp->ent['platform'];
+            $s->log("updated platform of $ns -> ".$ns->platform, LLOG_DEBUG);
+          }
+          if (isset($cdpp->ent['name']) && 
+              !empty($cdpp->ent['name']) &&
+              strcmp($cdpp->ent['name'], $ns->name)) {
+            $upd = true;
+            $ns->name = $cdpp->ent['name'];
+            $s->log("updated name of $ns -> ".$ns->name, LLOG_DEBUG);
+          }
+          if (isset($cdpp->ent['location']) &&  
+              !empty($cdpp->ent['location']) &&
+              strcmp($cdpp->ent['location'], $ns->location)) {
+            $upd = true;
+            $ns->location = $cdpp->ent['location'];
+            $s->log("updated location of $ns -> ".$ns->location, LLOG_DEBUG);
+          }
+	  if ($upd) $ns->update();
+	}
+	/* Check interface */
+	if (isset($cdpp->ent['port']) && !empty($cdpp->ent['port'])) {
+	  if (!$ns) continue; // no switch...
+          $ns->fetchRL('a_net');
+	  $sif = new Net();
+	  $sif->fk_switch = $ns->id;
+	  $sif->ifname = $cdpp->ent['port'];
+	  $upd = false;
+	  if ($sif->fetchFromFields(array('fk_switch', 'ifname'))) {
+	    $sif->insert();
+	    $s->log("added $sif to $ns", LLOG_INFO);
+	  }
+          if ($sif->fk_net <= 0 || $sif->fk_net != $net->id) {
+	    $s->log("changed link for $ns/$sif => $net", LLOG_DEBUG);
+	    $sif->fk_net = $net->id;
+	    $net->fk_net = $sif->id;
+	    $upd = true;
+	  }
+	  if ($net->fk_net <= 0 || $net->fk_net != $sif->id) {
+	    $s->log("changed link for $net => $ns/$sif", LLOG_DEBUG);
+	    $sif->fk_net = $net->id;
+	    $net->fk_net = $sif->id;
+	    $upd = true;
+	  }
+	  /**
+	   * @TODO: Add details to switch interfaces like mtu, duplex, link,vlan, etc..
+	   */
+	  if ($upd) {
+	    $sif->update();
+	    $net->update();
+	  }
+	}
+      }
+    }
+
+  }
+
+  /**
    * sds
    */
   public static function update_sds(&$s) {
  
+    $metastat = $s->findBin('metastat');
+    $metaset = $s->findBin('metaset');
+
   }
 
 

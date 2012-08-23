@@ -25,10 +25,13 @@ class Net extends mysqlObj
   public $flags = '';
   public $f_ipmp = 0;
   public $fk_server = -1;
+  public $fk_net = -1;
   public $t_add = -1;
   public $t_upd = -1;
 
   public $o_server = null;
+  public $o_net = null;
+  public $o_switch = null;
 
   public function equals($z) {
     if ($this->version == $z->version &&
@@ -48,6 +51,15 @@ class Net extends mysqlObj
         $this->fetchFK('fk_server');
       }
 
+      if (!$this->o_switch && $this->fk_switch > 0) {
+        $this->fetchFK('fk_switch');
+      }
+
+      if (!$this->o_net && $this->fk_net > 0) {
+        $this->fetchFK('fk_net');
+      }
+
+
     } catch (Exception $e) {
       throw($e);
     }
@@ -64,7 +76,15 @@ class Net extends mysqlObj
   }
 
   public function dump($s) {
-    $s->log(sprintf("\t%15s - %s", ($this->layer == 2)?'[layer2]':'[layer3]', ''.$this), LLOG_INFO);
+    if ($this->layer == 2) {
+      $s->log(sprintf("\t%15s - %s", '[layer2]', ''.$this), LLOG_INFO);
+      if ($this->o_net) $this->o_net->fetchAll(1);
+      if ($this->o_net && $this->o_net->o_switch) {
+	$s->log(sprintf("\t\t\t%s", "-> Connected on ".$this->o_net->o_switch."/".$this->o_net), LLOG_INFO);
+      }
+    } else {
+      $s->log(sprintf("\t%15s - %s", '[layer3]', ''.$this), LLOG_INFO);
+    }
   }
 
  /**
@@ -87,6 +107,8 @@ class Net extends mysqlObj
                         'flags' => SQL_PROPE,
                         'f_ipmp' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fk_switch' => SQL_PROPE,
+                        'fk_net' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE
                  );
@@ -102,11 +124,15 @@ class Net extends mysqlObj
                         'flags' => 'flags',
                         'f_ipmp' => 'f_ipmp',
                         'fk_server' => 'fk_server',
+                        'fk_switch' => 'fk_switch',
+                        'fk_net' => 'fk_net',
                         't_add' => 't_add',
                         't_upd' => 't_upd'
                  );
 
     $this->_addFK("fk_server", "o_server", "Server");
+    $this->_addFK("fk_net", "o_net", "Net");
+    $this->_addFK("fk_switch", "o_switch", "NSwitch");
 
     $this->_log = Logger::getInstance();
 
