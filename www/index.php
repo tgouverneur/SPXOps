@@ -8,12 +8,18 @@
  }
  $lm = loginCM::getInstance();
  $lm->startSession();
-
  $h = HTTP::getInstance();
  $h->parseUrl();
 
+ /* Page setup */
+ $page = array();
+ $page['title'] = 'Home';
+
+
  $index = new Template("../tpl/index.tpl");
  $head = new Template("../tpl/head.tpl");
+ $head->set('page', $page);
+
  $foot = new Template("../tpl/foot.tpl");
  $foot->set("start_time", $start_time);
  $content = new Template("../tpl/home.tpl");

@@ -1,6 +1,64 @@
       <div class="row">
-        <div class="span12">
-          <h1>Bootstrap starter template</h1>
-          <p>Use this document as a way to quick start any new project.<br> All you get is this message and a barebones HTML document.</p>
+        <div class="row12">
+          <div class="hero-unit">
+            <h1>Welcome to Espix Operations</h1>
+            <p>You can manage different flavours of UNIX operating systems using this portal, simply browse through the menu or check the documentation to see how to get more benefit of this portal.</p>
+  	    <p>
+  	      <a class="btn btn-primary btn-large" href="#">Documentation</a>
+	    </p>
+          </div>
+          <div class="row">
+	    <div class="span4">
+	      <h2>DB Statistics</h2>
+	      <ul>
+		<li>Servers: </li>
+		<li>Chassis: </li>
+		<li>Clusters: </li>
+	      </ul>
+	    </div>
+            <div class="span8">
+              <h2>Last Events</h2>
+              <ul>
+                <li>Server plopplop has been added to the database</li>
+                <li>Server plopplop network interface bge2 is now connected to sw01/FastEthernet/2</li>
+                <li>Elem3</li>
+              </ul>
+	      <a class="btn" href="#">More..</a>
+            </div>
+  	  </div>
+	  <div class="row">
+ 	    <div class="span6">
+              <h2>Last Jobs</h2>
+              <ul>
+                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
+                <li>Last Job 1337: Update::Cluster(cllab) finished with status: FAILED</li>
+                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
+                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
+                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
+                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
+                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
+                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
+                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
+                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
+              </ul>
+	      <a class="btn" href="#">More..</a>
+            </div>
+	    <div class="span6">
+              <h2>User Activities</h2>
+              <ul>
+                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+              </ul>
+	      <a class="btn" href="#">More..</a>
+            </div>
+	  </div>
         </div>
       </div>

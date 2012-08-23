@@ -56,6 +56,7 @@
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
                 <ul class="dropdown-menu">
+                  <li><a href="#">Configuration</a></li>
                   <li><a href="#">Jobs list</a></li>
                   <li><a href="#">IDR Patches</a></li>
                   <li><a href="#">NFS Impact</a></li>
@@ -67,9 +68,9 @@
               <li><a href="#">Contact</a></li>
             </ul>
 <?php if (isset($lo)) { ?>
-	    <p class="navbar-text pull-right">Welcome Thomas Gouverneur !</p>
+	    <p class="navbar-text pull-right">Welcome Thomas Gouverneur ! (<a href="/logout">logout</a>)</p>
 <?php } else { ?>
-	    <p class="navbar-text pull-right">Not logged-in.</p>
+	    <p class="navbar-text pull-right">Not Logged-in. (<a href="/login">login</a>)</p>
 <?php } ?>
         </div>
       </div>
