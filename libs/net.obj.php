@@ -33,6 +33,20 @@ class Net extends mysqlObj
   public $o_net = null;
   public $o_switch = null;
 
+  /* temp for display */
+  public $a_addr = array();
+
+  public function getSwitch() {
+    if (!$this->o_net && $this->fk_net > 0) {
+      $this->fetchFK('fk_net');
+    }
+    if (!$this->o_net) return null;
+    $this->o_net->fetchAll();
+   
+    $switch = $this->o_net->o_switch;
+    return $switch;
+  }
+
   public function equals($z) {
     if ($this->version == $z->version &&
         $this->layer == $z->layer &&

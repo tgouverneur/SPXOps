@@ -1919,6 +1919,14 @@ class OSSolaris extends OSType
   }
 
   /* Screening */
+  public static function htmlDump($s) {
+    return array(
+		'Kernel' => $s->data('os:kernel'),
+		'Version' => $s->data('os:major'),
+		'Update' => $s->data('os:update'),
+	   );
+  }
+
   public static function dump($s) {
 
     $ker_ver = $s->data('os:kernel');

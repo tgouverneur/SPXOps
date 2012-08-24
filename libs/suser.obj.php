@@ -33,6 +33,13 @@ class SUser extends mysqlObj
     return $this->username;
   }
 
+  public function htmlDump($s) {
+
+    return array(
+	'SSH User' => $this->username,
+    );
+  }
+
   public function dump($s) {
     $s->log(sprintf("%15s: %s", 'User', $this->username.' / '.$this->description), LLOG_INFO);
   }

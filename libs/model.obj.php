@@ -24,6 +24,21 @@ class Model extends mysqlObj
     return $this->vendor.'/'.$this->name;
   }
 
+  public function htmlDump($s) {
+
+    return array(
+      'Vendor' => $this->vendor,
+      'Model' => $this->name,
+      'Platform' => $s->data('hw:platform'),
+      'HW Class' => $s->data('hw:class'),
+      'Memory' => $s->data('hw:memory'),
+      'CPU Type' => $s->data('hw:cpu'),
+      'Num CPU' => $s->data('hw:nrcpu'),
+      'Num Cores' => $s->data('hw:nrcore'),
+      'Num Threads' => $s->data('hw:nrstrand'),
+    );
+  }
+
   public function dump($s) {
 
     $platform = $s->data('hw:platform');

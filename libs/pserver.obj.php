@@ -27,6 +27,20 @@ class PServer extends mysqlObj
     return $this->name;
   }
 
+  public function htmlDump($s) {
+
+    $this->fetchAll();
+
+    $ar =  array(
+        'Physical Name' => $this->name,
+        'Serial Number' => $this->serial,
+    );
+    if ($this->o_model) {
+      $ar = array_merge($ar, $this->o_model->htmlDump($s));
+    }
+    return $ar;
+  }
+
   public function dump($s) {
     $s->log(sprintf("%15s: %s", 'Physical', $this->name.' / serial: '.$this->serial ), LLOG_INFO);
 
@@ -47,6 +61,28 @@ class PServer extends mysqlObj
     } catch (Exception $e) {
       throw($e);
     }
+  }
+
+  public static function printCols() {
+    return array('Name' => 'name',
+                 'Serial' => 'serial',
+                 'Vendor' => 'vendor',
+                 'Model' => 'model',
+                );
+  }
+
+  public function toArray() {
+
+    if (!$this->o_model && $this->fk_model > 0) {
+      $this->fetchFK('fk_model');
+    }
+
+    return array(
+                 'name' => $this->name,
+                 'serial' => $this->serial,
+                 'vendor' => ($this->o_model)?$this->o_model->vendor:'Unknown',
+                 'model' => ($this->o_model)?$this->o_model->name:'Unknown',
+                );
   }
 
  /**

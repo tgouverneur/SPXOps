@@ -11,19 +11,42 @@
 	    <div class="span4">
 	      <h2>DB Statistics</h2>
 	      <ul>
-		<li>Servers: </li>
-		<li>Chassis: </li>
-		<li>Clusters: </li>
+		<li>Servers: <?php echo $stats['servers']; ?> registered</li>
+		<li>Chassis: <?php echo $stats['servers']; ?> registered</li>
+		<li>Clusters: <?php echo $stats['servers']; ?> registered</li>
 	      </ul>
 	    </div>
-            <div class="span8">
-              <h2>Last Events</h2>
+            <div class="span4">
+              <h2>Last Checks</h2>
               <ul>
-                <li>Server plopplop has been added to the database</li>
-                <li>Server plopplop network interface bge2 is now connected to sw01/FastEthernet/2</li>
-                <li>Elem3</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
               </ul>
 	      <a class="btn" href="#">More..</a>
+            </div>
+            <div class="span4">
+              <h2>Last Checks</h2>
+              <ul>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+                <li>This is a test check result message</li>
+              </ul>
+              <a class="btn" href="#">More..</a>
             </div>
   	  </div>
 	  <div class="row">

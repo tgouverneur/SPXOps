@@ -58,7 +58,7 @@ class mFK {
      if ($f_fetch) {
        $rc = $pthis->{$this->on}->fetchFromId();
        if ($rc) {
-         throw new SPXException('Cannot fetch '.$this->oc.' object with id '.$pthis->{$this->id});
+         throw new SPXException('Cannot fetch '.$this->oc.' object with id '.$pthis->{$this->in});
        }
      }
      return;
@@ -949,6 +949,62 @@ class mysqlObj
     catch (Exception $e) {
       throw($e);
     }
+  }
+
+  public static function getAll($f_fetch = true, $f = array(), $start = 0, $limit = 0) {
+
+    $oc = get_called_class();
+    $obj = new $oc();
+
+    $table = $obj->getTable();
+    $index = $obj->getIdx();
+    $a_idx = $obj->getIdx(true);
+    $where = '';
+    $limit = '';
+    $w = 0;
+    $ret = array();
+
+    if ($limit) {
+      $limit .= " LIMIT $start, $limit";
+    }
+
+    foreach($f as $field => $value) {
+      if ($w) { $where .= " AND "; } else { $where .= "WHERE "; }
+      if (!strncmp('CST:', $src, 4)) {
+        $sstring = preg_replace('/^CST:/', '', $src);
+        $where .= "`".$dst."`=".$my->quote($sstring);
+      } else if (!strncmp('LIKE:', $src, 5)) {
+        $sstring = preg_replace('/^LIKE:/', '', $src);
+        $where .= "`".$dst."` LIKE ".$my->quote($sstring);
+      } else {
+        $where .= "`".$dst."`=".$my->quote($this->{$src});
+      }
+      $w++;
+    }
+
+    try {
+      $my = MysqlCM::getInstance();
+      if (($idx = $my->fetchIndex($index, $table, $where.' '.$limit))) {
+        foreach($idx as $t) {
+          $d = new $oc();
+          foreach($a_idx as $idx) {
+            /* @TODO: we assume here that id obj == id sql, this is not necessarly true,
+                but it's sunday, it's hot and I'm way too lazy to do it better now even
+                if some copy paste would have taken more time than this silly comment
+             */
+            $d->{$idx} = $t[$idx];
+          }
+          if ($f_fetch) {
+            $d->fetchFromId();
+          }
+          array_push($ret, $d);
+        }
+      }
+    }
+    catch (Exception $e) {
+      throw($e);
+    }
+    return $ret;
   }
 
   public function copyToTable($table) {

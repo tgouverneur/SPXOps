@@ -63,6 +63,18 @@ class OS extends mysqlObj
       $s->log(sprintf("%15s: %s", 'Hostid', $hostid), LLOG_INFO);
   }
 
+  public function htmlDump($s) {
+    $oclass = $this->class;
+    $hostid = $s->data('os:hostid');
+    $spec = $oclass::htmlDump($s);
+
+    $myar = array(
+		'Name' => $this->name,
+            );
+
+    return array_merge($myar, $spec);
+  }
+
  /**
   * ctor
   */

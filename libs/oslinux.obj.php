@@ -974,6 +974,19 @@ class OSLinux extends OSType
   }
 
   /* Screening */
+  public static function htmlDump($s) {
+
+    $version = $s->data('linux:version'); 
+    $ver_name = $s->data('linux:ver_name');
+    $version = "$version ($ver_name)";
+
+    return array(
+                'Distribution' => $s->data('linux:name'),
+                'Version' => $version,
+		'Kernel' => $s->data('os:kernel'),
+           );
+  }
+
   public static function dump($s) {
 
     $distro = $s->data('linux:name');

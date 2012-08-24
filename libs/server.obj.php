@@ -20,7 +20,7 @@ class Server extends mysqlObj
   public $fk_pserver = -1;
   public $fk_os = -1;
   public $fk_suser = -1;
-  public $f_rcm = 0;
+  public $f_rce = 0;
   public $f_upd = 0;
   public $t_add = -1;
   public $t_upd = -1;
@@ -52,6 +52,29 @@ class Server extends mysqlObj
  
   public function log($str, $level) {
     Logger::log($str, $this, $level);
+  }
+
+  public function getNetworks() {
+    $ret = array();
+
+    foreach($this->a_net as $net) {
+      if (!$net->layer == 2) {
+        continue;
+      }
+      if (!isset($ret[$net->ifname])) {
+        $ret[$net->ifname] = $net;
+        $net->fetchAll();
+      }
+    }
+    foreach($this->a_net as $net) {
+      if ($net->layer == 2) {
+        continue;
+      }
+      if (isset($ret[$net->ifname])) {
+        $ret[$net->ifname]->a_addr[] = $net;
+      }
+    }
+    return $ret;
   }
 
   public function fetchAll($all = 1) {
@@ -236,12 +259,13 @@ class Server extends mysqlObj
     return $size;
   }
 
+
   public function dump() {
 
     /* echo basic infos first */
     $this->log(sprintf("%15s: %s", 'Server', $this->hostname.' ('.$this->id.')' ), LLOG_INFO);
     $this->log(sprintf("%15s: %s", 'Description', $this->description), LLOG_INFO);
-    $this->log(sprintf("%15s: %s", 'RCM', ($this->f_rcm)?"enabled":"disabled"), LLOG_INFO);
+    $this->log(sprintf("%15s: %s", 'RCE', ($this->f_rce)?"enabled":"disabled"), LLOG_INFO);
 
     
     if ($this->o_os) {
@@ -324,7 +348,41 @@ class Server extends mysqlObj
         $n->dump($this);
       }
     }
+  }
 
+  public static function printCols() {
+    return array('Hostname' => 'hostname',
+                 'Description' => 'description',
+                 'OS' => 'os',
+                 'Update?' => 'f_upd',
+                 'RCE' => 'f_rce',
+                );
+  }
+
+  public function toArray() {
+
+    if (!$this->o_os && $this->fk_os > 0) {
+      $this->fetchFK('fk_os');
+    }
+
+    return array(
+                 'hostname' => $this->hostname,
+                 'description' => $this->description,
+                 'os' => ($this->o_os)?$this->o_os->name:'Unknown',
+                 'f_rce' => $this->f_rce,
+                 'f_upd' => $this->f_upd,
+                );
+  }
+
+  public function htmlDump() {
+    return array(
+	'Hostname' => $this->hostname,
+	'Description' => $this->description,
+	'Update?' => ($this->f_upd)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
+	'RCE' => ($this->f_rce)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
+	'Updated on' => date('d-m-Y', $this->t_upd),
+	'Added on' => date('d-m-Y', $this->t_add),
+    );
   }
 
  /**
@@ -342,7 +400,7 @@ class Server extends mysqlObj
                         'fk_pserver' => SQL_PROPE,
                         'fk_os' => SQL_PROPE,
                         'fk_suser' => SQL_PROPE,
-                        'f_rcm' => SQL_PROPE,
+                        'f_rce' => SQL_PROPE,
                         'f_upd' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE
@@ -354,7 +412,7 @@ class Server extends mysqlObj
                         'fk_pserver' => 'fk_pserver',
                         'fk_os' => 'fk_os',
                         'fk_suser' => 'fk_suser',
-                        'f_rcm' => 'f_rcm',
+                        'f_rce' => 'f_rce',
                         'f_upd' => 'f_upd',
                         't_add' => 't_add',
                         't_upd' => 't_upd'
