@@ -52,6 +52,25 @@ class Patch extends mysqlObj
     return $this->patch;
   }
 
+  public static function printCols() {
+    return array('Patch-ID' => 'patch',
+                 'More Info' => 'minfo',
+                 'Added on' => 't_add',
+                );
+  }
+
+  public function toArray() {
+
+    return array(
+                 'patch' => $this->patch,
+                 'minfo' => '<a href="http://wesunsolve.net/patch/id/'.$this->patch.'" target="_blank">info</a>',
+                 't_add' => date('d-m-Y', $this->t_add),
+                );
+  }
+
+
+
+
  /**
   * ctor
   */

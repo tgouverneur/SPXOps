@@ -57,6 +57,26 @@ class Prj extends mysqlObj
     return $this->name;
   }
 
+  public static function printCols() {
+    return array('Name' => 'name',
+                 'PrjID' => 'prjid',
+                 'Added on' => 't_add',
+                 'Details' => 'details',
+                );
+  }
+
+  public function toArray() {
+
+    return array(
+                 'name' => $this->name,
+                 'prjid' => $this->prjid,
+                 'details' => '<a href="/view/w/project/i/'.$this->id.'">View</a>',
+                 't_add' => date('d-m-Y', $this->t_add),
+                );
+  }
+
+
+
  /**
   * ctor
   */

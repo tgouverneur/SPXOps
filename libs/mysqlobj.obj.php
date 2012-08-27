@@ -951,7 +951,7 @@ class mysqlObj
     }
   }
 
-  public static function getAll($f_fetch = true, $f = array(), $start = 0, $limit = 0) {
+  public static function getAll($f_fetch = true, $f = array(), $s = array(), $start = 0, $limit = 0) {
 
     $oc = get_called_class();
     $obj = new $oc();
@@ -960,13 +960,30 @@ class mysqlObj
     $index = $obj->getIdx();
     $a_idx = $obj->getIdx(true);
     $where = '';
+    $sort = '';
     $limit = '';
     $w = 0;
+    $si = 0;
     $ret = array();
 
     if ($limit) {
       $limit .= " LIMIT $start, $limit";
     }
+
+    foreach($s as $src) {
+      if ($si) { $sort .= ", "; } else { $where .= "ORDER BY "; }
+      if (!strncmp('ASC:', $src, 4)) {
+        $src = preg_replace('/^ASC:/', '', $src);
+        $where .= "`".$src."` ASC ";
+      } else if (!strncmp('DESC:', $src, 5)) {
+        $src = preg_replace('/^DESC:/', '', $src);
+        $where .= "`".$src."` DESC ";
+      } else {
+        $where .= "`".$src."`";
+      }
+      $si++;
+    }
+
 
     foreach($f as $field => $value) {
       if ($w) { $where .= " AND "; } else { $where .= "WHERE "; }
@@ -984,7 +1001,7 @@ class mysqlObj
 
     try {
       $my = MysqlCM::getInstance();
-      if (($idx = $my->fetchIndex($index, $table, $where.' '.$limit))) {
+      if (($idx = $my->fetchIndex($index, $table, $where.' '.$sort.' '.$limit))) {
         foreach($idx as $t) {
           $d = new $oc();
           foreach($a_idx as $idx) {

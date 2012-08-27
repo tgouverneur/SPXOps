@@ -25,11 +25,14 @@ class Net extends mysqlObj
   public $flags = '';
   public $f_ipmp = 0;
   public $fk_server = -1;
+  public $fk_zone = -1;
   public $fk_net = -1;
+  public $fk_switch = -1;
   public $t_add = -1;
   public $t_upd = -1;
 
   public $o_server = null;
+  public $o_zone = null;
   public $o_net = null;
   public $o_switch = null;
 
@@ -50,6 +53,9 @@ class Net extends mysqlObj
   public function equals($z) {
     if ($this->version == $z->version &&
         $this->layer == $z->layer &&
+        $this->fk_server == $z->fk_server &&
+        $this->fk_switch == $z->fk_switch &&
+        $this->fk_zone == $z->fk_zone &&
         !strcmp($this->ifname, $z->ifname) &&
         !strcmp($this->netmask, $z->netmask) &&
         !strcmp($this->address, $z->address)) {
@@ -69,6 +75,10 @@ class Net extends mysqlObj
         $this->fetchFK('fk_switch');
       }
 
+      if (!$this->o_zone && $this->fk_zone > 0) {
+        $this->fetchFK('fk_zone');
+      }
+
       if (!$this->o_net && $this->fk_net > 0) {
         $this->fetchFK('fk_net');
       }
@@ -83,6 +93,9 @@ class Net extends mysqlObj
     $rc = $this->ifname;
     if (!empty($this->alias)) {
       $rc .= ':'.$this->alias;
+    }
+    if ($this->o_zone) {
+      $rc .= '/'.$this->o_zone;
     }
     $rc .= '/'.$this->address;
     if (!empty($this->netmask)) $rc .= '/'.$this->netmask;
@@ -121,6 +134,7 @@ class Net extends mysqlObj
                         'flags' => SQL_PROPE,
                         'f_ipmp' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fk_zone' => SQL_PROPE,
                         'fk_switch' => SQL_PROPE,
                         'fk_net' => SQL_PROPE,
                         't_add' => SQL_PROPE,
@@ -138,6 +152,7 @@ class Net extends mysqlObj
                         'flags' => 'flags',
                         'f_ipmp' => 'f_ipmp',
                         'fk_server' => 'fk_server',
+                        'fk_zone' => 'fk_zone',
                         'fk_switch' => 'fk_switch',
                         'fk_net' => 'fk_net',
                         't_add' => 't_add',
@@ -147,6 +162,7 @@ class Net extends mysqlObj
     $this->_addFK("fk_server", "o_server", "Server");
     $this->_addFK("fk_net", "o_net", "Net");
     $this->_addFK("fk_switch", "o_switch", "NSwitch");
+    $this->_addFK("fk_zone", "o_zone", "Zone");
 
     $this->_log = Logger::getInstance();
 

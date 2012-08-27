@@ -23,7 +23,7 @@
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
      case 'pserver':
-       $a_list = PServer::getAll();
+       $a_list = PServer::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
        $content->set('canDel', true);
@@ -33,7 +33,7 @@
        $page['title'] .= 'Physical Servers';
      break;
      case 'server':
-       $a_list = Server::getAll();
+       $a_list = Server::getAll(true, array(), array('ASC:hostname'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
        $content->set('canMod', true);

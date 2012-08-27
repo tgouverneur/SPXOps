@@ -61,6 +61,25 @@ class Pkg extends mysqlObj
     return $this->name;
   }
 
+
+  public static function printCols() {
+    return array('Name' => 'name',
+                 'Version' => 'version',
+                 'Details' => 'details',
+                 'Added on' => 't_add',
+                );
+  }
+
+  public function toArray() {
+
+    return array(
+                 'name' => $this->name,
+		 'version' => $this->version,
+                 'details' => '<a href="/view/w/pkg/i/'.$this->id.'">View</a>',
+                 't_add' => date('d-m-Y', $this->t_add),
+                );
+  }
+
  /**
   * ctor
   */

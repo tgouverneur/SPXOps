@@ -1,0 +1,4 @@
+.modal.large {
+    width: 780px;
+    margin-left: -390px; /* - width/2 */
+}

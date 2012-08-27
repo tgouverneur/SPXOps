@@ -544,7 +544,7 @@ class OSSolaris extends OSType
 
     $lines = explode(PHP_EOL, $out_ifconfig);
 
-    $ifname = $alias = null;
+    $ifname = $c_if = $c_vif = $alias = null;
     foreach($lines as $line) {
       $line = trim($line);
       if (empty($line))
@@ -569,20 +569,22 @@ class OSSolaris extends OSType
         if (empty($alias)) {
           // physical should match $ifname already
 	  if (isset($found_if[$ifname])) {
-            $c_if = $found_if[$ifname];
             if (!isset($found_if[$ifname]['flags']) ||
                 empty($found_if[$ifname]['flags'])) {
               $found_if[$ifname]['flags'] = $flags;
             }
-
 	  } else {
 	    $if = array();
 	    $if['ifname'] = $ifname;
 	    $if['flags'] = $flags;
             $if['layer'] = 2;
             $if['fk_server'] = $s->id;
+	    /* Address hereunder... */
+            $if['addr'] = array();
+            $if['caddr'] = 0;
 	    $found_if[$ifname] = $if;
 	  }
+          $c_if = &$found_if[$ifname];
         }
 
       } else if (!strcmp($f[0], 'ether')) {
@@ -601,7 +603,11 @@ class OSSolaris extends OSType
         if (!strcmp($f[2], 'netmask')) {
 	  $vif['netmask'] = $f[3];
 	}
-        $found_if[] = $vif;
+	if (isset($found_if[$ifname])) {
+          $c_vif = $found_if[$ifname]['caddr'];
+	  $found_if[$ifname]['addr'][$c_vif] = $vif;
+	  $found_if[$ifname]['caddr']++;
+	}
 
       } else if (!strcmp($f[0], 'inet6') && strcmp($f[1], '::/0')) {
 
@@ -620,15 +626,32 @@ class OSSolaris extends OSType
         if (count($f) > 3 && !strcmp($f[2], 'netmask')) {
 	  $vif['netmask'] = $f[3];
 	}
-        $found_if[] = $vif;
+        if (isset($found_if[$ifname])) {
+          $c_vif = $found_if[$ifname]['caddr'];
+          $found_if[$ifname]['addr'][$c_vif] = $vif;
+          $found_if[$ifname]['caddr']++;
+        }
 
       } else if (!strcmp($f[0], 'groupname')) {
         if ($found_if[$ifname]) {
           $found_if[$ifname]['group'] = $f[1];
+          $found_if[$ifname]['f_ipmp'] = 1;
+        }
+      } else if (!strcmp($f[0], 'zone')) {
+	if (isset($found_if[$ifname])) {
+  	  $z = new Zone();
+	  $z->fk_server = $s->id;
+	  $z->name = $f[1];
+	  if ($z->fetchFromFields(array('fk_server', 'name'))) {
+	    $s->log("Zone added: $z", LLOG_INFO);
+	    $z->insert();
+	  }
+	  if (isset($found_if[$ifname]['addr'][$c_vif])) {
+            $found_if[$ifname]['addr'][$c_vif]['fk_zone'] = $z->id;
+	  }
         }
       }
     }
-
     return $found_if;
   }
 
@@ -655,6 +678,9 @@ class OSSolaris extends OSType
       $pnet['layer'] = 2;
       $pnet['fk_server'] = $s->id;
       $pnet['address'] = $f[2];
+      /* Address hereunder... */
+      $pnet['addr'] = array();
+      $pnet['caddr'] = 0;
       $found_if[$f[0]] = $pnet;
     }
 
@@ -664,7 +690,7 @@ class OSSolaris extends OSType
 
     $lines = explode(PHP_EOL, $out_ifconfig);
 
-    $ifname = $alias = null;
+    $ifname = $c_if = $c_vif = $alias = null;
     foreach($lines as $line) {
       $line = trim($line);
       if (empty($line))
@@ -690,7 +716,7 @@ class OSSolaris extends OSType
         if (empty($alias)) {
           // physical should match $ifname already
 	  if (isset($found_if[$ifname])) {
-            $c_if = $found_if[$ifname];
+            $c_if = &$found_if[$ifname];
 	    if (!isset($found_if[$ifname]['flags']) ||
 	        empty($found_if[$ifname]['flags'])) {
 	      $found_if[$ifname]['flags'] = $flags;
@@ -702,6 +728,9 @@ class OSSolaris extends OSType
             $if['layer'] = 2;
             $if['flags'] = $flags;
             $if['fk_server'] = $s->id;
+            /* Address hereunder... */
+            $if['addr'] = array();
+            $if['caddr'] = 0;
 	    $found_if[$ifname] = $if;
 	  }
         }
@@ -718,7 +747,11 @@ class OSSolaris extends OSType
         if (!strcmp($f[2], 'netmask')) {
 	  $vif['netmask'] = $f[3];
 	}
-        $found_if[] = $vif;
+        if (isset($found_if[$ifname])) {
+          $c_vif = $found_if[$ifname]['caddr'];
+          $found_if[$ifname]['addr'][$c_vif] = $vif;
+          $found_if[$ifname]['caddr']++;
+        }
 
       } else if (!strcmp($f[0], 'inet6') && strcmp($f[1], '::/0')) {
 
@@ -737,14 +770,32 @@ class OSSolaris extends OSType
         if (count($f) > 3 && !strcmp($f[2], 'netmask')) {
 	  $vif['netmask'] = $f[3];
 	}
-        $found_if[] = $vif;
+        if (isset($found_if[$ifname])) {
+          $c_vif = $found_if[$ifname]['caddr'];
+          $found_if[$ifname]['addr'][$c_vif] = $vif;
+          $found_if[$ifname]['caddr']++;
+        }
 
       } else if (!strcmp($f[0], 'groupname')) {
         if (isset($found_if[$ifname])) {
           $found_if[$ifname]['group'] = $f[1];
           $found_if[$ifname]['f_ipmp'] = 1;
         }
+      } else if (!strcmp($f[0], 'zone')) {
+        if (isset($found_if[$ifname])) {
+          $z = new Zone();
+          $z->fk_server = $s->id;
+          $z->name = $f[1];
+          if ($z->fetchFromFields(array('fk_server', 'name'))) {
+            $s->log("Zone added: $z", LLOG_INFO);
+            $z->insert();
+          }
+          if (isset($found_if[$ifname]['addr'][$c_vif])) {
+            $found_if[$ifname]['addr'][$c_vif]['fk_zone'] = $z->id;
+          }
+        }
       }
+
     }
 
     return $found_if;
@@ -763,6 +814,7 @@ class OSSolaris extends OSType
 		'fk_server',
 		'alias',
 		'layer',
+		'fk_zone',
 		'version',
 		'address',
 	 );
@@ -772,7 +824,14 @@ class OSSolaris extends OSType
 		'flags',
 		'f_ipmp',
 	);
+
+    $bifs = array();
     foreach($ifs as $if) {
+      $bifs[] = $if;
+      $bifs = array_merge($bifs, $if['addr']);
+    }
+    $found_if = array();
+    foreach($bifs as $if) {
       $io = new Net();
       $upd = false;
       foreach($f as $fi) {
@@ -793,6 +852,7 @@ class OSSolaris extends OSType
 	  }
         }
       } 
+      $io->fetchAll();
       $found_if[''.$io] = $io;
       if ($upd) {
 	$io->update();
@@ -800,6 +860,7 @@ class OSSolaris extends OSType
     }
 
     foreach($s->a_net as $n) {
+      $n->fetchAll();
       if (isset($found_if[''.$n])) {
         continue;
       }
