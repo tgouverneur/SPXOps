@@ -37,7 +37,7 @@
                   <li><a href="/add/w/server">Add</a></li>
 		  <li>
 		    <form class="navbar-search pull-left" action="/search/w/server" method="POST">
-		      <input type="text" class="search-query" placeholder="Search Server">
+		      <input name="q" type="text" class="search-query" placeholder="Search Server">
 	    	    </form>
 		  </li>
                   <li class="divider"></li>
@@ -46,7 +46,7 @@
                   <li><a href="/add/w/pserver">Add</a></li>
 		  <li>
 		    <form class="navbar-search pull-left" method="POST" action="/search/w/physical">
-		      <input type="text" class="search-query" placeholder="Search Physical">
+		      <input name="q" type="text" class="search-query" placeholder="Search Physical">
 	    	    </form>
 		  </li>
                   <li class="divider"></li>
@@ -55,7 +55,7 @@
                   <li><a href="/add/w/cluster">Add</a></li>
 		  <li>
 		    <form class="navbar-search pull-left" method="POST" action="/search/w/cluster">
-		      <input type="text" class="search-query" placeholder="Search Cluster">
+		      <input name="q" type="text" class="search-query" placeholder="Search Cluster">
 	    	    </form>
 		  </li>
                 </ul>

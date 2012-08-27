@@ -969,30 +969,31 @@ class mysqlObj
     if ($limit) {
       $limit .= " LIMIT $start, $limit";
     }
+    $my = MysqlCM::getInstance();
 
     foreach($s as $src) {
-      if ($si) { $sort .= ", "; } else { $where .= "ORDER BY "; }
+      if ($si) { $sort .= ", "; } else { $sort .= "ORDER BY "; }
       if (!strncmp('ASC:', $src, 4)) {
         $src = preg_replace('/^ASC:/', '', $src);
-        $where .= "`".$src."` ASC ";
+        $sort .= "`".$src."` ASC ";
       } else if (!strncmp('DESC:', $src, 5)) {
         $src = preg_replace('/^DESC:/', '', $src);
-        $where .= "`".$src."` DESC ";
+        $sort .= "`".$src."` DESC ";
       } else {
-        $where .= "`".$src."`";
+        $sort .= "`".$src."`";
       }
       $si++;
     }
 
 
-    foreach($f as $field => $value) {
+    foreach($f as $src => $dst) {
       if ($w) { $where .= " AND "; } else { $where .= "WHERE "; }
       if (!strncmp('CST:', $src, 4)) {
         $sstring = preg_replace('/^CST:/', '', $src);
         $where .= "`".$dst."`=".$my->quote($sstring);
       } else if (!strncmp('LIKE:', $src, 5)) {
         $sstring = preg_replace('/^LIKE:/', '', $src);
-        $where .= "`".$dst."` LIKE ".$my->quote($sstring);
+        $where .= "`".$sstring."` LIKE ".$my->quote($dst);
       } else {
         $where .= "`".$dst."`=".$my->quote($this->{$src});
       }
@@ -1000,7 +1001,6 @@ class mysqlObj
     }
 
     try {
-      $my = MysqlCM::getInstance();
       if (($idx = $my->fetchIndex($index, $table, $where.' '.$sort.' '.$limit))) {
         foreach($idx as $t) {
           $d = new $oc();
