@@ -2,6 +2,11 @@
   $cols = call_user_func($oc.'::printCols');
   if (!$a_list) $a_list = array();
 ?>
+<?php if (isset($info)) { ?>
+	<div class="alert alert-info">
+	  <?php echo $info; ?>
+	</div>
+<?php } ?>
 	 <table class="table table-striped table-bordered table-hover table-condensed">
 	  <thead>
 	   <tr>

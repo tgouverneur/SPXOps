@@ -69,6 +69,24 @@
        $content->set('a_list', $s->a_pkg);
        $content->set('oc', 'Pkg');
      break;
+     case 'disks':
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/modalerror.tpl');
+         $content->set('error', 'Server ID not provided');
+         goto screen;
+       }
+       $s = new Server($_GET['i']);
+       if ($s->fetchFromId()) {
+         $content = new Template('../tpl/modalerror.tpl');
+         $content->set('error', 'Server ID not found');
+         goto screen;
+       }
+       $s->fetchRL('a_disk');
+       $content = new Template('../tpl/modallist.tpl');
+       $content->set('a_list', $s->a_disk);
+       $content->set('oc', 'Disk');
+       $content->set('info', 'EMC Disks Lunid correspond to the EMC Device ID.');
+     break;
      default:
        $content = new Template('../tpl/modalerror.tpl');
        $content->set('error', 'Unknown option or not yet implemented');

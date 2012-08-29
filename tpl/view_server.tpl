@@ -1,6 +1,25 @@
       <div class="row">
 	<h1 class="row12">Server <?php echo $obj; ?></h1>
         <div class="row">
+	 <div class="row12">
+	  <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
+	    <button type="button" class="close">×</button>
+	    <h4>Success!</h4>
+	    <p id="success-msg"></p>
+	  </div>
+          <div class="alert alert-block fade in" id="warning-box" style="display:none;">
+            <button type="button" class="close">×</button>
+            <h4>Warning!</h4>
+            <p id="warning-msg"></p>
+          </div>
+          <div class="alert alert-block alert-error fade in" id="error-box" style="display:none;">
+            <button type="button" class="close">×</button>
+            <h4>Error!</h4>
+            <p id="error-msg"></p>
+          </div>
+	 </div>
+	</div>
+        <div class="row">
           <div class="span4">
            <h3>Basic Information</h3>
 	   <table class="table table-condensed">
@@ -47,7 +66,7 @@
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Action <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="#">Launch Update</a></li>
+                  <li><a href="#" onClick="addJob('Update', 'jobServer', '<?php echo $obj->id; ?>');">Launch Update</a></li>
                   <li><a href="#">Launch Check</a></li>
                   <li><a href="#">Check ZFS Arc</a></li>
                   <li><a href="#">Zone Stats</a></li>
@@ -60,6 +79,7 @@
                   <li><a data-toggle="modal" href="/modallist/w/packages/i/<?php echo $obj->id; ?>" data-target="#packagesModal">View Packages</a></li>
                   <li><a data-toggle="modal" href="/modallist/w/projects/i/<?php echo $obj->id; ?>" data-target="#projectsModal">View Projects</a></li>
                   <li><a data-toggle="modal" href="/modallist/w/disks/i/<?php echo $obj->id; ?>" data-target="#disksModal">View Disks</a></li>
+                  <li><a data-toggle="modal" href="/modallist/w/logs/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
                 </ul>
               </li>
             </ul>
@@ -172,6 +192,18 @@
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
           <h3 id="disksModalLabel">Disks list</h3>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+      </div>
+      <!-- Logs Modal -->
+      <div class="modal large hide fade in" id="logsModal" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+          <h3 id="logsModalLabel">Disks list</h3>
         </div>
         <div class="modal-body">
         </div>

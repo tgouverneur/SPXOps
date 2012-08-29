@@ -18,12 +18,24 @@ function parseVars($c) {
   return $rc;
 }
 
-function formatBlocks($k) {
+function formatBytes($k) {
+  $k /= 1024;
   if ($k < 1024) { return round($k, 2)." KB"; }
   $k = $k / 1024;
   if ($k < 1024) { return round($k)." MB"; }
   $k = $k / 1024;
   if ($k < 1024) { return round($k)." GB"; }
+  $k = $k / 1024;
+  return round($k)." TB";
+}
+
+
+function formatBlocks($k) {
+  if ($k < 1024) { return round($k)." KB"; }
+  $k = $k / 1024;
+  if ($k < 1024) { return round($k, 2)." MB"; }
+  $k = $k / 1024;
+  if ($k < 1024) { return round($k, 2)." GB"; }
   $k = $k / 1024;
   return round($k)." TB";
 }

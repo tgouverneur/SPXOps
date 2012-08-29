@@ -45,7 +45,7 @@
                   <li><a href="/list/w/pserver">List</a></li>
                   <li><a href="/add/w/pserver">Add</a></li>
 		  <li>
-		    <form class="navbar-search pull-left" method="POST" action="/search/w/physical">
+		    <form class="navbar-search pull-left" method="POST" action="/search/w/pserver">
 		      <input name="q" type="text" class="search-query" placeholder="Search Physical">
 	    	    </form>
 		  </li>
@@ -74,6 +74,7 @@
                 <ul class="dropdown-menu">
                   <li><a href="/setup">Configuration</a></li>
                   <li><a href="/list/w/jobs#">Jobs list</a></li>
+                  <li><a href="/list/w/users#">Users management</a></li>
                   <li><a href="/tools/w/idr">IDR Patches</a></li>
                   <li><a href="/tools/w/nfs">NFS Impact</a></li>
                   <li><a href="/tools/w/cdp">CDP Packets</a></li>

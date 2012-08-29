@@ -43,6 +43,26 @@
        $content->set('oc', 'Server');
        $page['title'] .= 'Servers';
      break;
+     case 'jobs':
+       $a_list = Job::getAll(true, array(), array('DESC:t_upd'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('canView', true);
+       $content->set('canMod', true);
+       $content->set('canDel', true);
+       $content->set('what', 'Jobs');
+       $content->set('oc', 'Job');
+       $page['title'] .= 'Jobs';
+     break;
+     case 'users':
+       $a_list = Login::getAll(true, array(), array('ASC:username'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('canView', true);
+       $content->set('what', 'Users');
+       $content->set('oc', 'Login');
+       $page['title'] .= 'Users';
+     break;
      default:
        $content = new Template('../tpl/error.tpl');
        $content->set('error', 'Unknown option or not yet implemented');

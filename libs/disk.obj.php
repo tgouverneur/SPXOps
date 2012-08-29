@@ -72,6 +72,34 @@ class Disk extends mysqlObj
 							$this->vendor, $this->product, $this->serial, $this->lunid, LLOG_INFO));
   }
 
+  public static function printCols() {
+    return array('Device' => 'dev',
+                 'Vendor' => 'vendor',
+                 'Size' => 'size',
+                 'LunID' => 'lunid',
+                 'on SAN?' => 'san',
+                 'Details' => 'details',
+                );
+  }
+
+  public function toArray() {
+
+    global $config;
+    @include_once($config['rootpath'].'/libs/functions.lib.php');
+    return array(
+                 'dev' => $this->dev,
+                 'serial' => $this->serial,
+                 'vendor' => $this->vendor,
+                 'product' => $this->product,
+                 'size' => formatBytes($this->size),
+                 'lunid' => $this->lunid,
+                 'san' => ($this->f_san)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
+                 'details' => '<a href="/view/w/disk/i/'.$this->id.'">View</a>',
+                 't_add' => date('d-m-Y', $this->t_add),
+                );
+  }
+
+
  /**
   * ctor
   */

@@ -1630,7 +1630,12 @@ class OSSolaris extends OSType
         $vars['vendor'] = trim($m[1]);
         $vars['product'] = trim($m[2]);
         $vars['rev'] = trim($m[3]);
-        $vars['serial'] = trim($m[4]);
+        if (preg_match('/Size: (.*) <([0-9]*) bytes>/', trim($m[4]), $ms)) {
+          $vars['serial'] = trim($ms[1]);
+          $vars['size'] = trim($ms[2]);
+        } else {
+          $vars['serial'] = preg_replace('/ Size:.*/', '', trim($m[4]));
+	}
       } else if (!$imdone && preg_match('/^Size: (.*)$/', $line, $m)) {
         $size = trim($m[1]);
 	if (preg_match('/^[0-9\.]*GB <([0-9]*) bytes>/', $size, $m)) {

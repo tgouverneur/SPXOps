@@ -985,7 +985,6 @@ class mysqlObj
       $si++;
     }
 
-
     foreach($f as $src => $dst) {
       if ($w) { $where .= " AND "; } else { $where .= "WHERE "; }
       if (!strncmp('CST:', $src, 4)) {
@@ -995,11 +994,10 @@ class mysqlObj
         $sstring = preg_replace('/^LIKE:/', '', $src);
         $where .= "`".$sstring."` LIKE ".$my->quote($dst);
       } else {
-        $where .= "`".$dst."`=".$my->quote($this->{$src});
+        $where .= "`".$dst."`=".$my->quote($src);
       }
       $w++;
     }
-
     try {
       if (($idx = $my->fetchIndex($index, $table, $where.' '.$sort.' '.$limit))) {
         foreach($idx as $t) {

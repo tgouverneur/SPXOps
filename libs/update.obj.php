@@ -14,6 +14,26 @@
 
 class Update
 {
+
+  public static function jobServer(&$job, $sid) {
+    $s = new Server($sid);
+    if ($s->fetchFromId()) {
+      throw new SPXException('Server not found in database');
+    }
+    $s->_job = $job;
+
+    try {
+      $s->log("Connecting to server", LLOG_INFO);
+      $s->connect();
+      $s->log("Launching the Update", LLOG_DEBUG);
+      Update::server($s);
+      $s->log("Disconnecting from server", LLOG_INFO);
+      $s->disconnect();
+    } catch (Exception $e) {
+      throw($e);
+    }
+  }
+
   public static function server($s, $f = null) {
 
     if (!$s) {

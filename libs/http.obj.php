@@ -20,6 +20,15 @@ class HTTP
   public $argv;
   public $css;
 
+  public function isAjax()
+  {
+    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+	$_SERVER['HTTP_X_REQUESTED_WITH'] == "XMLHttpRequest") {
+      return true;
+    }
+    return false;
+  }
+
   public function fetchCSS() {
     global $config;
 
@@ -140,11 +149,9 @@ class HTTP
   }
 
   public function parseUrl() {
-    global $_SERVER;
-    global $_GET;
-    if (count($_GET)) {
+    /*if (count($_GET)) {
 	return;
-    }
+    }*/
     if(!isset($_SERVER['PATH_INFO'])) {
       return;
     }
@@ -165,8 +172,8 @@ class HTTP
 	$s=0;
       }
     }
-    $_GET = $g;
-    //$_GET = array_merge($_GET, $g);
+    //$_GET = $g;
+    $_GET = array_merge($_GET, $g);
     return;
   }
 
@@ -333,13 +340,7 @@ class HTTP
     return $str;
   }
 
-  public static function isAjax() {
-    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-        $_SERVER['HTTP_X_REQUESTED_WITH'] == "XMLHttpRequest") {
-      return true;
-    }
-    return false;
-  }
+
 }
 
 

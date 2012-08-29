@@ -24,8 +24,9 @@ class Logger
   /**
    * Singleton variable
    */
-  private static $_instance;
-  private static $_level = LLOG_NONE;
+  protected static $_instance;
+  protected static $_level = LLOG_NONE;
+  protected static $_logfd = 0;
 
   public static function logLevel($level = LLOG_ERR) {
     
@@ -55,11 +56,38 @@ class Logger
 
     if ($obj && isset($obj->_job) && $obj->_job) {
       $obj->_job->log($str);
+    } else if ($cn::$_logfd) {
+      fprintf($cn::$_logfd, "[%s] %s\n", date("Y-m-d M:i:s"), $str);
     } else {
       echo "$str\n";
     }
     return;
   }
+
+  public static function openLog() {
+    global $config;
+    $cn = get_called_class();
+    $obj = null;
+
+    if (!($cn::$_logfd = fopen($config['spxopsd']['log'], 'w'))) {
+      $cn::log("Cannot open ".$config['spxopsd']['log']." for logging!");
+      return;
+    }
+    $cn::log("Opened ".$config['spxopsd']['log']." for logging!", $obj, LLOG_INFO);
+  }
+
+  public static function closeLog() {
+
+    global $config;
+    $cn = get_called_class();
+    $obj = null;
+    if ($cn::$_logfd) {
+      $cn::log("Closing ".$config['spxopsd']['log']."!", $obj, LLOG_INFO);
+      fclose($cn::$_logfd);
+      $cn::$_logfd = 0;
+    }
+  }
+
 
   /**
    * Returns the singleton instance

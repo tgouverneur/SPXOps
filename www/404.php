@@ -13,8 +13,7 @@
 
  /* Page setup */
  $page = array();
- $page['title'] = 'Home';
-
+ $page['title'] = '404 Not found';
 
  $index = new Template("../tpl/index.tpl");
  $head = new Template("../tpl/head.tpl");
