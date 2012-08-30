@@ -17,7 +17,7 @@
  $foot = new Template("../tpl/foot.tpl");
  $page = array();
  $page['title'] = 'List of ';
-
+ if ($lm->o_login) $page['login'] = &$lm->o_login;
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {

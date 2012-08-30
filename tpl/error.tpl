@@ -1,5 +1,5 @@
       <div class="row">
-        <div class="row12">
+        <div class="span12">
           <div class="hero-unit">
             <h1>That's some bad hat Harry</h1>
 <?php if (isset($error)) { ?>

@@ -1,5 +1,5 @@
       <div class="row">
-        <div class="row12">
+        <div class="span12">
           <h1>About</h1>
 	  <p>Espix Operations, the simplest interface to manage and keep track of your UNIX servers.</p>
 	  <p>It currently support actively following OSes:</p>

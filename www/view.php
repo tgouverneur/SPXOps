@@ -18,7 +18,7 @@
  //$foot->set("start_time", $start_time);
  $page = array();
  $page['title'] = 'Viewing ';
-
+ if ($lm->o_login) $page['login'] = &$lm->o_login;
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {

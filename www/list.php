@@ -18,7 +18,7 @@
  //$foot->set("start_time", $start_time);
  $page = array();
  $page['title'] = 'List of ';
-
+ if ($lm->o_login) $page['login'] = &$lm->o_login;
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
@@ -55,10 +55,23 @@
        $page['title'] .= 'Jobs';
      break;
      case 'users':
+       if (!$lm->o_login) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be logged in to access this page...");
+         goto screen;
+       }
        $a_list = Login::getAll(true, array(), array('ASC:username'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
        $content->set('canView', true);
+       if ($lm->o_login->f_admin) {
+         $content->set('canMod', true);
+         $content->set('canDel', true);
+         $actions = array(
+			'Add' => '/add/w/user',
+	 	    );
+	 $content->set('actions', $actions);
+       }
        $content->set('what', 'Users');
        $content->set('oc', 'Login');
        $page['title'] .= 'Users';
@@ -73,6 +86,7 @@
    $content->set('error', "I don't know what to list...");
  }
 
+screen:
  $head->set('page', $page);
  $index->set('head', $head);
  $index->set('content', $content);

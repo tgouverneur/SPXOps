@@ -14,6 +14,7 @@
  /* Page setup */
  $page = array();
  $page['title'] = 'Home';
+ if ($lm->o_login) $page['login'] = &$lm->o_login;
 
  $stats = array();
  $stats['nblogin'] = $m->count('list_login');

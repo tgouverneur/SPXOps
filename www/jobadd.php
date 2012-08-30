@@ -16,6 +16,7 @@
    /* Page setup */
    $page = array();
    $page['title'] = 'Error';
+   if ($lm->o_login) $page['login'] = &$lm->o_login;
 
    $index = new Template("../tpl/index.tpl");
    $head = new Template("../tpl/head.tpl");

@@ -8,23 +8,36 @@
  }
  $lm = loginCM::getInstance();
  $lm->startSession();
+
+ $loggedout = false;
+ if ($lm->o_login) {
+   $lm->logout();
+   $loggedout = true;
+ }
+
  $h = HTTP::getInstance();
  $h->parseUrl();
 
  /* Page setup */
  $page = array();
- $page['title'] = '404 Not found';
- if ($lm->o_login) $page['login'] = &$lm->o_login;
+ $page['title'] = 'Home';
 
  $index = new Template("../tpl/index.tpl");
  $head = new Template("../tpl/head.tpl");
  $head->set('page', $page);
 
  $foot = new Template("../tpl/foot.tpl");
- $foot->set("start_time", $start_time);
- $content = new Template("../tpl/error.tpl");
- $content->set('error', "The page you requested has not been found...");
 
+ if ($loggedout) {
+   $content = new Template("../tpl/message.tpl");
+   $content->set('msg', "You have been successfully logged out.");
+   goto screen;
+ }
+ 
+ $content = new Template("../tpl/error.tpl");
+ $content->set('error', "To logout, you should login first ;-)");
+
+screen:
  $index->set('head', $head);
  $index->set('content', $content);
  $index->set('foot', $foot);

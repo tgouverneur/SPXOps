@@ -1,5 +1,5 @@
       <div class="row">
-        <div class="row12">
+        <div class="span12">
           <div class="hero-unit">
             <h1>Welcome to Espix Operations</h1>
             <p>You can manage different flavours of UNIX operating systems using this portal, simply browse through the menu or check the documentation to see how to get more benefit of this portal.</p>

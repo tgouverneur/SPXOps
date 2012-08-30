@@ -222,7 +222,7 @@ class mysqlObj
   public function fetchData() {
 
     if (!$this->_nfotable)
-      throw new SPXException('No NFO table for this class');
+      return;
 
     /* Build index list */
     $ids = array_keys($this->_my, SQL_INDEX);

@@ -1,7 +1,7 @@
       <div class="row">
-	<h1 class="row12">Job details</h1>
+	<h1 class="span12">Job details</h1>
         <div class="row">
-	 <div class="row12">
+	 <div class="span12">
 	  <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
 	    <button type="button" class="close">×</button>
 	    <h4>Success!</h4>

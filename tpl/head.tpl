@@ -83,8 +83,8 @@
               </li>
               <li><a href="/about">About</a></li>
             </ul>
-<?php if (isset($lo)) { ?>
-	    <p class="navbar-text pull-right">Welcome Thomas Gouverneur ! (<a href="/logout">logout</a>)</p>
+<?php if (isset($page['login'])) { ?>
+	    <p class="navbar-text pull-right">Welcome <?php echo $page['login']->fullname; ?> ! (<a href="/logout">logout</a>)</p>
 <?php } else { ?>
 	    <p class="navbar-text pull-right">Not Logged-in. (<a href="/login">login</a>)</p>
 <?php } ?>
