@@ -30,16 +30,19 @@ if (!isset($action) || !$action) {
             <div class="controls">
               <input type="text" name="fullname" value="<?php echo $obj->fullname; ?>" id="inputFullname" placeholder="Full Name">
             </div>
+	  </div>
           <div class="control-group">
             <label class="control-label" for="inputEmail">E-Mail</label>
             <div class="controls">
               <input type="text" name="email" value="<?php echo $obj->email; ?>" id="inputEmail" placeholder="user@domain.tld">
             </div>
+	  </div>
 	  <div class="control-group">
 	    <label class="control-label" for="inputUsername">Username</label>
 	    <div class="controls">
-	      <input type="text" name="username" value="<?php echo $obj->fullname; ?>" id="inputUsername" placeholder="Username">
+	      <input type="text" name="username" value="<?php echo $obj->username; ?>" id="inputUsername" placeholder="Username">
 	    </div>
+	  </div>
 	  <div class="control-group">
 	    <label class="control-label" for="inputPassword">Password</label>
 	    <div class="controls">

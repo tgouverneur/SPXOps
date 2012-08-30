@@ -26,7 +26,14 @@
        $a_list = PServer::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
-       $content->set('canDel', true);
+       if ($lm->o_login) {
+         $content->set('canDel', true);
+         $content->set('canMod', true);
+         $actions = array(
+                        'Add' => '/add/w/pserver',
+                    );
+         $content->set('actions', $actions);
+       }
        $content->set('canView', true);
        $content->set('what', 'Physical Servers');
        $content->set('oc', 'PServer');
@@ -36,20 +43,33 @@
        $a_list = Server::getAll(true, array(), array('ASC:hostname'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
-       $content->set('canMod', true);
-       $content->set('canDel', true);
+       if ($lm->o_login) {
+         $content->set('canDel', true);
+         $content->set('canMod', true);
+         $actions = array( 
+                        'Add' => '/add/w/server',
+                    );
+         $content->set('actions', $actions);
+       }
        $content->set('canView', true);
        $content->set('what', 'Servers');
        $content->set('oc', 'Server');
        $page['title'] .= 'Servers';
      break;
      case 'jobs':
+       if (!$lm->o_login) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be logged in to access this page...");
+         goto screen;
+       }
        $a_list = Job::getAll(true, array(), array('DESC:t_upd'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
        $content->set('canView', true);
-       $content->set('canMod', true);
-       $content->set('canDel', true);
+       if ($lm->o_login->f_admin) {
+         $content->set('canMod', true);
+         $content->set('canDel', true);
+       }
        $content->set('what', 'Jobs');
        $content->set('oc', 'Job');
        $page['title'] .= 'Jobs';
@@ -75,6 +95,31 @@
        $content->set('what', 'Users');
        $content->set('oc', 'Login');
        $page['title'] .= 'Users';
+     break;
+     case 'susers':
+       if (!$lm->o_login) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be logged in to access this page...");
+         goto screen;
+       }
+       if (!$lm->o_login->f_admin) {
+	 $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be administrator to access this page...");
+         goto screen;
+       }
+       $a_list = SUser::getAll(true, array(), array('ASC:username'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('canView', true);
+       $content->set('canMod', true);
+       $content->set('canDel', true);
+       $actions = array(
+                      'Add' => '/add/w/suser',
+                  );
+       $content->set('actions', $actions);
+       $content->set('what', 'SSH Users');
+       $content->set('oc', 'SUser');
+       $page['title'] .= 'SSH Users';
      break;
      default:
        $content = new Template('../tpl/error.tpl');

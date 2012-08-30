@@ -18,6 +18,7 @@
 
  $stats = array();
  $stats['nblogin'] = $m->count('list_login');
+ $stats['nbsuser'] = $m->count('list_suser');
  $stats['nbswitch'] = $m->count('list_switch');
  $stats['nbos'] = $m->count('list_os');
  $stats['nbmodel'] = $m->count('list_model');
@@ -26,6 +27,7 @@
  $stats['nbdisk'] = $m->count('list_disk');
  $stats['nbcl'] = 0;
 
+ $a_job = Job::getAll(true, array(), array('DESC:t_add'), 0, 10);
 
  $index = new Template("../tpl/index.tpl");
  $head = new Template("../tpl/head.tpl");
@@ -35,6 +37,7 @@
  $foot->set("start_time", $start_time);
  $content = new Template("../tpl/home.tpl");
  $content->set('stats', $stats);
+ $content->set('a_job', $a_job);
 
  $index->set('head', $head);
  $index->set('content', $content);

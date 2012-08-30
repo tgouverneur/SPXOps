@@ -49,6 +49,64 @@ class Server extends mysqlObj
   /* Logging */
   private $_log = null;
   public $_job = null;
+
+  public function valid($new = true) { /* validate form-based fields */
+    global $config;
+    $ret = array();
+
+    if (empty($this->hostname)) {
+      $ret[] = 'Missing Hostname';
+    } else {
+      if ($new) { /* check for already-exist */
+        $check = new Server();
+        $check->hostname = $this->hostname;
+        if (!$check->fetchFromField('hostname')) {
+          $this->hostname = '';
+          $ret[] = 'Server Hostname already exist';
+          $check = null;
+        }
+      }
+    }
+
+    if (empty($this->fk_pserver)) {
+      $ret[] = 'Missing Physical Server specification';
+    } else {
+      if ($this->fk_pserver == -1) {
+	$check = new PServer();
+	$check->name = $this->hostname;
+	if ($check->fetchFromField('name')) {
+	  $this->fk_pserver = -2;
+	} else {
+	  $this->fk_pserver = $check->id;
+	}
+      } else {
+	$check = new PServer($this->fk_pserver);
+	if ($check->fetchFromId()) {
+	  $this->fk_pserver = -1;
+	  $ret[] = 'Physical Server not found in database';
+	  $check = null;
+	}
+      }
+    }
+
+    if (empty($this->fk_suser)) {
+      $ret[] = 'Missing SSH User specification';
+    } else { 
+      $check = new SUser($this->fk_suser);
+      if ($check->fetchFromId()) {
+	$this->fk_suser = -1;
+	$ret[] = 'Specified SSH User not found in database';
+	$check = null;
+      }
+    }
+
+    if (count($ret)) {
+      return $ret;
+    } else {
+      return null;
+    }
+  }
+
  
   public function log($str, $level) {
     Logger::log($str, $this, $level);

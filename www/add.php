@@ -28,6 +28,112 @@
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
+     case 'suser':
+       $what = 'SSH User';
+       $obj = new SUser();
+       $content = new Template('../tpl/form_suser.tpl');
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Add button */
+         $fields = array('description', 'pubkey', 'username', 'password');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid();
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->insert();
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "SSH User $obj has been added to database");
+         goto screen;
+       }
+     break;
+     case 'pserver':
+       $what = 'Physical Server';
+       $obj = new PServer();
+       $content = new Template('../tpl/form_pserver.tpl');
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Add button */
+         $fields = array('name');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid();
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->insert();
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "Physical Server $obj has been added to database");
+         goto screen;
+       }
+     break;
+     case 'server':
+       $what = 'Server';
+       $obj = new Server();
+       $content = new Template('../tpl/form_server.tpl');
+       $a_suser = SUser::getAll(true, array(), array('ASC:username'));
+       $a_pserver = PServer::getAll(true, array(), array('ASC:name'));
+       $content->set('susers', $a_suser);
+       $content->set('pservers', $a_pserver);
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Add button */
+         $fields = array('hostname', 'description', 'fk_pserver', 'fk_suser', 'f_rce', 'f_upd');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid();
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+	 if ($obj->fk_pserver == -2) { /* should be added */
+	   $ps = new PServer();
+	   $ps->name = $obj->hostname;
+	   $ps->insert();
+	   $obj->fk_pserver = $ps->id;
+	 }
+         $obj->insert();
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "Server $obj has been added to database");
+         goto screen;
+       }
+     break;
      case 'user':
        if (!$lm->o_login->f_admin) {
          $content = new Template('../tpl/error.tpl');

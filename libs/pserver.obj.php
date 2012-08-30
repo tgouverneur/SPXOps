@@ -23,6 +23,32 @@ class PServer extends mysqlObj
 
   public $o_model = null;
 
+  public function valid($new = true) { /* validate form-based fields */
+    global $config;
+    $ret = array();
+
+    if (empty($this->name)) {
+      $ret[] = 'Missing Name';
+    } else {
+      if ($new) { /* check for already-exist */
+        $check = new PServer();
+        $check->name = $this->name;
+        if (!$check->fetchFromField('name')) {
+          $this->name = '';
+          $ret[] = 'Physical Server Name already exist';
+          $check = null;
+        }
+      }
+    }
+
+    if (count($ret)) {
+      return $ret;
+    } else {
+      return null;
+    }
+  }
+
+
   public function __toString() {
     return $this->name;
   }

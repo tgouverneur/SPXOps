@@ -15,9 +15,10 @@
 		<li>Clusters: <?php echo $stats['nbcl']; ?> registered>
 		<li>Chassis: <?php echo $stats['nbpsrv']; ?> registered</li>
 		<li>Disks: <?php echo $stats['nbdisk']; ?> detected</li>
-		<li>HW Model: <?php echo $stats['nmodel']; ?> detected</li>
+		<li>HW Model: <?php echo $stats['nbmodel']; ?> detected</li>
 		<li>Network Switches: <?php echo $stats['nbswitch']; ?> detected</li>
 		<li>Portal Users: <?php echo $stats['nblogin']; ?> registered</li>
+		<li>SSH Users: <?php echo $stats['nbsuser']; ?> registered</li>
 	      </ul>
 	    </div>
             <div class="span4">
@@ -57,18 +58,11 @@
  	    <div class="span6">
               <h2>Last Jobs</h2>
               <ul>
-                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
-                <li>Last Job 1337: Update::Cluster(cllab) finished with status: FAILED</li>
-                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
-                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
-                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
-                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
-                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
-                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
-                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
-                <li>Last Job 1337: Update::Server(dunno) finished with status: OK</li>
+<?php foreach($a_job as $job) { ?>
+                <li><?php echo $job; ?></li>
+<?php } ?>
               </ul>
-	      <a class="btn" href="#">More..</a>
+	      <a class="btn" href="/list/w/jobs">More..</a>
             </div>
 	    <div class="span6">
               <h2>User Activities</h2>

@@ -72,13 +72,19 @@
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="/setup">Configuration</a></li>
                   <li><a href="/list/w/jobs#">Jobs list</a></li>
-                  <li><a href="/list/w/users#">Users management</a></li>
                   <li><a href="/tools/w/idr">IDR Patches</a></li>
                   <li><a href="/tools/w/nfs">NFS Impact</a></li>
                   <li><a href="/tools/w/cdp">CDP Packets</a></li>
                   <li><a href="/tools/w/rce">Remote Code Execution</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="/setup">Configuration</a></li>
+                  <li><a href="/list/w/users#">Users management</a></li>
+                  <li><a href="/list/w/susers#">Connect Users management</a></li>
                 </ul>
               </li>
               <li><a href="/about">About</a></li>
