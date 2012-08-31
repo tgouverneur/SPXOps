@@ -92,6 +92,50 @@
          goto screen;
        }
      break;
+     case 'cluster':
+       $what = 'Cluster';
+       $obj = new Cluster();
+       $content = new Template('../tpl/form_cluster.tpl');
+       $a_os = OS::getAll(true, array(), array('ASC:name'));
+       $content->set('oses', $a_os);
+       $js = array('cluster.js');
+       $foot->set('js', $js);
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Add button */
+         $fields = array('name', 'description', 'f_upd', 'a_server', 'fk_os');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if (isset($_POST[$field])) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid();
+         if ($errors) {
+           if (isset($obj->fk_os) && is_numeric($obj->fk_os) && $obj->fk_os > 0) {
+	     $a_server = Server::getAll(true, array('CST:'.$obj->fk_os => 'fk_os'), array('ASC:hostname'));
+	     $content->set('a_server', $a_server);
+	   }
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->insert();
+	 foreach($obj->a_server as $s) {
+	   $s->fk_cluster = $obj->id;
+	   $s->update();
+	 }
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "Cluster $obj has been added to database");
+         goto screen;
+       }
+     break;
      case 'server':
        $what = 'Server';
        $obj = new Server();

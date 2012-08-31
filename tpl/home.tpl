@@ -12,7 +12,7 @@
 	      <h2>DB Statistics</h2>
 	      <ul>
 		<li>Servers: <?php echo $stats['nbsrv']; ?> registered</li>
-		<li>Clusters: <?php echo $stats['nbcl']; ?> registered>
+		<li>Clusters: <?php echo $stats['nbcl']; ?> registered</li>
 		<li>Chassis: <?php echo $stats['nbpsrv']; ?> registered</li>
 		<li>Disks: <?php echo $stats['nbdisk']; ?> detected</li>
 		<li>HW Model: <?php echo $stats['nbmodel']; ?> detected</li>

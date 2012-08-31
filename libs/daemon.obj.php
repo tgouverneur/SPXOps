@@ -33,6 +33,7 @@ class Daemon
   
   public function __construct($obj, $f) 
   { 
+    $onull = null;
     if (!defined('SIGHUP')){
         trigger_error('PHP is compiled without --enable-pcntl directive', E_USER_ERROR);
     }
@@ -57,7 +58,7 @@ class Daemon
               exit(0);
             }
 	  } catch (Exception $e) {
-	    Logger::log("Exception catched in run(): $e", LLOG_ERROR);
+	    Logger::log("Exception catched in run(): $e", $onull, LLOG_ERR);
 	    $m = MysqlCM::getInstance();
 	    $m->disconnect();
 	    continue;
@@ -74,7 +75,7 @@ class Daemon
 	    exit(0);
 	  }
         } catch (Exception $e) {
-          Logger::log("Exception catched in run(): $e", LLOG_ERROR);
+          Logger::log("Exception catched in run(): $e", $onull, LLOG_ERR);
           $m = MysqlCM::getInstance();
           $m->disconnect();
           continue;

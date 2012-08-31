@@ -127,7 +127,12 @@ class Job extends mysqlObj
 
     $c = $this->class;
     $f = $this->fct;
-    $ret = $c::$f($this,$this->arg);
+    try {
+      $ret = $c::$f($this,$this->arg);
+    } catch (Exception $e) {
+      $this->log($e);
+      $ret = -1;
+    }
 
     $this->t_stop = time();
     $this->o_log->rc = $ret;

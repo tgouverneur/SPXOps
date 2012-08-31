@@ -75,6 +75,24 @@
        $ret['msg'] = "Job to update server $s has been succesfully added to the queue...";
        goto screen;
      }
+     if ($f == 'jobCluster') {
+       $oc = new Cluster($a);
+       if ($oc->fetchFromId()) {
+         $ret['rc'] = 1;
+         $ret['msg'] = 'Cluster specified not found in database';
+         goto screen;
+       }
+       $j = new Job();
+       $j->class = $c;
+       $j->fct = $f;
+       $j->arg = $a;
+       $j->state = S_NEW;
+       $j->insert();
+       /* @TODO: Add log entry */
+       $ret['rc'] = 0;
+       $ret['msg'] = "Job to update cluster $oc has been succesfully added to the queue...";
+       goto screen;
+     } 
    break;
    default:
      $ret['rc'] = 1;

@@ -63,7 +63,44 @@ class Update
     return -1;
   }
 
+  public static function jobCluster(&$job, $cid) {
+    $c = new Cluster($cid);
+    if ($c->fetchFromId()) {
+      throw new SPXException('Cluster not found in database');
+    }
+    $c->_job = $job;
+    $c->fetchRL('a_server');
+
+    try {
+      $c->log("Connecting to cluster", LLOG_INFO);
+      $c->connect();
+      $c->log("Launching the Update", LLOG_DEBUG);
+      Update::cluster($c);
+      $c->log("Disconnecting from cluster", LLOG_INFO);
+      $c->disconnect();
+    } catch (Exception $e) {
+      throw($e);
+    }
+  }
+
+
   public static function cluster($c) {
+
+    if (!$c) {
+      throw new SPXException('Update::cluster: $c is null');
+    }
+
+    if (!$c->fk_clver || $c->fk_clver == -1) {
+      Logger::log('Trying to detect Cluster Version for '.$c, $c, LLOG_INFO);
+      $oclv = CLVer::detect($c);
+      $c->fk_clver = $oclv->id;
+      $c->update();
+      $c->o_clver = $oclv;
+      Logger::log('Detected Cluster Version for '.$c.' is '.$oclv, $c, LLOG_INFO);
+    }
+
+    $c->fetchAll();
+
     $classname = $c->o_clver->class;
     if (class_exists($classname)) {
       return $classname::update($c);

@@ -76,6 +76,30 @@
        $obj->delete();
        goto screen;
      break;
+     case 'cluster':
+       /**
+	* @TODO; Check dependancies before delete()ing
+	*/
+       $what = 'Cluster';
+       $obj = new Cluster();
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $obj->id = $_GET['i'];
+         if ($obj->fetchFromId()) {
+           $content = new Template('../tpl/error.tpl');
+           $content->set('error', "Cluster specified cannot be found in the database");
+           goto screen;
+         }
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Cluster not specified");
+         goto screen;
+       }
+       $page['title'] .= $what;
+       $content = new Template('../tpl/message.tpl');
+       $content->set('msg', "Cluster $obj has been removed from database");
+       $obj->delete();
+       goto screen;
+     break;
      case 'server':
        /**
 	* @TODO; Check dependancies before delete()ing

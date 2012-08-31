@@ -12,7 +12,7 @@
  */
 
 
-class Server extends mysqlObj
+class Server extends mysqlObj implements JsonSerializable
 {
   public $id = -1;
   public $hostname = '';
@@ -20,6 +20,7 @@ class Server extends mysqlObj
   public $fk_pserver = -1;
   public $fk_os = -1;
   public $fk_suser = -1;
+  public $fk_cluster = -1;
   public $f_rce = 0;
   public $f_upd = 0;
   public $t_add = -1;
@@ -28,6 +29,7 @@ class Server extends mysqlObj
   public $o_pserver = null;
   public $o_os = null;
   public $o_suser = null;
+  public $o_cluster = null;
 
   public $a_sgroup = array();
   public $a_zone = array();
@@ -155,6 +157,10 @@ class Server extends mysqlObj
         $this->fetchFK('fk_suser');
       }
 
+      if (!$this->o_cluster && $this->fk_cluster > 0) {
+        $this->fetchFK('fk_cluster');
+      }
+
       if ($all) {
         $this->fetchRL('a_zone');
         $this->fetchRL('a_patch');
@@ -259,7 +265,7 @@ class Server extends mysqlObj
         $paths = OS::$binPaths;
       } else {
         if (!$this->o_os) {
-	  $this->fetcHFK('fk_os');
+	  $this->fetcFK('fk_os');
 	}
         $oclass = $this->o_os->class;
         $paths = $oclass::$binPaths;
@@ -434,7 +440,7 @@ class Server extends mysqlObj
   }
 
   public function htmlDump() {
-    return array(
+    $ret = array(
 	'Hostname' => $this->hostname,
 	'Description' => $this->description,
 	'Update?' => ($this->f_upd)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
@@ -442,7 +448,19 @@ class Server extends mysqlObj
 	'Updated on' => date('d-m-Y', $this->t_upd),
 	'Added on' => date('d-m-Y', $this->t_add),
     );
+    if ($this->o_cluster) {
+      $ret['Cluster'] = '<a href="/view/w/cluster/i/'.$this->o_cluster->id.'">'.$this->o_cluster.'</a>';
+    }
+    return $ret;
   }
+
+  public function jsonSerialize() {
+    return array(
+                'id' => $this->id,
+                'hostname' => $this->hostname
+           );
+  }
+
 
  /**
   * ctor
@@ -459,6 +477,7 @@ class Server extends mysqlObj
                         'fk_pserver' => SQL_PROPE,
                         'fk_os' => SQL_PROPE,
                         'fk_suser' => SQL_PROPE,
+                        'fk_cluster' => SQL_PROPE,
                         'f_rce' => SQL_PROPE,
                         'f_upd' => SQL_PROPE,
                         't_add' => SQL_PROPE,
@@ -468,6 +487,7 @@ class Server extends mysqlObj
                         'id' => 'id',
                         'hostname' => 'hostname',
                         'description' => 'description',
+                        'fk_cluster' => 'fk_cluster',
                         'fk_pserver' => 'fk_pserver',
                         'fk_os' => 'fk_os',
                         'fk_suser' => 'fk_suser',
@@ -480,6 +500,7 @@ class Server extends mysqlObj
     $this->_addFK("fk_suser", "o_suser", "SUser");
     $this->_addFK("fk_os", "o_os", "OS");
     $this->_addFK("fk_pserver", "o_pserver", "PServer");
+    $this->_addFK("fk_cluster", "o_cluster", "Cluster");
 
     $this->_addRL("a_zone", "Zone", array('id' => 'fk_server'));
     $this->_addRL("a_patch", "Patch", array('id' => 'fk_server'));

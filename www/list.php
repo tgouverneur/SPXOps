@@ -28,7 +28,6 @@
        $content->set('a_list', $a_list);
        if ($lm->o_login) {
          $content->set('canDel', true);
-         $content->set('canMod', true);
          $actions = array(
                         'Add' => '/add/w/pserver',
                     );
@@ -56,6 +55,23 @@
        $content->set('oc', 'Server');
        $page['title'] .= 'Servers';
      break;
+     case 'cluster':
+       $a_list = Cluster::getAll(true, array(), array('ASC:name'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       if ($lm->o_login) {
+         $content->set('canDel', true);
+         $content->set('canMod', true);
+         $actions = array( 
+                        'Add' => '/add/w/cluster',
+                    );
+         $content->set('actions', $actions);
+       }
+       $content->set('canView', true);
+       $content->set('what', 'Clusters');
+       $content->set('oc', 'Cluster');
+       $page['title'] .= 'Clusters';
+     break;
      case 'jobs':
        if (!$lm->o_login) {
          $content = new Template('../tpl/error.tpl');
@@ -67,7 +83,6 @@
        $content->set('a_list', $a_list);
        $content->set('canView', true);
        if ($lm->o_login->f_admin) {
-         $content->set('canMod', true);
          $content->set('canDel', true);
        }
        $content->set('what', 'Jobs');

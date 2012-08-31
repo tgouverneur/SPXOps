@@ -25,7 +25,7 @@
  $stats['nbsrv'] = $m->count('list_server');
  $stats['nbpsrv'] = $m->count('list_pserver');
  $stats['nbdisk'] = $m->count('list_disk');
- $stats['nbcl'] = 0;
+ $stats['nbcl'] = $m->count('list_cluster');
 
  $a_job = Job::getAll(true, array(), array('DESC:t_add'), 0, 10);
 

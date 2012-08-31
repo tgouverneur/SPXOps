@@ -9,6 +9,7 @@ class OSSolaris extends OSType
     "/sbin",
     "/usr/sbin",
     "/usr/local/sbin",
+    "/usr/ccs/sbin",
     "/opt/csw/bin",
     "/opt/csw/sbin",
   );

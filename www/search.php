@@ -83,6 +83,37 @@
        $content->set('oc', 'Server');
        $page['title'] .= 'Servers';
      break;
+     case 'cluster':
+       if (!isset($_POST['q']) || empty($_POST['q'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'Unknown option or not yet implemented');
+	 goto screen;
+       }
+       $q = '%'.$_POST['q'].'%';
+       $f = array();
+       $s = array('ASC:name');
+       $f['LIKE:name'] = $q;
+       $a_list = Cluster::getAll(true, $f, $s);
+       if (!count($a_list)) {
+	 $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'No result found for your search...');
+         goto screen;
+       }
+       if (count($a_list) == 1) {
+	 $obj = $a_list[0];
+	 $obj->fetchAll(1);
+	 $content = new Template('../tpl/view_cluster.tpl');
+         $content->set('obj', $obj);
+         $content->set('what', 'cluster');
+	 goto screen;
+       }
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('canView', true);
+       $content->set('what', 'Clusters');
+       $content->set('oc', 'Cluster');
+       $page['title'] .= 'Clusters';
+     break;
      default:
        $content = new Template('../tpl/error.tpl');
        $content->set('error', 'Unknown option or not yet implemented');

@@ -59,6 +59,26 @@
        $js = array('jobs.js');
        $foot->set('js', $js);
      break;
+     case 'cluster':
+       $what = 'Cluster';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       }
+       $obj = new Cluster($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       $obj->fetchAll(1);
+       $content = new Template('../tpl/view_cluster.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+       $js = array('jobs.js');
+       $foot->set('js', $js);
+     break;
      case 'job':
        $what = 'Job';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
