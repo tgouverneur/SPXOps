@@ -5,7 +5,6 @@
 - Fix check_ifaces for HME duplex check
 - Remove old resources of clusters in the update_cl_rs (sc32.obj.php)
 
-- Add exceptions
 - Integration of linux clusters?
 - Find a way to script check directly from interface
 - find a way to inventorize custom metrics

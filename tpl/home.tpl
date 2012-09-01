@@ -10,16 +10,24 @@
           <div class="row">
 	    <div class="span4">
 	      <h2>DB Statistics</h2>
-	      <ul>
-		<li>Servers: <?php echo $stats['nbsrv']; ?> registered</li>
-		<li>Clusters: <?php echo $stats['nbcl']; ?> registered</li>
-		<li>Chassis: <?php echo $stats['nbpsrv']; ?> registered</li>
-		<li>Disks: <?php echo $stats['nbdisk']; ?> detected</li>
-		<li>HW Model: <?php echo $stats['nbmodel']; ?> detected</li>
-		<li>Network Switches: <?php echo $stats['nbswitch']; ?> detected</li>
-		<li>Portal Users: <?php echo $stats['nblogin']; ?> registered</li>
-		<li>SSH Users: <?php echo $stats['nbsuser']; ?> registered</li>
-	      </ul>
+		<dl class="dl-horizontal">
+		  <dt>Servers:</dt>
+		  <dd><?php echo $stats['nbsrv']; ?> registered</dd>
+		  <dt>Clusters:</dt>
+		  <dd><?php echo $stats['nbcl']; ?> registered</dd>
+		  <dt>Chassis:</dt>
+		  <dd><?php echo $stats['nbpsrv']; ?> registered</dd>
+		  <dt>Disks:</dt>
+		  <dd><?php echo $stats['nbdisk']; ?> detected</dd>
+		  <dt>HW Model:</dt>
+		  <dd><?php echo $stats['nbmodel']; ?> detected</dd>
+		  <dt>Network SW:</dt>
+		  <dd><?php echo $stats['nbswitch']; ?> detected</dd>
+		  <dt>Portal Users:</dt>
+		  <dd><?php echo $stats['nblogin']; ?> registered</dd>
+		  <dt>SSH Users:</dt>
+		  <dd><?php echo $stats['nbsuser']; ?> registered</dd>
+		</dl>
 	    </div>
             <div class="span4">
               <h2>Last Checks</h2>

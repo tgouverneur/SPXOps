@@ -951,7 +951,7 @@ class mysqlObj
     }
   }
 
-  public static function getAll($f_fetch = true, $f = array(), $s = array(), $start = 0, $limit = 0) {
+  public static function getAll($f_fetch = true, $f = array(), $s = array(), $l_start = 0, $l_count = 0) {
 
     $oc = get_called_class();
     $obj = new $oc();
@@ -966,8 +966,8 @@ class mysqlObj
     $si = 0;
     $ret = array();
 
-    if ($limit) {
-      $limit .= " LIMIT $start, $limit";
+    if ($l_count) {
+      $limit .= " LIMIT $l_start, $l_count";
     }
     $my = MysqlCM::getInstance();
 

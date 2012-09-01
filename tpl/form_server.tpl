@@ -8,6 +8,7 @@ if (!isset($action) || !$action) {
   }
 }
 if (!isset($susers)) $susers = array();
+if (!isset($susers)) $edit = false;
 if (!isset($pservers)) $pservers = array();
 ?>
       <div class="row">
@@ -26,11 +27,11 @@ if (!isset($pservers)) $pservers = array();
       }
 ?>
 	<h2><?php echo $action; ?> a Server</h2>
-        <form method="POST" action="/<?php echo strtolower($action); ?>/w/server" class="form-horizontal">
+        <form method="POST" action="/<?php echo strtolower($action); ?>/w/server<?php if ($edit) echo "/i/".$obj->id; ?>" class="form-horizontal">
           <div class="control-group">
             <label class="control-label" for="inputHostname">Hostname</label>
             <div class="controls">
-              <input type="text" name="hostname" value="<?php echo $obj->hostname; ?>" id="inputHostname" placeholder="Server Hostname">
+              <input type="text" <?php if ($edit) echo "disabled"; ?> name="hostname" value="<?php echo $obj->hostname; ?>" id="inputHostname" placeholder="Server Hostname">
             </div>
 	  </div>
           <div class="control-group">
