@@ -10,11 +10,12 @@
  */
 
 $config['rootpath'] = '/srv/spxops';
+$config['sitename'] = 'SPXOps';
 
 /* UCC Database NG */
-$config['mysql']['host'] = 'sql01.ach.espix.org';
-$config['mysql']['user'] = '<username>';
-$config['mysql']['pass'] = '<password>';
+$config['mysql']['host'] = 'localhost';
+$config['mysql']['user'] = 'spxops';
+$config['mysql']['pass'] = '';
 $config['mysql']['port'] = 3306;
 $config['mysql']['db'] = 'spxopsNG';
 
@@ -29,7 +30,11 @@ $config['curl']['proxy'] = '';
 
 $config['webgui']['time'] = true;
 
+/* Users */
+$config['minpassword'] = 5;
+
 /* Logging */
+$config['spxopsd']['log'] = '/srv/spxops/logs/spxopsd.log';
 @require_once($config['rootpath'].'/libs/logger.obj.php');
 Logger::logLevel(LLOG_ERR);
 Logger::logLevel(LLOG_WARN);
