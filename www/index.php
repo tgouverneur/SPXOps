@@ -28,6 +28,7 @@
  $stats['nbcl'] = $m->count('list_cluster');
 
  $a_job = Job::getAll(true, array(), array('DESC:t_add'), 0, 10);
+ $a_act = Act::getAll(true, array(), array('DESC:t_add'), 0, 10);
 
  $index = new Template("../tpl/index.tpl");
  $head = new Template("../tpl/head.tpl");
@@ -38,6 +39,7 @@
  $content = new Template("../tpl/home.tpl");
  $content->set('stats', $stats);
  $content->set('a_job', $a_job);
+ $content->set('a_act', $a_act);
 
  $index->set('head', $head);
  $index->set('content', $content);

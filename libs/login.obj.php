@@ -26,6 +26,10 @@ class Login extends mysqlObj
   public $t_add = -1;
   public $t_upd = -1;
 
+  public function link() {
+    return '<a href="/view/w/login/i/'.$this->id.'">'.$this.'</a>';
+  }
+
   public function __toString() {
     return $this->username;
   }

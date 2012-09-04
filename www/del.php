@@ -50,6 +50,7 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "SSH User $obj has been removed from database");
        $obj->delete();
+       $a = Act::add('Deleted the SSH User: '.$obj->username, 'login', $lm->o_login);
        goto screen;
      break;
      case 'pserver':
@@ -74,6 +75,7 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "Physical Server $obj has been removed from database");
        $obj->delete();
+       $a = Act::add('Deleted the Physical Server: '.$obj->name, 'login', $lm->o_login);
        goto screen;
      break;
      case 'cluster':
@@ -98,6 +100,7 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "Cluster $obj has been removed from database");
        $obj->delete();
+       $a = Act::add('Deleted the Cluster: '.$obj->name, 'login', $lm->o_login);
        goto screen;
      break;
      case 'server':
@@ -122,6 +125,7 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "Server $obj has been removed from database");
        $obj->delete();
+       $a = Act::add('Deleted the Server: '.$obj->hostname, 'login', $lm->o_login);
        goto screen;
      case 'user':
        if (!$lm->o_login->f_admin) {
@@ -147,6 +151,7 @@
        $content->set('msg', "User $obj has been removed from database");
        $page['title'] .= $what;
        $obj->delete();
+       $a = Act::add('Deleted the User: '.$obj->username, 'login', $lm->o_login);
        goto screen;
      break;
      default:

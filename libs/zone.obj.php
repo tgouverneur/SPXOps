@@ -56,6 +56,10 @@ class Zone extends mysqlObj
     }
   }
 
+  public function link() {
+    return '<a href="/view/w/zone/i/'.$this->id.'">'.$this.'</a>';
+  }
+
   public function __toString() {
     return $this->name;
   }

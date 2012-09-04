@@ -48,6 +48,10 @@ class PServer extends mysqlObj
     }
   }
 
+  public function link() {
+    return '<a href="/view/w/pserver/i/'.$this->id.'">'.$this.'</a>';
+  }
+
 
   public function __toString() {
     return $this->name;

@@ -28,9 +28,27 @@ class Cluster extends mysqlObj
   /* Connected */
   public $o_cserver = null;
 
+  /* OS Detection */
+  public $fk_os = -1;
+  public $o_os = null;
+
   /* Logging */
   private $_log = null;
   public $_job = null;
+
+  public function detectOsFromNodes() {
+    if ($this->a_server && count($this->a_server)) {
+      $this->fk_os = $this->a_server[0]->fk_os;
+      if ($this->a_server[0]->o_os) {
+	$this->o_os = $this->a_server[0]->o_os;
+      } else {
+	$this->o_os = new OS($this->fk_os);
+	$this->o_os->fetchFromId();
+      }
+      return true;
+    }
+    return false;
+  }
 
   public function connect() {
 
@@ -104,7 +122,7 @@ class Cluster extends mysqlObj
     return $this->o_cserver->findBin($bin, $paths);
   }
 
-  public function valid($new = true) { /* validate form-based fields */
+  public function valid($new = true, &$old = null) { /* validate form-based fields */
     global $config;
     $ret = array();
 
@@ -119,6 +137,18 @@ class Cluster extends mysqlObj
           $ret[] = 'Cluster Name already exist';
           $check = null;
         }
+      } else {
+	if (strcmp($this->name, $old->name)) {
+	  $check = new Cluster();
+          $check->name = $this->name;
+          if (!$check->fetchFromField('name')) {
+            $this->name = '';
+            $ret[] = 'Cluster Name already exist';
+            $check = null;
+          } else {
+	    $old->name = $this->name;
+	  }
+	}
       }
     }
 
@@ -137,12 +167,20 @@ class Cluster extends mysqlObj
 	  $ret[] = "Server $sobj is already inside another cluster";
 	  continue;
 	}
-	if (!$new && $sobj->fk_cluster != $this->id && $sobj->fk_cluster > 0) {
+	if (!$new && !isset($old->a_server[$sobj->id]) && $sobj->fk_cluster > 0) {
 	  $ret[] = "Server $sobj is already inside another cluster";
 	  continue;
 	}
 	$this->a_server[$sobj->id] = $sobj;
       }
+    }
+
+    if (!$new && $old) {
+      if ($this->f_upd != $old->f_upd)
+	$old->f_upd = $this->f_upd;
+
+      if (strcmp($this->description, $old->description)) 
+	$old->description = $this->description;
     }
 
     if (count($ret)) {
@@ -177,6 +215,11 @@ class Cluster extends mysqlObj
 
     parent::delete();
   }
+
+  public function link() {
+    return '<a href="/view/w/cluster/i/'.$this->id.'">'.$this.'</a>';
+  }
+
 
   public function __toString() {
     return $this->name;

@@ -62,7 +62,7 @@
        if ($lm->o_login) {
          $content->set('canDel', true);
          $content->set('canMod', true);
-         $actions = array( 
+         $actions = array(
                         'Add' => '/add/w/cluster',
                     );
          $content->set('actions', $actions);
@@ -71,6 +71,15 @@
        $content->set('what', 'Clusters');
        $content->set('oc', 'Cluster');
        $page['title'] .= 'Clusters';
+     break;
+     case 'act':
+       $a_list = Act::getAll(true, array(), array('DESC:t_add'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('canView', true);
+       $content->set('what', 'Activities');
+       $content->set('oc', 'Act');
+       $page['title'] .= 'Activities';
      break;
      case 'jobs':
        if (!$lm->o_login) {

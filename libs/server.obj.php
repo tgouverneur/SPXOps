@@ -292,20 +292,21 @@ class Server extends mysqlObj implements JsonSerializable
 
   public function delete() {
 
-    $this->log("Asked to delete $this", LLOG_DEBUG);
     foreach($this->_rel as $r) {
-      $this->log("Treating $r", LLOG_DEBUG);
       if ($this->{$r->ar} && count($this->{$r->ar})) {
 	foreach($this->{$r->ar} as $e) {
-          $this->log("Deleting $e", LLOG_DEBUG);
 	  $e->delete();
 	}
       }
     }
 
-    $this->log('Deleting now myself...', LLOG_INFO);
     parent::delete();
   }
+
+  public function link() {
+    return '<a href="/view/w/server/i/'.$this->id.'">'.$this.'</a>';
+  }
+
 
   public function __toString() {
     return $this->hostname;

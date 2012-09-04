@@ -27,7 +27,7 @@ if (!isset($obj->fk_os)) $obj->fk_os = -1;
       }
 ?>
 	<h2><?php echo $action; ?> a Cluster</h2>
-        <form method="POST" action="/<?php echo strtolower($action); ?>/w/cluster" class="form-horizontal">
+        <form method="POST" action="/<?php echo strtolower($action); ?>/w/cluster<?php if ($edit) echo "/i/".$obj->id; ?>" class="form-horizontal">
           <div class="control-group">
             <label class="control-label" for="inputName">Name</label>
             <div class="controls">

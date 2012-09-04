@@ -75,18 +75,11 @@
 	    <div class="span6">
               <h2>User Activities</h2>
               <ul>
-                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
-                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
-                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
-                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
-                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
-                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
-                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
-                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
-                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
-                <li>User a0p60721 launched RCE "ps -eaf" on 2 servers (<a href="#">details</a>)</li>
+<?php foreach($a_act as $act) { ?>
+                <li><?php echo $act->html(); ?></li>
+<?php } ?>
               </ul>
-	      <a class="btn" href="#">More..</a>
+	      <a class="btn" href="/list/w/act">More..</a>
             </div>
 	  </div>
         </div>

@@ -63,7 +63,7 @@
              }
            }
          }
-         $errors = $obj->valid(true);
+         $errors = $obj->valid(false);
          if ($errors) {
            $content->set('error', $errors);
            $content->set('obj', $obj);
@@ -77,14 +77,42 @@
      break;
      case 'cluster':
        $what = 'Cluster';
-       $obj = new Cluster();
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $cuid = $_GET['i'];
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'ID of Cluster is not provided');
+         goto screen;
+       }
+       $obj = new Cluster($cuid);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'Cluster not found in the database');
+         goto screen;
+       }
+       $obj->fetchRL('a_server');
+       $obj->detectOsFromNodes();
        $content = new Template('../tpl/form_cluster.tpl');
        $a_os = OS::getAll(true, array(), array('ASC:name'));
        $content->set('oses', $a_os);
        $js = array('cluster.js');
        $foot->set('js', $js);
        $page['title'] .= $what;
+       $content->set('edit', true);
+       $content->set('page', $page);
+       if (isset($obj->fk_os) && is_numeric($obj->fk_os) && $obj->fk_os > 0) {
+         $a_server = Server::getAll(true, array('CST:'.$obj->fk_os => 'fk_os'), array('ASC:hostname'));
+         $content->set('a_server', $a_server);
+	 /* sort the a_server array of $obj to have index as server id */
+         $a = $obj->a_server;
+	 $obj->a_server = array();
+	 foreach($a as $o) {
+	   $obj->a_server[$o->id] = $o;
+ 	 }
+       }
        if (isset($_POST['submit'])) { /* clicked on the Edit button */
+         $objold = $obj;
+         $obj = new Cluster();
          $fields = array('name', 'description', 'f_upd', 'a_server', 'fk_os');
          foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
@@ -99,25 +127,28 @@
              }
            }
          }
-         $errors = $obj->valid();
+         $errors = $obj->valid(false, $objold);
          if ($errors) {
-           if (isset($obj->fk_os) && is_numeric($obj->fk_os) && $obj->fk_os > 0) {
-	     $a_server = Server::getAll(true, array('CST:'.$obj->fk_os => 'fk_os'), array('ASC:hostname'));
-	     $content->set('a_server', $a_server);
-	   }
            $content->set('error', $errors);
-           $content->set('obj', $obj);
+           $content->set('obj', $objold);
            goto screen;
          }
-         $obj->insert();
+         $objold->update();
 	 foreach($obj->a_server as $s) {
-	   $s->fk_cluster = $obj->id;
+	   $s->fk_cluster = $objold->id;
 	   $s->update();
 	 }
+	 foreach($objold->a_server as $s) {
+	   if (!isset($obj->a_server[$s->id])) {
+	     $s->fk_cluster = -1;
+	     $s->update();
+	   }
+	 }
          $content = new Template('../tpl/message.tpl');
-         $content->set('msg', "Cluster $obj has been added to database");
+         $content->set('msg', "Cluster $obj has been updated inside database");
          goto screen;
        }
+       $content->set('obj', $obj);
      break;
      case 'server':
        $what = 'Server';
@@ -218,7 +249,7 @@
 	     }
 	   }
 	 }
-	 $errors = $obj->valid(true);
+	 $errors = $obj->valid(false);
 	 if ($errors) {
 	   $content->set('error', $errors);
 	   $content->set('obj', $obj);

@@ -34,6 +34,13 @@
    exit(0);
  }
 
+
+ if (!$lm->o_login) {
+   $ret['rc'] = 1;
+   $ret['msg'] = 'You must be logged-in';
+   goto screen;
+ }
+
  $c = $f = $a = null;
 
  if (isset($_GET['c']) && !empty($_GET['c'])) {
@@ -70,7 +77,9 @@
        $j->arg = $a;
        $j->state = S_NEW;
        $j->insert();
-       /* @TODO: Add log entry */
+       $a = Act::add('Requested an update of the', 'server', $s);
+       $a->fk_login = $lm->o_login->id;
+       $a->update();
        $ret['rc'] = 0;
        $ret['msg'] = "Job to update server $s has been succesfully added to the queue...";
        goto screen;
@@ -88,7 +97,9 @@
        $j->arg = $a;
        $j->state = S_NEW;
        $j->insert();
-       /* @TODO: Add log entry */
+       $a = Act::add('Requested an update of the', 'cluster', $oc);
+       $a->fk_login = $lm->o_login->id;
+       $a->update();
        $ret['rc'] = 0;
        $ret['msg'] = "Job to update cluster $oc has been succesfully added to the queue...";
        goto screen;
