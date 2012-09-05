@@ -24,7 +24,9 @@ class Model extends mysqlObj
     return $this->vendor.'/'.$this->name;
   }
 
-  public function htmlDump($s) {
+  public function htmlDump($s = null) {
+
+    if (!$s) $s = new Server();
 
     return array(
       'Vendor' => $this->vendor,

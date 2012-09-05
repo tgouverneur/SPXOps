@@ -1,6 +1,6 @@
 <?php
 /**
- * SGroup object
+ * UGroup object
  *
  * @author Gouverneur Thomas <tgo@espix.net>
  * @copyright Copyright (c) 2007-2012, Gouverneur Thomas
@@ -12,7 +12,7 @@
  */
 
 
-class SGroup extends mysqlObj
+class UGroup extends mysqlObj
 {
   public $id = -1;
   public $name = '';
@@ -20,7 +20,7 @@ class SGroup extends mysqlObj
   public $t_add = -1;
   public $t_upd = -1;
 
-  public $a_server = array();
+  public $u_login = array();
 
   public function __toString() {
     return $this->name;
@@ -34,7 +34,7 @@ class SGroup extends mysqlObj
       $ret[] = 'Missing Name';
     } else {
       if ($new) { /* check for already-exist */
-        $check = new SGroup();
+        $check = new UGroup();
         $check->name = $this->name;
         if (!$check->fetchFromField('name')) {
           $this->name = '';
@@ -84,7 +84,7 @@ class SGroup extends mysqlObj
   public function __construct($id=-1)
   {
     $this->id = $id;
-    $this->_table = "list_sgroup";
+    $this->_table = "list_ugroup";
     $this->_nfotable = NULL;
     $this->_my = array(
                         "id" => SQL_INDEX,
@@ -103,8 +103,10 @@ class SGroup extends mysqlObj
                         "t_upd" => "t_upd"
                  );
 
+
+
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
-    $this->_addJT('a_server', 'Server', 'jt_server_sgroup', array('id' => 'fk_sgroup'), array('id' => 'fk_server'), array());
+    $this->_addJT('a_login', 'Login', 'jt_login_ugroup', array('id' => 'fk_ugroup'), array('id' => 'fk_login'), array());
 
   }
 

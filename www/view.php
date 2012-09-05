@@ -39,6 +39,23 @@
        $page['title'] .= $what;
        $content->set('obj', $obj);
      break;
+     case 'check':
+       $what = 'Check';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+	 $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       }
+       $obj = new Check($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+	 $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       $content = new Template('../tpl/view_check.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+     break;
      case 'server':
        $what = 'Server';
        if (!isset($_GET['i']) || empty($_GET['i'])) {

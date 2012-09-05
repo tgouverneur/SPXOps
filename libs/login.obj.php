@@ -26,6 +26,8 @@ class Login extends mysqlObj
   public $t_add = -1;
   public $t_upd = -1;
 
+  public $a_ugroup = array();
+
   public function link() {
     return '<a href="/view/w/login/i/'.$this->id.'">'.$this.'</a>';
   }
@@ -167,6 +169,9 @@ class Login extends mysqlObj
                         't_add' => 't_add',
                         't_upd' => 't_upd'
                  );
+                /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
+    $this->_addJT('a_ugroup', 'UGroup', 'jt_login_ugroup', array('id' => 'fk_login'), array('id' => 'fk_ugroup'), array());
+
   }
 
 }

@@ -208,6 +208,150 @@
          goto screen;
        }
      break;
+     case 'check':
+       $what = 'Check';
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $suid = $_GET['i'];
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'ID of Check is not provided');
+         goto screen;
+       }
+       $what = 'Check';
+       $obj = new Check($suid);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'Check not found in the database');
+         goto screen;
+       }
+       $content = new Template('../tpl/form_check.tpl');
+       $content->set('obj', $obj);
+       $content->set('edit', true);
+       $content->set('page', $page);
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Edit button */
+         $fields = array('description', 'm_error', 'm_warn', 'f_root', 'frequency', 'lua');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid(false);
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->update();
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "Check $obj has been updated to database");
+         goto screen;
+       }
+     break;
+     case 'sgroup':
+       $what = 'Server Group';
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $suid = $_GET['i'];
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'ID of Server Group is not provided');
+         goto screen;
+       }
+       $what = 'Server Group';
+       $obj = new SGroup($suid);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'Server Group not found in the database');
+         goto screen;
+       }
+       $content = new Template('../tpl/form_sgroup.tpl');
+       $content->set('obj', $obj);
+       $content->set('edit', true);
+       $content->set('page', $page);
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Edit button */
+         $fields = array('description');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid(false);
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->update();
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "Server Group $obj has been updated to database");
+         goto screen;
+       }
+     break;
+     case 'ugroup':
+       $what = 'User Group';
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $suid = $_GET['i'];
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'ID of User Group is not provided');
+         goto screen;
+       }
+       $what = 'User Group';
+       $obj = new UGroup($suid);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'User Group not found in the database');
+         goto screen;
+       }
+       $content = new Template('../tpl/form_ugroup.tpl');
+       $content->set('obj', $obj);
+       $content->set('edit', true);
+       $content->set('page', $page);
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Edit button */
+         $fields = array('description');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid(false);
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->update();
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "User Group $obj has been updated to database");
+         goto screen;
+       }
+     break;
      case 'login':
        if (!$lm->o_login->f_admin) {
          $content = new Template('../tpl/error.tpl');

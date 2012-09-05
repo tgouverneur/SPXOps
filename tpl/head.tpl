@@ -34,7 +34,9 @@
                 <ul class="dropdown-menu">
                   <li class="nav-header">Servers</li>
                   <li><a href="/list/w/server">List</a></li>
+                  <li><a href="/list/w/sgroup">List Groups</a></li>
                   <li><a href="/add/w/server">Add</a></li>
+                  <li><a href="/add/w/sgroup">Add Group</a></li>
 		  <li>
 		    <form class="navbar-search pull-left" action="/search/w/server" method="POST">
 		      <input name="q" type="text" class="search-query" placeholder="Search Server">
@@ -84,6 +86,7 @@
                 <ul class="dropdown-menu">
                   <li><a href="/setup">Configuration</a></li>
                   <li><a href="/list/w/users#">Users management</a></li>
+                  <li><a href="/list/w/ugroup#">Groups management</a></li>
                   <li><a href="/list/w/susers#">Connect Users management</a></li>
                 </ul>
               </li>

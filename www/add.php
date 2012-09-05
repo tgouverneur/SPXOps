@@ -61,6 +61,72 @@
          goto screen;
        }
      break;
+     case 'sgroup':
+       $what = 'Server Group';
+       $obj = new SGroup();
+       $content = new Template('../tpl/form_sgroup.tpl');
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Add button */
+         $fields = array('name', 'description');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid();
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->insert();
+         $a = Act::add('Added the Server Group: '.$obj->name, 'login', $lm->o_login);
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "Server Group $obj has been added to database");
+         goto screen;
+       }
+     break;
+     case 'ugroup':
+       $what = 'User Group';
+       $obj = new UGroup();
+       $content = new Template('../tpl/form_ugroup.tpl');
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Add button */
+         $fields = array('name', 'description');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid();
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->insert();
+         $a = Act::add('Added the User Group: '.$obj->name, 'login', $lm->o_login);
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "User Group $obj has been added to database");
+         goto screen;
+       }
+     break;
      case 'check':
        $what = 'Check';
        $obj = new Check();

@@ -13,6 +13,8 @@
 		<dl class="dl-horizontal">
 		  <dt>Servers:</dt>
 		  <dd><?php echo $stats['nbsrv']; ?> registered</dd>
+                  <dt>Server Groups:</dt>
+                  <dd><?php echo $stats['nbsgroup']; ?> registered</dd>
 		  <dt>Clusters:</dt>
 		  <dd><?php echo $stats['nbcl']; ?> registered</dd>
 		  <dt>Chassis:</dt>
@@ -25,6 +27,8 @@
 		  <dd><?php echo $stats['nbswitch']; ?> detected</dd>
 		  <dt>Portal Users:</dt>
 		  <dd><?php echo $stats['nblogin']; ?> registered</dd>
+                  <dt>Portal Groups:</dt>
+                  <dd><?php echo $stats['nbugroup']; ?> registered</dd>
 		  <dt>SSH Users:</dt>
 		  <dd><?php echo $stats['nbsuser']; ?> registered</dd>
 		</dl>

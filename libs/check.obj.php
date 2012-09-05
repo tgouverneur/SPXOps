@@ -97,6 +97,21 @@ CODE;
                 );
   }
 
+  public function htmlDump() {
+    $ret = array(
+        'Name' => $this->name,
+        'Description' => $this->description,
+        'Error Message' => $this->m_error,
+        'Warning Message' => $this->m_warn,
+        'Frequency' => $this->frequency,
+        'Need root?' => ($this->f_root)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
+        'Updated on' => date('d-m-Y', $this->t_upd),
+        'Added on' => date('d-m-Y', $this->t_add),
+    );
+    return $ret;
+  }
+
+
 
  /**
   * ctor

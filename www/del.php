@@ -103,6 +103,56 @@
        $a = Act::add('Deleted the Check: '.$obj->name, 'login', $lm->o_login);
        goto screen;
      break;
+     case 'ugroup':
+       /**
+        * @TODO; Check dependancies before delete()ing
+        */
+       $what = 'User Group';
+       $page['title'] .= $what;
+       $obj = new UGroup();
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $obj->id = $_GET['i'];
+         if ($obj->fetchFromId()) {
+           $content = new Template('../tpl/error.tpl');
+           $content->set('error', "User Group specified cannot be found in the database");
+           goto screen;
+         }
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "User Group not specified");
+         goto screen;
+       }
+       $content = new Template('../tpl/message.tpl');
+       $content->set('msg', "User Group $obj has been removed from database");
+       $obj->delete();
+       $a = Act::add('Deleted the User Group: '.$obj->name, 'login', $lm->o_login);
+       goto screen;
+     break;
+     case 'sgroup':
+       /**
+        * @TODO; Check dependancies before delete()ing
+        */
+       $what = 'Server Group';
+       $page['title'] .= $what;
+       $obj = new SGroup();
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $obj->id = $_GET['i'];
+         if ($obj->fetchFromId()) {
+           $content = new Template('../tpl/error.tpl');
+           $content->set('error', "Server Group specified cannot be found in the database");
+           goto screen;
+         }
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Server Group not specified");
+         goto screen;
+       }
+       $content = new Template('../tpl/message.tpl');
+       $content->set('msg', "Server Group $obj has been removed from database");
+       $obj->delete();
+       $a = Act::add('Deleted the Server Group: '.$obj->name, 'login', $lm->o_login);
+       goto screen;
+     break;
      case 'cluster':
        /**
 	* @TODO; Check dependancies before delete()ing

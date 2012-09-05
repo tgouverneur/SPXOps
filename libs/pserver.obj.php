@@ -57,7 +57,7 @@ class PServer extends mysqlObj
     return $this->name;
   }
 
-  public function htmlDump($s) {
+  public function htmlDump($s = null) {
 
     $this->fetchAll();
 

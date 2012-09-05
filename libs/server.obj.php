@@ -515,6 +515,9 @@ class Server extends mysqlObj implements JsonSerializable
     $this->_addRL("a_nfss", "NFS", array('id' => 'fk_server', 'CST:share' => 'type'));
     $this->_addRL("a_nfsm", "NFS", array('id' => 'fk_server', 'CST:mount' => 'type'));
 
+                /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
+    $this->_addJT('a_sgroup', 'SGroup', 'jt_server_sgroup', array('id' => 'fk_server'), array('id' => 'fk_sgroup'), array());
+
     $this->_log = Logger::getInstance();
 
   }

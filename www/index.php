@@ -23,6 +23,9 @@
  $stats['nbos'] = $m->count('list_os');
  $stats['nbmodel'] = $m->count('list_model');
  $stats['nbsrv'] = $m->count('list_server');
+ $stats['nbsgroup'] = $m->count('list_sgroup');
+ $stats['nbugroup'] = $m->count('list_ugroup');
+ $stats['nbcheck'] = $m->count('list_check');
  $stats['nbpsrv'] = $m->count('list_pserver');
  $stats['nbdisk'] = $m->count('list_disk');
  $stats['nbcl'] = $m->count('list_cluster');

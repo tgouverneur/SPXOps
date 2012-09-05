@@ -308,6 +308,10 @@ class mysqlObj
       $this->t_add = time();
     }
 
+    if (isset($this->t_upd)) {
+      $this->t_upd = time();
+    }
+
     $my = mysqlCM::getInstance();
     foreach ($this->_my as $k => $v) {
 

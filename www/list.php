@@ -22,6 +22,40 @@
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
+     case 'sgroup':
+       $a_list = SGroup::getAll(true, array(), array('ASC:name'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       if ($lm->o_login && $lm->o_login->f_admin) {
+         $content->set('canDel', true);
+         $content->set('canMod', true);
+         $actions = array(
+                        'Add' => '/add/w/sgroup',
+                    );
+         $content->set('actions', $actions);
+       }
+       $content->set('canView', true);
+       $content->set('what', 'Server Groups');
+       $content->set('oc', 'SGroup');
+       $page['title'] .= 'Server Group';
+     break;
+     case 'ugroup':
+       $a_list = UGroup::getAll(true, array(), array('ASC:name'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       if ($lm->o_login && $lm->o_login->f_admin) {
+         $content->set('canDel', true);
+         $content->set('canMod', true);
+         $actions = array(
+                        'Add' => '/add/w/ugroup',
+                    );
+         $content->set('actions', $actions);
+       }
+       $content->set('canView', true);
+       $content->set('what', 'User Groups');
+       $content->set('oc', 'UGroup');
+       $page['title'] .= 'User Group';
+     break;
      case 'check':
        $a_list = Check::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
