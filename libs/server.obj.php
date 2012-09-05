@@ -265,7 +265,7 @@ class Server extends mysqlObj implements JsonSerializable
         $paths = OS::$binPaths;
       } else {
         if (!$this->o_os) {
-	  $this->fetcFK('fk_os');
+	  $this->fetchFK('fk_os');
 	}
         $oclass = $this->o_os->class;
         $paths = $oclass::$binPaths;

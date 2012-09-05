@@ -78,6 +78,31 @@
        $a = Act::add('Deleted the Physical Server: '.$obj->name, 'login', $lm->o_login);
        goto screen;
      break;
+     case 'check':
+       /**
+	* @TODO; Check dependancies before delete()ing
+	*/
+       $what = 'Check';
+       $page['title'] .= $what;
+       $obj = new Check();
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $obj->id = $_GET['i'];
+         if ($obj->fetchFromId()) {
+           $content = new Template('../tpl/error.tpl');
+           $content->set('error', "Check specified cannot be found in the database");
+           goto screen;
+         }
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Check not specified");
+         goto screen;
+       }
+       $content = new Template('../tpl/message.tpl');
+       $content->set('msg', "Check $obj has been removed from database");
+       $obj->delete();
+       $a = Act::add('Deleted the Check: '.$obj->name, 'login', $lm->o_login);
+       goto screen;
+     break;
      case 'cluster':
        /**
 	* @TODO; Check dependancies before delete()ing

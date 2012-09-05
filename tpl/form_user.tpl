@@ -7,6 +7,7 @@ if (!isset($action) || !$action) {
     $action = 'Add'; 
   }
 }
+if (!isset($edit)) $edit = false;
 ?>
       <div class="row">
         <div class="span8 offset2">

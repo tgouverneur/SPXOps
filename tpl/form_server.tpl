@@ -10,6 +10,7 @@ if (!isset($action) || !$action) {
 if (!isset($susers)) $susers = array();
 if (!isset($susers)) $edit = false;
 if (!isset($pservers)) $pservers = array();
+if (!isset($edit)) $edit = false;
 ?>
       <div class="row">
         <div class="span8 offset2">

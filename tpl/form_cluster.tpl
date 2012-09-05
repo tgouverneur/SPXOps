@@ -7,6 +7,7 @@ if (!isset($action) || !$action) {
     $action = 'Add'; 
   }
 }
+if (!isset($edit)) $edit = false;
 if (!isset($oses)) $oses = array();
 if (!isset($a_server)) $a_server = array();
 if (!isset($obj->fk_os)) $obj->fk_os = -1;

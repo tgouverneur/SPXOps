@@ -61,6 +61,39 @@
          goto screen;
        }
      break;
+     case 'check':
+       $what = 'Check';
+       $obj = new Check();
+       $content = new Template('../tpl/form_check.tpl');
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Add button */
+         $fields = array('name', 'description', 'f_root', 'frequency', 'm_error', 'm_warn', 'lua');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid();
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->insert();
+         $a = Act::add('Added the Check: '.$obj->name, 'login', $lm->o_login);
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "Check $obj has been added to database");
+         goto screen;
+       }
+     break;
      case 'pserver':
        $what = 'Physical Server';
        $obj = new PServer();
