@@ -52,6 +52,14 @@ class Server extends mysqlObj implements JsonSerializable
   private $_log = null;
   public $_job = null;
 
+  public function equals($z) {
+    if (!strcmp($this->hostname, $z->hostname)) {
+      return true;
+    }
+    return false;
+  }
+
+
   public function valid($new = true) { /* validate form-based fields */
     global $config;
     $ret = array();

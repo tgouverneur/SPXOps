@@ -1,5 +1,5 @@
       <div class="row">
-	<h1 class="span12">Check <?php echo $obj; ?></h1>
+	<h1 class="span12">Server Group <?php echo $obj; ?></h1>
         <div class="row">
 	 <div class="span12">
 	  <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
@@ -31,7 +31,17 @@
 	   </table>
 	  </div>
           <div class="span4">
-           <h3>Free</h3>
+           <h3>Members</h3>
+           <table id="LListserverTable" class="table table-condensed">
+             <tbody>
+<?php foreach($obj->a_server as $server) { ?>
+            <tr id="LListserver<?php echo $server->id; ?>">
+                <td><?php echo $server->link(); ?></td>
+                <td><a href="#" onClick="delLList('sgroup', <?php echo $obj->id; ?>, 'server', <?php echo $server->id; ?>);">Remove</a></td>
+            </tr>
+<?php } ?>
+             </tbody>
+           </table>
           </div>
           <div class="span4">
            <h3>Actions</h3>
@@ -39,29 +49,32 @@
 	      <li class="dropdown">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
 	        <ul class="dropdown-menu">
-                  <li><a href="/del/w/check/i/<?php echo $obj->id; ?>">Delete</a></li>
-                  <li><a href="/edit/w/check/i/<?php echo $obj->id; ?>">Edit</a></li>
-                  <li><a href="/add/w/logentry/i/<?php echo $obj->id; ?>">Add Log entry</a></li>
+                  <li><a href="/del/w/sgroup/i/<?php echo $obj->id; ?>">Delete</a></li>
+                  <li><a href="/edit/w/sgroup/i/<?php echo $obj->id; ?>">Edit</a></li>
 	        </ul>
 	      </li>
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">View <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a data-toggle="modal" href="/modallist/w/logs/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
-                </ul>
-              </li>
             </ul>
 	  </div>
 	</div>
         <div class="row">
           <div class="span4">
-           <h3>Free</h3>
+           <h3>Add Server</h3>
+           <div class="input-append">
+             <select id="selectServer">
+               <option value="-1">Choose a server to add</option>
+<?php foreach($a_server as $s) { ?>
+               <option value="<?php echo $s->id; ?>"><?php echo $s; ?></option>
+
+<?php } ?>
+             </select> <button type="button" class="btn" onClick="addLList('sgroup', <?php echo $obj->id; ?>, 'server', '#selectServer');">Add</button>
+           </div>
+           <div class="input-append">
+             <input id="inputServer" type="text" placeholder="Server hostname Regexp">
+             <button type="button" class="btn" onClick="addLListR('sgroup', <?php echo $obj->id; ?>, 'server', '#inputServer');">Add</button>
+           </div>
           </div>
           <div class="span8">
-           <h3>LUA Code</h3>
-	    <pre class="pre-scrollable">
-<?php echo $obj->lua; ?>
-	    </pre>
+           <h3>Free</h3>
           </div>
        </div>
       </div>

@@ -1,5 +1,8 @@
+<?php 
+ if (!isset($a_login)) $a_login = array();
+?>
       <div class="row">
-	<h1 class="span12">Check <?php echo $obj; ?></h1>
+	<h1 class="span12">User Group <?php echo $obj; ?></h1>
         <div class="row">
 	 <div class="span12">
 	  <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
@@ -31,7 +34,17 @@
 	   </table>
 	  </div>
           <div class="span4">
-           <h3>Free</h3>
+           <h3>Members</h3>
+           <table id="LListloginTable" class="table table-condensed">
+             <tbody>
+<?php foreach($obj->a_login as $login) { ?>
+	    <tr id="LListlogin<?php echo $login->id; ?>">
+		<td><?php echo $login->link(); ?></td>
+		<td><a href="#" onClick="delLList('ugroup', <?php echo $obj->id; ?>, 'login', <?php echo $login->id; ?>);">Remove</a></td>
+	    </tr>
+<?php } ?>
+             </tbody>
+           </table>
           </div>
           <div class="span4">
            <h3>Actions</h3>
@@ -39,29 +52,32 @@
 	      <li class="dropdown">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
 	        <ul class="dropdown-menu">
-                  <li><a href="/del/w/check/i/<?php echo $obj->id; ?>">Delete</a></li>
-                  <li><a href="/edit/w/check/i/<?php echo $obj->id; ?>">Edit</a></li>
-                  <li><a href="/add/w/logentry/i/<?php echo $obj->id; ?>">Add Log entry</a></li>
+                  <li><a href="/del/w/ugroup/i/<?php echo $obj->id; ?>">Delete</a></li>
+                  <li><a href="/edit/w/ugroup/i/<?php echo $obj->id; ?>">Edit</a></li>
 	        </ul>
 	      </li>
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">View <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a data-toggle="modal" href="/modallist/w/logs/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
-                </ul>
-              </li>
             </ul>
 	  </div>
 	</div>
         <div class="row">
           <div class="span4">
-           <h3>Free</h3>
+           <h3>Add Login</h3>
+ 	   <div class="input-append">
+	     <select id="selectLogin">
+	       <option value="-1">Choose a login to add</option>
+<?php foreach($a_login as $l) { ?>
+	       <option value="<?php echo $l->id; ?>"><?php echo $l; ?></option>
+
+<?php } ?>
+	     </select> <button type="button" class="btn" onClick="addLList('ugroup', <?php echo $obj->id; ?>, 'login', '#selectLogin');">Add</button>
+           </div>
+	   <div class="input-append">
+             <input id="inputLogin" type="text" placeholder="Login Regexp">
+             <button type="button" class="btn" onClick="addLListR('ugroup', <?php echo $obj->id; ?>, 'login', '#inputLogin');">Add</button>
+           </div>
           </div>
           <div class="span8">
-           <h3>LUA Code</h3>
-	    <pre class="pre-scrollable">
-<?php echo $obj->lua; ?>
-	    </pre>
+           <h3>Free</h3>
           </div>
        </div>
       </div>

@@ -32,6 +32,14 @@ class Login extends mysqlObj
     return '<a href="/view/w/login/i/'.$this->id.'">'.$this.'</a>';
   }
 
+  public function equals($z) {
+    if (!strcmp($this->username, $z->username)) {
+      return true;
+    }
+    return false;
+  }
+
+
   public function __toString() {
     return $this->username;
   }

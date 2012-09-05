@@ -26,6 +26,14 @@ class SGroup extends mysqlObj
     return $this->name;
   }
 
+  public function equals($z) {
+    if (!strcmp($this->name, $z->name)) {
+      return true;
+    }
+    return false;
+  }
+
+
   public function valid($new = true) { /* validate form-based fields */
     global $config;
     $ret = array();

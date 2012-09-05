@@ -20,11 +20,19 @@ class UGroup extends mysqlObj
   public $t_add = -1;
   public $t_upd = -1;
 
-  public $u_login = array();
+  public $a_login = array();
 
   public function __toString() {
     return $this->name;
   }
+
+  public function equals($z) {
+    if (!strcmp($this->name, $z->name)) {
+      return true;
+    }
+    return false;
+  }
+
 
   public function valid($new = true) { /* validate form-based fields */
     global $config;

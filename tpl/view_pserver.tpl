@@ -27,11 +27,6 @@
 <?php foreach($obj->htmlDump() as $k => $v) { ?>
 	      <tr><td><?php echo $k; ?></td><td><?php echo $v; ?></td></tr>
 <?php } ?>
-<?php if ($obj->o_clver) { ?>
-<?php   foreach($obj->o_clver->htmlDump($obj) as $k => $v) { ?>
-	      <tr><td><?php echo $k; ?></td><td><?php echo $v; ?></td></tr>
-<?php   } ?>
-<?php } ?>
 	     </tbody>
 	   </table>
 	  </div>

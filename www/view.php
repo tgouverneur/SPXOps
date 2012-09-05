@@ -56,6 +56,48 @@
        $page['title'] .= $what;
        $content->set('obj', $obj);
      break;
+     case 'sgroup':
+       $what = 'Server Group';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       }
+       $obj = new SGroup($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       $obj->fetchJT('a_server');
+       $content = new Template('../tpl/view_sgroup.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+       $content->set('a_server', Server::getAll(true, array(), array('ASC:hostname')));
+       $js = array('llist.js');
+       $foot->set('js', $js);
+     break;
+     case 'ugroup':
+       $what = 'User Group';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       }
+       $obj = new UGroup($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       $obj->fetchJT('a_login');
+       $content = new Template('../tpl/view_ugroup.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+       $content->set('a_login', Login::getAll(true, array(), array('ASC:username')));
+       $js = array('llist.js');
+       $foot->set('js', $js);
+     break;
      case 'server':
        $what = 'Server';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
