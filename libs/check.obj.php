@@ -19,7 +19,7 @@ class Check extends mysqlObj
   public $frequency = 0;
   public $lua = <<<CODE
   function check()
-    return "OK"
+    return 0;
   end
 CODE;
   public $m_error = '';
@@ -27,6 +27,9 @@ CODE;
   public $f_root = 0;
   public $t_add = -1;
   public $t_upd = -1;
+
+  public $a_sgroup = array();
+  public $f_except = array();
 
 
   public function valid($new = true) { /* validate form-based fields */
@@ -54,6 +57,62 @@ CODE;
     } else {
       return null;
     }
+  }
+
+
+  /* Call the proper method */
+  public function doCheck(&$s) {
+
+    if ($this->isLocked($s))
+      return -1;
+
+    if ($this->lockCheck($s)) {
+      return -1;
+    }
+    $lua = new Lua();
+    $lua->registerCallback('exec', array(&$s, 'exec'));
+    $lua->registerCallback('findBin', array(&$s, 'findBin'));
+    $lua->registerCallback('isFile', array(&$s, 'isFile'));
+    try {
+
+      $lua->eval($this->lua);
+      $rc = $lua->call("check");
+
+    } catch (Exception $e) {
+      $s->log("Error with LUA code: $e", LLOG_ERR);
+      $rc = -1;
+    }
+
+    $this->unlockCheck($s);
+    return $rc;
+  }
+
+  /* Check locking */
+  public function lockCheck(&$obj) {
+    $cl = new Lock();
+    $cl->fk_check = $this->id;
+    $cl->fk_server = $obj->id;
+    return $cl->insert();
+  }
+
+  public function unlockCheck(&$obj) {
+    $cl = new Lock();
+    $cl->fk_check = $this->id;
+    $cl->fk_server = $obj->id;
+    if (!$cl->fetchFromId()) {
+      return $cl->delete();
+    }
+    return -1;
+  }
+
+  public function isLocked(&$obj) {
+    $cl = new Lock();
+    $cl->fk_check = $this->id;
+    $cl->fk_server = $obj->id;
+    if ($cl->fetchFromId()) {
+      return false;
+    }
+    return true;
   }
 
 
@@ -149,6 +208,10 @@ CODE;
 //    $this->_addFK("fk_server", "o_server", "Server");
 
     $this->_log = Logger::getInstance();
+
+                /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
+    $this->_addJT('a_sgroup', 'SGroup', 'jt_check_sgroup', array('id' => 'fk_check'), array('id' => 'fk_sgroup'), array('f_except'));
+
   }
 
 }

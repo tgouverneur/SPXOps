@@ -31,7 +31,30 @@
 	   </table>
 	  </div>
           <div class="span4">
-           <h3>Free</h3>
+           <h3>Groups</h3>
+           <table id="LListsgroupTable" class="table table-condensed">
+	     <caption>Will be done on:</caption>
+             <tbody>
+<?php foreach($obj->a_sgroup as $grp) { if ($obj->f_except[''.$grp]) continue; ?>
+            <tr id="LListsgroup<?php echo $grp->id; ?>">
+                <td><?php echo $grp->link(); ?></td>
+                <td><a href="#" onClick="delLList('check', <?php echo $obj->id; ?>, 'sgroup', <?php echo $grp->id; ?>);">Remove</a></td>
+            </tr>
+<?php } ?>  
+             </tbody>
+           </table>
+           <table id="LListesgroupTable" class="table table-condensed">
+             <caption>Except for members of:</caption>
+             <tbody>
+<?php foreach($obj->a_sgroup as $grp) { if (!$obj->f_except[''.$grp]) continue; ?>
+            <tr id="LListesgroup<?php echo $grp->id; ?>">
+                <td><?php echo $grp->link(); ?></td>
+                <td><a href="#" onClick="delLList('check', <?php echo $obj->id; ?>, 'esgroup', <?php echo $grp->id; ?>);">Remove</a></td>
+            </tr>
+<?php } ?>  
+             </tbody>
+           </table>
+
           </div>
           <div class="span4">
            <h3>Actions</h3>
@@ -55,7 +78,25 @@
 	</div>
         <div class="row">
           <div class="span4">
-           <h3>Free</h3>
+           <h3>Add Groups</h3>
+           <div class="input-append">
+             <select id="selectGroup">
+               <option value="-1">Choose a group to add</option>
+<?php foreach($a_sgroup as $l) { ?>
+               <option value="<?php echo $l->id; ?>"><?php echo $l; ?></option>
+
+<?php } ?>  
+             </select> <button type="button" class="btn" onClick="addLList('check', <?php echo $obj->id; ?>, 'sgroup', '#selectGroup');">Add</button>
+           </div>
+           <div class="input-append">
+             <select id="selectEGroup">
+               <option value="-1">Choose a group to exempt</option>
+<?php foreach($a_sgroup as $l) { ?>
+               <option value="<?php echo $l->id; ?>"><?php echo $l; ?></option>
+
+<?php } ?>  
+             </select> <button type="button" class="btn" onClick="addLList('check', <?php echo $obj->id; ?>, 'esgroup', '#selectEGroup');">Add</button>
+           </div>
           </div>
           <div class="span8">
            <h3>LUA Code</h3>

@@ -21,6 +21,8 @@ class SGroup extends mysqlObj
   public $t_upd = -1;
 
   public $a_server = array();
+  public $a_check = array();
+  public $f_except = array();
 
   public function __toString() {
     return $this->name;
@@ -32,6 +34,11 @@ class SGroup extends mysqlObj
     }
     return false;
   }
+
+  public function link() {
+    return '<a href="/view/w/sgroup/i/'.$this->id.'">'.$this.'</a>';
+  }
+
 
 
   public function valid($new = true) { /* validate form-based fields */
@@ -113,6 +120,8 @@ class SGroup extends mysqlObj
 
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
     $this->_addJT('a_server', 'Server', 'jt_server_sgroup', array('id' => 'fk_sgroup'), array('id' => 'fk_server'), array());
+    $this->_addJT('a_check', 'Check', 'jt_check_sgroup', array('id' => 'fk_sgroup'), array('id' => 'fk_check'), array('f_except'));
+
 
   }
 

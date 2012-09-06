@@ -52,9 +52,13 @@
 	 $content->set('error', "Unable to find the $what in database");
          goto screen;
        }
+       $obj->fetchJT('a_sgroup');
        $content = new Template('../tpl/view_check.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);
+       $js = array('llist.js');
+       $foot->set('js', $js);
+       $content->set('a_sgroup', SGroup::getAll(true, array(), array('ASC:name')));
      break;
      case 'sgroup':
        $what = 'Server Group';

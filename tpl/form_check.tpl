@@ -60,7 +60,7 @@ if (!isset($pservers)) $pservers = array();
 	  <div class="control-group">
 	    <label class="control-label" for="selectFrequency">Frequency</label>
 	    <div class="controls">
-	      <select name="fk_pserver" id="selectFrequency">
+	      <select name="frequency" id="selectFrequency">
 		<option value="-1">Upon request</option>
 		<option value="3600">1h</option>
 		<option value="7200">2h</option>

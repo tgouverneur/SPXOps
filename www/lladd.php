@@ -124,6 +124,92 @@
        goto screen;
      }
    break;
+   case 'check':
+     $obj = new Check($i);
+     if ($obj->fetchFromId()) {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'Cannot find Check provided inside the database';
+       goto screen;
+     }
+     if (!strcmp($o, 'sgroup')) {
+       $obj->fetchJT('a_sgroup');
+       if (!$r || $r == 0) {
+         $tobj = new SGroup($t);
+         if ($tobj->fetchFromId()) {
+           $ret['rc'] = 1;
+           $ret['msg'] = 'Cannot find Server Group provided inside the database';
+           goto screen;
+         }
+	 $tobj->f_except[''.$obj] = 0;
+          if (!$obj->isInJT('a_sgroup', $tobj)) {
+            $obj->addToJT('a_sgroup', $tobj);
+            $a = Act::add("Added Server Group $tobj to Check $obj", 'login', $lm->o_login);
+            $ret['rc'] = 0;
+            $ret['res'] = json_encode(array(
+                                json_encode(array(
+                                'id' => $tobj->id,
+                                'value' => $tobj->link(),
+                                )),
+                          ));
+            $ret['llist'] = 'sgroup';
+            $ret['src'] = 'check';
+            $ret['srcid'] = $obj->id;
+            $ret['msg'] = "Added server group $tobj to check $obj";
+            goto screen;
+
+          } else {
+            $ret['rc'] = 1;
+            $ret['msg'] = 'Specified group already assigned to this check';
+            goto screen;
+          }
+       } else {
+         $ret['rc'] = 42;
+         $ret['msg'] = 'Not yet impl';
+         goto screen;
+       }
+     } else if (!strcmp($o, 'esgroup')) {
+       $obj->fetchJT('a_sgroup');
+       if (!$r || $r == 0) {
+         $tobj = new SGroup($t);
+         if ($tobj->fetchFromId()) {
+           $ret['rc'] = 1;
+           $ret['msg'] = 'Cannot find Server Group provided inside the database';
+           goto screen;
+         }
+	 $tobj->f_except[''.$obj] = 1; // EXCEPTED!
+         $obj->f_except[''.$tobj] = 1;
+          if (!$obj->isInJT('a_sgroup', $tobj)) {
+            $obj->addToJT('a_sgroup', $tobj);
+            $a = Act::add("Added Exception for Server Group $tobj to Check $obj", 'login', $lm->o_login);
+            $ret['rc'] = 0;
+            $ret['res'] = json_encode(array(
+                                json_encode(array(
+                                'id' => $tobj->id,
+                                'value' => $tobj->link(),
+                                )),
+                          ));
+            $ret['llist'] = 'esgroup';
+            $ret['src'] = 'check';
+            $ret['srcid'] = $obj->id;
+            $ret['msg'] = "Added exception for server group $tobj to check $obj";
+            goto screen;
+
+          } else {
+            $ret['rc'] = 1;
+            $ret['msg'] = 'Specified group already assigned to this check';
+            goto screen;
+          }
+       } else {
+         $ret['rc'] = 42;
+         $ret['msg'] = 'Not yet impl';
+         goto screen;
+       }
+     } else {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'Unrecognized target class';
+       goto screen;
+     }
+   break;
    case 'ugroup':
      $obj = new UGroup($i);
      if ($obj->fetchFromId()) {

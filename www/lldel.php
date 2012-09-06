@@ -110,6 +110,41 @@
        goto screen;
      }
    break;
+   case 'check':
+     $obj = new Check($i);
+     if ($obj->fetchFromId()) {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'Cannot find Check provided inside the database';
+       goto screen;
+     }
+     if (!strcmp($o, 'sgroup') || !strcmp($o, 'esgroup')) {
+       $obj->fetchJT('a_sgroup');
+       $tobj = new SGroup($t);
+       if ($tobj->fetchFromId()) {
+         $ret['rc'] = 1;
+         $ret['msg'] = 'Cannot find Server Group provided inside the database';
+         goto screen;
+        }
+        if ($obj->isInJT('a_sgroup', $tobj)) {
+          $obj->delFromJT('a_sgroup', $tobj);
+          $a = Act::add("Removed Server group $tobj from check $obj", 'check', $lm->o_check);
+          $ret['rc'] = 0;
+          $ret['id'] = $tobj->id;
+          $ret['llist'] = $o;
+          $ret['msg'] = "Removed group $tobj from check $obj";
+          goto screen;
+
+        } else {
+          $ret['rc'] = 1;
+          $ret['msg'] = 'Specified group is not in this check';
+          goto screen;
+        }
+     } else {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'Unrecognized target class';
+       goto screen;
+     }
+   break;
    case 'ugroup':
      $obj = new UGroup($i);
      if ($obj->fetchFromId()) {
