@@ -98,6 +98,28 @@
        $js = array('llist.js');
        $foot->set('js', $js);
      break;
+     case 'login':
+       $what = 'User';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       }
+       $obj = new Login($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       $obj->fetchJT('a_ugroup');
+       $content = new Template('../tpl/view_login.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+       $content->set('a_ugroup', UGroup::getAll(true, array(), array('ASC:name')));
+       $content->set('a_act', Act::getAll(true, array('CST:'.$obj->id => 'fk_login'), array('DESC:t_add'),0, 10));
+       $js = array('llist.js');
+       $foot->set('js', $js);
+     break;
      case 'server':
        $what = 'Server';
        if (!isset($_GET['i']) || empty($_GET['i'])) {

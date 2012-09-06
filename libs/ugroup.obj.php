@@ -86,6 +86,11 @@ class UGroup extends mysqlObj
   }
 
 
+  public function link() {
+    return '<a href="/view/w/ugroup/i/'.$this->id.'">'.$this.'</a>';
+  }
+
+
  /**
   * ctor
   */

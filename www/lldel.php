@@ -75,6 +75,41 @@
  }
 
  switch ($w) {
+   case 'login':
+     $obj = new Login($i);
+     if ($obj->fetchFromId()) {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'Cannot find User provided inside the database';
+       goto screen;
+     }
+     if (!strcmp($o, 'ugroup')) {
+       $obj->fetchJT('a_ugroup');
+       $tobj = new UGroup($t);
+       if ($tobj->fetchFromId()) {
+         $ret['rc'] = 1;
+         $ret['msg'] = 'Cannot find User Group provided inside the database';
+         goto screen;
+        }
+        if ($obj->isInJT('a_ugroup', $tobj)) {
+          $obj->delFromJT('a_ugroup', $tobj);
+          $a = Act::add("Removed User group $tobj from user $obj", 'login', $lm->o_login);
+          $ret['rc'] = 0;
+          $ret['id'] = $tobj->id;
+          $ret['llist'] = 'ugroup';
+          $ret['msg'] = "Removed group $tobj from user $obj";
+          goto screen;
+
+        } else {
+          $ret['rc'] = 1;
+          $ret['msg'] = 'Specified group is not in this user';
+          goto screen;
+        }
+     } else {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'Unrecognized target class';
+       goto screen;
+     }
+   break;
    case 'ugroup':
      $obj = new UGroup($i);
      if ($obj->fetchFromId()) {

@@ -75,6 +75,55 @@
  }
 
  switch ($w) {
+   case 'login':
+     $obj = new Login($i);
+     if ($obj->fetchFromId()) {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'Cannot find User provided inside the database';
+       goto screen;
+     }
+     if (!strcmp($o, 'ugroup')) {
+       $obj->fetchJT('a_ugroup');
+       if (!$r || $r == 0) {
+         $tobj = new UGroup($t);
+         if ($tobj->fetchFromId()) {
+           $ret['rc'] = 1;
+           $ret['msg'] = 'Cannot find User Group provided inside the database';
+           goto screen;
+         }
+          if (!$obj->isInJT('a_ugroup', $tobj)) {
+            $obj->addToJT('a_ugroup', $tobj);
+            $a = Act::add("Added User Group $tobj to User $obj", 'login', $lm->o_login);
+            $ret['rc'] = 0;
+            $ret['res'] = json_encode(array(
+                                json_encode(array(
+                                'id' => $tobj->id,
+                                'value' => $tobj->link(),
+                                )),
+                          ));
+            $ret['llist'] = 'ugroup';
+            $ret['src'] = 'login';
+            $ret['srcid'] = $obj->id;
+            $ret['msg'] = "Added group $tobj to user $obj";
+            goto screen;
+
+          } else {
+            $ret['rc'] = 1;
+            $ret['msg'] = 'Specified group already assigned to this user';
+            goto screen;
+          }
+       } else {
+       $ret['rc'] = 42;
+       $ret['msg'] = 'Not yet impl';
+       goto screen;
+
+       }
+     } else {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'Unrecognized target class';
+       goto screen;
+     }
+   break;
    case 'ugroup':
      $obj = new UGroup($i);
      if ($obj->fetchFromId()) {

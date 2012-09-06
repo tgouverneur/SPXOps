@@ -143,6 +143,19 @@ class Login extends mysqlObj
                 );
   }
 
+  public function htmlDump() {
+    return array(
+        'Username' => $this->username,
+        'Full Name' => $this->fullname,
+        'E-Mail' => $this->email,
+        'Admin?' => ($this->f_admin)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
+        'LDAP?' => ($this->f_ldap)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
+        'Last seen' => date('d-m-Y', $this->t_last),
+        'Updated on' => date('d-m-Y', $this->t_upd),
+        'Added on' => date('d-m-Y', $this->t_add),
+    );
+  }
+
  /**
   * ctor
   */
