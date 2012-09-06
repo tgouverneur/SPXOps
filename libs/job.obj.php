@@ -18,23 +18,6 @@ if (!defined('S_NONE')) {
  define ('S_DONE', 8);   
 }
 
-class JobArg
-{
-  public $args = array();
-  public function add($name, $value) {
-    $this->args[$name] = $value;
-    return;
-  }
-  public function get($name) {
-    if (isset($this->args[$name])) {
-      return $this->args[$name];
-    } else {
-      return false;
-    }
-  }
-}
-
-
 class Job extends mysqlObj
 {
   public $id = -1;		/* ID in the MySQL table */
