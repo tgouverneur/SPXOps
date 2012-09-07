@@ -58,7 +58,7 @@
                $obj->{$field} = 0;
              }
            } else {
-             if ($_POST[$field]) {
+             if (isset($_POST[$field])) {
                $obj->{$field} = $_POST[$field];
              }
            }
@@ -69,7 +69,7 @@
            $content->set('obj', $obj);
            goto screen;
          }
-         $obj->insert();
+         $obj->update();
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "SSH User $obj has been updated");
          goto screen;
@@ -101,7 +101,7 @@
        $content->set('edit', true);
        $content->set('page', $page);
        if (isset($obj->fk_os) && is_numeric($obj->fk_os) && $obj->fk_os > 0) {
-         $a_server = Server::getAll(true, array('CST:'.$obj->fk_os => 'fk_os'), array('ASC:hostname'));
+         $a_server = Server::getAll(true, array('fk_os' => 'CST:'.$obj->fk_os), array('ASC:hostname'));
          $content->set('a_server', $a_server);
 	 /* sort the a_server array of $obj to have index as server id */
          $a = $obj->a_server;
@@ -209,6 +209,7 @@
        }
      break;
      case 'check':
+       @include_once($config['rootpath'].'/libs/functions.lib.php');
        $what = 'Check';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $suid = $_GET['i'];

@@ -31,7 +31,6 @@ CODE;
   public $a_sgroup = array();
   public $f_except = array();
 
-
   public function valid($new = true) { /* validate form-based fields */
     global $config;
     $ret = array();
@@ -77,6 +76,52 @@ CODE;
 
       $lua->eval($this->lua);
       $rc = $lua->call("check");
+      $s->log("$this check on $s returned value: $rc", LLOG_DEBUG);
+
+      $r = new Result();
+      $r->fk_check = $this->id;
+      $r->fk_server = $s->id;
+      $r->rc = $rc;
+      // update message accordingly
+      switch($r->rc) {
+        case 0:
+	  $r->f_ack = 1;
+	  $r->message = '';
+	  $r->extended = '';
+	break;
+	case -1: // WARNING
+	  $r->f_ack = 0;
+	  $r->message = $this->m_warn;
+	  $r->extended = '';
+	break;
+	case -2: // ERROR
+	  $r->f_ack = 0;
+	  $r->message = $this->m_error;
+	  $r->extended = '';
+	break;
+	default:
+	  $r->f_ack = 0;
+	  $r->message = 'Unexpected return code, please check deeper...';
+	  $r->extended = '';
+	break;
+      }
+      $done = false;
+      if (isset($s->a_lr[$this->id]) &&
+	  $s->a_lr[$this->id]) {
+	$s->log("Last result found for $this / $s", LLOG_DEBUG);
+        if ($r->equals($s->a_lr[$this->id])) { /* same result, only update t_upd */
+	  $s->a_lr[$this->id]->update();
+	  $done = true;
+	  $s->log("We only updated check result for $this / $s", LLOG_DEBUG);
+	}
+      } else {
+	$s->log("Check result not found for $this / $s", LLOG_DEBUG);
+        echo '';
+      }
+      if (!$done) { // new check result
+        $s->a_lr[$this->id] = $r;
+	$s->a_lr[$this->id]->insert();
+      }
 
     } catch (Exception $e) {
       $s->log("Error with LUA code: $e", LLOG_ERR);
@@ -99,7 +144,7 @@ CODE;
     $cl = new Lock();
     $cl->fk_check = $this->id;
     $cl->fk_server = $obj->id;
-    if (!$cl->fetchFromId()) {
+    if (!$cl->fetchFromFields(array('fk_check', 'fk_server'))) {
       return $cl->delete();
     }
     return -1;
@@ -109,7 +154,7 @@ CODE;
     $cl = new Lock();
     $cl->fk_check = $this->id;
     $cl->fk_server = $obj->id;
-    if ($cl->fetchFromId()) {
+    if ($cl->fetchFromFields(array('fk_check', 'fk_server'))) {
       return false;
     }
     return true;
@@ -148,21 +193,25 @@ CODE;
   }
 
   public function toArray() {
+    global $config;
+    @include_once($config['rootpath'].'/libs/functions.lib.php');
     return array(
                  'name' => $this->name,
                  'description' => $this->description,
-                 'frequency' => $this->frequency,
+                 'frequency' => parseFrequency($this->frequency),
                  'f_root' => $this->f_root,
                 );
   }
 
   public function htmlDump() {
+    global $config;
+    @include_once($config['rootpath'].'/libs/functions.lib.php');
     $ret = array(
         'Name' => $this->name,
         'Description' => $this->description,
         'Error Message' => $this->m_error,
         'Warning Message' => $this->m_warn,
-        'Frequency' => $this->frequency,
+        'Frequency' => parseFrequency($this->frequency),
         'Need root?' => ($this->f_root)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
         'Updated on' => date('d-m-Y', $this->t_upd),
         'Added on' => date('d-m-Y', $this->t_add),
@@ -170,6 +219,70 @@ CODE;
     return $ret;
   }
 
+  public function delete() {
+
+    parent::_delAllJT();
+    parent::delete();
+  }
+
+  public static function server(&$s) {
+    if (!count($s->a_check))
+      return;
+
+    foreach($s->a_check as $c) {
+      $s->log("Launching $c ...", LLOG_INFO);
+      $c->doCheck($s);
+      $s->log("$c done", LLOG_DEBUG);
+    }
+  }
+
+  public static function jobServer(&$job, $sid) {
+
+    $s = new Server($sid);
+    if ($s->fetchFromId()) {
+      throw new SPXException('Server not found in database');
+    }
+    $s->_job = $job;
+    $s->fetchJT('a_sgroup');
+    $s->buildCheckList();
+
+    if (!count($s->a_check)) {
+      $s->log("No checks to be done on $s, skipping...", LLOG_INFO);
+      return;
+    }
+
+    try {
+      $s->log("Connecting to $s", LLOG_INFO);
+      $s->connect();
+      $s->log("Launching the checks", LLOG_DEBUG);
+      Check::server($s);
+      $s->log("Disconnecting from server", LLOG_INFO);
+      $s->disconnect();
+    } catch (Exception $e) {
+      throw($e);
+    }
+  }
+
+  public static function serverChecks(&$job) {
+    $table = "`list_server`";
+    $index = "`id`";
+    $cindex = "COUNT(`id`)";
+    $where = "WHERE `f_upd`='1'";
+    $it = new mIterator('Server', $index, $table, $where, $cindex);
+    $slog = new Server();
+    $slog->_job = $job;
+
+    while(($s = $it->next())) {
+      $s->fetchFromId();
+      $j = new Job();
+      $j->class = 'Check';
+      $j->fct = 'jobServer';
+      $j->arg = $s->id;
+      $j->state = S_NEW;
+      $j->insert();
+      Logger::log("Added job to check server $s", $slog, LLOG_INFO);
+    }
+  }
 
 
  /**

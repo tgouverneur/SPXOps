@@ -9,7 +9,7 @@
   private $_lrun = 0;
   private $_crun = 0;
   private $_jexec = 0;
-  private $_interval = 10;
+  private $_interval = 1;
   private $_logfd = 0;
   private $_foreground = false;
 
@@ -43,7 +43,7 @@
 
     /* update last run time */
     $this->_lrun = $this->_crun;
-    $this->_crun = date("U");
+    $this->_crun = time();
 
     $this->log("Previous run: ".$this->_lrun, LLOG_DEBUG);
     $this->log("New run: ".$this->_crun, LLOG_DEBUG);
@@ -58,11 +58,31 @@
       sleep($this->_interval);
       throw($e);
     }
+    /* See if it's time to add some recurrent jobs */
+    if (!Lock::isFctLocked('rjob')) {
+      $this->log("Locking RJob function", LLOG_DEBUG);
+      Lock::lockFct('rjob');
+      $rjobs = RJob::getAll();
+      foreach($rjobs as $rjob) {
+	if (($rjob->t_last + $rjob->frequency) <= $this->_crun) { // RUN IT FFS!
+          $this->log("Added $rjob to the job queue ", LLOG_INFO);
+	  $rjob->addIt();
+          $rjob->t_last = $this->_crun;
+          $rjob->update();
+        }
+      }
+      $this->log("Unlocking RJob function", LLOG_DEBUG);
+      Lock::unlockFct('rjob');
+    } else {
+      $this->log("RJob function locked..", LLOG_WARN);
+    }
 
+    
+    /* Check for Stalled jobs */
     try {
       $f = array();
-      $f['CST:'.S_RUN] = 'state';
-      $f['pid'] = 'pid';
+      $f['state'] = 'CST:'.S_RUN;
+      $f['pid'] = $this->pid;
       $fjobs = Job::getAll(true, $f);
       foreach($fjobs as $fjob) {
         $fjob->state = S_FAIL;

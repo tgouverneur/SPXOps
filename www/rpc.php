@@ -44,7 +44,7 @@
          die('Missing argument');
        }
        $id = $_GET['i'];
-       $a_server = Server::getAll(true, array('CST:'.$id => 'fk_os'), array('hostname'));
+       $a_server = Server::getAll(true, array('fk_os' => 'CST:'.$id), array('hostname'));
        header('Content-Type: application/json');
        echo json_encode($a_server);
      break;

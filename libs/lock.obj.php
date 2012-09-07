@@ -16,6 +16,7 @@ class Lock extends mysqlObj
   public $id = -1;
   public $fk_server = -1;
   public $fk_check = -1;
+  public $fct = '';
   public $t_add = -1;
 
   public function fetchAll($all = 1) {
@@ -32,6 +33,31 @@ class Lock extends mysqlObj
     } catch (Exception $e) {
       throw($e);
     }
+  }
+
+  /* Fct locking */
+  public static function lockFct($fct) {
+    $cl = new Lock();
+    $cl->fct = $fct;
+    return $cl->insert();
+  }
+
+  public static function unlockFct($fct) {
+    $cl = new Lock();
+    $cl->fct = $fct;
+    if (!$cl->fetchFromFields(array('fk_server', 'fk_check', 'fct'))) {
+      return $cl->delete();
+    }
+    return -1;
+  }
+
+  public static function isFctLocked($fct) {
+    $cl = new Lock();
+    $cl->fct = $fct;
+    if ($cl->fetchFromFields(array('fk_server', 'fk_check', 'fct'))) {
+      return false;
+    }
+    return true;
   }
 
   public function __toString() {
@@ -51,12 +77,14 @@ class Lock extends mysqlObj
                         'id' => SQL_INDEX,
                         'fk_check' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fct' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                  );
     $this->_myc = array( /* mysql => class */
                         'id' => 'id',
                         'fk_check' => 'fk_check',
                         'fk_server' => 'fk_server',
+                        'fct' => 'fct',
                         't_add' => 't_add',
                  );
 

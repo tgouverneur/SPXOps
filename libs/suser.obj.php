@@ -57,8 +57,8 @@ class SUser extends mysqlObj
 
   public static function printCols() {
     return array('Username' => 'username',
-                 'Fullname' => 'fullname',
                  'Description' => 'description',
+                 'Pubkey' => 'pubkey',
                  'Updated' => 't_upd',
                  'Added' => 't_add',
                 );
@@ -68,8 +68,8 @@ class SUser extends mysqlObj
 
     return array(
                  'username' => $this->username,
-                 'fullname' => $this->fullname,
                  'description' => $this->description,
+                 'pubkey' => $this->pubkey,
                  't_add' => date('d-m-Y', $this->t_add),
                  't_upd' => date('d-m-Y', $this->t_upd),
                 );

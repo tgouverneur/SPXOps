@@ -94,6 +94,41 @@
          goto screen;
        }
      break;
+     case 'rjob':
+       @include_once($config['rootpath'].'/libs/functions.lib.php');
+       $what = 'Recurrent Job';
+       $obj = new RJob();
+       $content = new Template('../tpl/form_rjob.tpl');
+       $page['title'] .= $what;
+       $obj->fk_login = $lm->o_login->id;
+       if (isset($_POST['submit'])) { /* clicked on the Add button */
+         $fields = array('class', 'fct', 'frequency', 'arg');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid();
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->insert();
+         $a = Act::add('Added the Recurrent Job: '.$obj, 'login', $lm->o_login);
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "Recurrent Job $obj has been added to database");
+         goto screen;
+       }
+     break;
      case 'ugroup':
        $what = 'User Group';
        $obj = new UGroup();
@@ -128,6 +163,7 @@
        }
      break;
      case 'check':
+       @include_once($config['rootpath'].'/libs/functions.lib.php');
        $what = 'Check';
        $obj = new Check();
        $content = new Template('../tpl/form_check.tpl');
@@ -220,7 +256,7 @@
          $errors = $obj->valid();
          if ($errors) {
            if (isset($obj->fk_os) && is_numeric($obj->fk_os) && $obj->fk_os > 0) {
-	     $a_server = Server::getAll(true, array('CST:'.$obj->fk_os => 'fk_os'), array('ASC:hostname'));
+	     $a_server = Server::getAll(true, array('fk_os' => 'CST:'.$obj->fk_os), array('ASC:hostname'));
 	     $content->set('a_server', $a_server);
 	   }
            $content->set('error', $errors);

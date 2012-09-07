@@ -30,7 +30,7 @@
        $q = '%'.$_POST['q'].'%';
        $f = array();
        $s = array('ASC:name');
-       $f['LIKE:name'] = $q;
+       $f['name'] = 'LIKE:'.$q;
        $a_list = PServer::getAll(true, $f, $s);
        if (!count($a_list)) {
          $content = new Template('../tpl/error.tpl');
@@ -61,7 +61,7 @@
        $q = '%'.$_POST['q'].'%';
        $f = array();
        $s = array('ASC:hostname');
-       $f['LIKE:hostname'] = $q;
+       $f['hostname'] = 'LIKE:'.$q;
        $a_list = Server::getAll(true, $f, $s);
        if (!count($a_list)) {
 	 $content = new Template('../tpl/error.tpl');
@@ -92,7 +92,7 @@
        $q = '%'.$_POST['q'].'%';
        $f = array();
        $s = array('ASC:name');
-       $f['LIKE:name'] = $q;
+       $f['name'] = 'LIKE:'.$q;
        $a_list = Cluster::getAll(true, $f, $s);
        if (!count($a_list)) {
 	 $content = new Template('../tpl/error.tpl');

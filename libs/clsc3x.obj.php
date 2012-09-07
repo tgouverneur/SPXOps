@@ -22,11 +22,11 @@ for i in `./scha_cluster_get -O ALL_RESOURCEGROUPS`; do nodelist=`./scha_resourc
   public static function update_release(&$c) {
 
     /* get uname -a */
-    $cat = $s->findBin('cat');
+    $cat = $c->findBin('cat');
     $cmd_cat = "$cat /etc/cluster/release";
-    $out_cat = $s->exec($cmd_cat);
+    $out_cat = $c->exec($cmd_cat);
 
-    $s->setData('cl:version', $clversion);
+    $c->setData('cl:version', $clversion);
 
     return 0;
   }

@@ -62,17 +62,10 @@ if (!isset($pservers)) $pservers = array();
 	    <div class="controls">
 	      <select name="frequency" id="selectFrequency">
 		<option value="-1">Upon request</option>
-		<option value="3600">1h</option>
-		<option value="7200">2h</option>
-		<option value="14400">4h</option>
-		<option value="21600">6h</option>
-		<option value="28800">8h</option>
-		<option value="43200">12h</option>
-		<option value="57600">16h</option>
-		<option value="86400">1d</option>
-		<option value="172800">2d</option>
-		<option value="604800">1w</option>
-		<option value="2678400">1m</option>
+<?php $f = array(3600, 7200, 14400, 21600, 28800, 43200, 57600, 86400, 172800, 604800, 2678400);
+      foreach($f as $freq) { ?>
+		<option value="<?php echo $freq; ?>" <?php if ($freq == $obj->frequency) echo "selected"; ?>><?php echo parseFrequency($freq); ?></option>
+<?php } ?>
 	      </select>
 	    </div>
 	  </div>

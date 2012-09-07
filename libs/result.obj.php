@@ -24,7 +24,30 @@ class Result extends mysqlObj
   public $t_add = -1;
   public $t_upd = -1;
 
+  public function equals($r) {
+    if ($r->rc == $this->rc &&
+	$r->fk_check == $this->fk_check &&
+	$r->fk_server == $this->fk_server) {
+      return true;
+    }
+    return false;
+  }
 
+  public static function getLast($c, $s) {
+    
+    $sort = array('DESC:t_upd');
+    $filter = array();
+
+    $filter['fk_check'] = 'CST:'.$c->id;
+    $filter['fk_server'] = 'CST:'.$s->id;
+
+    $r = Result::getAll(true, $filter, $sort, 0, 1);
+    if (count($r)) {
+      $r = $r[0];
+      return $r;
+    }
+    return null;
+  }
 
   public function fetchAll($all = 1) {
 

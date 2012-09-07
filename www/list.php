@@ -22,6 +22,23 @@
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
+     case 'rjob':
+       $a_list = RJob::getAll(true, array(), array('ASC:class', 'ASC:fct'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       if ($lm->o_login && $lm->o_login->f_admin) {
+         $content->set('canDel', true);
+         $content->set('canMod', true);
+         $actions = array(
+                        'Add' => '/add/w/rjob',
+                    );
+         $content->set('actions', $actions);
+       }
+       $content->set('canView', true);
+       $content->set('what', 'Recurrent Jobs');
+       $content->set('oc', 'RJob');
+       $page['title'] .= 'Recurrent jobs';
+     break;
      case 'sgroup':
        $a_list = SGroup::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
@@ -40,6 +57,16 @@
        $page['title'] .= 'Server Group';
      break;
      case 'ugroup':
+       if (!$lm->o_login) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be logged in to access this page...");
+         goto screen;
+       }
+       if (!$lm->o_login->f_admin) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be administrator to access this page...");
+         goto screen;
+       }
        $a_list = UGroup::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
@@ -153,6 +180,11 @@
        if (!$lm->o_login) {
          $content = new Template('../tpl/error.tpl');
          $content->set('error', "You should be logged in to access this page...");
+         goto screen;
+       }
+       if (!$lm->o_login->f_admin) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be administrator to access this page...");
          goto screen;
        }
        $a_list = Login::getAll(true, array(), array('ASC:username'));

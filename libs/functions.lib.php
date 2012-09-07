@@ -1,5 +1,27 @@
 <?php
 
+function parseFrequency($f) {
+  if ($f >= 2678400) {
+    $months = round($f/2678400);
+    return $months.'m';
+  }
+  if ($f >= 604800) {
+    $week = round($f/604800);
+    return $week.'w';
+  }
+  if ($f >= 86400) {
+    $day = round($f/86400);
+    return $day.'d';
+  }
+  if ($f >= 3600) {
+    $hour = round($f/3600);
+    return $hour.'h';
+  }
+
+
+
+}
+
 function parseVars($c) {
   $lines = explode(PHP_EOL, $c);
   $rc = array();

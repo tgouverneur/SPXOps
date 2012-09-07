@@ -44,6 +44,9 @@ class Server extends mysqlObj implements JsonSerializable
   public $a_nfss = array(); /* nfs shares */
   public $a_nfsm = array(); /* nfs mount */
 
+  /* Check system */
+  public $a_check = array();
+
   /* SSH */
   private $_ssh = null;
   private $_paths = array();
@@ -51,6 +54,49 @@ class Server extends mysqlObj implements JsonSerializable
   /* Logging */
   private $_log = null;
   public $_job = null;
+
+
+  public function buildCheckList($force=false) {
+
+    $checks = Check::getAll(true);
+    $now = time();
+    $this->a_check = array();
+
+    foreach ($checks as $check) {
+
+      /* Check Groups */
+      $check->fetchJT('a_sgroup');
+      $f_group = 0;
+      $f_egroup = 0;
+
+      foreach ($check->a_sgroup as $grp) {
+        if ($this->isInJT('a_sgroup', $grp)) {
+	  if ($check->f_except[''.$grp]) {
+            $f_egroup = 1;
+	  } else {
+            $f_group = 1;
+	  }
+        }
+      }
+      if (!$f_group || $f_egroup)
+        continue;
+
+      if ($force) { /* don't take timestamp into account */
+        array_push($this->a_check, $check);
+        continue; 
+      }
+      $this->a_lr[$check->id] = Result::getLast($check, $this);
+
+      if ($this->a_lr[$check->id] === null) {
+        array_push($this->a_check, $check);
+        continue;
+      }
+      if (($now - $this->a_lr[$check->id]->t_upd) >= $check->frequency) {
+        array_push($this->a_check, $check);
+      }
+    }
+  }
+
 
   public function equals($z) {
     if (!strcmp($this->hostname, $z->hostname)) {
@@ -308,6 +354,7 @@ class Server extends mysqlObj implements JsonSerializable
       }
     }
 
+    parent::_delAllJT();
     parent::delete();
   }
 

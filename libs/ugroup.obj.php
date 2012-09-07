@@ -90,6 +90,11 @@ class UGroup extends mysqlObj
     return '<a href="/view/w/ugroup/i/'.$this->id.'">'.$this.'</a>';
   }
 
+  public function delete() {
+
+    parent::_delAllJT();
+    parent::delete();
+  }
 
  /**
   * ctor

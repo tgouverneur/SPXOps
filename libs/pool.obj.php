@@ -89,6 +89,12 @@ class Pool extends mysqlObj
     }
   }
 
+  public function delete() {
+
+    parent::_delAllJT();
+    parent::delete();
+  }
+
  /**
   * ctor
   */

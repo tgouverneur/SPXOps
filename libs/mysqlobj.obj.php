@@ -125,6 +125,16 @@ class mysqlObj
     }
   }
 
+  public function delAllData() {
+    if (!$this->_nfotable)
+      return null;
+
+    $this->fetchData();
+    foreach($this->_datas as $v) {
+      $this->delData($v);
+    }
+  }
+
   /**
    *
    */
@@ -614,7 +624,18 @@ class mysqlObj
       $where .= "`".$id."`=".$my->quote($this->{$this->_myc[$id]});
       $w++;
     }
+    $this->delAllData();
     return $my->delete($this->_table, $where);
+  }
+
+  protected function _delAllJT() {
+
+    foreach($this->_jt as $jt) {
+      $this->fetchJT($jt->ar);
+      foreach($this->{$jt->ar} as $l) {
+        $this->delFromJT($jt->ar, $l);
+      }
+    }
   }
 
   protected function _addJT($ar, $oc, $jt, $src, $dst, $attrs = array()) {
@@ -711,7 +732,8 @@ class mysqlObj
      }
 
      $my->delete($table, $where);
-     for ($i=0;$i<count($this->{$rel->ar}); $i++) {
+     $ak = array_keys($this->{$rel->ar});
+     foreach ($ak as $i) {
        if ($this->{$rel->ar}[$i]->equals($fobj)) {
 	 $good = true;
          foreach($rel->attrs as $name) {
@@ -989,14 +1011,14 @@ class mysqlObj
       $si++;
     }
 
-    foreach($f as $src => $dst) {
+    foreach($f as $dst => $src) {
       if ($w) { $where .= " AND "; } else { $where .= "WHERE "; }
       if (!strncmp('CST:', $src, 4)) {
         $sstring = preg_replace('/^CST:/', '', $src);
         $where .= "`".$dst."`=".$my->quote($sstring);
       } else if (!strncmp('LIKE:', $src, 5)) {
         $sstring = preg_replace('/^LIKE:/', '', $src);
-        $where .= "`".$sstring."` LIKE ".$my->quote($dst);
+        $where .= "`".$dst."` LIKE ".$my->quote($sstring);
       } else {
         $where .= "`".$dst."`=".$my->quote($src);
       }

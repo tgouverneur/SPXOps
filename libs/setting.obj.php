@@ -23,6 +23,7 @@ class Setting extends mysqlObj
   public $value = '';
   public $t_add = -1;
   public $t_upd = -1;
+
   private static $_s = array();
 
   public static function fetchAll() {
@@ -30,6 +31,10 @@ class Setting extends mysqlObj
   }
 
   public static function getSettings($cat = null) {
+
+    if (!count(Setting::$_s)) {
+      Setting::fetchAll();
+    }
     if (!$cat) {
       return Setting::$_s;
     }
@@ -42,6 +47,10 @@ class Setting extends mysqlObj
   }
 
   public static function getCat() {
+
+    if (!count(Setting::$_s)) {
+      Setting::fetchAll();
+    }
     $cat = array();
     foreach(Setting::$_s as $s) {
       if (!isset($cat[$s->cat]))
@@ -52,9 +61,24 @@ class Setting extends mysqlObj
 
   public static function get($cat, $name) {
 
+    if (!count(Setting::$_s)) {
+      Setting::fetchAll();
+    }
+
+    foreach(Setting::$_s as $s) {
+      if (!strcmp($s->cat, $cat) &&
+	  !strcmp($s->name, $name)) {
+        return $s;
+      }
+    }
+    return null;
   }
 
   public static function set($cat, $name, $value) {
+
+    if (!count(Setting::$_s)) {
+      Setting::fetchAll();
+    }
 
   }
 

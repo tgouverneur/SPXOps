@@ -23,11 +23,11 @@ class Update
     $s->_job = $job;
 
     try {
-      $s->log("Connecting to server", LLOG_INFO);
+      $s->log("Connecting to $s", LLOG_INFO);
       $s->connect();
       $s->log("Launching the Update", LLOG_DEBUG);
       Update::server($s);
-      $s->log("Disconnecting from server", LLOG_INFO);
+      $s->log("Disconnecting from $s", LLOG_INFO);
       $s->disconnect();
     } catch (Exception $e) {
       throw($e);
@@ -37,7 +37,7 @@ class Update
   public static function server($s, $f = null) {
 
     if (!$s) {
-      throw new SPXException('Update::server: $s is null');
+      throw new SPXException("Update::server: $s is null");
     }
     
     if (!$s->fk_os || $s->fk_os == -1) {
@@ -72,11 +72,11 @@ class Update
     $c->fetchRL('a_server');
 
     try {
-      $c->log("Connecting to cluster", LLOG_INFO);
+      $c->log("Connecting to cluster $c", LLOG_INFO);
       $c->connect();
       $c->log("Launching the Update", LLOG_DEBUG);
       Update::cluster($c);
-      $c->log("Disconnecting from cluster", LLOG_INFO);
+      $c->log("Disconnecting from cluster $c", LLOG_INFO);
       $c->disconnect();
     } catch (Exception $e) {
       throw($e);
@@ -87,7 +87,7 @@ class Update
   public static function cluster($c) {
 
     if (!$c) {
-      throw new SPXException('Update::cluster: $c is null');
+      throw new SPXException("Update::cluster: $c is null");
     }
 
     if (!$c->fk_clver || $c->fk_clver == -1) {
@@ -106,6 +106,48 @@ class Update
       return $classname::update($c);
     }
     return -1;
+  }
+
+  public static function allServers(&$job) {
+    $table = "`list_server`";
+    $index = "`id`";
+    $cindex = "COUNT(`id`)";
+    $where = "WHERE `f_upd`='1'";
+    $it = new mIterator('Server', $index, $table, $where, $cindex);
+    $slog = new Server();
+    $slog->_job = $job;
+
+    while(($s = $it->next())) {
+      $s->fetchFromId();
+      $j = new Job();
+      $j->class = 'Update';
+      $j->fct = 'jobServer';
+      $j->arg = $s->id;
+      $j->state = S_NEW;
+      $j->insert();
+      Logger::log("Added job to update server $s", $slog, LLOG_INFO);
+    }
+  }
+
+  public static function allClusters(&$job) {
+    $table = "`list_cluster`";
+    $index = "`id`";
+    $cindex = "COUNT(`id`)";
+    $where = "WHERE `f_upd`='1'";
+    $it = new mIterator('Cluster', $index, $table, $where, $cindex);
+    $clog = new Cluster();
+    $clog->_job = $job;
+
+    while(($s = $it->next())) {
+      $s->fetchFromId();
+      $j = new Job(); 
+      $j->class = 'Update';
+      $j->fct = 'jobCluster';
+      $j->arg = $s->id;
+      $j->state = S_NEW;
+      $j->insert();
+      Logger::log("Added job to update cluster $s", $clog, LLOG_INFO);
+    }
   }
  
   public function __construct()

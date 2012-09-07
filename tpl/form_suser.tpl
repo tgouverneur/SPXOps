@@ -47,7 +47,7 @@ if (!isset($edit)) $edit = false;
           <div class="control-group">
             <label class="control-label" for="inputPubKey">Public Key</label>
             <div class="controls">
-              <input type="text" name="pubkey" id="inputPubKey" placeholder="Public Key file path">
+              <input type="text" name="pubkey" value="<?php echo $obj->pubkey; ?>" id="inputPubKey" placeholder="Public Key file path">
             </div>
           </div>
 	  <div class="control-group">

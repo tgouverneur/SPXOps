@@ -120,7 +120,7 @@
        $page['title'] .= $what;
        $content->set('obj', $obj);
        $content->set('a_ugroup', UGroup::getAll(true, array(), array('ASC:name')));
-       $content->set('a_act', Act::getAll(true, array('CST:'.$obj->id => 'fk_login'), array('DESC:t_add'),0, 10));
+       $content->set('a_act', Act::getAll(true, array('fk_login' => 'CST:'.$obj->id), array('DESC:t_add'),0, 10));
        $js = array('llist.js');
        $foot->set('js', $js);
      break;

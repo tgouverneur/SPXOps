@@ -120,8 +120,6 @@ class Job extends mysqlObj
     $this->t_stop = time();
     $this->o_log->rc = $ret;
 
-    $this->_icmid->log('finished: $this');
-
     if ($ret) {
       $this->state = S_FAIL;
     } else {

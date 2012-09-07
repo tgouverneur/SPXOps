@@ -18,7 +18,7 @@
     if (file_exists($file)) {
       require_once($file);
     } else {
-      trigger_error("Cannot load $file...\n", E_USER_ERROR);
+      throw new SPXException("Cannot load $file...\n");
     }
   }
 ?>

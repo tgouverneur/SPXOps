@@ -85,6 +85,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="/settings">Configuration</a></li>
+                  <li><a href="/list/w/rjob">Job Crontab</a></li>
                   <li><a href="/list/w/users#">Users management</a></li>
                   <li><a href="/list/w/ugroup#">Groups management</a></li>
                   <li><a href="/list/w/susers#">Connect Users management</a></li>
