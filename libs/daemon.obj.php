@@ -18,6 +18,7 @@ interface Daemonizable {
   public function cleanup();
   public function sigterm();
   public function sighup();
+  public function sigchld();
   public function sigkill();
   public function sigusr1();
   public function sigusr2();
@@ -38,6 +39,7 @@ class Daemon
         trigger_error('PHP is compiled without --enable-pcntl directive', E_USER_ERROR);
     }
     pcntl_signal(SIGTERM,array($obj,'sigterm'));
+    pcntl_signal(SIGCHLD,array($obj,'sigchld'));
     pcntl_signal(SIGHUP,array($obj,'sighup'));
     pcntl_signal(SIGUSR1,array($obj,'sigusr1')); 
     pcntl_signal(SIGUSR2,array($obj,'sigusr2')); 
@@ -49,6 +51,12 @@ class Daemon
         echo "Forked\n";
         return;
       } else {
+        pcntl_signal(SIGTERM,array($obj,'sigterm'));
+        pcntl_signal(SIGHUP,array($obj,'sighup'));
+        pcntl_signal(SIGCHLD,array($obj,'sigchld'));
+        pcntl_signal(SIGUSR1,array($obj,'sigusr1')); 
+        pcntl_signal(SIGUSR2,array($obj,'sigusr2')); 
+ 
         $this->pid = posix_getpid();
         $obj->pid = $this->pid;
         $obj->start();

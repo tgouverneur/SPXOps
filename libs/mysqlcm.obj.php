@@ -222,21 +222,28 @@ class mysqlCM
   public function connect()
   {
     global $config;
+    $attempts = 0;
 
     $dbstring = "mysql:host=".$config['mysql']['host'];
     $dbstring .= "; port=".$config['mysql']['port'];
     $dbstring .= "; dbname=".$config['mysql']['db'];
-    try {
-      $this->_link = new PDO($dbstring, 
-                             $config['mysql']['user'], 
-                             $config['mysql']['pass'],
-			     array(PDO::ATTR_PERSISTENT => true));
-    } catch (PDOException $e) {
-      $this->_error = $e->getMessage();
-      if ($this->_debug)
-        $this->_dprint("[".time()."] Connection failed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
-      return -1;
-    }
+    do {
+      try {
+        $this->_link = @new PDO($dbstring, 
+                               $config['mysql']['user'], 
+                               $config['mysql']['pass'],
+  			       array(PDO::ATTR_PERSISTENT => true));
+      } catch (PDOException $e) {
+        $this->_error = $e->getMessage();
+	if (strpos($this->_error, '2006 MySQL') !== false && $this->_reconnect) {
+           $this->reconnect();
+           $this->_error = null;
+        }
+        if ($this->_debug)
+          $this->_dprint("[".time()."] Connection failed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+        return -1;
+      }
+    } while ($attempts++ < 3);
     if ($this->_debug)
       $this->_dprint("[".time()."] Connection succesfull to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
     return 0;
@@ -290,10 +297,13 @@ class mysqlCM
 
     $this->_nres = null;
 
-    if (!$this->_query($query))
+    if (!$this->_query($query, null))
     {
       $data = array();
-      $this->_nres = $this->_link->query("SELECT FOUND_ROWS()")->fetchColumn();
+      $this->_nres = @$this->_link->query("SELECT FOUND_ROWS()");
+      if ($this->_nres) {
+        $this->_nres = $this->_nres->fetchColumn();
+      }
       if ($this->_nres) {
         for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
           $data[$i] = $r;
@@ -369,10 +379,8 @@ class mysqlCM
     $query = "SELECT ".$index." FROM ".$table." ".$where;
 
     $this->_nres = null;
-    if (!$this->_query($query, null))
+    if (!$this->_query($query, null, true))
     {
-      /* TODO: Fix the rowCount being called on a non object ! */
-      $this->_nres = $this->_link->query("SELECT FOUND_ROWS()")->rowCount();
       $data = array();
       if ($this->_nres) {
         for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
@@ -392,34 +400,43 @@ class mysqlCM
   private function _rquery($query, $args=null)
   {
     if ($this->_debug) $this->_time();
+    if (!$this->_link) return -1;
+    $attempts = 0;
 
-    unset($this->_res);
-    if (($this->_affect = $this->_link->exec($query)) === FALSE) {
+    do {
+      try {
+        unset($this->_res);
+        if (($this->_affect = @$this->_link->exec($query)) === FALSE) {
 
-      $this->_error = $this->_link->errorInfo();
-      $this->_error = $this->_error[2];
-      if ($this->_debug) $this->_time();
-      if ($this->_errlog) {
-        $this->_eprint("[".time()."] Failed _rquery (".$this->_affect."): $query\n");
-        $this->_eprint("\tError: ".$this->_error."\n");
+          $this->_error = $this->_link->errorInfo();
+          $this->_error = $this->_error[2];
+
+          if (strpos($this->_error, 'has gone away') !== false && $this->_reconnect) {
+             $this->reconnect();
+             continue;
+          }
+
+          if ($this->_debug) $this->_time();
+          if ($this->_errlog) {
+            $this->_eprint("[".time()."] Failed _rquery (".$this->_affect."): $query\n");
+            $this->_eprint("\tError: ".$this->_error."\n");
+          }
+          return -1;
+
+        } else {
+
+          if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
+          return 0;
+
+        }
+      } catch (PDOException $e) {
+        if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
+           $this->reconnect();
+        }
       }
-      return -1;
-
-    } else if ($this->_affect) {
-
-      if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
-      return 0;
-
-    } 
-    // Log null queries
-    /* else {
-
-      if ($this->_errlog) {
-        $this->_eprint("[".time()."] Null _rquery: $query\n");
-      }
-    }
-    */
+    } while ($attempts++ < 3);
   }
+
 
   public function rawQuery($q) {
     return $this->_query($q);
@@ -429,7 +446,7 @@ class mysqlCM
    * Query database and handle errors
    * @return 0 if ok, non-zero if any error
    */
-  private function _query($query, $args=null)
+  private function _query($query, $args=null, $cnt = false)
   {
     $attempts = 0;
     if ($this->_debug) $this->_time();
@@ -438,9 +455,16 @@ class mysqlCM
     do {
       try {
         $this->_res = $this->_link->prepare($query);
-        if ($this->_res->execute($args)) {
+        if (@$this->_res->execute($args)) {
     
           if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
+          if ($cnt) {
+	    $this->_nres = @$this->_link->query("SELECT FOUND_ROWS()");
+	    if ($this->_nres) 
+	      $this->_nres = $this->_nres->rowCount();
+	    else 
+              $this->_nres = null;
+	  }
     
           return 0;
         } else {

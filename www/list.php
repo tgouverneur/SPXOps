@@ -83,6 +83,24 @@
        $content->set('oc', 'UGroup');
        $page['title'] .= 'User Group';
      break;
+     case 'pid':
+       if (!$lm->o_login) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be logged in to access this page...");
+         goto screen;
+       }
+       if (!$lm->o_login->f_admin) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be administrator to access this page...");
+         goto screen;
+       }
+       $a_list = Pid::getAll(true, array(), array('ASC:agent', 'ASC:pid'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('what', 'Daemon Instance');
+       $content->set('oc', 'Pid');
+       $page['title'] .= 'Daemon Instance';
+     break;
      case 'check':
        $a_list = Check::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');

@@ -89,6 +89,7 @@
                   <li><a href="/list/w/users#">Users management</a></li>
                   <li><a href="/list/w/ugroup#">Groups management</a></li>
                   <li><a href="/list/w/susers#">Connect Users management</a></li>
+                  <li><a href="/list/w/pid">Show Daemons</a></li>
                 </ul>
               </li>
               <li><a href="/about">About</a></li>

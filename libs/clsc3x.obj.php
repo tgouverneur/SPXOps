@@ -26,7 +26,7 @@ for i in `./scha_cluster_get -O ALL_RESOURCEGROUPS`; do nodelist=`./scha_resourc
     $cmd_cat = "$cat /etc/cluster/release";
     $out_cat = $c->exec($cmd_cat);
 
-    $c->setData('cl:version', $clversion);
+//    $c->setData('cl:version', $clversion);
 
     return 0;
   }

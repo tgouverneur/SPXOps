@@ -137,6 +137,10 @@ CODE;
     $cl = new Lock();
     $cl->fk_check = $this->id;
     $cl->fk_server = $obj->id;
+    $pid = Pid::getMyPid();
+    if ($pid) {
+      $cl->fk_pid = $pid->id;
+    }
     return $cl->insert();
   }
 

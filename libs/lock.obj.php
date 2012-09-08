@@ -16,6 +16,7 @@ class Lock extends mysqlObj
   public $id = -1;
   public $fk_server = -1;
   public $fk_check = -1;
+  public $fk_pid = -1;
   public $fct = '';
   public $t_add = -1;
 
@@ -29,6 +30,9 @@ class Lock extends mysqlObj
       if (!$this->o_check && $this->fk_check > 0) {
         $this->fetchFK('fk_check');
       }
+      if (!$this->o_pid && $this->fk_pid > 0) {
+        $this->fetchFK('fk_pid');
+      }
 
     } catch (Exception $e) {
       throw($e);
@@ -39,6 +43,10 @@ class Lock extends mysqlObj
   public static function lockFct($fct) {
     $cl = new Lock();
     $cl->fct = $fct;
+    $pid = Pid::getMyPid();
+    if ($pid) {
+      $cl->fk_pid = $pid->id;
+    }
     return $cl->insert();
   }
 
@@ -77,6 +85,7 @@ class Lock extends mysqlObj
                         'id' => SQL_INDEX,
                         'fk_check' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fk_pid' => SQL_PROPE,
                         'fct' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                  );
@@ -84,12 +93,14 @@ class Lock extends mysqlObj
                         'id' => 'id',
                         'fk_check' => 'fk_check',
                         'fk_server' => 'fk_server',
+                        'fk_pid' => 'fk_pid',
                         'fct' => 'fct',
                         't_add' => 't_add',
                  );
 
     $this->_addFK("fk_server", "o_server", "Server");
     $this->_addFK("fk_check", "o_check", "Check");
+    $this->_addFK("fk_pid", "o_pid", "Pid");
 
   }
 

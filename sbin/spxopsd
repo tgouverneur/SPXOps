@@ -12,8 +12,12 @@
   private $_interval = 1;
   private $_logfd = 0;
   private $_foreground = false;
+  private $_nrProcess = 1;
 
   public $pid = -1;
+  public $ppid = -1;
+  public $curProcess = 1;
+  public $f_master = 0;
 
   public function setForeground($f = false) {
     $this->_foreground = $f;
@@ -40,80 +44,128 @@
     }
 
     $this->log("Entering run()", LLOG_DEBUG);
-
+   
     /* update last run time */
     $this->_lrun = $this->_crun;
     $this->_crun = time();
-
     $this->log("Previous run: ".$this->_lrun, LLOG_DEBUG);
     $this->log("New run: ".$this->_crun, LLOG_DEBUG);
     
-    try {
-      $j = Job::fetchFirst($this);
-      if ($j) {
-        $this->log("Trying to execute job :$j", LLOG_DEBUG);
-        $j->runJob();
-      }
-    } catch (Exception $e) {
-      sleep($this->_interval);
-      throw($e);
-    }
-    /* See if it's time to add some recurrent jobs */
-    if (!Lock::isFctLocked('rjob')) {
-      $this->log("Locking RJob function", LLOG_DEBUG);
-      Lock::lockFct('rjob');
-      $rjobs = RJob::getAll();
-      foreach($rjobs as $rjob) {
-	if (($rjob->t_last + $rjob->frequency) <= $this->_crun) { // RUN IT FFS!
-          $this->log("Added $rjob to the job queue ", LLOG_INFO);
-	  $rjob->addIt();
-          $rjob->t_last = $this->_crun;
-          $rjob->update();
+    /* Ping pid() */
+    Pid::ping($this);
+
+    /* Check for other eventually died pids */
+    if ($this->f_master) {
+      /* first, reap eventual dead childs */
+      $this->sigchld();
+      Pid::check($this);
+      if (!$this->_foreground) {
+        while($this->curProcess < $this->_nrProcess) {
+          $pid = $this->spawnProcess();
+	  $this->log("Spawned other process: $pid", LLOG_DEBUG);
+          $this->curProcess++;
         }
       }
-      $this->log("Unlocking RJob function", LLOG_DEBUG);
-      Lock::unlockFct('rjob');
-    } else {
-      $this->log("RJob function locked..", LLOG_WARN);
     }
+
+    if (!$this->f_master ||
+	$this->_foreground) { /* Only child are doing the reluctant work ... */
+      try {
+        $j = Job::fetchFirst($this);
+        if ($j) {
+          $this->log("Trying to execute job :$j", LLOG_DEBUG);
+          $j->runJob();
+        }
+      } catch (Exception $e) {
+        sleep($this->_interval);
+        throw($e);
+      }
+
+      /* See if it's time to add some recurrent jobs */
+      if (!Lock::isFctLocked('rjob')) {
+        $this->log("Locking RJob function", LLOG_DEBUG);
+        Lock::lockFct('rjob');
+        $rjobs = RJob::getAll();
+        foreach($rjobs as $rjob) {
+  	  if (($rjob->t_last + $rjob->frequency) <= $this->_crun) { // RUN IT FFS!
+            $this->log("Added $rjob to the job queue ", LLOG_INFO);
+	    $rjob->addIt();
+            $rjob->t_last = $this->_crun;
+            $rjob->update();
+          }
+        }
+        $this->log("Unlocking RJob function", LLOG_DEBUG);
+        Lock::unlockFct('rjob');
+      } else {
+        $this->log("RJob function locked..", LLOG_WARN);
+      }
 
     
-    /* Check for Stalled jobs */
-    try {
-      $f = array();
-      $f['state'] = 'CST:'.S_RUN;
-      $f['pid'] = $this->pid;
-      $fjobs = Job::getAll(true, $f);
-      foreach($fjobs as $fjob) {
-        $fjob->state = S_FAIL;
-	$fjob->update();
-	$this->log("Job $fjob has been set to FAILED as we were responsible for it...", LLOG_WARN);
+      /* Check for Stalled jobs */
+      try {
+        $f = array();
+        $f['state'] = 'CST:'.S_RUN;
+        $f['pid'] = $this->pid;
+        $fjobs = Job::getAll(true, $f);
+        foreach($fjobs as $fjob) {
+          $fjob->state = S_FAIL;
+	  $fjob->update();
+  	  $this->log("Job $fjob has been set to FAILED as we were responsible for it...", LLOG_WARN);
+        }
+      } catch (Exception $e) {
+        sleep($this->_interval);
+        throw($e);
       }
-    } catch (Exception $e) {
-      sleep($this->_interval);
-      throw($e);
-    }
 
+    }
     $m->disconnect();
     $this->log("sleeping..", LLOG_DEBUG);
     sleep($this->_interval);
     return 0;
   }
 
+  public function setNrProcess($i) {
+    $this->_nrProcess = $i;
+  }
+
+  public function setInterval($i) {
+    $this->_interval = $i;
+  }
+
   public function start() {
     if (!$this->_foreground) Logger::openLog();
+
+    $m = mysqlCM::getInstance();
+    $m->disconnect();
+    if ($m->connect()) {
+      die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+    }
+
+  }
+
+  public function cleanup() {
+    if (!$this->_foreground) Logger::closeLog();
 
     $m = mysqlCM::getInstance();
     if ($m->connect()) {
       die($argv[0]." Error with SQL db: ".$m->getError()."\n");
     }
-  }
 
-  public function cleanup() {
-    if (!$this->_foreground) Logger::closeLog();
+    Ping::stop();
   }
 
   /* Signal management */
+
+  public function sigchld() {
+    while(true) {
+       $p = pcntl_waitpid(-1, $status, WNOHANG);  
+       if($p > 0){ 
+         $this->log("We just reaped a child: $p", LLOG_WARN);
+       } else {
+         return;
+       }
+    }
+  }
 
   public function sigterm() {
     $this->cleanup();
@@ -142,11 +194,31 @@
   }
 
   /* Log management */
-  public function __construct() {
-    $j = new Job();
-    unset($j);
+  public function __construct($parent = null) {
+    if ($parent) {
+      $this->f_master = 0;
+      $this->ppid = $parent->pid;
+      $this->setForeground(false);
+      $this->_interval = $parent->getInterval();
+      
+    } else {
+      $j = new Job();
+      unset($j);
+    }
   }
 
+  private function spawnProcess() {
+    global $config;
+    $newD = new SPXOpsd($this);
+    $daemon = new Daemon($newD, false);
+    $pid = new Pid();
+    $pid->agent = $config['agentname'];
+    $pid->pid = $daemon->getPid();
+    $pid->ppid = $this->pid;
+    $pid->f_master = 0;
+    return $pid;
+  }
+  public function getInterval() { return $this->_interval; }
  }
 
  // Connect to mysql
@@ -176,6 +248,12 @@
  }
 
  $spxopsd->setForeground($o['f']);
+ Setting::fetchAll();
+ $interval = Setting::get('daemon', 'sleepTime');
+ $nrProcess = Setting::get('daemon', 'nrProcess');
+ $spxopsd->setInterval($interval->value);
+ $spxopsd->setNrProcess($nrProcess->value);
+ $spxopsd->f_master = 1;
 
  $daemon = new Daemon($spxopsd, $o['f']);  
 
