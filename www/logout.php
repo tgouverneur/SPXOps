@@ -38,6 +38,7 @@
  $content->set('error', "To logout, you should login first ;-)");
 
 screen:
+ if (isset($a_link)) $foot->set('a_link', $a_link);
  $index->set('head', $head);
  $index->set('content', $content);
  $index->set('foot', $foot);

@@ -420,6 +420,7 @@
 
 screen:
  $head->set('page', $page);
+ if (isset($a_link)) $foot->set('a_link', $a_link);
  $index->set('head', $head);
  $index->set('content', $content);
  $index->set('foot', $foot);

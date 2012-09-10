@@ -93,7 +93,6 @@ class Act extends mysqlObj
   public static function printCols() {
     return array('Who' => 'who',
                  'Message' => 'msg',
-                 'What' => 'what',
                  'When' => 't_add',
                 );
   }
@@ -116,18 +115,7 @@ class Act extends mysqlObj
 
     $rc['msg'] = $this->msg;
     $rc['t_add'] = date('d-m-Y H:m:s', $this->t_add);
-    
-    $rc['what'] = '-';
-    if ($this->o_server) {
-      $rc['what'] = $this->o_server->link();
-    }
-    if ($this->o_zone) {
-      $rc['what'] = $this->o_zone->link();
-    }
-    if ($this->o_cluster) {
-      $rc['what'] = $this->o_cluster->link();
-    }
-    return $rc;
+       return $rc;
   }
 
   public function html() {

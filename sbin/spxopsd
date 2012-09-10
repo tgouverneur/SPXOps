@@ -31,6 +31,7 @@
   /* Main run () */
   public function run() {
 
+
     try {
       $m = mysqlCM::getInstance();
       if ($m->connect()) {
@@ -54,11 +55,12 @@
     /* Ping pid() */
     Pid::ping($this);
 
-    /* Check for other eventually died pids */
+    /* Check for other eventually died pids or locks */
     if ($this->f_master) {
       /* first, reap eventual dead childs */
       $this->sigchld();
       Pid::check($this);
+      Pid::checkLocks($this);
       if (!$this->_foreground) {
         while($this->curProcess < $this->_nrProcess) {
           $pid = $this->spawnProcess();
@@ -66,6 +68,22 @@
           $this->curProcess++;
         }
       }
+      /* Check that running jobs have an associated valid pid,
+	 otherwise, they should be flagged as stalled jobs
+      */
+      $jobs = Job::getAll(true, array('state' => S_RUN));
+      foreach($jobs as $job) {
+	if ($job->fk_pid > 0) {
+        $pid = new Pid($job->fk_pid);
+	if ($pid->fetchFromId()) {
+          Logger::log("Set as STALLED stalled job $job because pid doesn't exist ", $d, LLOG_DEBUG);
+          $job->state = S_STALL;
+          $job->fk_pid = -1; 
+          $job->update();
+	}
+        }
+      }
+
     }
 
     if (!$this->f_master ||
@@ -82,9 +100,8 @@
       }
 
       /* See if it's time to add some recurrent jobs */
-      if (!Lock::isFctLocked('rjob')) {
-        $this->log("Locking RJob function", LLOG_DEBUG);
-        Lock::lockFct('rjob');
+      if (Lock::lockFctIfNot('rjob')) {
+        $this->log("Locked RJob function for our usage", LLOG_DEBUG);
         $rjobs = RJob::getAll();
         foreach($rjobs as $rjob) {
   	  if (($rjob->t_last + $rjob->frequency) <= $this->_crun) { // RUN IT FFS!
@@ -97,10 +114,9 @@
         $this->log("Unlocking RJob function", LLOG_DEBUG);
         Lock::unlockFct('rjob');
       } else {
-        $this->log("RJob function locked..", LLOG_WARN);
+        $this->log("RJob function locked or cannot acquire lock..", LLOG_WARN);
       }
 
-    
       /* Check for Stalled jobs */
       try {
         $f = array();
@@ -116,11 +132,11 @@
         sleep($this->_interval);
         throw($e);
       }
-
     }
     $m->disconnect();
     $this->log("sleeping..", LLOG_DEBUG);
     sleep($this->_interval);
+//    pcntl_signal_dispatch();
     return 0;
   }
 
@@ -133,6 +149,10 @@
   }
 
   public function start() {
+    global $config;
+    if (!$this->f_master && $this->ppid) {
+      $config['spxopsd']['log'] = $config['spxopsd']['log'].'-'.$this->pid;
+    }
     if (!$this->_foreground) Logger::openLog();
 
     $m = mysqlCM::getInstance();
@@ -145,13 +165,6 @@
 
   public function cleanup() {
     if (!$this->_foreground) Logger::closeLog();
-
-    $m = mysqlCM::getInstance();
-    if ($m->connect()) {
-      die($argv[0]." Error with SQL db: ".$m->getError()."\n");
-    }
-
-    Ping::stop();
   }
 
   /* Signal management */
@@ -200,7 +213,6 @@
       $this->ppid = $parent->pid;
       $this->setForeground(false);
       $this->_interval = $parent->getInterval();
-      
     } else {
       $j = new Job();
       unset($j);
@@ -211,6 +223,8 @@
     global $config;
     $newD = new SPXOpsd($this);
     $daemon = new Daemon($newD, false);
+    $m = MysqlCM::getInstance();
+    $m->connect();
     $pid = new Pid();
     $pid->agent = $config['agentname'];
     $pid->pid = $daemon->getPid();
@@ -254,6 +268,8 @@
  $spxopsd->setInterval($interval->value);
  $spxopsd->setNrProcess($nrProcess->value);
  $spxopsd->f_master = 1;
+
+ $m->disconnect();
 
  $daemon = new Daemon($spxopsd, $o['f']);  
 

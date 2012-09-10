@@ -58,6 +58,11 @@
          $a = Act::add('Added the SSH User: '.$obj->username, 'login', $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "SSH User $obj has been added to database");
+         $a_link = array(
+              array('href' => '/list/w/susers',
+                    'name' => 'Back to list of connect users',
+                   ),
+              );
          goto screen;
        }
      break;
@@ -91,6 +96,11 @@
          $a = Act::add('Added the Server Group: '.$obj->name, 'login', $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Server Group $obj has been added to database");
+         $a_link = array(
+              array('href' => '/list/w/sgroup',
+                    'name' => 'Back to list of server groups',
+                   ),
+              );
          goto screen;
        }
      break;
@@ -126,6 +136,11 @@
          $a = Act::add('Added the Recurrent Job: '.$obj, 'login', $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Recurrent Job $obj has been added to database");
+         $a_link = array(
+              array('href' => '/list/w/rjob',
+                    'name' => 'Back to list of recurrent jobs',
+                   ),
+              );
          goto screen;
        }
      break;
@@ -159,6 +174,11 @@
          $a = Act::add('Added the User Group: '.$obj->name, 'login', $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "User Group $obj has been added to database");
+         $a_link = array(
+              array('href' => '/list/w/ugroup',
+                    'name' => 'Back to list of user users groups',
+                   ),
+              );
          goto screen;
        }
      break;
@@ -193,6 +213,11 @@
          $a = Act::add('Added the Check: '.$obj->name, 'login', $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Check $obj has been added to database");
+         $a_link = array(
+              array('href' => '/list/w/check',
+                    'name' => 'Back to list of checks',
+                   ),
+              );
          goto screen;
        }
      break;
@@ -226,6 +251,11 @@
          $a = Act::add('Added the Physical Server: '.$obj->name, 'login', $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Physical Server $obj has been added to database");
+         $a_link = array(
+              array('href' => '/list/w/pserver',
+                    'name' => 'Back to list of physical servers',
+                   ),
+              );
          goto screen;
        }
      break;
@@ -277,6 +307,11 @@
 	 }
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Cluster $obj has been added to database");
+         $a_link = array(
+              array('href' => '/list/w/cluster',
+                    'name' => 'Back to list of clusters',
+                   ),
+              );
          goto screen;
        }
      break;
@@ -322,6 +357,11 @@
 	 $a->update();
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Server $obj has been added to database");
+         $a_link = array(
+              array('href' => '/list/w/server',
+                    'name' => 'Back to list of servers',
+                   ),
+              );
          goto screen;
        }
      break;
@@ -362,6 +402,11 @@
          $a = Act::add('Added the user: '.$obj->username, 'login', $lm->o_login);
          $content = new Template('../tpl/message.tpl');
 	 $content->set('msg', "User $obj has been added to database");
+         $a_link = array(
+              array('href' => '/list/w/users',
+                    'name' => 'Back to list of users',
+                   ),
+              );
 	 goto screen;
        }
      break;
@@ -377,6 +422,7 @@
 
 screen:
  $head->set('page', $page);
+ if (isset($a_link)) $foot->set('a_link', $a_link);
  $index->set('head', $head);
  $index->set('content', $content);
  $index->set('foot', $foot);

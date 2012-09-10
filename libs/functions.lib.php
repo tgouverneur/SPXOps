@@ -17,9 +17,11 @@ function parseFrequency($f) {
     $hour = round($f/3600);
     return $hour.'h';
   }
-
-
-
+   if ($f >= 60) {
+    $min = round($f/60);
+    return $min.'m';
+  }
+  return $f.'s';
 }
 
 function parseVars($c) {

@@ -102,7 +102,7 @@ class RJob extends mysqlObj
                  'Function' => 'fct',
                  'Frequency' => 'frequency',
                  'Last run' => 't_last',
-                 'Added on' => 't_add',
+                 'Next run' => 't_next',
                  'Updated on' => 't_upd',
                 );
   }
@@ -115,7 +115,7 @@ class RJob extends mysqlObj
                  'fct' => $this->fct,
                  'frequency' => parseFrequency($this->frequency),
                  't_last' => date('d-m-Y H:m:s', $this->t_last),
-                 't_add' => date('d-m-Y H:m:s', $this->t_add),
+                 't_next' => date('d-m-Y H:m:s', $this->t_last + $this->frequency),
                  't_upd' => date('d-m-Y H:m:s', $this->t_upd),
                 );
   }

@@ -67,7 +67,7 @@ class Cluster extends mysqlObj
 	continue;
       }
     }
-    throw(new SPXException("Cannot connect to cluster $name"));
+    throw(new SPXException("Cannot connect to cluster $this"));
   }
 
   public function disconnect() {

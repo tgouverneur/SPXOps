@@ -63,6 +63,26 @@
  }
 
  switch ($c) {
+   case 'Check':
+     if ($f == 'jobServer') {
+       $s = new Server($a);
+       if ($s->fetchFromId()) {
+         $ret['rc'] = 1;
+         $ret['msg'] = 'Server specified not found in database';
+         goto screen;
+       }
+       $j = new Job();
+       $j->class = $c;
+       $j->fct = $f;
+       $j->arg = $a;
+       $j->state = S_NEW;
+       $j->insert();
+       $a = Act::add("Requested an update of the server $s", 'login', $lm->o_login);
+       $ret['rc'] = 0;
+       $ret['msg'] = "Job to update server $s has been succesfully added to the queue...";
+       goto screen;
+     }
+   break;
    case 'Update':
      if ($f == 'jobServer') {
        $s = new Server($a);
@@ -77,9 +97,7 @@
        $j->arg = $a;
        $j->state = S_NEW;
        $j->insert();
-       $a = Act::add('Requested an update of the', 'server', $s);
-       $a->fk_login = $lm->o_login->id;
-       $a->update();
+       $a = Act::add("Requested an update of the server $s", 'login', $lm->o_login);
        $ret['rc'] = 0;
        $ret['msg'] = "Job to update server $s has been succesfully added to the queue...";
        goto screen;
@@ -97,9 +115,7 @@
        $j->arg = $a;
        $j->state = S_NEW;
        $j->insert();
-       $a = Act::add('Requested an update of the', 'cluster', $oc);
-       $a->fk_login = $lm->o_login->id;
-       $a->update();
+       $a = Act::add("Requested an update of the cluster $oc", 'login', $lm->o_login);
        $ret['rc'] = 0;
        $ret['msg'] = "Job to update cluster $oc has been succesfully added to the queue...";
        goto screen;

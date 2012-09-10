@@ -39,6 +39,7 @@ class Daemon
         trigger_error('PHP is compiled without --enable-pcntl directive', E_USER_ERROR);
     }
     pcntl_signal(SIGTERM,array($obj,'sigterm'));
+//    pcntl_signal(SIGINT,array($obj,'sigterm'));
     pcntl_signal(SIGCHLD,array($obj,'sigchld'));
     pcntl_signal(SIGHUP,array($obj,'sighup'));
     pcntl_signal(SIGUSR1,array($obj,'sigusr1')); 
@@ -46,16 +47,19 @@ class Daemon
  
     if (!$f) {
 
+      mysqlCM::delInstance();
       $this->pid = pcntl_fork();
       if ($this->pid) {
         echo "Forked\n";
         return;
       } else {
+        Logger::delInstance();
         pcntl_signal(SIGTERM,array($obj,'sigterm'));
         pcntl_signal(SIGHUP,array($obj,'sighup'));
         pcntl_signal(SIGCHLD,array($obj,'sigchld'));
         pcntl_signal(SIGUSR1,array($obj,'sigusr1')); 
         pcntl_signal(SIGUSR2,array($obj,'sigusr2')); 
+        $m = mysqlCM::getInstance();
  
         $this->pid = posix_getpid();
         $obj->pid = $this->pid;

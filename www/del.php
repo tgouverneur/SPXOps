@@ -51,6 +51,11 @@
        $content->set('msg', "SSH User $obj has been removed from database");
        $obj->delete();
        $a = Act::add('Deleted the SSH User: '.$obj->username, 'login', $lm->o_login);
+         $a_link = array(
+              array('href' => '/list/w/susers',
+                    'name' => 'Back to list of connect users',
+                   ),
+              );
        goto screen;
      break;
      case 'pserver':
@@ -76,6 +81,11 @@
        $content->set('msg', "Physical Server $obj has been removed from database");
        $obj->delete();
        $a = Act::add('Deleted the Physical Server: '.$obj->name, 'login', $lm->o_login);
+         $a_link = array(
+              array('href' => '/list/w/pserver',
+                    'name' => 'Back to list of physical server',
+                   ),
+              );
        goto screen;
      break;
      case 'check':
@@ -101,6 +111,11 @@
        $content->set('msg', "Check $obj has been removed from database");
        $obj->delete();
        $a = Act::add('Deleted the Check: '.$obj->name, 'login', $lm->o_login);
+         $a_link = array(
+              array('href' => '/list/w/check',
+                    'name' => 'Back to list of checks',
+                   ),
+              );
        goto screen;
      break;
      case 'rjob':
@@ -111,18 +126,23 @@
          $obj->id = $_GET['i'];
          if ($obj->fetchFromId()) {
            $content = new Template('../tpl/error.tpl');
-           $content->set('error', "Check specified cannot be found in the database");
+           $content->set('error', "Recurrent Job specified cannot be found in the database");
            goto screen;
          }
        } else {
          $content = new Template('../tpl/error.tpl');
-         $content->set('error', "Check not specified");
+         $content->set('error', "Recurrent Job not specified");
          goto screen;
        }
        $content = new Template('../tpl/message.tpl');
-       $content->set('msg', "Check $obj has been removed from database");
+       $content->set('msg', "Recurrent Job $obj has been removed from database");
        $obj->delete();
-       $a = Act::add('Deleted the Check: '.$obj->name, 'login', $lm->o_login);
+       $a = Act::add('Deleted the Recurrent Job: '.$obj->name, 'login', $lm->o_login);
+         $a_link = array(
+              array('href' => '/list/w/rjob',
+                    'name' => 'Back to list of recurrent jobs',
+                   ),
+              );
        goto screen;
      break;
      case 'ugroup':
@@ -148,6 +168,12 @@
        $content->set('msg', "User Group $obj has been removed from database");
        $obj->delete();
        $a = Act::add('Deleted the User Group: '.$obj->name, 'login', $lm->o_login);
+         $a_link = array(
+              array('href' => '/list/w/users',
+                    'name' => 'Back to list of user groups',
+                   ),
+              );
+
        goto screen;
      break;
      case 'sgroup':
@@ -173,6 +199,11 @@
        $content->set('msg', "Server Group $obj has been removed from database");
        $obj->delete();
        $a = Act::add('Deleted the Server Group: '.$obj->name, 'login', $lm->o_login);
+         $a_link = array(
+              array('href' => '/list/w/sgroup',
+                    'name' => 'Back to list of server groups',
+                   ),
+              );
        goto screen;
      break;
      case 'cluster':
@@ -198,6 +229,11 @@
        $content->set('msg', "Cluster $obj has been removed from database");
        $obj->delete();
        $a = Act::add('Deleted the Cluster: '.$obj->name, 'login', $lm->o_login);
+         $a_link = array(
+              array('href' => '/list/w/cluster',
+                    'name' => 'Back to list of clusters',
+                   ),
+              );
        goto screen;
      break;
      case 'server':
@@ -223,8 +259,13 @@
        $content->set('msg', "Server $obj has been removed from database");
        $obj->delete();
        $a = Act::add('Deleted the Server: '.$obj->hostname, 'login', $lm->o_login);
+         $a_link = array(
+              array('href' => '/list/w/server',
+                    'name' => 'Back to list of servers',
+                   ),
+              );
        goto screen;
-     case 'user':
+     case 'login':
        if (!$lm->o_login->f_admin) {
          $content = new Template('../tpl/error.tpl');
          $content->set('error', "You should be administrator in to access this page...");
@@ -249,6 +290,11 @@
        $page['title'] .= $what;
        $obj->delete();
        $a = Act::add('Deleted the User: '.$obj->username, 'login', $lm->o_login);
+         $a_link = array(
+              array('href' => '/list/w/users',
+                    'name' => 'Back to list of users',
+                   ),
+              );
        goto screen;
      break;
      default:
@@ -263,6 +309,7 @@
 
 screen:
  $head->set('page', $page);
+ if (isset($a_link)) $foot->set('a_link', $a_link);
  $index->set('head', $head);
  $index->set('content', $content);
  $index->set('foot', $foot);

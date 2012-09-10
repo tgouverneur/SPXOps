@@ -52,6 +52,19 @@ class Pid extends mysqlObj
     return;
   }
 
+  public static function checkLocks(&$d) {
+    global $config;
+    $locks = Lock::getAll(true, array());
+    foreach($locks as $lock) {
+      $pid = new Pid();
+      $pid->id = $lock->fk_pid;
+      if ($pid->fetchFromId()) {
+        Logger::log("Lock $lock has been detected as dead...", $d, LLOG_DEBUG);
+	$lock->delete();
+      }
+    }
+  }
+
   public static function check(&$d) {
     global $config;
     $pids = Pid::getAll(true, array('agent' => 'CST:'.$config['agentname']));
@@ -64,6 +77,13 @@ class Pid extends mysqlObj
 	  Logger::log("Removed dead lock $lock for pid $pid", $d, LLOG_DEBUG);
 	  $lock->delete();
 	}
+        $jobs = Job::getAll(true, array('fk_pid' => 'CST:'.$pid->id, 'state' => S_RUN));
+        foreach($jobs as $job) {
+          Logger::log("Set as STALLED stalled job $job for pid $pid", $d, LLOG_DEBUG);
+	  $job->state = S_STALL;
+          $job->fk_pid = -1;
+	  $job->update();
+        }
         $pid->delete();
 	$cnt--;
 	Logger::log("Pid $pid has been detected as stopped...", $d, LLOG_DEBUG);

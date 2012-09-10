@@ -16,6 +16,7 @@ if (!defined('S_NONE')) {
  define ('S_RUN', 2);  
  define ('S_FAIL', 4);  
  define ('S_DONE', 8);   
+ define ('S_STALL', 16);   
 }
 
 class Job extends mysqlObj
@@ -23,17 +24,18 @@ class Job extends mysqlObj
   public $id = -1;		/* ID in the MySQL table */
   public $class = '';
   public $fct = '';
-  public $pid = -1;
   public $arg = '';
   public $state = S_NONE;
   public $fk_login = -1;
   public $fk_log = -1;
+  public $fk_pid = -1;
   public $t_start = -1;
   public $t_stop = -1;
   public $t_add = -1;
   public $t_upd = -1;
 
   public $o_login = null;
+  public $o_pid = null;
   public $o_log = null;
   private $_icmid = null;
 
@@ -83,6 +85,9 @@ class Job extends mysqlObj
       case S_DONE:
 	return 'DONE';
         break;
+      case S_STALL:
+        return 'STALLED';
+        break;
     }
     return 'UNKNOWN';
   }
@@ -96,7 +101,8 @@ class Job extends mysqlObj
     $this->fk_log = $this->o_log->id;
     $this->t_start = time();
     $this->state = S_RUN;
-    $this->pid = getmypid();
+    $this->o_pid = Pid::getMyPid();
+    $this->fk_pid = $this->o_pid->id;
     $this->update();
 
     if (!class_exists($this->class) || !method_exists($this->class, $this->fct)) {
@@ -149,6 +155,10 @@ class Job extends mysqlObj
         $this->fetchFK('fk_login');
       }
 
+      if (!$this->o_pid && $this->fk_pid > 0) {
+        $this->fetchFK('fk_pid');
+      }
+
     } catch (Exception $e) {
       throw($e);
     }
@@ -181,7 +191,7 @@ class Job extends mysqlObj
         'Function' => $this->fct,
         'Argument' => $this->arg,
         'State' => $this->stateStr(),
-        'PID' => $this->pid,
+        'PID' => $this->o_pid,
         'Added by' => ($this->o_login)?$this->o_login:'Unknown',
         'Started at' => date('d-m-Y H:m:s', $this->t_start),
         'Stopped at' => date('d-m-Y H:m:s', $this->t_stop),
@@ -201,11 +211,11 @@ class Job extends mysqlObj
 			'id' => SQL_INDEX, 
 		        'class' => SQL_PROPE,
 			'fct' => SQL_PROPE,
-			'pid' => SQL_PROPE,
 			'arg' => SQL_PROPE,
 			'state' => SQL_PROPE,
 			'fk_log' => SQL_PROPE,
 			'fk_login' => SQL_PROPE,
+			'fk_pid' => SQL_PROPE,
 			't_start' => SQL_PROPE,
 			't_stop' => SQL_PROPE,
 			't_add' => SQL_PROPE,
@@ -216,11 +226,11 @@ class Job extends mysqlObj
 			'id' => 'id', 
 			'class' => 'class',
 			'fct' => 'fct',
-			'pid' => 'pid',
 			'arg' => 'arg',
 			'state' => 'state',
 			'fk_login' => 'fk_login',
 			'fk_log' => 'fk_log',
+			'fk_pid' => 'fk_pid',
 			't_start' => 't_start',
 			't_stop' => 't_stop',
 			't_add' => 't_add',
@@ -229,6 +239,7 @@ class Job extends mysqlObj
 
     $this->_addFK("fk_login", "o_login", "Login");
     $this->_addFK("fk_log", "o_log", "jobLog");
+    $this->_addFK("fk_pid", "o_pid", "Pid");
 
   }
 }

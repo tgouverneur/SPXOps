@@ -39,6 +39,30 @@ class Lock extends mysqlObj
     }
   }
 
+  public static function lockFctIfNot($fct) {
+
+    $m = MysqlCM::getInstance();
+    $locked = false;
+
+    /* Lock the table */
+    $rc = $m->lockTable('list_lock');
+    if ($rc) {
+      return $locked;
+    }
+    if (!self::isFctLocked($fct)) {
+      $rc = self::lockFct($fct);
+      if ($rc) {
+        /* Something bad happened, try anyway to delete lock... */
+        self::unlockFct($fct);
+      } else {
+	$locked = true;
+      }
+    }
+
+    $m->unlockTables();
+    return $locked;
+  }
+
   /* Fct locking */
   public static function lockFct($fct) {
     $cl = new Lock();
@@ -53,7 +77,11 @@ class Lock extends mysqlObj
   public static function unlockFct($fct) {
     $cl = new Lock();
     $cl->fct = $fct;
-    if (!$cl->fetchFromFields(array('fk_server', 'fk_check', 'fct'))) {
+    $pid = Pid::getMyPid();
+    if ($pid) {
+      $cl->fk_pid = $pid->id;
+    }
+    if (!$cl->fetchFromFields(array('fct'))) {
       return $cl->delete();
     }
     return -1;
@@ -62,7 +90,7 @@ class Lock extends mysqlObj
   public static function isFctLocked($fct) {
     $cl = new Lock();
     $cl->fct = $fct;
-    if ($cl->fetchFromFields(array('fk_server', 'fk_check', 'fct'))) {
+    if ($cl->fetchFromFields(array('fct'))) {
       return false;
     }
     return true;

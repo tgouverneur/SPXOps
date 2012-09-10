@@ -7,7 +7,7 @@
 	  <?php echo $info; ?>
 	</div>
 <?php } ?>
-	 <table class="table table-striped table-bordered table-hover table-condensed">
+	 <table class="table <?php if (!isset($notStripped)) echo "table-striped"; ?> table-bordered table-hover table-condensed">
 	  <thead>
 	   <tr>
 <?php foreach($cols as $e => $k) { ?>
@@ -26,7 +26,7 @@
 	  </thead>
 	  <tbody>
 <?php foreach($a_list as $e) { $a = $e->toArray(); ?>
-           <tr>
+           <tr<?php if (isset($a["_color"])) { echo ' class="'.$a['_color'].'" '; } ?>>
    <?php foreach($cols as $v) { 
 	   if (preg_match('/^f_/', $v)) {
 	     if ($a[$v]) {

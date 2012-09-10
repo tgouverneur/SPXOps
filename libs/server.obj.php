@@ -40,12 +40,14 @@ class Server extends mysqlObj implements JsonSerializable
   public $a_hba = array();
   public $a_disk = array();
   public $a_pool = array();
+  public $a_result = array();
 
   public $a_nfss = array(); /* nfs shares */
   public $a_nfsm = array(); /* nfs mount */
 
   /* Check system */
   public $a_check = array();
+  public $a_lr = array();
 
   /* SSH */
   private $_ssh = null;
@@ -81,15 +83,17 @@ class Server extends mysqlObj implements JsonSerializable
       if (!$f_group || $f_egroup)
         continue;
 
-      if ($force) { /* don't take timestamp into account */
-        array_push($this->a_check, $check);
-        continue; 
-      }
       $this->a_lr[$check->id] = Result::getLast($check, $this);
 
       if ($this->a_lr[$check->id] === null) {
         array_push($this->a_check, $check);
         continue;
+      }
+      $this->a_lr[$check->id]->o_check = $check;
+
+      if ($force) { /* don't take timestamp into account */
+        array_push($this->a_check, $check);
+        continue; 
       }
       if (($now - $this->a_lr[$check->id]->t_upd) >= $check->frequency) {
         array_push($this->a_check, $check);
@@ -518,6 +522,52 @@ class Server extends mysqlObj implements JsonSerializable
   }
 
 
+  public static function dashboardArray($fk_os = null) {
+    /* Optimization of last check result calculation,
+       we are doing the fetch here instead of inside server.obj
+       to allow the fetch for all the server at once!
+    */
+    $a = array();
+    $m = mysqlCM::getInstance();
+    $index = "`fk_server`,`fk_check`,`t_upd`,`rc`,`message`,`f_ack`";
+    $table = "(select * from `list_result` order by `t_upd` desc) a";
+    if ($fk_os) {
+      $where = " WHERE `fk_server` ".$f_in;
+      $where .= " group by `fk_server`,`fk_check` order by `t_upd` desc";
+    } else {
+      $where = "group by `fk_server`,`fk_check` order by `t_upd` desc";
+    }
+    if (($idx = $m->fetchIndex($index, $table, $where)))
+    {
+      foreach($idx as $t) {
+        $d = new Result();
+        $d->fk_check = $t["fk_check"];
+        $d->fk_server = $t["fk_server"];
+        $d->t_upd = $t["t_upd"];
+        $d->f_ack = $t["f_ack"];
+        $d->rc = $t["rc"];
+        $d->message = $t["message"];
+        if (!isset($a[$d->fk_server])) {
+	  $a[$d->fk_server] = new Server($d->fk_server);
+	  $a[$d->fk_server]->fetchFromId();
+	}
+        if (!$a[$d->fk_server]->a_lr) {
+          $a[$d->fk_server]->a_lr = array();
+        }
+        if (isset($a[$d->fk_server]->rc)) {
+          if ($d->rc < $a[$d->fk_server]->rc && !$d->f_ack) {
+	    $a[$d->fk_server]->rc = $d->rc;
+	  }
+	} else {
+	  if (!$d->f_ack)
+  	    $a[$d->fk_server]->rc = $d->rc;
+	}
+        array_push($a[$d->fk_server]->a_lr, $d);
+      }
+    }
+    return $a;
+  }
+
  /**
   * ctor
   */
@@ -566,6 +616,7 @@ class Server extends mysqlObj implements JsonSerializable
     $this->_addRL("a_hba", "Hba", array('id' => 'fk_server'));
     $this->_addRL("a_disk", "Disk", array('id' => 'fk_server'));
     $this->_addRL("a_pool", "Pool", array('id' => 'fk_server'));
+    $this->_addRL("a_result", "Result", array('id' => 'fk_server'));
 
     $this->_addRL("a_nfss", "NFS", array('id' => 'fk_server', 'CST:share' => 'type'));
     $this->_addRL("a_nfsm", "NFS", array('id' => 'fk_server', 'CST:mount' => 'type'));

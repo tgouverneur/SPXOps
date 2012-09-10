@@ -71,6 +71,7 @@
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">View <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a data-toggle="modal" href="/modallist/w/logs/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
+                  <li><a data-toggle="modal" href="/modallist/w/results/i/<?php echo $obj->id; ?>" data-target="#resultsModal">View Result</a></li>
                 </ul>
               </li>
             </ul>
@@ -105,6 +106,18 @@
 	    </pre>
           </div>
        </div>
+      </div>
+      <!-- Result Modal -->
+      <div class="modal large hide fade in" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+          <h3 id="resultModalLabel">Disks list</h3>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
       </div>
       <!-- Logs Modal -->
       <div class="modal large hide fade in" id="logsModal" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">

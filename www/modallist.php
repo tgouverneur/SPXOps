@@ -35,6 +35,29 @@
        $content->set('a_list', $s->a_patch);
        $content->set('oc', 'Patch');
      break;
+     case 'results':
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/modalerror.tpl');
+         $content->set('error', 'Check ID not provided');
+         goto screen;
+       }
+       $a_list = Result::getAll(true, array('fk_check' => $_GET['i']), array('DESC:t_upd', 'DESC:t_add'));
+       $content = new Template('../tpl/modallist.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('oc', 'Result');
+     break;
+     case 'sresults':
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/modalerror.tpl');
+         $content->set('error', 'Server ID not provided');
+         goto screen;
+       }
+       $a_list = Result::getAll(true, array('fk_server' => $_GET['i']), array('DESC:t_upd', 'DESC:t_add'));
+       $content = new Template('../tpl/modallist.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('oc', 'Result');
+       $content->set('notStripped', true);
+     break;
      case 'projects':
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');

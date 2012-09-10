@@ -101,6 +101,25 @@
        $content->set('oc', 'Pid');
        $page['title'] .= 'Daemon Instance';
      break;
+     case 'results':
+       if (!$lm->o_login) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be logged in to access this page...");
+         goto screen;
+       }
+       if (!$lm->o_login->f_admin) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You should be administrator to access this page...");
+         goto screen;
+       }
+       $a_list = Result::getAll(true, array(), array('DESC:t_upd', 'DESC:t_add'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('what', 'Check Results');
+       $content->set('notStripped', true);
+       $content->set('oc', 'Result');
+       $page['title'] .= 'Check Results';
+     break;
      case 'check':
        $a_list = Check::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
@@ -258,6 +277,7 @@
 
 screen:
  $head->set('page', $page);
+ if (isset($a_link)) $foot->set('a_link', $a_link);
  $index->set('head', $head);
  $index->set('content', $content);
  $index->set('foot', $foot);

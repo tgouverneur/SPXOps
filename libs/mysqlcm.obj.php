@@ -75,6 +75,10 @@ class mysqlCM
    */
   private static $_instance;
 
+  public static function delInstance() {
+    self::$_instance = null;
+  }
+
   /**
    * Returns the singleton instance
    */
@@ -88,7 +92,11 @@ class mysqlCM
   }
 
   public function quote($str) {
-    return $this->_link->quote($str);
+    if ($this->_link) {
+      return $this->_link->quote($str);
+    } else {
+      throw new SPXException("Cannot use MysqlCM::quote when disconnected");
+    }
   }
 
   /**
@@ -232,7 +240,10 @@ class mysqlCM
         $this->_link = @new PDO($dbstring, 
                                $config['mysql']['user'], 
                                $config['mysql']['pass'],
-  			       array(PDO::ATTR_PERSISTENT => true));
+  			       array(PDO::ATTR_PERSISTENT => true,
+				     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+	$this->_link->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+
       } catch (PDOException $e) {
         $this->_error = $e->getMessage();
 	if (strpos($this->_error, '2006 MySQL') !== false && $this->_reconnect) {
@@ -259,6 +270,7 @@ class mysqlCM
     if ($this->_debug)
       $this->_dprint("[".time()."] Connection closed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
 
+    unset($this->_link);
     $this->_link = null;
 
     return 0;
@@ -276,7 +288,12 @@ class mysqlCM
     
     if (!$this->_query($query))
     {
-      $row = $this->_res->fetch(PDO::FETCH_ASSOC);
+      try {
+        $row = $this->_res->fetchAll(PDO::FETCH_ASSOC);
+      } catch (PDOException $e) {
+	return -1;
+      }
+      if (count($row)) $row = $row[0];
       if (isset($row['COUNT(*)']))
 	$data = $row['COUNT(*)'];
       unset($this->_res);
@@ -300,20 +317,25 @@ class mysqlCM
     if (!$this->_query($query, null))
     {
       $data = array();
-      $this->_nres = @$this->_link->query("SELECT FOUND_ROWS()");
-      if ($this->_nres) {
-        $this->_nres = $this->_nres->fetchColumn();
+//      $this->_nres = @$this->_link->rowCount();
+      try {
+        $data = $this->_res->fetchAll(PDO::FETCH_ASSOC);
+      } catch (PDOException $e) {
+        return -1;
       }
-      if ($this->_nres) {
-        for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
-          $data[$i] = $r;
-      }
+      $this->_nres = count($data);
+//      if ($this->_nres) {
+//        for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
+//          $data[$i] = $r;
+//      }
       unset($this->_res);
       return $data;
     }
     else 
       return -1;
   }
+
+
 
   /**
    * Insert data into table
@@ -379,18 +401,25 @@ class mysqlCM
     $query = "SELECT ".$index." FROM ".$table." ".$where;
 
     $this->_nres = null;
-    if (!$this->_query($query, null, true))
+    if (!$this->_query($query))
     {
       $data = array();
-      if ($this->_nres) {
-        for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
-          $data[$i] = $r;
-      }
+      try {
+        $data = $this->_res->fetchAll(PDO::FETCH_ASSOC);
+      } catch (PDOException $e) { 
+        return -1;
+      } 
+
+//      if ($this->_nres) {
+//        for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
+//          $data[$i] = $r;
+//      }
       unset($this->_res);
       return $data;
     }
-    else 
+    else {
       return 0;
+    }
   }
    
   /**
@@ -446,7 +475,7 @@ class mysqlCM
    * Query database and handle errors
    * @return 0 if ok, non-zero if any error
    */
-  private function _query($query, $args=null, $cnt = false)
+  private function _query($query, $args=null)
   {
     $attempts = 0;
     if ($this->_debug) $this->_time();
@@ -458,13 +487,7 @@ class mysqlCM
         if (@$this->_res->execute($args)) {
     
           if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
-          if ($cnt) {
-	    $this->_nres = @$this->_link->query("SELECT FOUND_ROWS()");
-	    if ($this->_nres) 
-	      $this->_nres = $this->_nres->rowCount();
-	    else 
-              $this->_nres = null;
-	  }
+	  $this->_nres = $this->_res->rowCount();
     
           return 0;
         } else {
@@ -490,6 +513,42 @@ class mysqlCM
       }
     } while ($attempts++ < 3);
     return -1;
+  }
+
+  /**
+   * Lock specified table
+   * @return -1 if error, 0 if ok
+   */
+  public function lockTable($table, $what = "WRITE")
+  {
+    $query = "LOCK TABLE $table $what";
+
+    if (!$this->_rquery($query))
+    {
+      return 0;
+    }
+    else
+    {
+     return -1;
+    }
+  }
+
+  /**
+   * Unlock every previously locked tables
+   * @return -1 if error, 0 if ok
+   */
+  public function unlockTables()
+  {
+    $query = "UNLOCK TABLES";
+
+    if (!$this->_rquery($query))
+    {
+      return 0;
+    }
+    else
+    {
+     return -1;
+    }
   }
 
   private function reconnect() {

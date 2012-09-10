@@ -67,7 +67,7 @@
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Action <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="#" onClick="addJob('Update', 'jobServer', '<?php echo $obj->id; ?>');">Launch Update</a></li>
-                  <li><a href="#">Launch Check</a></li>
+                  <li><a href="#" onClick="addJob('Check', 'jobServer', '<?php echo $obj->id; ?>');">Launch Check</a></li>
                   <li><a href="#">Check ZFS Arc</a></li>
                   <li><a href="#">Zone Stats</a></li>
                 </ul>
@@ -79,6 +79,7 @@
                   <li><a data-toggle="modal" href="/modallist/w/packages/i/<?php echo $obj->id; ?>" data-target="#packagesModal">View Packages</a></li>
                   <li><a data-toggle="modal" href="/modallist/w/projects/i/<?php echo $obj->id; ?>" data-target="#projectsModal">View Projects</a></li>
                   <li><a data-toggle="modal" href="/modallist/w/disks/i/<?php echo $obj->id; ?>" data-target="#disksModal">View Disks</a></li>
+                  <li><a data-toggle="modal" href="/modallist/w/sresults/i/<?php echo $obj->id; ?>" data-target="#resultsModal">View Check Results</a></li>
                   <li><a data-toggle="modal" href="/modallist/w/logs/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
                 </ul>
               </li>
@@ -192,6 +193,18 @@
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
           <h3 id="disksModalLabel">Disks list</h3>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+      </div>
+      <!-- Result Modal -->
+      <div class="modal large hide fade in" id="resultsModal" tabindex="-1" role="dialog" aria-labelledby="resultsModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+          <h3 id="resultsModalLabel">Disks list</h3>
         </div>
         <div class="modal-body">
         </div>

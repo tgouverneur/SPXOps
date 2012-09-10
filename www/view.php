@@ -177,7 +177,12 @@
          $content->set('error', "Unable to find the $what in database");
          goto screen;
        }
+       try {
        $obj->fetchAll(1);
+       } catch (Exception $e) {
+	 echo '';
+	 /* @TODO: maybe we should log theses exception to a special log to allow debugging... */
+       }
        $content = new Template('../tpl/view_job.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);
@@ -193,6 +198,7 @@
  }
 
 screen:
+ if (isset($a_link)) $foot->set('a_link', $a_link);
  $head->set('page', $page);
  $index->set('head', $head);
  $index->set('content', $content);

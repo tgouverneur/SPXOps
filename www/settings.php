@@ -45,6 +45,7 @@
 
 
 screen:
+ if (isset($a_link)) $foot->set('a_link', $a_link);
  $head->set('page', $page);
  $index->set('head', $head);
  $index->set('content', $content);

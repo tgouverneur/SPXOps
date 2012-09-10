@@ -2,3 +2,19 @@
     width: 780px;
     margin-left: -390px; /* - width/2 */
 }
+
+.tdsuccess {
+  background-color: green;
+}
+
+.tdwarning {
+  background-color: #ff9900;
+}
+
+.tderror {
+  background-color: red;
+}
+
+.tdsuccess a, .tdsuccess a:visited, .tdwarning a, .tdwarning a:visited, .tderror a, .tderror a:visited {
+  color: black;
+}

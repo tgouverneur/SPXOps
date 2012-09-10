@@ -24,6 +24,10 @@ class Result extends mysqlObj
   public $t_add = -1;
   public $t_upd = -1;
 
+  public $o_check = null;
+  public $o_server = null;
+  public $o_login = null;
+
   public function equals($r) {
     if ($r->rc == $this->rc &&
 	$r->fk_check == $this->fk_check &&
@@ -31,6 +35,22 @@ class Result extends mysqlObj
       return true;
     }
     return false;
+  }
+
+  public function ackBy() {
+    if (!$this->o_login && $this->fk_login > 0) {
+      $this->fetchFK('fk_login');
+    }
+    if ($this->f_ack) {
+      if ($this->o_login) {
+	return $this->o_login->link().'<button type="button" class="close" onClick="nackCheck('.$this->id.');">×</button>';
+      } else {
+        return 'N/A';
+      }
+    } else {
+      return '<button type="button" class="btn btn-primary btn-mini" onClick="ackCheck('.$this->id.');">Ack!</button>';
+      //return '<a href="/ack/i/'.$this->id.'">Ack!</a>';
+    }
   }
 
   public static function getLast($c, $s) {
@@ -69,8 +89,55 @@ class Result extends mysqlObj
     }
   }
 
+  public static function printCols() {
+    return array('Check' => 'check',
+                 'Server' => 'server',
+                 'Result' => '_color',
+                 'Message' => 'message',
+                 'Checked at' => 't_upd',
+                );
+  }
+
+  public static function colorRC($rc) {
+    $c_rc = 'error';
+    if ($rc >= 0) $c_rc = 'success';
+    else if ($rc == -1) $c_rc = 'warning';
+    else $c_rc = 'error';
+    return $c_rc;
+  }
+
+  public function toArray() {
+
+    if (!$this->o_server && $this->fk_server > 0) {
+      $this->fetchFK('fk_server');
+    }
+    if (!$this->o_check && $this->fk_check > 0) {
+      $this->fetchFK('fk_check');
+    }
+
+    return array(
+                 '_color' => Result::colorRC($this->rc),
+                 'check' => $this->o_check->link(),
+                 'server' => $this->o_server->link(),
+                 'message' => $this->message,
+                 't_upd' => date('d-m-Y H:m:s', $this->t_upd),
+                );
+  }
+
   public function __toString() {
-    $rc = '';
+
+    try {
+      if (!$this->o_server && $this->fk_server > 0) {
+        $this->fetchFK('fk_server');
+      }
+      if (!$this->o_check && $this->fk_check > 0) {
+        $this->fetchFK('fk_check');
+      }
+    } catch (Exception $e) {
+      echo '';
+    }
+
+    $rc = $this->o_check.'/'.$this->o_server.'='.$this->rc;
     return $rc;
   }
 

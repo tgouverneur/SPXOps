@@ -31,6 +31,11 @@ CODE;
   public $a_sgroup = array();
   public $f_except = array();
 
+  public function link() {
+    return '<a href="/view/w/check/i/'.$this->id.'">'.$this.'</a>';
+  }
+
+
   public function valid($new = true) { /* validate form-based fields */
     global $config;
     $ret = array();
@@ -116,7 +121,6 @@ CODE;
 	}
       } else {
 	$s->log("Check result not found for $this / $s", LLOG_DEBUG);
-        echo '';
       }
       if (!$done) { // new check result
         $s->a_lr[$this->id] = $r;

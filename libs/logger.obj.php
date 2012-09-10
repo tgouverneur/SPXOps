@@ -57,7 +57,7 @@ class Logger
     if ($obj && isset($obj->_job) && $obj->_job) {
       $obj->_job->log($str);
     } else if ($cn::$_logfd) {
-      fprintf($cn::$_logfd, "[%s] %s\n", date("Y-m-d M:i:s"), $str);
+      fprintf($cn::$_logfd, "[%s] %s\n", date("Y-m-d H:m:s"), $str);
     } else {
       echo "$str\n";
     }
@@ -86,6 +86,11 @@ class Logger
       fclose($cn::$_logfd);
       $cn::$_logfd = 0;
     }
+  }
+
+  public static function delInstance() {
+    self::closeLog();
+    self::$_instance = null;
   }
 
 
