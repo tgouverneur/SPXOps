@@ -4,17 +4,31 @@
 }
 
 .tdsuccess {
-  background-color: green;
+  background-color: #DFF0D8;
+  border: 1px solid #D6E9C6;
 }
 
 .tdwarning {
-  background-color: #ff9900;
+  background-color: #FCF8E3;
+  border: 1px solid #FBEED5;
 }
 
 .tderror {
-  background-color: red;
+  background-color: #F2DEDE;
+  border: 1px solid #EED3D7;
 }
 
-.tdsuccess a, .tdsuccess a:visited, .tdwarning a, .tdwarning a:visited, .tderror a, .tderror a:visited {
-  color: black;
+.tdsuccess a, .tdsuccess a:visited {
+  color: #468847;
+}
+.tdwarning a, .tdwarning a:visited {
+
+  color: #C09853;
+}
+.tderror a, .tderror a:visited {
+  color: #B94A48;
+}
+
+.table-dashboard td {
+   text-align: center;   
 }

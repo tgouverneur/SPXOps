@@ -76,6 +76,7 @@
        $j->fct = $f;
        $j->arg = $a;
        $j->state = S_NEW;
+       $j->fk_login = $lm->o_login->id;
        $j->insert();
        $a = Act::add("Requested an update of the server $s", 'login', $lm->o_login);
        $ret['rc'] = 0;
@@ -96,6 +97,7 @@
        $j->fct = $f;
        $j->arg = $a;
        $j->state = S_NEW;
+       $j->fk_login = $lm->o_login->id;
        $j->insert();
        $a = Act::add("Requested an update of the server $s", 'login', $lm->o_login);
        $ret['rc'] = 0;
@@ -114,6 +116,7 @@
        $j->fct = $f;
        $j->arg = $a;
        $j->state = S_NEW;
+       $j->fk_login = $lm->o_login->id;
        $j->insert();
        $a = Act::add("Requested an update of the cluster $oc", 'login', $lm->o_login);
        $ret['rc'] = 0;

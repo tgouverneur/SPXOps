@@ -32,6 +32,7 @@
 
  $a_job = Job::getAll(true, array(), array('DESC:t_add'), 0, 10);
  $a_act = Act::getAll(true, array(), array('DESC:t_add'), 0, 10);
+ $a_result = Result::getAll(true, array(), array('DESC:t_upd'), 0, 10);
 
  $index = new Template("../tpl/index.tpl");
  $head = new Template("../tpl/head.tpl");
@@ -43,6 +44,7 @@
  $content->set('stats', $stats);
  $content->set('a_job', $a_job);
  $content->set('a_act', $a_act);
+ $content->set('a_result', $a_result);
 
  $index->set('head', $head);
  $index->set('content', $content);

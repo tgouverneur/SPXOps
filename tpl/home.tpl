@@ -36,32 +36,16 @@
             <div class="span4">
               <h2>Last Checks</h2>
               <ul>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
+<?php foreach($a_result as $check) { ?>
+                <li><?php echo $check->html(); ?></li>
+<?php } ?>
               </ul>
-	      <a class="btn" href="#">More..</a>
+	      <a class="btn" href="/list/w/results">More..</a>
             </div>
             <div class="span4">
-              <h2>Last Checks</h2>
+              <h2>Free</h2>
               <ul>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
-                <li>This is a test check result message</li>
+                <li>Free</li>
               </ul>
               <a class="btn" href="#">More..</a>
             </div>

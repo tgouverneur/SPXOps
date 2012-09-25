@@ -141,6 +141,23 @@ class Result extends mysqlObj
     return $rc;
   }
 
+  public function html() {
+
+    try {
+      if (!$this->o_server && $this->fk_server > 0) {
+        $this->fetchFK('fk_server');
+      }
+      if (!$this->o_check && $this->fk_check > 0) {
+        $this->fetchFK('fk_check');
+      }
+    } catch (Exception $e) {
+      echo '';
+    }
+
+    $rc = $this->o_check->link().'/'.$this->o_server->link().'='.Result::colorRC($this->rc);
+    return $rc;
+  }
+
 
  /**
   * ctor

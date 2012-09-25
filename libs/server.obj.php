@@ -48,6 +48,7 @@ class Server extends mysqlObj implements JsonSerializable
   /* Check system */
   public $a_check = array();
   public $a_lr = array();
+  public $rc = 0;
 
   /* SSH */
   private $_ssh = null;

@@ -8,7 +8,7 @@
       <div class="row">
         <div class="span12">
           <h1>Dashboard</h1>
-	  <table class="table table-bordered">
+	  <table class="table table-bordered table-dashboard">
 	  <tbody>
   <?php for ($i=0; $i<$lines; $i++) { ?>
    <tr>
