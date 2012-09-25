@@ -218,7 +218,33 @@ class OSLinux extends OSType
   }
 
   public static function update_packages_rpm(&$s) {
-    return array();
+    $rpm = $s->findBin('rpm');
+    $cmd_rpm = "$rpm -qa --qf '%{NAME};%{VERSION};%{ARCH};;%{SUMMARY}\n'";
+    $out_rpm = $s->exec($cmd_rpm);
+
+    $lines = explode(PHP_EOL, $out_rpm);
+    $found_p = array();
+
+    $pkg = null;
+    foreach($lines as $line) {
+      $line = trim($line);
+      if (empty($line)) {
+        continue;
+      }
+      $f = explode(';', $line);
+      if (preg_match('/not-installed/', $f[3])) {
+        continue;
+      }
+      $pkg = array();
+      $pkg['name'] = $f[0];
+      $pkg['version'] = $f[1];
+      $pkg['arch'] = $f[2];
+      $pkg['status'] = $f[3];
+      $pkg['desc'] = $f[4];
+      $found_p[$f[0]] = $pkg;
+    }
+
+    return $found_p;
   }
 
   public static function update_packages_ebd(&$s) {
