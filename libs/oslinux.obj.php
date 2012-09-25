@@ -709,6 +709,7 @@ class OSLinux extends OSType
     $thread = 0;
     $physical = 0;
     $cores = 0;
+    $cpuspeed = 0;
     $cputype = '';
 
     $lines = explode(PHP_EOL, $out_cat);
@@ -740,6 +741,11 @@ class OSLinux extends OSType
 	    $cputype = $value;
 	  }
 	break;
+        case 'cpu MHz':
+          if (empty($cpuspeed)) {
+            $cpuspeed = $value;
+          }
+        break;
       }
     }
     if ($cores)
@@ -760,6 +766,35 @@ class OSLinux extends OSType
     if ($s->data('hw:nrstrand') != $thread) {
       $s->setData('hw:nrstrand', $thread);
       $s->log('Updated hw:nrstrand => '.$thread, LLOG_INFO);
+    }
+    if ($s->data('hw:cpuspeed') != $cpuspeed) {
+      $s->setData('hw:cpuspeed', $cpuspeed);
+      $s->log('hw:cpuspeed => '.$cpuspeed, LLOG_INFO);
+    }
+
+    $cmd_cat = "$cat /proc/meminfo";
+    $out_cat = $s->exec($cmd_cat);
+    $memsize = 0;
+
+    $lines = explode(PHP_EOL, $out_cat);
+    foreach($lines as $line) {
+      $line = trim($line);
+      if (empty($line)) {
+        continue;
+      }
+      $f = explode(':', $line, 2);
+      $name = trim($f[0]);
+      $value = trim($f[1]);
+      switch($name) {
+	case 'MemTotal':
+	  $memsize = round($value / 1024);
+	break;
+      }
+    }
+
+    if ($s->data('hw:memory') != $memsize) {
+      $s->setData('hw:memory', $memsize);
+      $s->log('hw:memory => '.$memsize, LLOG_INFO);
     }
 
     return 0;
