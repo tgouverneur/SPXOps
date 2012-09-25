@@ -3,19 +3,20 @@
 class OSAix extends OSType
 {
   public static $binPaths = array(
-    "/bin",
     "/usr/bin",
-    "/usr/local/bin",
-    "/sbin",
     "/usr/sbin",
+    "/bin",
+    "/usr/local/bin",
     "/usr/local/sbin",
   );
 
   protected static $_update = array(
-  //  "update_uname",
-  //  "update_release",
+    "update_prtconf",
+    "update_lparstat",
+    "update_hostid",
+    "update_oslevel",
+    "update_uname",
   //  "update_network",
-  //  "update_hostid",
   //  "update_nfs_shares",
   //  "update_nfs_mount",
   );
@@ -41,146 +42,146 @@ class OSAix extends OSType
     return 0;
   }
 
-  /**
-   * network
-   */
-  public static function update_network(&$s) {
 
-    $ip = $s->findBin('ip');
-    $cmd_ip = "$ip addr";
-    $out_ip = $s->exec($cmd_ip);
+  public static function update_lparstat(&$s) {
 
-    $lines = explode(PHP_EOL, $out_ip);
+    /* get lparstat */
+    $lparstat = $s->findBin('lparstat');
 
-    $found_if = array();
-    $c_if = null;
+    $cmd_lparstat = "$lparstat";
+    $out_lparstat = $s->exec($cmd_lparstat);
+
+    $lines = explode(PHP_EOL, $out_lparstat);
+    $nrstrand = $memsize = 0;
 
     foreach($lines as $line) {
-      $vnet = null;
-      $pnet = null;
       $line = trim($line);
-      if (empty($line))
-	continue;
-      
-      if (preg_match('/^[0-9]*: ([a-z0-9]*): ([A-Z,_<>]*)/', $line, $m)) {
-        $pnet = new Net();
-	$pnet->fk_server = $s->id;
-	$pnet->layer = 2; // ether
-        $pnet->ifname = $m[1];
-	if ($pnet->fetchFromFields(array('layer', 'ifname', 'fk_server'))) {
-          $pnet->insert();
-	  $s->log("Added $pnet to server", LLOG_INFO);
-	  $s->a_net[] = $pnet;
-	}
-        if (strcmp($pnet->flags, $m[2])) {
-          $pnet->flags = $m[2];
-	  $s->log("Updated flags for $pnet to be ".$pnet->flags, LLOG_DEBUG);
-	  $pnet->update();
-	}
-        $c_if = $pnet;
-	$found_if[''.$c_if] = $c_if;
-      } else if (preg_match('/^link\/ether/', $line)) {
-        $f_eth = explode(' ', $line);
-	if (strcmp($c_if->address, $f_eth[1])) {
-	  $c_if->address = $f_eth[1];
-	  $s->log("Updated layer 2 address for $c_if to be ".$c_if->address, LLOG_DEBUG);
-	  $c_if->update();
-	  $found_if[''.$c_if] = $c_if;
-	}
-
-      } else if (preg_match('/^inet ([0-9\.\/]*) /', $line, $m)) {
-        $f_eth = explode(' ', $line);
-        $vnet = new Net();
-        $vnet->ifname = $c_if->ifname;
-	$vnet->fk_server = $s->id;
-	$vnet->layer = 3; /* IP */
-	$ipaddr = explode('/', $m[1]);
-        $vnet->address = $ipaddr[0];
-        $vnet->netmask = $ipaddr[1];
-	if ($vnet->fetchFromFields(array('ifname', 'version', 'fk_server', 'layer', 'address', 'netmask'))) {
-	  $vnet->insert();
-	  $s->log("Added alias $vnet to server", LLOG_INFO);
-	  $s->a_net[] = $vnet;
-	}
-	if ($f_eth[count($f_eth) - 2] == 'secondary') {
-          $alias = explode(':', $f_eth[count($f_eth) - 1], 2);
-	  if (count($alias) == 2) {
-	    if (strcmp($vnet->alias, $alias[1])) {
-	      $vnet->alias = $alias[1];
-              $s->log("Updated alias for $vnet to be ".$vnet->alias, LLOG_DEBUG);
-	      $vnet->update();
-	    }
+      if (preg_match('/^System configuration:/', $line)) {
+        $line = preg_replace('/^System configuration: /', '', $line);
+        $nvs = explode(' ', $line);
+        foreach($nvs as $nv) {
+	  $nv = explode('=', $nv);
+	  $name = $nv[0];
+	  $value = $nv[1];
+	  switch($name) {
+	    case 'type':
+	    break;
+	    case 'mode':
+	    break;
+	    case 'smt':
+	    break;
+	    case 'lcpu':
+	      $nrstrand = $value;
+	    break;
+	    case 'mem':
+	      $memsize = $value;
+	    break;
+	    case 'psize':
+	    break;
+	    case 'ent':
+	    break;
 	  }
-	}
-      
-      } else if (preg_match('/^inet6 ([0-9a-z:\/]*) /', $line, $m)) {
-        $f_eth = explode(' ', $line);
-        $vnet = new Net();
-        $vnet->ifname = $c_if->ifname;
-        $vnet->fk_server = $s->id;
-        $vnet->layer = 3; /* IP */
-        $vnet->version = 6; /* v6 */
-        $ipaddr = explode('/', $m[1]);
-        $vnet->address = $ipaddr[0]; 
-        $vnet->netmask = $ipaddr[1];
-        if ($vnet->fetchFromFields(array('ifname', 'version', 'fk_server', 'layer', 'address', 'netmask'))) {
-          $vnet->insert();
-          $s->log("Added alias6 $vnet to server", LLOG_INFO);
-	  $s->a_net[] = $vnet;
-        }
-        if ($f_eth[count($f_eth) - 2] == 'secondary') {
-          $alias = explode(':', $f_eth[count($f_eth) - 1], 2);
-          if (count($alias) == 2) {
-            if (strcmp($vnet->alias, $alias[1])) {
-              $vnet->alias = $alias[1];
-              $s->log("Updated alias6 for $vnet to be ".$vnet->alias, LLOG_DEBUG);
-              $vnet->update();
-            }
-          }
         }
       }
-      $found_if[''.$vnet] = $vnet;
     }
 
-    foreach($s->a_net as $n) {
-      if (isset($found_if[''.$n])) {
-        continue;
-      }
-      $s->log("Removing net $n", LLOG_INFO);
-      $n->delete();
+    if ($s->data('hw:nrstrand') != $nrstrand) {
+      $s->setData('hw:nrstrand', $nrstrand);
+      $s->log('Updated hw:nrstrand => '.$nrstrand, LLOG_INFO);
     }
 
-    /* default router */
-    
-    $cmd_ip = "$ip ro";
-    $out_ip = $s->exec($cmd_ip);
-
-    $lines = explode(PHP_EOL, $out_ip);
-    $defrouter = null;
-
-    foreach($lines as $line) {
-      $line = trim($line);
-      if (empty($line))
-        continue;
-
-      $f = preg_split("/\s+/", $line);
-
-      if (!strcmp($f[0], 'default')) {
-	if (!strcmp($f[1], 'via')) {
-          $defrouter = $f[2];
-	}
-	break;
-      }
-    }
-
-    if ($defrouter &&
-	strcmp($s->data('net:defrouter'), $defrouter)) {
-      $s->setData('net:defrouter', $defrouter);
-      $s->log("Change defrouter => $defrouter", LLOG_INFO);
+    if ($memsize && $s->data('hw:memory') != $memsize) {
+      $s->setData('hw:memory', $memsize);
+      $s->log('Updating Memory size: '.$memsize, LLOG_INFO);
     }
 
     return 0;
   }
+
+  public static function update_prtconf(&$s) {
+
+    /* get prtconf */
+    $prtconf = $s->findBin('prtconf');
+
+    $cmd_prtconf = "$prtconf";
+    $out_prtconf = $s->exec($cmd_prtconf);
+
+    $lines = explode(PHP_EOL, $out_prtconf);
+    $nrcpu = $hwclass = $cputype = $cpuspeed = 0;
+
+    foreach($lines as $line) {
+      $line = trim($line);
+      if (preg_match('/:/', $line)) {
+        $nv = explode(':', $line, 2);
+        $name = $nv[0];
+	$value = trim($nv[1]);
+	switch($name) {
+	  case 'Processor Implementation Mode':
+	    $hwclass = $value;
+	  break;
+	  case 'Processor Type':
+	    $cputype = $value;
+	  break;
+	  case 'Number Of Processors':
+	    $nrcpu = $value;
+	  break;
+	  case 'Processor Clock Speed':
+	    $cpuspeed = $value;
+	  break;
+	}
+      }
+    }
+
+    if ($s->data('hw:nrcpu') != $nrcpu) {
+      $s->setData('hw:nrcpu', $nrcpu);
+      $s->log('Updated hw:nrcpu => '.$nrcpu, LLOG_INFO);
+    }
+    if ($s->data('hw:cpu') != $cputype) {
+      $s->setData('hw:cpu', $cputype);
+      $s->log('Updated hw:cpu => '.$cputype, LLOG_INFO);
+    }
+    if ($s->data('hw:class') != $hwclass) {
+      $s->setData('hw:class', $hwclass);
+      $s->log('Updated hw:class => '.$hwclass, LLOG_INFO);
+    }
+    if ($s->data('hw:cpuspeed') != $cpuspeed) {
+      $s->setData('hw:cpuspeed', $cpuspeed);
+      $s->log('Updated hw:cpuspeed => '.$cpuspeed, LLOG_INFO);
+    }
+
+    return 0;
+  }
+
+
+  public static function update_oslevel(&$s) {
+
+    /* get prtconf */
+    $oslevel = $s->findBin('oslevel');
+
+    $cmd_oslevel = "$oslevel";
+    $out_oslevel = $s->exec($cmd_oslevel);
+
+    $una_fields = explode('.', $out_oslevel);
+    $os_name = 'AIX';
+    $os_version = $una_fields[0];
+    $os_release = $out_oslevel;
+
+    if ($s->data('os:major') != $os_version) {
+      $s->setData('os:major', $os_version);
+      $s->log('os:major => '.$os_version, LLOG_INFO);
+    }
+
+    if ($s->data('os:update') != $os_release) {
+      $s->setData('os:update', $os_release);
+      $s->log('os:update => '.$os_release, LLOG_INFO);
+    }
+
+
+
+
+    return 0;
+  }
+
   /**
    * uname
    */
@@ -189,30 +190,45 @@ class OSAix extends OSType
     /* get uname -a */
     $uname = $s->findBin('uname');
 
-    $cmd_uname = "$uname -r";
+    $cmd_uname = "$uname -M";
     $out_uname = $s->exec($cmd_uname);
-    $kr_version = $out_uname;
+    $model = $out_uname;
+    if (preg_match('/,/', $model)) {
+      $model = explode(',', $model, 2);
+       $str_vendor = $model[0];
+       $str_model = $model[1];
+    } else {
+      $str_model = $model;
+      $str_vendor = 'Unknown';
+    }
     
-    $cmd_uname = "$uname -i";
+    $cmd_uname = "$uname -m";
     $out_uname = $s->exec($cmd_uname);
-    $hw_class = $out_uname;
+    $serial = $out_uname;
 
     $cmd_uname = "$uname -p";
     $out_uname = $s->exec($cmd_uname);
     $platform = $out_uname;
 
-    $cmd_uname = "$uname -m";
-    $out_uname = $s->exec($cmd_uname);
-    $cputype = $out_uname;
+    $mo = new Model();
+    $mo->name = $str_model;
+    $mo->vendor = $str_vendor;
+    if ($mo->fetchFromFields(array('name', 'vendor'))) {
+      $mo->insert();
+    }
+    if ($s->o_pserver) {
+      if ($mo->id != $s->o_pserver->fk_model) {
+        $s->log('Updating HW Model to be: '.$mo, LLOG_INFO);
+        $s->o_pserver->fk_model = $mo->id;
+        $s->o_pserver->update();
+      }
+      if ($s->o_pserver->serial != $serial) {
+        $s->o_pserver->serial = $serial;
+        $s->log("Updated serial number: $serial", LLOG_INFO);
+        $s->o_pserver->update();
+      }
+    }
 
-    if ($s->data('os:kernel') != $kr_version) {
-      $s->setData('os:kernel', $kr_version);
-      $s->log('os:kernel => '.$kr_version, LLOG_INFO);
-    }
-    if ($s->data('hw:class') != $hw_class) {
-      $s->setData('hw:class', $hw_class);
-      $s->log('hw:class => '.$hw_class, LLOG_INFO);
-    }
     if ($s->data('hw:platform') != $platform) {
       $s->setData('hw:platform', $platform);
       $s->log('hw:platform => '.$platform, LLOG_INFO);
@@ -225,18 +241,10 @@ class OSAix extends OSType
   /* Screening */
   public static function htmlDump($s) {
 
-/*
-    $version = $s->data('linux:version'); 
-    $ver_name = $s->data('linux:ver_name');
-    $version = "$version ($ver_name)";
-
     return array(
-                'Distribution' => $s->data('linux:name'),
-                'Version' => $version,
-		'Kernel' => $s->data('os:kernel'),
+                'Version' => $s->data('os:major'),
+                'Update' => $s->data('os:update'),
            );
-*/
-    return array();
   }
 
   public static function dump($s) {

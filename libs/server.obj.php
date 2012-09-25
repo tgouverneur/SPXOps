@@ -295,7 +295,7 @@ class Server extends mysqlObj implements JsonSerializable
     }
 
     try {
-      $r = $this->_ssh->execSecure('test -f '.$path.' && echo 1', 5);
+      $r = $this->_ssh->execSecure('test -f '.$path.' && echo 1', 10);
     } catch (Exception $e) {
       throw($e);
     }
@@ -334,7 +334,7 @@ class Server extends mysqlObj implements JsonSerializable
     foreach($paths as $path) {
       $bpath = $path.'/'.$bin;
       try {
-        $r = $this->_ssh->execSecure('test -x '.$bpath.' && echo 1', 5);
+        $r = $this->_ssh->execSecure('test -x '.$bpath.' && echo 1', 10);
       } catch (Exception $e) {
         throw($e);
       }

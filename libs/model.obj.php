@@ -35,6 +35,7 @@ class Model extends mysqlObj
       'HW Class' => $s->data('hw:class'),
       'Memory' => $s->data('hw:memory'),
       'CPU Type' => $s->data('hw:cpu'),
+      'CPU Speed' => $s->data('hw:cpuspeed'),
       'Num CPU' => $s->data('hw:nrcpu'),
       'Num Cores' => $s->data('hw:nrcore'),
       'Num Threads' => $s->data('hw:nrstrand'),
