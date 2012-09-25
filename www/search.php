@@ -70,11 +70,7 @@
        }
        if (count($a_list) == 1) {
 	 $obj = $a_list[0];
-	 $obj->fetchAll(1);
-	 $content = new Template('../tpl/view_server.tpl');
-         $content->set('obj', $obj);
-         $content->set('what', 'server');
-	 goto screen;
+         HTTP::redirect('/view/w/server/i/'.$obj->id);
        }
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
