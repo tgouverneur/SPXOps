@@ -262,8 +262,25 @@ class CDPPacket {
 	}
       }
     }
-
   }
+
+  public function htmlDump() {
+
+    $ar =  array(
+	'Source MAC' => $this->srcMAC,
+	'Dest MAC' => $this->dstMAC,
+	'Packet Length' => $this->pktLen,
+	'LLC' => $this->pktLLC,
+	'CDP Version' => $this->cdpVer,
+	'CDP TTL' => $this->cdpTTL,
+	'CDP Checksum' => $this->cdpCksum,
+    );
+    foreach($this->ent as $k => $v) {
+      $ar['Router '.$k] = $v;
+    }
+    return $ar;
+  }
+
 
   public function dump() {
     echo "DST MAC: ".$this->dstMAC."\n";
