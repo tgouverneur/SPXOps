@@ -18,6 +18,23 @@
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
+     case 'rs':
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/modalerror.tpl');
+         $content->set('error', 'Resource group ID not provided');
+         goto screen;
+       }
+       $rg = new CLRg($_GET['i']);
+       if ($rg->fetchFromId()) {
+         $content = new Template('../tpl/modalerror.tpl');
+         $content->set('error', 'Resource group ID not found');
+         goto screen;
+       }
+       $rg->fetchRL('a_clrs');
+       $content = new Template('../tpl/modallist.tpl');
+       $content->set('a_list', $rg->a_clrs);
+       $content->set('oc', 'CLRs');
+     break;
      case 'patches':
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');

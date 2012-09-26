@@ -73,10 +73,33 @@
 	  </div>
 	</div>
         <div class="row">
-          <div class="span4">
-           <h3>Free</h3>
-          </div>
           <div class="span8">
+           <h3>Resource Groups</h3>
+           <table class="table table-condensed">
+             <thead>
+               <tr>
+                <td>Name</td>
+                <td>Description</td>
+                <td>State</td>
+                <td>Suspended</td>
+                <td></td>
+               </tr>
+             </thead>
+             <tbody>
+<?php foreach($obj->a_clrg as $rg) { ?>
+               <tr>
+                <td><?php echo $rg->name; ?></td>
+                <td><?php echo $rg->description; ?></td>
+                <td><?php echo $rg->state; ?></td>
+                <td><?php echo ($rg->f_suspend)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>'; ?></td>
+		<td><a data-toggle="modal" href="/modallist/w/rs/i/<?php echo $rg->id; ?>" data-target="#rsModal">Details</a></td>
+               </tr>
+<?php } ?>
+             </tbody>
+           </table>
+
+          </div>
+          <div class="span4">
            <h3>Free</h3>
           </div>
        </div>
@@ -85,7 +108,19 @@
       <div class="modal large hide fade in" id="logsModal" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="logsModalLabel">Disks list</h3>
+          <h3 id="logsModalLabel">Cluster Logs</h3>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+      </div>
+      <!-- Resource Modal -->
+      <div class="modal large hide fade in" id="rsModal" tabindex="-1" role="dialog" aria-labelledby="rsModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+          <h3 id="rsModalLabel">Resource List</h3>
         </div>
         <div class="modal-body">
         </div>

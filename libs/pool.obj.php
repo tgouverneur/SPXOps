@@ -26,6 +26,7 @@ class Pool extends mysqlObj
 
   public $o_server = null;
   public $a_dataset = array();
+  public $a_disk = array();
 
   /* JT attrs */
   public $slice = array();

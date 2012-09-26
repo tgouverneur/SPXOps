@@ -1,0 +1,80 @@
+#!/usr/bin/php
+<?php
+/**
+ * cluster management
+ *
+ * @author Gouverneur Thomas <tgo@espix.net>
+ * @copyright Copyright (c) 2012, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("/srv/spxops/libs/config.inc.php");
+  require_once("/srv/spxops/libs/autoload.lib.php");
+
+  $chortopts = "F::u::c::Uhadv";
+  $opts = getopt($chortopts);
+
+  if (isset($opts['h']) || count($argv) < 2) {
+    echo $argv[0]."\n";
+    echo "\t [-c=<cluster>]\n";
+    echo "\t [-F=<function>]\n";
+    echo "\t [-h] this help\n";
+    echo "\t [-v] Verbose\n";
+    echo "\t [-U] Update cluster\n";
+    exit();
+  }
+  $cname = $fname = '';
+
+  if (isset($opts['v'])) {
+    Logger::logLevel(LLOG_DEBUG);
+  }
+
+  if (isset($opts['c']) && !empty($opts['c'])) {
+    $cname = $opts['c'];
+  } else {
+    echo "[!] You must provide cluster name (check -h for syntax)\n";
+    exit(1);
+  }
+
+  if (isset($opts['F']) && !empty($opts['F'])) {
+    $fname = $opts['F'];
+  }
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  $c = new Cluster();
+  $c->name = $cname;
+
+  if (isset($opts['U'])) {
+    if ($c->fetchFromField("name")) {
+      echo "[!] Cluster not found in DB..\n";
+      exit(2);
+    }
+    $c->fetchAll();
+    echo "[-] Connecting to $c\n";
+    $c->connect();
+    echo "[-] Launching the update:\n";
+    if (empty($fname)) {
+      Update::cluster($c);
+    } else {
+      Update::cluster($c, $fname);
+    }
+    exit(0);
+  }
+
+  /* if we're here, we should show the cluster... */
+  if ($c->fetchFromField("name")) {
+    echo "[!] Cluster not found in DB..\n";
+    exit(2);
+  }
+  $c->fetchAll(1);
+  $c->dump();
+
+?>

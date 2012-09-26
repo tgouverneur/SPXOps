@@ -161,7 +161,7 @@
        $content = new Template('../tpl/view_cluster.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);
-       $js = array('jobs.js');
+       $js = array('jobs.js', 'cluster.js');
        $foot->set('js', $js);
      break;
      case 'job':

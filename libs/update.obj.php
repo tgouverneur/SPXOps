@@ -84,7 +84,7 @@ class Update
   }
 
 
-  public static function cluster($c) {
+  public static function cluster($c, $f=null) {
 
     if (!$c) {
       throw new SPXException("Update::cluster: $c is null");
@@ -103,7 +103,12 @@ class Update
 
     $classname = $c->o_clver->class;
     if (class_exists($classname)) {
-      return $classname::update($c);
+      if ($f) {
+        return $classname::update($c, $f);
+      } else {
+        Logger::log('Launching '.$classname.'::update', $c, LLOG_INFO);
+        return $classname::update($c);
+      }
     }
     return -1;
   }

@@ -42,6 +42,18 @@ function parseVars($c) {
   return $rc;
 }
 
+function parseBool($b) {
+  switch (strtoupper($b)) {
+    case "TRUE":
+      return 1;
+    break;
+    case "FALSE":
+    default:
+      return 0;
+    break;
+  }
+}
+
 function formatBytes($k) {
   $k /= 1024;
   if ($k < 1024) { return round($k, 2)." KB"; }

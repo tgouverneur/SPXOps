@@ -24,6 +24,7 @@ class Cluster extends mysqlObj
 
   public $o_clver = null;
   public $a_server = array();
+  public $a_clrg = array();
 
   /* Connected */
   public $o_cserver = null;
@@ -116,7 +117,7 @@ class Cluster extends mysqlObj
         $cclass = $this->o_clver->class;
         $clpaths = $cclass::$binPaths;
       }
-      $paths = array_merge($paths, $clpaths);
+      $paths = array_merge($clpaths, $paths);
     }
 
     return $this->o_cserver->findBin($bin, $paths);
@@ -204,6 +205,7 @@ class Cluster extends mysqlObj
       }
 
       $this->fetchRL('a_server');
+      $this->fetchRL('a_clrg');
       $this->fetchData();
 
     } catch (Exception $e) {
@@ -298,6 +300,7 @@ class Cluster extends mysqlObj
     $this->_addFK("fk_clver", "o_clver", "CLVer");
 
     $this->_addRL("a_server", "Server", array('id' => 'fk_cluster'));
+    $this->_addRL("a_clrg", "CLRg", array('id' => 'fk_cluster'));
 
     $this->_log = Logger::getInstance();
 

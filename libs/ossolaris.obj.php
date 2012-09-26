@@ -33,6 +33,7 @@ class OSSolaris extends OSType
     "update_fcinfo",
     "update_zfs",
     "update_sds",
+    "update_swap",
     "update_cdp",
 //    "update_swap",
   );
@@ -1788,7 +1789,65 @@ class OSSolaris extends OSType
   public static function update_sds(&$s) {
  
     $metastat = $s->findBin('metastat');
+    $cmd_metastat = "$metastat -p";
+ //   $out_metastat = $s->exec($cmd_metastat);
+/*
+d9 -m d29 1
+d29 1 1 /dev/dsk/emcpower59a
+d8 -m d28 1
+d28 1 1 /dev/dsk/emcpower12a
+d6 -m d26 1
+d26 1 1 /dev/dsk/emcpower60b
+d2 -m d22 d12 1
+d22 1 1 c1t0d0s0
+d12 1 1 c0t0d0s0
+d3 -m d23 d13 1
+d23 1 1 c1t0d0s3
+d13 1 1 c0t0d0s3
+d4 -m d14 d24 1
+d14 1 1 c0t0d0s5
+d24 1 1 c1t0d0s5
+d110 -m d112 1
+d112 1 1 /dev/dsk/emcpower18a
+d100 -m d101 1
+d101 1 1 /dev/dsk/emcpower58a
+*/
+
     $metaset = $s->findBin('metaset');
+    $cmd_metaset = "$metaset";
+  }
+
+  /**
+   * swap
+   */
+  public static function update_swap(&$s) {
+
+    $swap = $s->findBin('swap');
+    $cmd_swap = "$swap -l";
+    $out_swap = $s->exec($cmd_swap);
+    
+    $found_s = array();
+    $lines = explode(PHP_EOL, $out_swap);
+    
+    foreach($lines as $line) {
+      $line = trim($line);
+      if (empty($line))
+	continue;
+
+      if (preg_match('/^swapfile/', $line))
+	continue;
+
+      $f = preg_split("/\s+/", $line);
+      $dev = $f[0];
+
+      if (preg_match('/\/dev\/md\//', $dev)) {
+	$s->log("Found swap MD: $dev", LLOG_DEBUG);
+      } else if (preg_match('/^\/dev\/zvol\//', $dev)) {
+	$s->log("Found ZFS swap: $dev", LLOG_DEBUG);
+      } else {
+	$s->log("Found Device swap: $dev", LLOG_DEBUG);
+      }
+    }
 
   }
 
