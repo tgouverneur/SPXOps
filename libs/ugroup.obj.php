@@ -21,6 +21,8 @@ class UGroup extends mysqlObj
   public $t_upd = -1;
 
   public $a_login = array();
+  public $a_right = array();
+  public $level = array();
 
   public function __toString() {
     return $this->name;
@@ -125,6 +127,7 @@ class UGroup extends mysqlObj
 
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
     $this->_addJT('a_login', 'Login', 'jt_login_ugroup', array('id' => 'fk_ugroup'), array('id' => 'fk_login'), array());
+    $this->_addJT('a_right', 'Right', 'jt_right_ugroup', array('id' => 'fk_ugroup'), array('id' => 'fk_right'), array('level'));
 
   }
 

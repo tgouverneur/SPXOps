@@ -99,7 +99,8 @@
        $page['title'] .= $what;
        $content->set('obj', $obj);
        $content->set('a_login', Login::getAll(true, array(), array('ASC:username')));
-       $js = array('llist.js');
+       $content->set('a_right', Right::getAll(true, array(), array('ASC:short')));
+       $js = array('llist.js', 'right.js');
        $foot->set('js', $js);
      break;
      case 'login':

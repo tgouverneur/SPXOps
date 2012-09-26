@@ -78,6 +78,30 @@
           </div>
           <div class="span8">
            <h3>Rights</h3>
+           <table class="table table-condensed">
+	    <thead>
+	     <tr>
+		<th>Label</th>
+		<th>View</th>
+		<th>Add</th>
+		<th>Edit</th>
+		<th>Del</th>
+		<th></th>
+	     </tr>
+	    </thead>
+	    <tbody>
+<?php foreach($a_right as $right) { ?>
+	     <tr>
+		<td><?php echo $right->name; ?></td>
+		<td><input type="checkbox" name=""/></td>
+		<td><input type="checkbox" name=""/></td>
+		<td><input type="checkbox" name=""/></td>
+		<td><input type="checkbox" name=""/></td>
+		<td><button class="btn btn-primary btn-mini">Save</button></td>
+	     </tr>
+<?php } ?>
+	    </tbody>
+	   </table>
           </div>
        </div>
       </div>
