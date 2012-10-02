@@ -96,7 +96,7 @@
        $a_os = OS::getAll(true, array(), array('ASC:name'));
        $content->set('oses', $a_os);
        $js = array('cluster.js');
-       $foot->set('js', $js);
+       $head->set('js', $js);
        $page['title'] .= $what;
        $content->set('edit', true);
        $content->set('page', $page);

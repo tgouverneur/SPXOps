@@ -52,7 +52,7 @@
              ),
 	);
    $js = array('check.js');
-   $foot->set('js', $js);
+   $head->set('js', $js);
  } else {
    $content = new Template("../tpl/dashboard.tpl");
    $content->set('a_list', Server::dashboardArray());

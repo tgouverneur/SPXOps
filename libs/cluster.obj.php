@@ -37,6 +37,20 @@ class Cluster extends mysqlObj
   private $_log = null;
   public $_job = null;
 
+  public function getRGRepartition() {
+    $r = array();
+    foreach($this->a_server as $n) {
+      $r[''.$n] = 0;
+    }
+    foreach($this->a_clrg as $rg) {
+      $rg->fetchJT('a_node');
+      foreach($rg->a_node as $n) {
+        $r[''.$n]++;
+      }
+    }
+    return $r;
+  }
+
   public function detectOsFromNodes() {
     if ($this->a_server && count($this->a_server)) {
       $this->fk_os = $this->a_server[0]->fk_os;

@@ -7,6 +7,9 @@
     <meta name="author" content="Espix Network SPRL">
     <link href="/css/bootstrap.css" rel="stylesheet">
     <link href="/css/spxops.css" rel="stylesheet">
+<?php if (isset($css)) { foreach($css as $j) { ?>
+    <link href="/css/<?php echo $j; ?>" rel="stylesheet">
+<?php } } ?>
     <style>
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
@@ -19,10 +22,13 @@
     <![endif]-->
 
     <link rel="shortcut icon" href="/ico/favicon.ico">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+<?php if (isset($js)) { foreach($js as $j) { ?>
+    <script src="/js/<?php echo $j; ?>"></script>
+<?php } } ?>
   </head>
-
   <body>
-
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">

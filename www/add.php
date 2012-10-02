@@ -266,7 +266,7 @@
        $a_os = OS::getAll(true, array(), array('ASC:name'));
        $content->set('oses', $a_os);
        $js = array('cluster.js');
-       $foot->set('js', $js);
+       $head->set('js', $js);
        $page['title'] .= $what;
        if (isset($_POST['submit'])) { /* clicked on the Add button */
          $fields = array('name', 'description', 'f_upd', 'a_server', 'fk_os');

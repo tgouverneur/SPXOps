@@ -57,7 +57,7 @@
        $page['title'] .= $what;
        $content->set('obj', $obj);
        $js = array('llist.js');
-       $foot->set('js', $js);
+       $head->set('js', $js);
        $content->set('a_sgroup', SGroup::getAll(true, array(), array('ASC:name')));
      break;
      case 'sgroup':
@@ -79,7 +79,7 @@
        $content->set('obj', $obj);
        $content->set('a_server', Server::getAll(true, array(), array('ASC:hostname')));
        $js = array('llist.js');
-       $foot->set('js', $js);
+       $head->set('js', $js);
      break;
      case 'ugroup':
        $what = 'User Group';
@@ -101,7 +101,7 @@
        $content->set('a_login', Login::getAll(true, array(), array('ASC:username')));
        $content->set('a_right', Right::getAll(true, array(), array('ASC:short')));
        $js = array('llist.js', 'right.js');
-       $foot->set('js', $js);
+       $head->set('js', $js);
      break;
      case 'login':
        $what = 'User';
@@ -123,7 +123,7 @@
        $content->set('a_ugroup', UGroup::getAll(true, array(), array('ASC:name')));
        $content->set('a_act', Act::getAll(true, array('fk_login' => 'CST:'.$obj->id), array('DESC:t_add'),0, 10));
        $js = array('llist.js');
-       $foot->set('js', $js);
+       $head->set('js', $js);
      break;
      case 'server':
        $what = 'Server';
@@ -143,7 +143,7 @@
        $page['title'] .= $what;
        $content->set('obj', $obj);
        $js = array('jobs.js');
-       $foot->set('js', $js);
+       $head->set('js', $js);
      break;
      case 'cluster':
        $what = 'Cluster';
@@ -162,8 +162,11 @@
        $content = new Template('../tpl/view_cluster.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);
-       $js = array('jobs.js', 'cluster.js');
-       $foot->set('js', $js);
+       $js = array('jobs.js', 'jquery.jqplot.min.js', 'jqplot.pieRenderer.min.js');
+       $css = array('jquery.jqplot.min.css');
+       $head->set('css', $css);
+       $head->set('js', $js);
+       $foot->set('js', array('cluster.js'));
      break;
      case 'job':
        $what = 'Job';

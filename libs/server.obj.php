@@ -30,6 +30,7 @@ class Server extends mysqlObj implements JsonSerializable
   public $o_os = null;
   public $o_suser = null;
   public $o_cluster = null;
+  public $fk_zone = array(); // JT attribute for cluster's rg
 
   public $a_sgroup = array();
   public $a_zone = array();

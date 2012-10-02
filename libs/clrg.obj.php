@@ -26,6 +26,26 @@ class CLRg extends mysqlObj
   public $o_cluster = null;
   public $a_clrs = array();
 
+  public $a_node = array();
+  public $fk_zone = array();
+
+  public function dumpNodes($html=true) {
+    $txt = '';
+    $i = 0;
+    foreach($this->a_node as $n) {
+      if ($i++) {
+        if ($html) { $txt .= '<br/>'; } else { $txt .= "\n"; }
+      }
+      if ($html) { $txt .= $n->link(); } else { $txt .= $n; }
+      if (isset($this->fk_zone[$n->id]) && $this->fk_zone[$n->id] > 0) {
+	$z = new Zone($this->fk_zone[$n->id]);
+	$z->fetchFromId();
+	$txt .= ':';
+	if ($html) { $txt .= $z->link(); } else { $txt .= $z; }
+      }
+    }
+    return $txt;
+  }
  
   public function equals($z) {
     if (!strcmp($this->name, $z->name) && $this->fk_cluster && $z->fk_cluster) {
@@ -104,6 +124,9 @@ class CLRg extends mysqlObj
 
     $this->_addFK("fk_cluster", "o_cluster", "Cluster");
     $this->_addRL("a_clrs", "CLRs", array('id' => 'fk_clrg'));
+                /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
+    $this->_addJT('a_node', 'Server', 'jt_clrg_server', array('id' => 'fk_clrg'), array('id' => 'fk_server'), array('fk_zone'));
+
 
   }
 

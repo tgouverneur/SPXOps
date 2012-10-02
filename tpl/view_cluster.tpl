@@ -81,16 +81,18 @@
                 <td>Name</td>
                 <td>Description</td>
                 <td>State</td>
+                <td>Nodes</td>
                 <td>Suspended</td>
                 <td></td>
                </tr>
              </thead>
              <tbody>
-<?php foreach($obj->a_clrg as $rg) { ?>
+<?php foreach($obj->a_clrg as $rg) { $rg->fetchJT('a_node'); ?>
                <tr>
                 <td><?php echo $rg->name; ?></td>
                 <td><?php echo $rg->description; ?></td>
                 <td><?php echo $rg->state; ?></td>
+                <td><?php echo $rg->dumpNodes(); ?></td>
                 <td><?php echo ($rg->f_suspend)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>'; ?></td>
 		<td><a data-toggle="modal" href="/modallist/w/rs/i/<?php echo $rg->id; ?>" data-target="#rsModal">Details</a></td>
                </tr>
@@ -100,7 +102,8 @@
 
           </div>
           <div class="span4">
-           <h3>Free</h3>
+           <h3>Visual repartition</h3>
+	   <div id="pieRG"></div>
           </div>
        </div>
       </div>
@@ -128,3 +131,29 @@
           <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         </div>
       </div>
+      <script class="code" type="text/javascript">
+	$(document).ready(function(){
+	  var data = [
+<?php
+	$r = $obj->getRGRepartition();
+	foreach($r as $n => $nb) { ?>
+	    ['<?php echo $n; ?>', <?php echo $nb; ?>],
+<?php   } ?>
+	  ];
+	  var plot1 = jQuery.jqplot ('pieRG', [data], 
+	    { 
+	      seriesDefaults: {
+		renderer: jQuery.jqplot.PieRenderer, 
+		rendererOptions: {
+		  fill: false,
+		  sliceMargin: 4,
+		  lineWidth: 5,
+		  showDataLabels: true
+		}
+	      }, 
+	      legend: { show:true, location: 'e' },
+	      grid: { drawGridLines:false, shadow:false, borderWidth:0.0 }
+	    }
+	  );
+	});
+      </script>
