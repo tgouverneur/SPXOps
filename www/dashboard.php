@@ -14,18 +14,20 @@
  /* Page setup */
  $page = array();
  $page['title'] = 'Home';
- if ($lm->o_login) $page['login'] = &$lm->o_login;
+ if ($lm->o_login) {
+   $page['login'] = &$lm->o_login;
+   $lm->o_login->fetchRights();
+   if (!$lm->o_login->cRight('CHKBOARD', R_VIEW)) {
+     HTTP::errWWW('Access Denied, please check your access rights!');
+   }
+ } else {
+   HTTP::errWWW('You must be logged-in to access this page');
+ }
 
  $index = new Template("../tpl/index.tpl");
  $head = new Template("../tpl/head.tpl");
  $head->set('page', $page);
  $foot = new Template("../tpl/foot.tpl");
-
- if (!$lm->o_login) {
-   $content = new Template('../tpl/error.tpl');
-   $content->set('error', "You should be logged in to access this page...");
-   goto screen;
- }
 
  $i = null;
  if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -36,7 +38,7 @@
    $obj = new Server($i);
    if ($obj->fetchFromId()) {
      $content = new Template('../tpl/error.tpl');
-     $content->set('error', "You should be logged in to access this page...");
+     $content->set('error', "Provided server ID not found in the database..");
      goto screen;
    }
    $obj->fetchJT('a_sgroup');

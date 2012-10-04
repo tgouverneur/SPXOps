@@ -72,80 +72,40 @@ class HTTP
 
   public static function errMysql() {
     global $start_time;
-    $index = new Template("./tpl/index.tpl");
-    $head = new Template("./tpl/head.tpl");
-    $menu = new Template("./tpl/menu.tpl");
-    $foot = new Template("./tpl/foot.tpl");
+    $index = new Template("../tpl/index.tpl");
+    $head = new Template("../tpl/head.tpl");
+    $foot = new Template("../tpl/foot.tpl");
     $foot->set("start_time", $start_time);
-    $content = new Template("./tpl/sorrypage.tpl");
-
+    $content = new Template("../tpl/error.tpl");
+    $content->set('error', "An error has occurred with the SQL Server and we were unable to process your request...");
     $index->set("head", $head);
-    $index->set("menu", $menu);
     $index->set("content", $content);
     $index->set("foot", $foot);
     echo $index->fetch();
-    die();
+    exit(0);
   }
 
   public static function errWWW($e) {
     global $start_time;
-    $index = new Template("./tpl/index.tpl");
-    $head = new Template("./tpl/head.tpl");
-    $menu = new Template("./tpl/menu.tpl");
-    $foot = new Template("./tpl/foot.tpl");
+    $lm = loginCM::getInstance();
+
+    $index = new Template("../tpl/index.tpl");
+    $head = new Template("../tpl/head.tpl");
+    $foot = new Template("../tpl/foot.tpl");
     $foot->set("start_time", $start_time);
-    $content = new Template("./tpl/error.tpl");
+    $content = new Template("../tpl/error.tpl");
     $content->set("error", $e);
 
+    $page = array();
+    $page['title'] = 'That\'s some bad hat harry';
+    if ($lm->o_login) $page['login'] = &$lm->o_login;
+
+    $head->set('page', $page);
     $index->set("head", $head);
-    $index->set("menu", $menu);
     $index->set("content", $content);
     $index->set("foot", $foot);
     echo $index->fetch();
-    die();
-  }
-
-  public static function piwikLogin($uname) {
-    global $config;
-    include_once($config['rootpath'].'/libs/PiwikTracker.php');
-    /* Log visit on piwik */
-    $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
-    $piwikTracker->setTokenAuth( $config['piwikToken'] );
-    $piwikTracker->setVisitorId($piwikTracker->getVisitorId());  /* You need to add this so the user id isn't lost and thier tracking starts over */
-    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
-    $piwikTracker->setCustomVariable( 1, "LoggedIn", $uname, 'visit');
-    $piwikTracker->doTrackPageView('Login');
-    return true;
-  }
-
-  public static function piwikDownload($file) {
-    global $config;
-    include_once($config['rootpath'].'/libs/PiwikTracker.php');
-     /* Log visit on piwik */
-    $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
-    $piwikTracker->setTokenAuth( $config['piwikToken'] );
-    $piwikTracker->setVisitorId($piwikTracker->getVisitorId());  /* You need to add this so the user id isn't lost and thier tracking starts over */
-    $url = $piwikTracker->pageUrl.'/'.$file;
-    $piwikTracker->setUrl( $url );
-    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
-    $lm = loginCM::getInstance();
-    if ($lm->o_login) {
-      $piwikTracker->setCustomVariable( 1, "LoggedIn", $lm->o_login->username, 'visit');
-    }
-    $piwikTracker->doTrackAction($url, 'download');
-    return true;
-  }
-
-  public static function Piwik($title) {
-    global $config;
-     /* Log visit on piwik */
-    include_once($config['rootpath'].'/libs/PiwikTracker.php');
-    $piwikTracker = new PiwikTracker( $config['piwikId'], $config['piwikUri']);
-    $piwikTracker->setTokenAuth( $config['piwikToken'] );
-    $piwikTracker->setVisitorId($piwikTracker->getVisitorId());  /* You need to add this so the user id isn't lost and thier tracking starts over */
-    $piwikTracker->setIp( $_SERVER['REMOTE_ADDR'] );
-    $piwikTracker->doTrackPageView($title);
-    return true;
+    exit(0);
   }
 
   public function parseUrl() {

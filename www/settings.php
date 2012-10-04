@@ -17,17 +17,15 @@
  $foot = new Template("../tpl/foot.tpl");
  $page = array();
  $page['title'] = 'Edit settings';
- if ($lm->o_login) $page['login'] = &$lm->o_login;
+
+ if ($lm->o_login) {
+   $page['login'] = &$lm->o_login;
+   $lm->o_login->fetchRights();
+ }
 
  if (!$lm->o_login) {
    $content = new Template('../tpl/error.tpl');
    $content->set('error', "You should be logged in to access this page...");
-   goto screen;
- }
-
- if (!$lm->o_login->f_admin) {
-   $content = new Template('../tpl/error.tpl');
-   $content->set('error', "You should be administrator to access this page...");
    goto screen;
  }
 

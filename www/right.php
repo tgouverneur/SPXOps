@@ -34,66 +34,74 @@
    exit(0);
  }
 
-
  if (!$lm->o_login) {
    $ret['rc'] = 1;
    $ret['msg'] = 'You must be logged-in';
    goto screen;
  }
- $lm->o_login->fetchRights();
 
- $i = $n = null;
-
- if (isset($_GET['i']) && !empty($_GET['i'])) {
-   $i = $_GET['i'];
+ if (!$lm->o_login->f_admin) {
+   $ret['rc'] = 1;
+   $ret['msg'] = 'You must be administrator to update some rights...';
+   goto screen;
  }
- if (isset($_GET['n']) && !empty($_GET['n'])) {
-   $n = $_GET['n'];
+
+ $u = $r = $l = null;
+
+ if (isset($_GET['u']) && !empty($_GET['u'])) {
+   $u = $_GET['u'];
+ }
+ if (isset($_GET['r']) && !empty($_GET['r'])) {
+   $r = $_GET['r'];
+ }
+ if (isset($_GET['l']) && !empty($_GET['l'])) {
+   $l = $_GET['l'];
  }
 
  header('Content-Type: application/json'); 
  $ret = array();
 
- if (!$i) {
+ if (!$u || !$r) {
    $ret['rc'] = 1;
    $ret['msg'] = 'You must provide proper arguments';
    goto screen;
  }
 
- $r = new Result($i);
- if ($r->fetchFromId()) {
+ $ugroup = new UGroup();
+ $ugroup->id = $u;
+ if ($ugroup->fetchFromId()) {
    $ret['rc'] = 1;
-   $ret['msg'] = 'Result specified not found in database';
+   $ret['msg'] = 'UGroup specified not found in database';
    goto screen;
  }
- if ($r->f_ack && !$n) {
+
+ $right = new Right();
+ $right->id = $r;
+ if ($right->fetchFromId()) {
    $ret['rc'] = 1;
-   $ret['msg'] = 'This result is already acknowledged';
+   $ret['msg'] = 'Right specified not found in database';
    goto screen;
  }
- if (!$r->f_ack && $n) {
+
+ if (!is_numeric($l) && $l) {
    $ret['rc'] = 1;
-   $ret['msg'] = 'This result is not acknowledged';
+   $ret['msg'] = 'Incorrect level speicification';
    goto screen;
  }
- if (!$n) {
-   $r->f_ack = 1;
-   $r->fk_login = $lm->o_login->id;
-   $r->o_login = $lm->o_login;
-   $a = Act::add("Acknowledged $r", 'login', $lm->o_login);
-   $ret['msg'] = "$r successfully acknowledged";
-   $ret['ackWho'] = $r->o_login->username;
-   $ret['ackId'] = $r->fk_login;
- } else {
-   $r->f_ack = 0;
-   $r->fk_login = -1;
-   $k->o_login = null;
-   $a = Act::add("Un-Acknowledged $r", 'login', $lm->o_login);
-   $ret['msg'] = "$r successfully unacknowledged";
+
+ $right->fetchJT('a_ugroup');
+ $ugroup->level[''.$right] = $right->getRight($ugroup);
+ if ($right->isInJT('a_ugroup', $ugroup, array('level'))) {
+   $right->delFromJT('a_ugroup', $ugroup);
  }
+
+ $ugroup->level[''.$right] = $l;
+ $right->level[''.$ugroup] = $l;
+ $right->addToJT('a_ugroup', $ugroup);
+
+ $a = Act::add("Changed the right $right for group $ugroup", 'login', $lm->o_login);
  $ret['rc'] = 0;
- $ret['id'] = $r->id;
- $r->update();
+ $ret['msg'] = "The right $right for $ugroup has been updated.";
  goto screen;
 
 screen:

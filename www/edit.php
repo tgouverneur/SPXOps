@@ -18,17 +18,19 @@
  $page = array();
  $page['title'] = 'Edit ';
  $page['action'] = 'Edit';
- if ($lm->o_login) $page['login'] = &$lm->o_login;
-
- if (!$lm->o_login) {
-   $content = new Template('../tpl/error.tpl');
-   $content->set('error', "You should be logged in to access this page...");
-   goto screen;
+ if ($lm->o_login) {
+   $page['login'] = &$lm->o_login;
+   $lm->o_login->fetchRights();
+ } else {
+   HTTP::errWWW('You must be logged-in to access this page');
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
      case 'suser':
+       if (!$lm->o_login->cRight('CUSR', R_EDIT)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $suid = $_GET['i'];
        } else {
@@ -76,6 +78,9 @@
        }
      break;
      case 'cluster':
+       if (!$lm->o_login->cRight('CLUSTER', R_EDIT)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Cluster';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $cuid = $_GET['i'];
@@ -151,6 +156,9 @@
        $content->set('obj', $obj);
      break;
      case 'server':
+       if (!$lm->o_login->cRight('SRV', R_EDIT)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Server';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $suid = $_GET['i'];
@@ -209,6 +217,9 @@
        }
      break;
      case 'check':
+       if (!$lm->o_login->cRight('CHK', R_EDIT)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        @include_once($config['rootpath'].'/libs/functions.lib.php');
        $what = 'Check';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -258,6 +269,9 @@
        }
      break;
      case 'sgroup':
+       if (!$lm->o_login->cRight('SRVGRP', R_EDIT)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Server Group';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $suid = $_GET['i'];
@@ -306,6 +320,9 @@
        }
      break;
      case 'ugroup':
+       if (!$lm->o_login->cRight('UGRP', R_EDIT)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'User Group';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $suid = $_GET['i'];
@@ -354,10 +371,8 @@
        }
      break;
      case 'login':
-       if (!$lm->o_login->f_admin) {
-         $content = new Template('../tpl/error.tpl');
-         $content->set('error', "You should be administrator in to access this page...");
-         goto screen;
+       if (!$lm->o_login->cRight('USR', R_EDIT)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
        }
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $suid = $_GET['i'];

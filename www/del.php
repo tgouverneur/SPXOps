@@ -18,12 +18,11 @@
  $page = array();
  $page['title'] = 'Remove ';
  $page['action'] = 'Remove';
- if ($lm->o_login) $page['login'] = &$lm->o_login;
-
- if (!$lm->o_login) {
-   $content = new Template('../tpl/error.tpl');
-   $content->set('error', "You should be logged in to access this page...");
-   goto screen;
+ if ($lm->o_login) {
+   $page['login'] = &$lm->o_login;
+   $lm->o_login->fetchRights();
+ } else {
+   HTTP::errWWW('You must be logged-in to access this page');
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
@@ -32,6 +31,9 @@
        /**
         * @TODO; Check dependancies before delete()ing
         */
+       if (!$lm->o_login->cRight('CUSER', R_DEL)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'SSH User';
        $page['title'] .= $what;
        $obj = new SUser();
@@ -62,6 +64,9 @@
        /**
 	* @TODO; Check dependancies before delete()ing
 	*/
+       if (!$lm->o_login->cRight('PHY', R_DEL)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Physical Server';
        $page['title'] .= $what;
        $obj = new PServer();
@@ -92,6 +97,9 @@
        /**
 	* @TODO; Check dependancies before delete()ing
 	*/
+       if (!$lm->o_login->cRight('CHK', R_DEL)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Check';
        $page['title'] .= $what;
        $obj = new Check();
@@ -119,6 +127,9 @@
        goto screen;
      break;
      case 'rjob':
+       if (!$lm->o_login->cRight('RJOB', R_DEL)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'RJob';
        $page['title'] .= $what;
        $obj = new RJob();
@@ -149,6 +160,9 @@
        /**
         * @TODO; Check dependancies before delete()ing
         */
+       if (!$lm->o_login->cRight('UGRP', R_DEL)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'User Group';
        $page['title'] .= $what;
        $obj = new UGroup();
@@ -180,6 +194,9 @@
        /**
         * @TODO; Check dependancies before delete()ing
         */
+       if (!$lm->o_login->cRight('SRVGRP', R_DEL)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Server Group';
        $page['title'] .= $what;
        $obj = new SGroup();
@@ -210,6 +227,9 @@
        /**
 	* @TODO; Check dependancies before delete()ing
 	*/
+       if (!$lm->o_login->cRight('CLUSTER', R_DEL)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Cluster';
        $obj = new Cluster();
        if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -240,6 +260,9 @@
        /**
 	* @TODO; Check dependancies before delete()ing
 	*/
+       if (!$lm->o_login->cRight('SRV', R_DEL)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Server';
        $obj = new Server();
        if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -266,10 +289,8 @@
               );
        goto screen;
      case 'login':
-       if (!$lm->o_login->f_admin) {
-         $content = new Template('../tpl/error.tpl');
-         $content->set('error', "You should be administrator in to access this page...");
-         goto screen;
+       if (!$lm->o_login->cRight('USR', R_DEL)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
        }
        $what = 'User';
        $obj = new Login();

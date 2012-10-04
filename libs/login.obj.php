@@ -27,6 +27,7 @@ class Login extends mysqlObj
   public $t_upd = -1;
 
   public $a_ugroup = array();
+  public $a_right = array();
 
   public function link() {
     return '<a href="/view/w/login/i/'.$this->id.'">'.$this.'</a>';
@@ -60,6 +61,11 @@ class Login extends mysqlObj
 	  $check = null;
 	}
       }
+    }
+
+    if ($this->f_admin && !$lm->o_login->f_admin) {
+      $ret[] = 'You cannot add an admin user as you aren\'t administrator yourself.';
+      $this->f_admin = false;
     }
 
     if (empty($this->email)) {
@@ -101,6 +107,35 @@ class Login extends mysqlObj
     } else {
       return null;
     }
+  }
+
+  public function fetchRights() {
+    $this->a_right = array();
+    $this->fetchJT('a_ugroup');
+    foreach($this->a_ugroup as $ug) {
+      $ug->fetchJT('a_right');
+      foreach($ug->a_right as $r) {
+        if (!isset($this->a_right[$r->short])) {
+	  $this->a_right[$r->short] = $ug->level[''.$r];
+	} else {
+	  $ra = array(R_VIEW, R_ADD, R_EDIT, R_DEL);
+	  foreach($ra as $rr) {
+	    if (!($this->a_right[$r->short] & $rr) &&
+	         ($ug->level[''.$r])) {
+	      $this->a_right[$r->short] |= $rr;
+	    }
+	  }
+	}
+      }
+    }
+  }
+
+  public function cRight($short, $right) {
+    if (isset($this->a_right[$short]) &&
+	$this->a_right[$short] & $right) {
+      return true;
+    }
+    return false;
   }
 
   public function bcrypt($input, $rounds = 7)

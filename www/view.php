@@ -18,11 +18,25 @@
  //$foot->set("start_time", $start_time);
  $page = array();
  $page['title'] = 'Viewing ';
- if ($lm->o_login) $page['login'] = &$lm->o_login;
+ if ($lm->o_login) {
+   $page['login'] = &$lm->o_login;
+   $lm->o_login->fetchRights();
+ } else {
+   HTTP::errWWW('You must be logged-in to access this page');
+ }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
+     case 'rights': // Special page to check user's right
+       $what = 'user\'s rights';
+       $content = new Template('../tpl/view_right.tpl');
+       $page['title'] .= $what;
+       $content->set('a_right', $lm->o_login->a_right);
+     break;
      case 'pserver':
+       if (!$lm->o_login->cRight('PHY', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Physical Server';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/error.tpl');
@@ -40,6 +54,9 @@
        $content->set('obj', $obj);
      break;
      case 'check':
+       if (!$lm->o_login->cRight('CHK', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Check';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/error.tpl');
@@ -61,6 +78,9 @@
        $content->set('a_sgroup', SGroup::getAll(true, array(), array('ASC:name')));
      break;
      case 'sgroup':
+       if (!$lm->o_login->cRight('SRVGRP', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Server Group';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/error.tpl');
@@ -82,6 +102,9 @@
        $head->set('js', $js);
      break;
      case 'ugroup':
+       if (!$lm->o_login->cRight('UGRP', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'User Group';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/error.tpl');
@@ -100,10 +123,13 @@
        $content->set('obj', $obj);
        $content->set('a_login', Login::getAll(true, array(), array('ASC:username')));
        $content->set('a_right', Right::getAll(true, array(), array('ASC:short')));
-       $js = array('llist.js', 'right.js');
+       $js = array('llist.js', 'rights.js');
        $head->set('js', $js);
      break;
      case 'login':
+       if (!$lm->o_login->cRight('USR', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'User';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/error.tpl');
@@ -126,6 +152,9 @@
        $head->set('js', $js);
      break;
      case 'server':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Server';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/error.tpl');
@@ -146,6 +175,9 @@
        $head->set('js', $js);
      break;
      case 'cluster':
+       if (!$lm->o_login->cRight('CLUSTER', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Cluster';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/error.tpl');
@@ -169,6 +201,9 @@
        $foot->set('js', array('cluster.js'));
      break;
      case 'job':
+       if (!$lm->o_login->cRight('JOB', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Job';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/error.tpl');

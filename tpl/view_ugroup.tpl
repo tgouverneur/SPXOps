@@ -90,14 +90,22 @@
 	     </tr>
 	    </thead>
 	    <tbody>
-<?php foreach($a_right as $right) { ?>
+<?php $obj->fetchJT('a_right'); 
+      $lm = loginCM::getInstance();
+      foreach($a_right as $right) { 
+	$l = $obj->getRight($right);
+        $view_r = $l & R_VIEW;
+        $add_r = $l & R_ADD;
+        $edit_r = $l & R_EDIT;
+        $del_r = $l & R_DEL;
+?>
 	     <tr>
 		<td><?php echo $right->name; ?></td>
-		<td><input type="checkbox" name=""/></td>
-		<td><input type="checkbox" name=""/></td>
-		<td><input type="checkbox" name=""/></td>
-		<td><input type="checkbox" name=""/></td>
-		<td><button class="btn btn-primary btn-mini">Save</button></td>
+		<td><input <?php if (!$lm->o_login->f_admin) echo "disabled"; ?> type="checkbox" id="view_<?php echo $obj->id.'_'.$right->id; ?>" <?php if ($view_r) echo 'checked'; ?>/></td>
+		<td><input <?php if (!$lm->o_login->f_admin) echo "disabled"; ?> type="checkbox" id="add_<?php echo $obj->id.'_'.$right->id; ?>" <?php if ($add_r) echo 'checked'; ?>/></td>
+		<td><input <?php if (!$lm->o_login->f_admin) echo "disabled"; ?> type="checkbox" id="edit_<?php echo $obj->id.'_'.$right->id; ?>" <?php if ($edit_r) echo 'checked'; ?>/></td>
+		<td><input <?php if (!$lm->o_login->f_admin) echo "disabled"; ?> type="checkbox" id="del_<?php echo $obj->id.'_'.$right->id; ?>" <?php if ($del_r) echo 'checked'; ?>/></td>
+		<td><?php if ($lm->o_login->f_admin) { ?><button class="btn btn-primary btn-mini" onClick="saveRight(<?php echo $obj->id; ?>, <?php echo $right->id; ?>);">Save</button><?php } ?></td>
 	     </tr>
 <?php } ?>
 	    </tbody>

@@ -18,17 +18,19 @@
  $page = array();
  $page['title'] = 'Add ';
  $page['action'] = 'Add';
- if ($lm->o_login) $page['login'] = &$lm->o_login;
-
- if (!$lm->o_login) {
-   $content = new Template('../tpl/error.tpl');
-   $content->set('error', "You should be logged in to access this page...");
-   goto screen;
+ if ($lm->o_login) {
+   $page['login'] = &$lm->o_login;
+   $lm->o_login->fetchRights();
+ } else {
+   HTTP::errWWW('You must be logged-in to access this page');
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
      case 'suser':
+       if (!$lm->o_login->cRight('CUSER', R_ADD)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'SSH User';
        $obj = new SUser();
        $content = new Template('../tpl/form_suser.tpl');
@@ -67,7 +69,9 @@
        }
      break;
      case 'sgroup':
-       $what = 'Server Group';
+       if (!$lm->o_login->cRight('SRVGRP', R_ADD)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $obj = new SGroup();
        $content = new Template('../tpl/form_sgroup.tpl');
        $page['title'] .= $what;
@@ -105,6 +109,9 @@
        }
      break;
      case 'rjob':
+       if (!$lm->o_login->cRight('RJOB', R_ADD)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        @include_once($config['rootpath'].'/libs/functions.lib.php');
        $what = 'Recurrent Job';
        $obj = new RJob();
@@ -145,6 +152,9 @@
        }
      break;
      case 'ugroup':
+       if (!$lm->o_login->cRight('UGRP', R_ADD)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'User Group';
        $obj = new UGroup();
        $content = new Template('../tpl/form_ugroup.tpl');
@@ -183,6 +193,9 @@
        }
      break;
      case 'check':
+       if (!$lm->o_login->cRight('CHK', R_ADD)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        @include_once($config['rootpath'].'/libs/functions.lib.php');
        $what = 'Check';
        $obj = new Check();
@@ -222,6 +235,9 @@
        }
      break;
      case 'pserver':
+       if (!$lm->o_login->cRight('PHY', R_ADD)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Physical Server';
        $obj = new PServer();
        $content = new Template('../tpl/form_pserver.tpl');
@@ -260,6 +276,9 @@
        }
      break;
      case 'cluster':
+       if (!$lm->o_login->cRight('CLUSTER', R_ADD)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Cluster';
        $obj = new Cluster();
        $content = new Template('../tpl/form_cluster.tpl');
@@ -316,6 +335,9 @@
        }
      break;
      case 'server':
+       if (!$lm->o_login->cRight('SRV', R_ADD)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        $what = 'Server';
        $obj = new Server();
        $content = new Template('../tpl/form_server.tpl');
@@ -366,10 +388,8 @@
        }
      break;
      case 'user':
-       if (!$lm->o_login->f_admin) {
-         $content = new Template('../tpl/error.tpl');
-         $content->set('error', "You should be administrator in to access this page...");
-         goto screen;
+       if (!$lm->o_login->cRight('USR', R_ADD)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
        }
        $what = 'User';
        $obj = new Login();

@@ -44,6 +44,13 @@ class Right extends mysqlObj
     return $this->name;
   }
 
+  public function getRight($ugroup) {
+    if (isset($this->level[''.$ugroup])) {
+      return $this->level[''.$ugroup];
+    }
+    return 0;
+  }
+
 
  /**
   * ctor

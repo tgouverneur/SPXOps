@@ -33,22 +33,16 @@
 		  <dd><?php echo $stats['nbsuser']; ?> registered</dd>
 		</dl>
 	    </div>
-            <div class="span4">
-              <h2>Last Checks</h2>
+	    <div class="span8">
+              <h2>User Activities</h2>
               <ul>
-<?php foreach($a_result as $check) { ?>
-                <li><?php echo $check->html(); ?></li>
+<?php foreach($a_act as $act) { ?>
+                <li><?php echo $act->html(); ?></li>
 <?php } ?>
               </ul>
-	      <a class="btn" href="/list/w/results">More..</a>
+	      <a class="btn" href="/list/w/act">More..</a>
             </div>
-            <div class="span4">
-              <h2>Free</h2>
-              <ul>
-                <li>Free</li>
-              </ul>
-              <a class="btn" href="#">More..</a>
-            </div>
+
   	  </div>
 	  <div class="row">
  	    <div class="span6">
@@ -60,15 +54,16 @@
               </ul>
 	      <a class="btn" href="/list/w/jobs">More..</a>
             </div>
-	    <div class="span6">
-              <h2>User Activities</h2>
+            <div class="span4">
+              <h2>Last Checks</h2>
               <ul>
-<?php foreach($a_act as $act) { ?>
-                <li><?php echo $act->html(); ?></li>
+<?php foreach($a_result as $check) { ?>
+                <li><?php echo $check->html(); ?></li>
 <?php } ?>
               </ul>
-	      <a class="btn" href="/list/w/act">More..</a>
+	      <a class="btn" href="/list/w/results">More..</a>
             </div>
+
 	  </div>
         </div>
       </div>

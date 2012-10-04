@@ -24,6 +24,13 @@ class UGroup extends mysqlObj
   public $a_right = array();
   public $level = array();
 
+  public function getRight($right) {
+    if (isset($this->level[''.$right])) {
+      return $this->level[''.$right];
+    }
+    return 0;
+  }
+
   public function __toString() {
     return $this->name;
   }

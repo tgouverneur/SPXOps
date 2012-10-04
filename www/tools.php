@@ -18,7 +18,10 @@
  //$foot->set("start_time", $start_time);
  $page = array();
  $page['title'] = 'Tool: ';
- if ($lm->o_login) $page['login'] = &$lm->o_login;
+ if ($lm->o_login) {
+   $page['login'] = &$lm->o_login;
+   $lm->o_login->fetchRights();
+ }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {

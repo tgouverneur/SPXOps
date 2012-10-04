@@ -40,12 +40,7 @@
    $ret['msg'] = 'You must be logged-in';
    goto screen;
  }
-
- if (!$lm->o_login) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You must be admin';
-   goto screen;
- }
+ $lm->o_login->fetchRights();
 
  $w = $i = $o = $t = $r = null;
 

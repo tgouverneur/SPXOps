@@ -40,6 +40,7 @@
    $ret['msg'] = 'You must be logged-in';
    goto screen;
  }
+ $lm->o_login->fetchRights();
 
  $c = $f = $a = null;
 

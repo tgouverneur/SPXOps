@@ -695,9 +695,6 @@ class mysqlObj
     return $rc;
   }
 
-  /*
-   * @TODO: this function is a prototype, should be completed asap
-   */
   public function delFromJT($name, $fobj) {
 
     if (!isset($this->_jt[$name])) {
@@ -756,9 +753,6 @@ class mysqlObj
     }
   }
 
-  /*
-   * @TODO: this function is a prototype, should be completed asap
-   */
   public function addToJT($name, $fobj) {
 
     if (!isset($this->_jt[$name])) {
