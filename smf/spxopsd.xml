@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<service_bundle type='manifest' name=':spxopsd'>
+<service
+	name='espix/spxopsd'
+	type='service'
+	version='1'>
+
+
+	<dependency
+		name='fs'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri value='svc:/system/filesystem/local' />
+	</dependency>
+
+	<!--
+	    If we're homed on an autofs mount point, then we should
+	    delay until our path becomes available.
+	-->
+	<dependency
+		name='autofs'
+		grouping='optional_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri value='svc:/system/filesystem/autofs' />
+	</dependency>
+
+	<!--
+	  Proper time sync is required to allow connection to database
+	-->
+	<dependency
+		name='network'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri value='svc:/milestone/network' />
+	</dependency>
+
+	<exec_method
+		type='method'
+		name='start'
+		exec='/lib/svc/method/spxopsd %m'
+		timeout_seconds='0' />
+
+	<exec_method
+		type='method'
+		name='stop'
+		exec='/lib/svc/method/spxopsd %m %{restarter/contract}'
+		timeout_seconds='30' />
+
+
+	<instance name='default' enabled='false'>
+	        <method_context>
+	    	        <method_credential user='nobody' group='nobody' />
+	        </method_context>
+		<property_group name='spxopsd' type='application'>
+			<propval name='rpath' type='astring' value='/srv/spxops' />
+			<propval name='opts' type='astring' value='-v' />
+		</property_group>
+        </instance>
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+SPXOps
+			</loctext>
+		</common_name>
+	</template>
+</service>
+
+</service_bundle>
