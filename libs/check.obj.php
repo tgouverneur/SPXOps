@@ -13,6 +13,9 @@
 
 class Check extends mysqlObj
 {
+  use logTrait;
+  public static $RIGHT = 'CHK';
+
   public $id = -1;
   public $name = '';
   public $description = '';

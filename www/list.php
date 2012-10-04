@@ -197,7 +197,6 @@
        $a_list = Act::getAll(true, array(), array('DESC:t_add'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
-       $content->set('canView', true);
        $content->set('what', 'Activities');
        $content->set('oc', 'Act');
        $page['title'] .= 'Activities';

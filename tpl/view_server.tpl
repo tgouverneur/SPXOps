@@ -60,7 +60,7 @@
 	        <ul class="dropdown-menu">
                   <li><a href="/edit/w/server/i/<?php echo $obj->id; ?>">Edit</a></li>
                   <li><a href="/del/w/server/i/<?php echo $obj->id; ?>">Delete</a></li>
-                  <li><a href="/add/w/logentry/i/<?php echo $obj->id; ?>">Add Log entry</a></li>
+                  <li><a href="/log/w/server/i/<?php echo $obj->id; ?>">Add Log entry</a></li>
 	        </ul>
 	      </li>
               <li class="dropdown">
@@ -80,7 +80,7 @@
                   <li><a data-toggle="modal" href="/modallist/w/projects/i/<?php echo $obj->id; ?>" data-target="#projectsModal">View Projects</a></li>
                   <li><a data-toggle="modal" href="/modallist/w/disks/i/<?php echo $obj->id; ?>" data-target="#disksModal">View Disks</a></li>
                   <li><a data-toggle="modal" href="/modallist/w/sresults/i/<?php echo $obj->id; ?>" data-target="#resultsModal">View Check Results</a></li>
-                  <li><a data-toggle="modal" href="/modallist/w/logs/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
+                  <li><a data-toggle="modal" href="/modallist/w/logs/o/Server/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
                 </ul>
               </li>
             </ul>
@@ -204,7 +204,7 @@
       <div class="modal large hide fade in" id="resultsModal" tabindex="-1" role="dialog" aria-labelledby="resultsModalLabel" aria-hidden="true">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="resultsModalLabel">Disks list</h3>
+          <h3 id="resultsModalLabel">Results list</h3>
         </div>
         <div class="modal-body">
         </div>
@@ -216,7 +216,7 @@
       <div class="modal large hide fade in" id="logsModal" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="logsModalLabel">Disks list</h3>
+          <h3 id="logsModalLabel">Log Entries</h3>
         </div>
         <div class="modal-body">
         </div>

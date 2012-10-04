@@ -93,7 +93,7 @@
          }
           if (!$obj->isInJT('a_ugroup', $tobj)) {
             $obj->addToJT('a_ugroup', $tobj);
-            $a = Act::add("Added User Group $tobj to User $obj", 'login', $lm->o_login);
+            Act::add("Added User Group $tobj to User $obj", $lm->o_login);
             $ret['rc'] = 0;
             $ret['res'] = json_encode(array(
                                 json_encode(array(
@@ -148,7 +148,7 @@
 	 $tobj->f_except[''.$obj] = 0;
           if (!$obj->isInJT('a_sgroup', $tobj)) {
             $obj->addToJT('a_sgroup', $tobj);
-            $a = Act::add("Added Server Group $tobj to Check $obj", 'login', $lm->o_login);
+            Act::add("Added Server Group $tobj to Check $obj", $lm->o_login);
             $ret['rc'] = 0;
             $ret['res'] = json_encode(array(
                                 json_encode(array(
@@ -185,7 +185,7 @@
          $obj->f_except[''.$tobj] = 1;
           if (!$obj->isInJT('a_sgroup', $tobj)) {
             $obj->addToJT('a_sgroup', $tobj);
-            $a = Act::add("Added Exception for Server Group $tobj to Check $obj", 'login', $lm->o_login);
+            Act::add("Added Exception for Server Group $tobj to Check $obj", $lm->o_login);
             $ret['rc'] = 0;
             $ret['res'] = json_encode(array(
                                 json_encode(array(
@@ -227,7 +227,7 @@
        $ret['msg'] = 'Cannot find User Group provided inside the database';
        goto screen;
      }
-     if (!strcmp($o, 'login')) {
+     if (!strcmp($o)) {
        $obj->fetchJT('a_login');
        if (!$r || $r == 0) {
          $tobj = new Login($t);
@@ -238,7 +238,7 @@
 	 }
           if (!$obj->isInJT('a_login', $tobj)) {
             $obj->addToJT('a_login', $tobj);
-	    $a = Act::add("Added login $tobj to $obj group", 'login', $lm->o_login);
+	    Act::add("Added login $tobj to $obj group", $lm->o_login);
             $ret['rc'] = 0;
             $ret['res'] = json_encode(array(
 				json_encode(array(
@@ -292,7 +292,7 @@
          }
           if (!$obj->isInJT('a_server', $tobj)) {
             $obj->addToJT('a_server', $tobj);
-            $a = Act::add("Added server $tobj to $obj group", 'login', $lm->o_login);
+            Act::add("Added server $tobj to $obj group", $lm->o_login);
             $ret['rc'] = 0;
             $ret['res'] = json_encode(array(
 				json_encode(array(

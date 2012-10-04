@@ -18,6 +18,35 @@
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
+     case 'logs':
+       if (!isset($_GET['o']) || empty($_GET['o'])) {
+         $content = new Template('../tpl/modalerror.tpl');
+	 $content->set('error', 'No class specified');
+         goto screen;
+       }
+       $o_name = $_GET['o'];
+       if (!class_exists($o_name) ||
+           !method_exists($o_name, 'fetchLogs')) {
+         $content = new Template('../tpl/modalerror.tpl');
+	 $content->set('error', 'This kind of object doesn\'t support Logs');
+         goto screen;
+       }
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/modalerror.tpl');
+         $content->set('error', 'ID Not specified');
+         goto screen;
+       }
+       $obj = new $o_name($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/modalerror.tpl');
+         $content->set('error', 'Object not found inside database');
+         goto screen;
+       }
+       $obj->fetchLogs();
+       $content = new Template('../tpl/modallist.tpl');
+       $content->set('a_list', $obj->a_log);
+       $content->set('oc', 'Log');
+     break;
      case 'rs':
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');

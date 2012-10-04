@@ -14,6 +14,9 @@
 
 class Cluster extends mysqlObj
 {
+  use logTrait;
+  public static $RIGHT = 'CLUSTER';
+
   public $id = -1;
   public $name = '';
   public $description = '';

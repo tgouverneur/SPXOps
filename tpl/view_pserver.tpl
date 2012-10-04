@@ -40,13 +40,13 @@
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
 	        <ul class="dropdown-menu">
                   <li><a href="/del/w/pserver/i/<?php echo $obj->id; ?>">Delete</a></li>
-                  <li><a href="/add/w/logentry/i/<?php echo $obj->id; ?>">Add Log entry</a></li>
+                  <li><a href="/log/w/pserver/i/<?php echo $obj->id; ?>">Add Log entry</a></li>
 	        </ul>
 	      </li>
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">View <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a data-toggle="modal" href="/modallist/w/logs/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
+                  <li><a data-toggle="modal" href="/modallist/w/logs/o/pserver/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
                 </ul>
               </li>
             </ul>

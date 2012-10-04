@@ -92,7 +92,7 @@
         }
         if ($obj->isInJT('a_ugroup', $tobj)) {
           $obj->delFromJT('a_ugroup', $tobj);
-          $a = Act::add("Removed User group $tobj from user $obj", 'login', $lm->o_login);
+          Act::add("Removed User group $tobj from user $obj", $lm->o_login);
           $ret['rc'] = 0;
           $ret['id'] = $tobj->id;
           $ret['llist'] = 'ugroup';
@@ -132,7 +132,7 @@
         }
         if ($obj->isInJT('a_sgroup', $tobj)) {
           $obj->delFromJT('a_sgroup', $tobj);
-          $a = Act::add("Removed Server group $tobj from check $obj", 'check', $lm->o_check);
+          Act::add("Removed Server group $tobj from check $obj", $lm->o_login);
           $ret['rc'] = 0;
           $ret['id'] = $tobj->id;
           $ret['llist'] = $o;
@@ -162,7 +162,7 @@
        $ret['msg'] = 'Cannot find User Group provided inside the database';
        goto screen;
      }
-     if (!strcmp($o, 'login')) {
+     if (!strcmp($o)) {
        $obj->fetchJT('a_login');
        $tobj = new Login($t);
        if ($tobj->fetchFromId()) {
@@ -172,7 +172,7 @@
 	}
         if ($obj->isInJT('a_login', $tobj)) {
           $obj->delFromJT('a_login', $tobj);
-	  $a = Act::add("Removed login $tobj from $obj group", 'login', $lm->o_login);
+	  Act::add("Removed login $tobj from $obj group", $lm->o_login);
           $ret['rc'] = 0;
           $ret['id'] = $tobj->id;
           $ret['llist'] = 'login';
@@ -212,7 +212,7 @@
         }
         if ($obj->isInJT('a_server', $tobj)) {
           $obj->delFromJT('a_server', $tobj);
-          $a = Act::add("Removed server $tobj from $obj group", 'login', $lm->o_login);
+          Act::add("Removed server $tobj from $obj group", $lm->o_login);
           $ret['rc'] = 0;
           $ret['id'] = $tobj->id;
           $ret['llist'] = 'server';

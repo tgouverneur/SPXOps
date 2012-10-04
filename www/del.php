@@ -52,8 +52,8 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "SSH User $obj has been removed from database");
        $obj->delete();
-       $a = Act::add('Deleted the SSH User: '.$obj->username, 'login', $lm->o_login);
-         $a_link = array(
+       Act::add('Deleted the SSH User: '.$obj->username, $lm->o_login);
+       $a_link = array(
               array('href' => '/list/w/susers',
                     'name' => 'Back to list of connect users',
                    ),
@@ -85,8 +85,8 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "Physical Server $obj has been removed from database");
        $obj->delete();
-       $a = Act::add('Deleted the Physical Server: '.$obj->name, 'login', $lm->o_login);
-         $a_link = array(
+       Act::add('Deleted the Physical Server: '.$obj->name, $lm->o_login);
+       $a_link = array(
               array('href' => '/list/w/pserver',
                     'name' => 'Back to list of physical server',
                    ),
@@ -118,8 +118,8 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "Check $obj has been removed from database");
        $obj->delete();
-       $a = Act::add('Deleted the Check: '.$obj->name, 'login', $lm->o_login);
-         $a_link = array(
+       Act::add('Deleted the Check: '.$obj->name, $lm->o_login);
+       $a_link = array(
               array('href' => '/list/w/check',
                     'name' => 'Back to list of checks',
                    ),
@@ -148,8 +148,8 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "Recurrent Job $obj has been removed from database");
        $obj->delete();
-       $a = Act::add('Deleted the Recurrent Job: '.$obj->name, 'login', $lm->o_login);
-         $a_link = array(
+       Act::add('Deleted the Recurrent Job: '.$obj->name, $lm->o_login);
+       $a_link = array(
               array('href' => '/list/w/rjob',
                     'name' => 'Back to list of recurrent jobs',
                    ),
@@ -181,8 +181,8 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "User Group $obj has been removed from database");
        $obj->delete();
-       $a = Act::add('Deleted the User Group: '.$obj->name, 'login', $lm->o_login);
-         $a_link = array(
+       Act::add('Deleted the User Group: '.$obj->name, $lm->o_login);
+       $a_link = array(
               array('href' => '/list/w/users',
                     'name' => 'Back to list of user groups',
                    ),
@@ -215,8 +215,8 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "Server Group $obj has been removed from database");
        $obj->delete();
-       $a = Act::add('Deleted the Server Group: '.$obj->name, 'login', $lm->o_login);
-         $a_link = array(
+       Act::add('Deleted the Server Group: '.$obj->name, $lm->o_login);
+       $a_link = array(
               array('href' => '/list/w/sgroup',
                     'name' => 'Back to list of server groups',
                    ),
@@ -248,8 +248,8 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "Cluster $obj has been removed from database");
        $obj->delete();
-       $a = Act::add('Deleted the Cluster: '.$obj->name, 'login', $lm->o_login);
-         $a_link = array(
+       Act::add('Deleted the Cluster: '.$obj->name, $lm->o_login);
+       $a_link = array(
               array('href' => '/list/w/cluster',
                     'name' => 'Back to list of clusters',
                    ),
@@ -281,8 +281,8 @@
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "Server $obj has been removed from database");
        $obj->delete();
-       $a = Act::add('Deleted the Server: '.$obj->hostname, 'login', $lm->o_login);
-         $a_link = array(
+       Act::add('Deleted the Server: '.$obj->hostname, $lm->o_login);
+       $a_link = array(
               array('href' => '/list/w/server',
                     'name' => 'Back to list of servers',
                    ),
@@ -310,12 +310,12 @@
        $content->set('msg', "User $obj has been removed from database");
        $page['title'] .= $what;
        $obj->delete();
-       $a = Act::add('Deleted the User: '.$obj->username, 'login', $lm->o_login);
-         $a_link = array(
-              array('href' => '/list/w/users',
-                    'name' => 'Back to list of users',
-                   ),
-              );
+       Act::add('Deleted the User: '.$obj->username, $lm->o_login);
+       $a_link = array(
+            array('href' => '/list/w/users',
+                  'name' => 'Back to list of users',
+                 ),
+            );
        goto screen;
      break;
      default:

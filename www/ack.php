@@ -85,7 +85,7 @@
    $r->f_ack = 1;
    $r->fk_login = $lm->o_login->id;
    $r->o_login = $lm->o_login;
-   $a = Act::add("Acknowledged $r", 'login', $lm->o_login);
+   $a = Act::add("Acknowledged $r", $lm->o_login);
    $ret['msg'] = "$r successfully acknowledged";
    $ret['ackWho'] = $r->o_login->username;
    $ret['ackId'] = $r->fk_login;
@@ -93,7 +93,7 @@
    $r->f_ack = 0;
    $r->fk_login = -1;
    $k->o_login = null;
-   $a = Act::add("Un-Acknowledged $r", 'login', $lm->o_login);
+   $a = Act::add("Un-Acknowledged $r", $lm->o_login);
    $ret['msg'] = "$r successfully unacknowledged";
  }
  $ret['rc'] = 0;

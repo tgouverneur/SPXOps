@@ -84,7 +84,7 @@
        $j->state = S_NEW;
        $j->fk_login = $lm->o_login->id;
        $j->insert();
-       $a = Act::add("Requested an update of the server $s", 'login', $lm->o_login);
+       Act::add("Requested an update of the server $s", $lm->o_login);
        $ret['rc'] = 0;
        $ret['msg'] = "Job to update server $s has been succesfully added to the queue...";
        goto screen;
@@ -105,7 +105,7 @@
        $j->state = S_NEW;
        $j->fk_login = $lm->o_login->id;
        $j->insert();
-       $a = Act::add("Requested an update of the server $s", 'login', $lm->o_login);
+       Act::add("Requested an update of the server $s", $lm->o_login);
        $ret['rc'] = 0;
        $ret['msg'] = "Job to update server $s has been succesfully added to the queue...";
        goto screen;
@@ -124,7 +124,7 @@
        $j->state = S_NEW;
        $j->fk_login = $lm->o_login->id;
        $j->insert();
-       $a = Act::add("Requested an update of the cluster $oc", 'login', $lm->o_login);
+       Act::add("Requested an update of the cluster $oc", $lm->o_login);
        $ret['rc'] = 0;
        $ret['msg'] = "Job to update cluster $oc has been succesfully added to the queue...";
        goto screen;

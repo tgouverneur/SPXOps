@@ -99,7 +99,7 @@
  $right->level[''.$ugroup] = $l;
  $right->addToJT('a_ugroup', $ugroup);
 
- $a = Act::add("Changed the right $right for group $ugroup", 'login', $lm->o_login);
+ Act::add("Changed the right $right for group $ugroup", $lm->o_login);
  $ret['rc'] = 0;
  $ret['msg'] = "The right $right for $ugroup has been updated.";
  goto screen;

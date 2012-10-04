@@ -1,6 +1,6 @@
 <?php
 /**
- * Act object
+ * Log object
  *
  * @author Gouverneur Thomas <tgo@espix.net>
  * @copyright Copyright (c) 2007-2012, Gouverneur Thomas
@@ -12,15 +12,18 @@
  */
 
 
-class Act extends mysqlObj
+class Log extends mysqlObj
 {
   public $id = -1;
   public $msg = '';
   public $fk_login = -1;
+  public $fk_what = -1;
+  public $o_class = '';
   public $t_add = -1;
   public $t_upd = -1;
 
   public $o_login = null;
+  public $o_what = null;
 
   public function equals($z) {
     return false;
@@ -32,6 +35,14 @@ class Act extends mysqlObj
 
       if (!$this->o_login && $this->fk_login > 0) {
         $this->fetchFK('fk_login');
+      }
+
+      if (!empty($this->o_class) &&
+	  class_exists($this->o_class) &&
+	  $this->fk_what > 0) {
+	$oc = $this->o_class;
+        $this->o_what = new $oc($this->fk_what);
+	$this->o_what->fetchFromId();
       }
 
     } catch (Exception $e) {
@@ -48,17 +59,10 @@ class Act extends mysqlObj
   //    $s->log(sprintf("\t%15s - %s", '[layer3]', ''.$this), LLOG_INFO);
   }
 
-  public static function add($msg, $obj=null) {
-    $act = new Act();
-    $act->msg = $msg;
-    $act->fk_login = $obj->id;
-    $act->insert();
-    return $act;
-  }
-
   public static function printCols() {
     return array('Who' => 'who',
                  'Message' => 'msg',
+                 'On' => 'on',
                  'When' => 't_add',
                 );
   }
@@ -77,6 +81,11 @@ class Act extends mysqlObj
       $rc['who'] = ''.$this->o_login->link();
     } else {
       $rc['who'] = 'unknown';
+    }
+    if ($this->o_what) {
+      $rc['on'] = ''.$this->o_what->link();
+    } else {
+      $rc['on'] = 'unknown';
     }
 
     $rc['msg'] = $this->msg;
@@ -107,19 +116,23 @@ class Act extends mysqlObj
   public function __construct($id=-1)
   {
     $this->id = $id;
-    $this->_table = 'list_act';
+    $this->_table = 'list_log';
     $this->_nfotable = null;
     $this->_my = array(
                         'id' => SQL_INDEX,
                         'msg' => SQL_PROPE,
+                        'o_class' => SQL_PROPE,
                         'fk_login' => SQL_PROPE,
+                        'fk_what' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE
                  );
     $this->_myc = array( /* mysql => class */
                         'id' => 'id',
                         'msg' => 'msg',
+                        'o_class' => 'o_class',
                         'fk_login' => 'fk_login',
+                        'fk_what' => 'fk_what',
                         't_add' => 't_add',
                         't_upd' => 't_upd'
                  );

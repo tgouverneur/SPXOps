@@ -14,6 +14,10 @@
 
 class PServer extends mysqlObj
 {
+  use logTrait;
+  public static $RIGHT = 'PHY';
+
+
   public $id = -1;
   public $name = '';
   public $serial = '';

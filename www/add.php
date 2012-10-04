@@ -57,7 +57,7 @@
            goto screen;
          }
          $obj->insert();
-         $a = Act::add('Added the SSH User: '.$obj->username, 'login', $lm->o_login);
+         $a = Act::add('Added the SSH User: '.$obj->username, $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "SSH User $obj has been added to database");
          $a_link = array(
@@ -97,7 +97,7 @@
            goto screen;
          }
          $obj->insert();
-         $a = Act::add('Added the Server Group: '.$obj->name, 'login', $lm->o_login);
+         $a = Act::add('Added the Server Group: '.$obj->name, $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Server Group $obj has been added to database");
          $a_link = array(
@@ -140,7 +140,7 @@
            goto screen;
          }
          $obj->insert();
-         $a = Act::add('Added the Recurrent Job: '.$obj, 'login', $lm->o_login);
+         $a = Act::add('Added the Recurrent Job: '.$obj, $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Recurrent Job $obj has been added to database");
          $a_link = array(
@@ -181,7 +181,7 @@
            goto screen;
          }
          $obj->insert();
-         $a = Act::add('Added the User Group: '.$obj->name, 'login', $lm->o_login);
+         $a = Act::add('Added the User Group: '.$obj->name, $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "User Group $obj has been added to database");
          $a_link = array(
@@ -223,7 +223,7 @@
            goto screen;
          }
          $obj->insert();
-         $a = Act::add('Added the Check: '.$obj->name, 'login', $lm->o_login);
+         $a = Act::add('Added the Check: '.$obj->name, $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Check $obj has been added to database");
          $a_link = array(
@@ -264,7 +264,7 @@
            goto screen;
          }
          $obj->insert();
-         $a = Act::add('Added the Physical Server: '.$obj->name, 'login', $lm->o_login);
+         $a = Act::add('Added the Physical Server: '.$obj->name, $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Physical Server $obj has been added to database");
          $a_link = array(
@@ -313,16 +313,11 @@
            goto screen;
          }
          $obj->insert();
-         $a = Act::add('Added the Cluster', 'cluster', $obj);
-	 $a->fk_login = $lm->o_login->id;
-	 $a->update();
+         Act::add("Added the Cluster: $obj", $lm->o_login);
 	 foreach($obj->a_server as $s) {
 	   $s->fk_cluster = $obj->id;
 	   $s->update();
-
-           $a = Act::add('Added the server '.$s->hostname.' as node to the cluster', 'cluster', $obj);
-	   $a->fk_login = $lm->o_login->id;
-	   $a->update();
+           Act::add('Added the server '.$s->hostname." as node to the cluster: $obj", $lm->o_login);
 	 }
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Cluster $obj has been added to database");
@@ -374,9 +369,7 @@
 	   $obj->fk_pserver = $ps->id;
 	 }
          $obj->insert();
-         $a = Act::add('Added the server ', 'server', $obj);
-	 $a->fk_login = $lm->o_login->id;
-	 $a->update();
+         Act::add("Added the server: $obj", $lm->o_login);
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Server $obj has been added to database");
          $a_link = array(
@@ -419,7 +412,7 @@
 	 /* Must crypt the password */
 	 $obj->bcrypt($obj->password);
          $obj->insert();
-         $a = Act::add('Added the user: '.$obj->username, 'login', $lm->o_login);
+         $a = Act::add('Added the user: '.$obj->username, $lm->o_login);
          $content = new Template('../tpl/message.tpl');
 	 $content->set('msg', "User $obj has been added to database");
          $a_link = array(
