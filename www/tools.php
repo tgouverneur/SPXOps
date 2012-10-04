@@ -21,6 +21,8 @@
  if ($lm->o_login) {
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
+ } else {
+   HTTP::errWWW('You must be logged-in to access this page');
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {

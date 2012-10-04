@@ -71,6 +71,11 @@
 
  switch ($w) {
    case 'login':
+     if (!$lm->o_login->cRight('USR', R_EDIT)) {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'You don\'t have the rights to edit user';
+       goto screen;
+     }
      $obj = new Login($i);
      if ($obj->fetchFromId()) {
        $ret['rc'] = 1;
@@ -106,6 +111,11 @@
      }
    break;
    case 'check':
+     if (!$lm->o_login->cRight('CHK', R_EDIT)) {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'You don\'t have the rights to edit check';
+       goto screen;
+     }
      $obj = new Check($i);
      if ($obj->fetchFromId()) {
        $ret['rc'] = 1;
@@ -141,6 +151,11 @@
      }
    break;
    case 'ugroup':
+     if (!$lm->o_login->cRight('UGRP', R_EDIT)) {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'You don\'t have the rights to edit user group';
+       goto screen;
+     }
      $obj = new UGroup($i);
      if ($obj->fetchFromId()) {
        $ret['rc'] = 1;
@@ -176,6 +191,11 @@
      }
    break;
    case 'sgroup':
+     if (!$lm->o_login->cRight('SRVGRP', R_EDIT)) {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'You don\'t have the rights to edit server group';
+       goto screen;
+     }
      $obj = new SGroup($i);
      if ($obj->fetchFromId()) {
        $ret['rc'] = 1;

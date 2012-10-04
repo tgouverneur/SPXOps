@@ -21,13 +21,11 @@
  if ($lm->o_login) {
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
+ } else {
+   HTTP::errWWW('You must be logged-in to access this page');
  }
 
- if (!$lm->o_login) {
-   $content = new Template('../tpl/error.tpl');
-   $content->set('error', "You should be logged in to access this page...");
-   goto screen;
- }
+ /* @TODO: Check rights */
 
  $what = 'Setting';
  $content = new Template('../tpl/settings.tpl');
@@ -40,7 +38,6 @@
    $content->set('msg', "Settings have been updated");
    goto screen;
  }
-
 
 screen:
  if (isset($a_link)) $foot->set('a_link', $a_link);

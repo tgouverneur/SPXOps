@@ -41,6 +41,11 @@
    goto screen;
  }
  $lm->o_login->fetchRights();
+ if (!$lm->o_login->cRight('CHKBOARD', R_DEL)) {
+   $ret['rc'] = 1;
+   $ret['msg'] = 'You don\'t have the rights to ack check';
+   goto screen;
+ }
 
  $i = $n = null;
 

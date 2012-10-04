@@ -41,6 +41,11 @@
    goto screen;
  }
  $lm->o_login->fetchRights();
+ if (!$lm->o_login->cRight('JOB', R_ADD)) {
+   $ret['rc'] = 1;
+   $ret['msg'] = 'You don\'t have the rights to add jobs';
+   goto screen;
+ }
 
  $c = $f = $a = null;
 
