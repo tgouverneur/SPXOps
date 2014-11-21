@@ -380,7 +380,7 @@
          goto screen;
        }
      break;
-     case 'user':
+     case 'login':
        if (!$lm->o_login->cRight('USR', R_ADD)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }

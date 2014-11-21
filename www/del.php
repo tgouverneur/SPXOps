@@ -183,7 +183,7 @@
        $obj->delete();
        Act::add('Deleted the User Group: '.$obj->name, $lm->o_login);
        $a_link = array(
-              array('href' => '/list/w/users',
+              array('href' => '/list/w/ugroup',
                     'name' => 'Back to list of user groups',
                    ),
               );

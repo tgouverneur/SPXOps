@@ -126,6 +126,28 @@
        $js = array('llist.js', 'rights.js');
        $head->set('js', $js);
      break;
+     case 'suser':
+       if (!$lm->o_login->cRight('CUSER', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
+       $what = 'Connect User';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       }
+       $obj = new SUser($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       $content = new Template('../tpl/view_suser.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+       $js = array('llist.js');
+       $head->set('js', $js);
+     break;
      case 'login':
        if (!$lm->o_login->cRight('USR', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
@@ -149,6 +171,31 @@
        $content->set('a_ugroup', UGroup::getAll(true, array(), array('ASC:name')));
        $content->set('a_act', Act::getAll(true, array('fk_login' => 'CST:'.$obj->id), array('DESC:t_add'),0, 10));
        $js = array('llist.js');
+       $head->set('js', $js);
+     break;
+     case 'vm':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
+       $what = 'Virtual Machine';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       } 
+       $obj = new VM($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       $obj->fetchAll(1);
+       $obj->getNets();
+       $obj->getDisks();
+       $content = new Template('../tpl/view_vm.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+       $js = array('jobs.js');
        $head->set('js', $js);
      break;
      case 'server':
@@ -200,6 +247,33 @@
        $head->set('js', $js);
        $foot->set('js', array('cluster.js'));
      break;
+     case 'rjob':
+       if (!$lm->o_login->cRight('RJOB', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
+       $what = 'Recurrent Job';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       }
+       $obj = new RJob($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       try {
+       $obj->fetchAll(1);
+       } catch (Exception $e) {
+	 echo '';
+	 /* @TODO: maybe we should log theses exception to a special log to allow debugging... */
+       }
+       $content = new Template('../tpl/view_rjob.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+     break;
+
      case 'job':
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');

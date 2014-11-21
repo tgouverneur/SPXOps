@@ -1,0 +1,73 @@
+#!/usr/bin/php
+<?php
+/**
+ * scheck
+ *
+ * @author Gouverneur Thomas <tgo@espix.net>
+ * @copyright Copyright (c) 2012, Gouverneur Thomas
+ * @version 1.0
+ * @package CLI
+ * @category utils
+ * @subpackage list
+ * @filesource
+ */
+
+  require_once("/tank/app/spxops/libs/config.inc.php");
+  require_once("/tank/app/spxops/libs/autoload.lib.php");
+
+  $shortopts = "c::s::hv";
+  $opts = getopt($shortopts);
+
+  if (isset($opts['h']) || count($argv) < 2) {
+    echo $argv[0]."\n";
+    echo "\t [-s=<server>]\n";
+    echo "\t [-c=<check>]\n";
+    echo "\t [-h] this help\n";
+    echo "\t [-v] Verbose\n";
+    exit();
+  }
+  $sname = $cname = '';
+
+  if (isset($opts['v'])) {
+    Logger::logLevel(LLOG_DEBUG);
+  }
+
+  if (isset($opts['s']) && !empty($opts['s'])) {
+    $sname = $opts['s'];
+  } else {
+    echo "[!] You must provide server name (check -h for syntax)\n";
+    exit(1);
+  }
+
+  if (isset($opts['c']) && !empty($opts['c'])) {
+    $cname = $opts['c'];
+  }
+
+  $m = mysqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  $s = new Server();
+  $s->hostname = $sname;
+
+  if ($s->fetchFromField("hostname")) {
+    echo "[!] Server not found in DB..\n";
+    exit(2);
+  }
+  $s->fetchAll(1);
+
+  $c = new Check();
+  $c->name = $cname;
+
+  if ($c->fetchFromField("name")) {
+    echo "[!] Check not found in DB..\n";
+    exit(2);
+  }
+
+  echo "[-] Connecting to $s\n";
+  $s->connect();
+
+  $c->doCheck($s);
+
+?>

@@ -88,6 +88,7 @@
 	</div>
         <div class="row">
           <div class="span4">
+<?php if ($obj->o_os->f_zone) { ?>
            <h3>Zones</h3>
 	   <table class="table table-condensed">
              <thead>
@@ -100,13 +101,33 @@
 	     <tbody>
 <?php foreach($obj->a_zone as $zone) { ?>
 	       <tr>
-		<td><a href="/view/w/zone/id/<?php echo $zone->id; ?>"><?php echo $zone->name; ?></td>
+		<td><a href="/view/w/zone/i/<?php echo $zone->id; ?>"><?php echo $zone->name; ?></td>
 		<td><?php echo $zone->brand; ?></td>
 		<td><?php echo $zone->status; ?></td>
 	       </tr>
 <?php } ?>
              </tbody>
 	   </table>
+<?php } else { ?>
+           <h3>VMs</h3>
+	   <table class="table table-condensed">
+             <thead>
+	       <tr>
+		<td>Name</td>
+		<td>Status</td>
+	       </tr>
+	     </thead>
+	     <tbody>
+<?php foreach($obj->a_vm as $vm) { ?>
+	       <tr>
+		<td><a href="/view/w/vm/i/<?php echo $vm->id; ?>"><?php echo $vm->name; ?></td>
+		<td><?php echo $vm->status; ?></td>
+	       </tr>
+<?php } ?>
+             </tbody>
+	   </table>
+
+<?php } ?>
           </div>
           <div class="span8">
            <h3>Network Interfaces</h3>

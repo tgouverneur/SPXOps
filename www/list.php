@@ -150,6 +150,18 @@
        $content->set('oc', 'PServer');
        $page['title'] .= 'Physical Servers';
      break;
+     case 'vm':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
+       $a_list = VM::getAll(true, array(), array('ASC:name'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('canView', true);
+       $content->set('what', 'VM');
+       $content->set('oc', 'VM');
+       $page['title'] .= 'VMs';
+     break;
      case 'server':
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
@@ -214,7 +226,7 @@
        $content->set('oc', 'Job');
        $page['title'] .= 'Jobs';
      break;
-     case 'users':
+     case 'login':
        if (!$lm->o_login->cRight('USR', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        } 

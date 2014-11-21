@@ -84,8 +84,10 @@ if (!isset($pservers)) $pservers = array();
 	    </div>
 	  </div>
         </div>
-        <div class="span7">
-         <textarea name="lua" rows="25" class="input-xxlarge"><?php if (!empty($obj->lua)) echo $obj->lua; ?></textarea>
+        <div class="span1">
+	</div>
+        <div class="span4">
+         <textarea name="lua" rows="20" class="input-xxlarge"><?php if (!empty($obj->lua)) echo $obj->lua; ?></textarea>
         </div>
        </form>
       </div>

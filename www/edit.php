@@ -28,7 +28,7 @@
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
      case 'suser':
-       if (!$lm->o_login->cRight('CUSR', R_EDIT)) {
+       if (!$lm->o_login->cRight('CUSER', R_EDIT)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
        if (isset($_GET['i']) && !empty($_GET['i'])) {

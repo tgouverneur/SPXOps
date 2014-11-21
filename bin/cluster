@@ -12,8 +12,8 @@
  * @filesource
  */
 
-  require_once("/srv/spxops/libs/config.inc.php");
-  require_once("/srv/spxops/libs/autoload.lib.php");
+  require_once("/tank/app/spxops/libs/config.inc.php");
+  require_once("/tank/app/spxops/libs/autoload.lib.php");
 
   $chortopts = "F::u::c::Uhadv";
   $opts = getopt($chortopts);

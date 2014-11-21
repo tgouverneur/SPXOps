@@ -49,7 +49,6 @@ class Result extends mysqlObj
       }
     } else {
       return '<button type="button" class="btn btn-primary btn-mini" onClick="ackCheck('.$this->id.');">Ack!</button>';
-      //return '<a href="/ack/i/'.$this->id.'">Ack!</a>';
     }
   }
 
@@ -143,6 +142,7 @@ class Result extends mysqlObj
 
   public function html() {
 
+    $rc = '';
     try {
       if (!$this->o_server && $this->fk_server > 0) {
         $this->fetchFK('fk_server');
@@ -150,11 +150,11 @@ class Result extends mysqlObj
       if (!$this->o_check && $this->fk_check > 0) {
         $this->fetchFK('fk_check');
       }
+      $rc = $this->o_check->link().'/'.$this->o_server->link().'='.Result::colorRC($this->rc);
     } catch (Exception $e) {
       echo '';
     }
 
-    $rc = $this->o_check->link().'/'.$this->o_server->link().'='.Result::colorRC($this->rc);
     return $rc;
   }
 

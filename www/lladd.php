@@ -312,8 +312,35 @@
             goto screen;
           }
        } else {
-         $ret['rc'] = 42;
-         $ret['msg'] = 'Not yet impl';
+         $q = '%'.$t.'%';
+         $f = array();
+         $s = array('ASC:hostname');
+         $f['hostname'] = 'LIKE:'.$q;
+         $a_list = Server::getAll(true, $f, $s);
+         if (!count($a_list)) {
+ 	   $ret['rc'] = 1;
+           $ret['msg'] = 'No Server(s) found';
+           goto screen;
+         } 
+         $res = array();
+         $nradd = 0;
+         foreach($a_list as $tobj) {
+	   if (!$obj->isInJT('a_server', $tobj)) {
+             $obj->addToJT('a_server', $tobj);
+             Act::add("Added server $tobj to $obj group", $lm->o_login);
+             $nradd++;
+	     array_push($res, json_encode(array(
+                                        'id' => $tobj->id,
+                                        'value' => $tobj->link(),
+                                )));
+           }
+	 }
+         $ret['llist'] = 'server';
+         $ret['src'] = 'sgroup';
+         $ret['srcid'] = $obj->id;
+         $ret['rc'] = 0;
+         $ret['res'] = json_encode($res);
+         $ret['msg'] = $nradd." Have been added to $obj group.";
          goto screen;
        }
      } else {

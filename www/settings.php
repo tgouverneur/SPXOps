@@ -25,6 +25,10 @@
    HTTP::errWWW('You must be logged-in to access this page');
  }
 
+ if (!$lm->o_login->cRight('CFG', R_VIEW)) {
+   HTTP::errWWW('Access Denied, please check your access rights!');
+ }
+
  /* @TODO: Check rights */
 
  $what = 'Setting';
@@ -35,6 +39,8 @@
  $page['title'] .= $what;
  $content->set('page', $page);
  if (isset($_POST['submit'])) { /* clicked on the Edit button */
+   /* @TODO: Update all settings! */
+   $content = new Template('../tpl/message.tpl');
    $content->set('msg', "Settings have been updated");
    goto screen;
  }

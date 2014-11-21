@@ -18,6 +18,7 @@ class OS extends mysqlObj
   public $name = '';
   public $uname = '';
   public $class = '';
+  public $f_zone = 0;
 
   public static $binPaths = array(
     "/bin",
@@ -88,6 +89,7 @@ class OS extends mysqlObj
                         "name" => SQL_PROPE|SQL_EXIST,
                         "uname" => SQL_PROPE,
                         "class" => SQL_PROPE,
+                        "f_zone" => SQL_PROPE,
                  );
 
 
@@ -96,6 +98,7 @@ class OS extends mysqlObj
                         "name" => "name",
                         "uname" => "uname",
                         "class" => "class",
+                        "f_zone" => "f_zone",
                  );
   }
 

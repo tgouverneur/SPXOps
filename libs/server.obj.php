@@ -37,6 +37,7 @@ class Server extends mysqlObj implements JsonSerializable
 
   public $a_sgroup = array();
   public $a_zone = array();
+  public $a_vm = array();
   public $a_patch = array();
   public $a_pkg = array();
   public $a_net = array();
@@ -226,6 +227,7 @@ class Server extends mysqlObj implements JsonSerializable
 
       if ($all) {
         $this->fetchRL('a_zone');
+        $this->fetchRL('a_vm');
         $this->fetchRL('a_patch');
         $this->fetchRL('a_pkg');
         $this->fetchRL('a_nfss');
@@ -411,12 +413,20 @@ class Server extends mysqlObj implements JsonSerializable
     
     /* Dump Relations */
 
-
     /* Zones */
     if (count($this->a_zone)) {
       $this->log('', LLOG_INFO);
       $this->log(sprintf("%15s:", 'Zones'), LLOG_INFO);
       foreach($this->a_zone as $z) {
+	$z->dump($this);
+      }
+    }
+
+    /* VMs */
+    if (count($this->a_vm)) {
+      $this->log('', LLOG_INFO);
+      $this->log(sprintf("%15s:", 'VMs'), LLOG_INFO);
+      foreach($this->a_vm as $z) {
 	$z->dump($this);
       }
     }
@@ -614,6 +624,7 @@ class Server extends mysqlObj implements JsonSerializable
     $this->_addFK("fk_cluster", "o_cluster", "Cluster");
 
     $this->_addRL("a_zone", "Zone", array('id' => 'fk_server'));
+    $this->_addRL("a_vm", "VM", array('id' => 'fk_server'));
     $this->_addRL("a_patch", "Patch", array('id' => 'fk_server'));
     $this->_addRL("a_pkg", "Pkg", array('id' => 'fk_server'));
     $this->_addRL("a_net", "Net", array('id' => 'fk_server'));

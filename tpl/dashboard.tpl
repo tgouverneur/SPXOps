@@ -1,5 +1,5 @@
 <?php
- if (!isset($columns)) $columns = 8;
+ if (!isset($columns)) $columns = 7;
  $total = count($a_list);
  $lines = $total / $columns;
  $keys = array_keys($a_list);

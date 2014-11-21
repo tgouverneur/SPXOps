@@ -53,7 +53,7 @@
 
 	<instance name='default' enabled='false'>
 	        <method_context>
-	    	        <method_credential user='nobody' group='nobody' />
+	    	        <method_credential user='spxops' group='spxops' />
 	        </method_context>
 		<property_group name='spxopsd' type='application'>
 			<propval name='rpath' type='astring' value='/srv/spxops' />

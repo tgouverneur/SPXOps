@@ -40,7 +40,7 @@
 	    <td><?php echo $r->message; ?></td>
 	    <td><?php echo ($r->f_ack)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>'; ?></td>
 	    <td id="ackBtn<?php echo $r->id; ?>"><?php echo $r->ackBy(); ?></td>
-	    <td><?php echo $r->t_upd; ?></td>
+	    <td><?php echo date('d-m-Y H:m:s', $r->t_upd); ?></td>
 	    <td><?php if (!empty($r->details)) { ?><a href="#">Details</a><?php } ?></td>
 	   </tr>
 <?php }	?>

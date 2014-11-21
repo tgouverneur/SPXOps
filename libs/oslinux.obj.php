@@ -14,6 +14,7 @@ class OSLinux extends OSType
   protected static $_update = array(
     "update_uname",
     "update_release",
+    "update_linux_vms",
     "update_dmidecode",
     "update_network",
     "update_hostid",
@@ -22,11 +23,115 @@ class OSLinux extends OSType
     "update_nfs_shares",
     "update_nfs_mount",
     "update_lvm",
-    "update_cdp",
+//    "update_cdp",
 //    "update_swap",
   );
 
   /* Updates function for Linux */
+
+  /**
+   * VMs
+   */
+  public static function update_linux_vms(&$s) {
+    
+    $virsh = $s->findBin('virsh');
+    
+    $cmd_vlist = "$virsh -r -c qemu:///system list --name --all";
+    $cmd_vstate = "$virsh -r -c qemu:///system domstate";
+    $cmd_vdump = "$virsh -r -c qemu:///system dumpxml";
+ 
+    $out_vlist = $s->exec($cmd_vlist);
+
+    $lines = explode(PHP_EOL, $out_vlist);
+    $found_vm = array();
+
+    foreach($lines as $line) {
+      $line = trim($line);
+      if (empty($line)) {
+        continue;
+      }
+      $vm = new VM();
+      $vm->name = $line;
+      if ($vm->fetchFromField('name')) {
+        $s->log('new VM registered: '.$vm, LLOG_INFO);
+        $vm->insert();
+	array_push($s->a_vm, $vm);
+      }
+      $vm->fetchData();
+      $u = 0;
+      if ($vm->fk_server != $s->id) {
+        $vm->fk_server = $s->id;
+        $s->log("VM $vm reassigned to $s", LLOG_INFO);
+        $u++;
+      }
+      /* get the XML dump */
+      $out_vdump = $s->exec($cmd_vdump.' '.$vm->name);
+      $xmldump = trim($out_vdump);
+      if (!strcmp($vm->xml, $xmldump)) {
+        $vm->xml = $xmldump;
+        $s->log("$vm XML dump updated", LLOG_INFO);
+        $vm->parseXML();
+        $u++;
+        $vm_mem = $vm->o_xml->memory;
+        $vm_nrcpu = $vm->o_xml->vcpu;
+        $vm_disks = '';
+        foreach ($vm->o_xml->devices->disk as $disk) {
+          if (!strcmp($disk->Attributes()['device'], 'cdrom')) continue; // skip cdrom devices
+	  $vm_disks .= $disk->source->Attributes()[0].';';
+        }
+        if ($vm->data('hw:disks') != $vm_disks) {
+	  $vm->setData('hw:disks', $vm_disks);
+	  $s->log("$vm hw:disks => $vm_disks", LLOG_INFO);
+          $u++;
+        }
+        $vm_nets = '';
+        foreach ($vm->o_xml->devices->interface as $net) {
+	  $vm_nets .= $net->mac->Attributes()[0].','.$net->source->Attributes()[0].','.$net->model->Attributes()[0].';';
+        }
+        if ($vm->data('hw:net') != $vm_nets) {
+	  $vm->setData('hw:net', $vm_nets);
+	  $s->log("$vm hw:net => $vm_nets", LLOG_INFO);
+          $u++;
+        }
+        if ($vm->data('hw:nrcpu') != $vm_nrcpu) {
+	  $vm->setData('hw:nrcpu', $vm_nrcpu);
+	  $s->log("$vm hw:nrcpu => $vm_nrcpu", LLOG_INFO);
+          $u++;
+        }
+        if ($vm->data('hw:memory') != $vm_mem) {
+	  $vm->setData('hw:memory', $vm_mem);
+	  $s->log("$vm hw:memory => $vm_mem", LLOG_INFO);
+          $u++;
+        }
+      }
+      /* get the state */
+      $out_vstate = $s->exec($cmd_vstate.' '.$vm->name);
+      $state = trim($out_vstate);
+      if (strcmp($vm->status, $state)) {
+        $vm->status = $state;
+        $s->log("$vm state changed to $state", LLOG_INFO);
+        $u++;
+      }
+      if ($u) {
+        $s->log("Updated $u infos about VM $vm", LLOG_INFO);
+        $vm->update();
+      }
+      $found_vm[$vm->name] = $vm;
+    }
+    foreach($s->a_vm as $svm) {
+      if (isset($found_vm[$svm->name])) {
+        continue;
+      } 
+      $s->log("Removing VM $svm from this server", LLOG_INFO);
+      $svm->fk_server = -1;
+      $svm->update();
+    }
+
+
+
+    return 0;
+  }
+
 
   /**
    * nfs_shares

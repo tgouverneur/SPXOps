@@ -49,6 +49,14 @@
 	    	    </form>
 		  </li>
                   <li class="divider"></li>
+                  <li class="nav-header">Virtual Machines</li>
+                  <li><a href="/list/w/vm">List</a></li>
+		  <li>
+		    <form class="navbar-search pull-left" action="/search/w/vm" method="POST">
+		      <input name="q" type="text" class="search-query" placeholder="Search VM">
+	    	    </form>
+		  </li>
+                  <li class="divider"></li>
                   <li class="nav-header">Physical</li>
                   <li><a href="/list/w/pserver">List</a></li>
                   <li><a href="/add/w/pserver">Add</a></li>
@@ -92,7 +100,7 @@
                 <ul class="dropdown-menu">
                   <li><a href="/settings">Configuration</a></li>
                   <li><a href="/list/w/rjob">Job Crontab</a></li>
-                  <li><a href="/list/w/users#">Users management</a></li>
+                  <li><a href="/list/w/login#">Users management</a></li>
                   <li><a href="/list/w/ugroup#">Groups management</a></li>
                   <li><a href="/list/w/susers#">Connect Users management</a></li>
                   <li><a href="/list/w/pid">Show Daemons</a></li>

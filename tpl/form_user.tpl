@@ -25,7 +25,7 @@ if (!isset($edit)) $edit = false;
       }
 ?>
 	<h2><?php echo $action; ?> an User</h2>
-        <form method="POST" action="/<?php echo strtolower($action); ?>/w/user<?php if ($edit) echo "/i/".$obj->id; ?>" class="form-horizontal">
+        <form method="POST" action="/<?php echo strtolower($action); ?>/w/login<?php if ($edit) echo "/i/".$obj->id; ?>" class="form-horizontal">
           <div class="control-group">
             <label class="control-label" for="inputFullname">Fullname</label>
             <div class="controls">

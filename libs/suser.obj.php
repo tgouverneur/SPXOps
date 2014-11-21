@@ -76,7 +76,7 @@ class SUser extends mysqlObj
   }
 
 
-  public function htmlDump($s) {
+  public function htmlDump() {
 
     return array(
 	'SSH User' => $this->username,

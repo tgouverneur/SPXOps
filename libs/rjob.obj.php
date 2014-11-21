@@ -121,6 +121,8 @@ class RJob extends mysqlObj
   }
 
   public function htmlDump() {
+    global $config;
+    @include_once($config['rootpath'].'/libs/functions.lib.php');
     return array(
         'Class' => $this->class,
         'Function' => $this->fct,

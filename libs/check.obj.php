@@ -84,6 +84,7 @@ CODE;
 
       $lua->eval($this->lua);
       $rc = $lua->call("check");
+print_r($rc);
       $s->log("$this check on $s returned value: $rc", LLOG_DEBUG);
 
       $r = new Result();

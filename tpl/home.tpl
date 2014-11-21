@@ -15,10 +15,16 @@
 		  <dd><?php echo $stats['nbsrv']; ?> registered</dd>
                   <dt>Server Groups:</dt>
                   <dd><?php echo $stats['nbsgroup']; ?> registered</dd>
+                  <dt>Virtual Machines:</dt>
+                  <dd><?php echo $stats['nbvm']; ?> detected</dd>
+                  <dt>Solaris Zones:</dt>
+                  <dd><?php echo $stats['nbzone']; ?> detected</dd>
 		  <dt>Clusters:</dt>
 		  <dd><?php echo $stats['nbcl']; ?> registered</dd>
 		  <dt>Chassis:</dt>
 		  <dd><?php echo $stats['nbpsrv']; ?> registered</dd>
+                  <dt>Zpools:</dt>
+                  <dd><?php echo $stats['nbpool']; ?> detected</dd>
 		  <dt>Disks:</dt>
 		  <dd><?php echo $stats['nbdisk']; ?> detected</dd>
 		  <dt>HW Model:</dt>

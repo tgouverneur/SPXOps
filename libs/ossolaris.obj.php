@@ -30,11 +30,11 @@ class OSSolaris extends OSType
     "update_nfs_mount",
     "update_projects",
     "update_disk",
-    "update_fcinfo",
+//    "update_fcinfo",
     "update_zfs",
     "update_sds",
     "update_swap",
-    "update_cdp",
+//    "update_cdp",
 //    "update_swap",
   );
 
@@ -2032,7 +2032,7 @@ d101 1 1 /dev/dsk/emcpower58a
 	  $do->used = $used;
 	}
 	if ($upd) $do->update();
-	$found_d[$do->name]  = $d;
+	$found_d[$do->name] = $do;
       }
       foreach($p->a_dataset as $d) {
         if (isset($found_d[$d->name])) {
