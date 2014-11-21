@@ -510,7 +510,17 @@ class OSSolaris extends OSType
         $nrcore += 1;
         $nrstrand += $cpu[1];
       }
+      $last_line = $line;
+    }
 
+    if (preg_match('/@/', $last_line)) {
+      $f_speed = explode('@', $last_line);
+      $cpuspeed = trim($f_speed[1]);
+      /* just fix formatting of the cpu type */
+      $f_cpu = explode(' ', trim($f_speed[0]));
+      $cpu = '';
+      foreach($f_cpu as $f) { $cpu .= $f.' '; }
+      $cpu = trim($cpu);
     }
 
     if ($s->data('hw:nrcpu') != $nrcpu) {
@@ -526,6 +536,16 @@ class OSSolaris extends OSType
     if ($s->data('hw:nrstrand') != $nrstrand) {
       $s->setData('hw:nrstrand', $nrstrand);
       $s->log('Updated hw:nrstrand => '.$nrstrand, LLOG_INFO);
+    }
+
+    if (strcmp($s->data('hw:cpu'), $cpu)) {
+      $s->setData('hw:cpu', $cpu);
+      $s->log('Updated hw:cpu=> '.$cpu, LLOG_INFO);
+    }
+
+    if (strcmp($s->data('hw:cpuspeed'), $cpuspeed)) {
+      $s->setData('hw:cpuspeed', $cpuspeed);
+      $s->log('Updated hw:cpuspeed => '.$cpuspeed, LLOG_INFO);
     }
 
     return 0;
@@ -946,6 +966,22 @@ class OSSolaris extends OSType
       $release_major = $f_release[2];
       $release_update = $f_release[3];
     }
+
+    if (!strncmp($release_major, "11.", 3)) {
+      $pkg = $s->findBin('pkg');
+      $cmd_entire = "$pkg info entire";
+      $out_entire = $s->exec($cmd_entire);
+      $entire_lines = explode(PHP_EOL, $out_entire);
+      foreach($entire_lines as $line) {
+        $line = trim($line);
+        if (preg_match('/^Branch:/', $line)) {
+          $f_branch = explode(' ', $line);
+          $branch = $f_branch[1];
+	  $release_update = $branch;
+          break;
+        }
+      }
+    }
     
     if ($s->data('os:major') != $release_major) {
       $s->setData('os:major', $release_major);
@@ -1090,13 +1126,11 @@ class OSSolaris extends OSType
     $kr_version = $f_uname[3];
     $kr_version = preg_replace('/Generic_/', '', $kr_version);
     $hw_class = $f_uname[4];
-    $cputype = $f_uname[5];
     $platform = $f_uname[count($f_uname) - 1]; 
 
     $s->setData('os:version', $os_version);
     $s->setData('os:kernel', $kr_version);
     $s->setData('hw:class', $hw_class);
-    $s->setData('hw:cpu', $cputype);
     $s->setData('hw:platform', $platform);
 
     return 0;

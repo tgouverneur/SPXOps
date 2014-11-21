@@ -25,6 +25,20 @@
    HTTP::errWWW('You must be logged-in to access this page');
  }
 
+ $js = array();
+ $css = array();
+ array_push($css, 'jquery.dataTables.css');
+ array_push($css, 'dataTables.bootstrap.css');
+ array_push($js, 'jquery.dataTables.js');
+ array_push($js, 'dataTables.bootstrap.js');
+ $head_code = '<script type="text/javascript" charset="utf-8">'."\n";
+ $head_code .= '		$(document).ready(function() {'."\n";
+ $head_code .= "		$('#datatable').dataTable( { \"ordering\": false } );"."\n";
+ $head_code .= '		} ); </script>'."\n";
+ $head->set("js", $js);
+ $head->set("css", $css);
+ $head->set("head_code", $head_code);
+
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
      case 'rjob':

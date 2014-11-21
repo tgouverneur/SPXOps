@@ -67,7 +67,7 @@ class OSLinux extends OSType
       /* get the XML dump */
       $out_vdump = $s->exec($cmd_vdump.' '.$vm->name);
       $xmldump = trim($out_vdump);
-      if (!strcmp($vm->xml, $xmldump)) {
+      if (strcmp($vm->xml, $xmldump)) {
         $vm->xml = $xmldump;
         $s->log("$vm XML dump updated", LLOG_INFO);
         $vm->parseXML();

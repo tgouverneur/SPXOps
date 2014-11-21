@@ -27,6 +27,7 @@
 <?php if (isset($js)) { foreach($js as $j) { ?>
     <script src="/js/<?php echo $j; ?>"></script>
 <?php } } ?>
+<?php if (isset($head_code)) { echo $head_code; } ?>
   </head>
   <body>
     <div class="navbar navbar-inverse navbar-fixed-top">

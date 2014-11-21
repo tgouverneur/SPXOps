@@ -8,7 +8,7 @@
         </div>
         <div class="row">
           <div class="span12">
-  	   <table class="table <?php if (!isset($notStripped)) echo "table-striped"; ?> table-bordered table-hover table-condensed">
+  	   <table id="datatable" class="table <?php if (!isset($notStripped)) echo "table-striped"; ?> table-bordered table-hover table-condensed">
   	    <thead>
 	     <tr>
 <?php foreach($cols as $e => $k) { ?>
