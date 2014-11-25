@@ -149,7 +149,12 @@
        $head->set('js', $js);
      break;
      case 'login':
-       if (!$lm->o_login->cRight('USR', R_VIEW)) {
+       $self = false;
+       if (!strcmp($_GET['i'], 'self')) {
+         $_GET['i'] = $lm->o_login->id;
+         $self = true;
+       }
+       if (!$lm->o_login->cRight('USR', R_VIEW) && !$self) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
        $what = 'User';
@@ -171,6 +176,31 @@
        $content->set('a_ugroup', UGroup::getAll(true, array(), array('ASC:name')));
        $content->set('a_act', Act::getAll(true, array('fk_login' => 'CST:'.$obj->id), array('DESC:t_add'),0, 10));
        $js = array('llist.js');
+       $head->set('js', $js);
+     break;
+     case 'pool':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
+       $what = 'ZFS Pool';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       } 
+       $obj = new Pool($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       $obj->fetchAll(1);
+       $content = new Template('../tpl/view_pool.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+       $js = array('jobs.js', 'jquery.jqplot.min.js', 'jqplot.pieRenderer.min.js', 'jqplot.donutRenderer.min.js');
+       $css = array('jquery.jqplot.min.css');
+       $head->set('css', $css);
        $head->set('js', $js);
      break;
      case 'vm':

@@ -1899,6 +1899,7 @@ d101 1 1 /dev/dsk/emcpower58a
 
     $cmd_zpool = "$zpool list -H -o name,size,free,capacity";
     $cmd_ozpool = "$zpool list -H -o name,size,available,capacity";
+    $cmd_zhealth = "$zpool list -H -o health";
 
     $out_zpool = $s->exec($cmd_zpool);
 
@@ -1936,10 +1937,17 @@ d101 1 1 /dev/dsk/emcpower58a
 	$p->insert();
         $s->a_pool[] = $p;
       }
+      $health = $s->exec($cmd_zhealth.' '.$p->name);
+      $health = trim($health);
       if ($size != $p->size) {
         $p->size = $size;
 	$upd = true;
 	$s->log("Changed pool $p size => $size", LLOG_INFO);
+      }
+      if ($health != $p->status) {
+        $p->status = $health;
+	$upd = true;
+	$s->log("Changed pool $p status => $health", LLOG_INFO);
       }
       if ($used != $p->used) {
         $p->used = $used;
@@ -1961,7 +1969,7 @@ d101 1 1 /dev/dsk/emcpower58a
 
     $cmd_status = "$zpool status %s";
     $zfs = $s->findBin('zfs');
-    $cmd_dset = "$zfs list -H -r -t filesystem,volume -o name,used,quota,available %s";
+    $cmd_dset = "$zfs list -H -r -o space,type,quota %s";
 
     foreach($s->a_pool as $p) {
       $p->fetchJT('a_disk');
@@ -1990,6 +1998,7 @@ d101 1 1 /dev/dsk/emcpower58a
 	  continue;
 	}
 
+        /* @TODO: add the type of device */
         if ($vdev_list && !preg_match('/^mirror|^raid|^log|^spare|^cache/', $line)) {
 
 	  /* we should have a dev here... */
@@ -2031,11 +2040,10 @@ d101 1 1 /dev/dsk/emcpower58a
         $p->delFromJT('a_disk', $d);
       }
 
-      /* dataset ndexation */
+      /* dataset indexation */
       $found_d = array();
       $out_d = $s->exec($cmd_d);
       $lines = explode(PHP_EOL, $out_d);
-
       foreach($lines as $line) {
 	$line = trim($line);
 	if (empty($line))
@@ -2052,9 +2060,39 @@ d101 1 1 /dev/dsk/emcpower58a
 	  $s->log("Added dataset $do to $p", LLOG_INFO);
 	  $do->insert();
 	}
-	$used = Pool::formatSize($f['1']);
-	$quota = Pool::formatSize($f['2']);
-	$available = Pool::formatSize($f['3']);
+/*
+# zfs list -r -o space,type,quota slc8.mgmt/test
+NAME                        AVAIL   USED  USEDSNAP  USEDDS  USEDREFRESERV  USEDCHILD  TYPE        QUOTA
+slc8.mgmt/test              95.7G   316M         0   63.9K              0       316M  filesystem   none
+slc8.mgmt/test/test1        95.8G  18.6M         0   18.6M              0          0  filesystem   none
+slc8.mgmt/test/test1@bck        -      0         -       -              -          -  snapshot        -
+slc8.mgmt/test/test2        95.7G   141M     38.0K    141M              0          0  filesystem   none
+slc8.mgmt/test/test2@bck        -  38.0K         -       -              -          -  snapshot        -
+slc8.mgmt/test/test2-clone  95.7G  75.6M         0   75.6M              0          0  filesystem   none
+*/
+	$quota = $f[8];
+	$type = $f[7];
+        if (!strcmp($quota, "none")) { $quota = 0; } else { $quota = Pool::formatSize($quota); }
+	$used = Pool::formatSize($f[2]);
+	$usedsnap = Pool::formatSize($f[3]);
+	$usedds = Pool::formatSize($f[4]);
+	$usedrefres = Pool::formatSize($f[5]);
+	$usedchild = Pool::formatSize($f[6]);
+	$available = Pool::formatSize($f[1]);
+        switch($type) {
+          case 'snapshot':
+	    break;
+          case 'filesystem':
+	  case 'volume':
+          default:
+	    $used = $usedds;
+	    break;
+        }
+        if ($type && $do->type != $type) {
+	  $upd = true;
+	  $s->log("updated $do type => $type", LLOG_DEBUG);
+	  $do->type = $type;
+        }
 	if ($quota && $do->size != $quota) {
 	  $upd = true;
 	  $s->log("updated $do size => $quota", LLOG_DEBUG);

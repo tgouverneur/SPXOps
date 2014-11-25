@@ -31,7 +31,6 @@
   /* Main run () */
   public function run() {
 
-
     try {
       $m = mysqlCM::getInstance();
       if ($m->connect()) {
@@ -54,6 +53,13 @@
     
     /* Ping pid() */
     Pid::ping($this);
+
+    /* refresh main settings */
+    Setting::fetchAll();
+    $interval = Setting::get('daemon', 'sleepTime');
+    $nrProcess = Setting::get('daemon', 'nrProcess');
+    $this->setInterval($interval->value);
+    $this->setNrProcess($nrProcess->value);
 
     /* Check for other eventually died pids or locks */
     if ($this->f_master) {

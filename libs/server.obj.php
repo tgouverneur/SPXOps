@@ -63,6 +63,21 @@ class Server extends mysqlObj implements JsonSerializable
   private $_log = null;
   public $_job = null;
 
+  /* VM Stats */
+  public $vm_nb = 0;
+  public $vm_cores = 0;
+  public $vm_mem = 0;
+
+  public function vmStats() {
+    $this->vm_nb = count($this->a_vm);
+    $this->vm_core = 0;
+    $this->vm_mem = 0;
+    foreach ($this->a_vm as $vm) {
+      $vm->fetchData();
+      $this->vm_core += $vm->data('hw:nrcpu');
+      $this->vm_mem += $vm->data('hw:memory');
+    }
+  }
 
   public function buildCheckList($force=false) {
 
@@ -515,6 +530,9 @@ class Server extends mysqlObj implements JsonSerializable
   }
 
   public function htmlDump() {
+    if (count($this->a_vm)) {
+      $this->vmStats();
+    }
     $ret = array(
 	'Hostname' => $this->hostname,
 	'Description' => $this->description,
@@ -523,6 +541,11 @@ class Server extends mysqlObj implements JsonSerializable
 	'Updated on' => date('d-m-Y', $this->t_upd),
 	'Added on' => date('d-m-Y', $this->t_add),
     );
+    if ($this->vm_nb) {
+      $ret['# VM'] = $this->vm_nb;
+      $ret['# VM Cores'] = $this->vm_core;
+      $ret['# VM Memory'] = Pool::formatBytes($this->vm_mem * 1024);
+    }
     if ($this->o_cluster) {
       $ret['Cluster'] = '<a href="/view/w/cluster/i/'.$this->o_cluster->id.'">'.$this->o_cluster.'</a>';
     }

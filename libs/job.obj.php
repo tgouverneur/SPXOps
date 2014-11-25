@@ -66,6 +66,29 @@ class Job extends mysqlObj
     return $out;
   }
 
+
+  public static function cleanJobs(&$job) {
+
+    $t_old = time() - (3600*24*1); // 2 days
+    $table = "`list_job`";
+    $index = "`id`";
+    $cindex = "COUNT(`id`)";
+    $where = "WHERE `t_add` <= ".$t_old." AND (`state`=".S_FAIL." OR `state`=".S_DONE." OR `state`=".S_STALL.")";
+    $it = new mIterator('Job', $index, $table, $where, $cindex);
+    $slog = new Server();
+    $slog->_job = $job;
+
+    while(($j = $it->next())) {
+      $j->fetchFromId();
+      $j->fetchFK('fk_log');
+      Logger::log("Removing job $j and its log", $slog, LLOG_INFO);
+      if ($j->o_log) $j->o_log->delete();
+      $j->delete();
+    }
+  }
+
+
+
   /* Display fct */
 
   public function stateStr() {

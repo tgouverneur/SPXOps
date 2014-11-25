@@ -29,8 +29,6 @@
    HTTP::errWWW('Access Denied, please check your access rights!');
  }
 
- /* @TODO: Check rights */
-
  $what = 'Setting';
  $content = new Template('../tpl/settings.tpl');
  Setting::fetchAll();
@@ -39,9 +37,28 @@
  $page['title'] .= $what;
  $content->set('page', $page);
  if (isset($_POST['submit'])) { /* clicked on the Edit button */
-   /* @TODO: Update all settings! */
+ 
+   if (!$lm->o_login->cRight('CFG', R_EDIT)) {
+     HTTP::errWWW('Access Denied, please check your access rights!');
+   }
+   $u=0;
+   foreach (Setting::getSettings() as $s) { 
+     if (!isset($_POST[$s->cat.'_'.$s->name])) { continue; }
+
+     $value = $_POST[$s->cat.'_'.$s->name];
+     if (strcmp($value, $s->value)) {
+       Setting::set($s->cat, $s->name, $value);
+       $u++;
+     }
+     $a_link = array(
+            array('href' => '/settings',
+                  'name' => 'Back to configuration',
+                 ),
+            );
+
+   }
    $content = new Template('../tpl/message.tpl');
-   $content->set('msg', "Settings have been updated");
+   $content->set('msg', "Settings have been updated ($u)");
    goto screen;
  }
 

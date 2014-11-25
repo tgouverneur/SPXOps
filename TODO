@@ -2,26 +2,25 @@ Urgent:
 -------
 
  - Adapt SQL schema to have inter-table dependancies and on delete cascade
- - Implement pagination on tpl/list.tpl
+ - [DONE] Implement pagination on tpl/list.tpl
 
 Medium:
 -------
 
  - find a way to inventorize custom metrics
+ - [DONE][BUG] Edit his own profile is not working if not changing password and if you are and admin
 
 Cosmetics:
 ----------
 
  - Modif mysqlCM to include some stripslashes and mysql_escape_string directly
  - Add a check_config table to configure the variables of checks like minimal versions and so on...
- - !! Adapt all ajax/* files for new structure !!
 
 Nice to have:
 -------------
 
  - Fix check_ifaces for HME duplex check
  - Switch/online/offline resource group with web gui
- - Remove old resources of clusters in the update_cl_rs (sc32.obj.php)
  - Integration of linux clusters?
  
 Linux checks:

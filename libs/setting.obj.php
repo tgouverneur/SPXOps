@@ -46,6 +46,7 @@ class Setting extends mysqlObj
     return $v;
   }
 
+
   public static function getCat() {
 
     if (!count(Setting::$_s)) {
@@ -79,7 +80,17 @@ class Setting extends mysqlObj
     if (!count(Setting::$_s)) {
       Setting::fetchAll();
     }
-
+ 
+    foreach(Setting::$_s as $s) {
+      if (!strcmp($s->cat, $cat) &&
+	  !strcmp($s->name, $name)) {
+        $s->value = $value;
+	$s->update();
+        return 0;
+      }
+    }
+    return -1;
+   
   }
 
   public function __toString() {

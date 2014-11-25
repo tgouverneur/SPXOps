@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>SPXOps - <?php echo $page['title']; ?></title>
+    <title><?php echo Setting::get('general', 'sitename')->value; ?> - <?php echo $page['title']; ?></title>
     <meta name="description" content="">
     <meta name="author" content="Espix Network SPRL">
     <link href="/css/bootstrap.css" rel="stylesheet">
@@ -33,7 +33,7 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="#">SPXOps</a>
+          <a class="brand" href="#"><?php echo Setting::get('general', 'sitename')->value; ?></a>
             <ul class="nav">
               <li class="active"><a href="/index">Home</a></li>
               <li class="dropdown"> 
@@ -90,15 +90,15 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="/list/w/jobs#">Jobs list</a></li>
-                  <li><a href="/tools/w/idr">IDR Patches</a></li>
-                  <li><a href="/tools/w/nfs">NFS Impact</a></li>
                   <li><a href="/tools/w/cdp">CDP Packets</a></li>
+                  <li><a href="/tools/w/stats">Statistics</a></li>
                   <li><a href="/tools/w/rce">Remote Code Execution</a></li>
                 </ul>
               </li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
                 <ul class="dropdown-menu">
+                  <li><a href="/view/w/login/i/self">My Profile</a></li>
                   <li><a href="/settings">Configuration</a></li>
                   <li><a href="/list/w/rjob">Job Crontab</a></li>
                   <li><a href="/list/w/login#">Users management</a></li>

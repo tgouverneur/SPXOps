@@ -153,7 +153,7 @@ class VM extends mysqlObj
     $ret = array(
 	'Name' => $this->name,
 	'Status' => $this->status,
-	'Server' => ($this->o_server)?$this->o_server->hostname:'Unknown',
+	'Server' => ($this->o_server)?$this->o_server->link():'Unknown',
 	'# CPU' => $this->data('hw:nrcpu'),
 	'Memory' => formatBytes($this->data('hw:memory') * 1024),
 	'Updated on' => date('d-m-Y', $this->t_upd),

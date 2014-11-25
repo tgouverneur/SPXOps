@@ -416,7 +416,7 @@
          $content = new Template('../tpl/message.tpl');
 	 $content->set('msg', "User $obj has been added to database");
          $a_link = array(
-              array('href' => '/list/w/users',
+              array('href' => '/list/w/login',
                     'name' => 'Back to list of users',
                    ),
               );

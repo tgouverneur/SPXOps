@@ -36,7 +36,8 @@ class OSLinux extends OSType
     
     $virsh = $s->findBin('virsh');
     
-    $cmd_vlist = "$virsh -r -c qemu:///system list --name --all";
+    //$cmd_vlist = "$virsh -r -c qemu:///system list --name --all"; NOT SUPPORTED ON OLDER VIRSH
+    $cmd_vlist = "$virsh -r -c qemu:///system list --all";
     $cmd_vstate = "$virsh -r -c qemu:///system domstate";
     $cmd_vdump = "$virsh -r -c qemu:///system dumpxml";
  
@@ -50,8 +51,17 @@ class OSLinux extends OSType
       if (empty($line)) {
         continue;
       }
+      if (!preg_match('/^([0-9]|-)/', $line)) {
+	continue;
+      }
+
+      $f = preg_split("/\s+/", $line);
+      if (count($f) < 3) {
+        continue; // Malformed line
+      }
+
       $vm = new VM();
-      $vm->name = $line;
+      $vm->name = $f[1];
       if ($vm->fetchFromField('name')) {
         $s->log('new VM registered: '.$vm, LLOG_INFO);
         $vm->insert();
@@ -67,7 +77,7 @@ class OSLinux extends OSType
       /* get the XML dump */
       $out_vdump = $s->exec($cmd_vdump.' '.$vm->name);
       $xmldump = trim($out_vdump);
-      if (strcmp($vm->xml, $xmldump)) {
+//TMP      if (strcmp($vm->xml, $xmldump)) {
         $vm->xml = $xmldump;
         $s->log("$vm XML dump updated", LLOG_INFO);
         $vm->parseXML();
@@ -103,7 +113,7 @@ class OSLinux extends OSType
 	  $s->log("$vm hw:memory => $vm_mem", LLOG_INFO);
           $u++;
         }
-      }
+//TMP      }
       /* get the state */
       $out_vstate = $s->exec($cmd_vstate.' '.$vm->name);
       $state = trim($out_vstate);

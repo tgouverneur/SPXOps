@@ -11,6 +11,8 @@
  $h = HTTP::getInstance();
  $h->parseUrl();
 
+ Setting::fetchAll();
+
  /* Page setup */
  $page = array();
  $page['title'] = 'Home';

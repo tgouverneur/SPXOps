@@ -77,22 +77,22 @@ class Login extends mysqlObj
       }
     }
 
-    if (empty($this->password)) {
+    if (empty($this->password) && $new) {
       $ret[] = 'Missing Password';
       $this->password = $this->password_c = '';
     }
 
-    if (empty($this->password_c)) {
+    if (empty($this->password_c) && (!empty($this->password) && $new)) {
       $ret[] = 'Missing Password confirmation';
       $this->password = $this->password_c = '';
     }
 
-    if (strlen($this->password) < $config['minpassword']) {
+    if (strlen($this->password) < $config['minpassword'] && !empty($this->password_c)) {
       $ret[] = 'Password is too short, should be '.$config['minpassword'].' length minimum';
       $this->password = $this->password_c = '';
     }
 
-    if (strcmp($this->password, $this->password_c)) {
+    if (strcmp($this->password, $this->password_c) && $new && !empty($this->password_c)) {
       $ret[] = 'Password and its confirmation doesn\'t match';
       $this->password = $this->password_c = '';
     }

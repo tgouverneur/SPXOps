@@ -129,6 +129,33 @@
 
 <?php } ?>
           </div>
+<?php if (count($obj->a_pool)) {  ?>
+          <div class="span8">
+            <h3>Zpool</h3>
+ 	    <table class="table table-condensed">
+             <thead>
+	       <tr>
+		<td>Name</td>
+		<td>Size</td>
+		<td>Free</td>
+		<td>Status</td>
+	       </tr>
+	     </thead>
+	     <tbody>
+<?php foreach($obj->a_pool as $pool) { ?>
+	       <tr>
+		<td><a href="/view/w/pool/i/<?php echo $pool->id; ?>"><?php echo $pool->name; ?></td>
+		<td><?php echo Pool::formatBytes($pool->size); ?></td>
+		<td><?php echo Pool::formatBytes($pool->size - $pool->used); ?></td>
+		<td><?php echo $pool->status; ?></td>
+	       </tr>
+<?php } ?>
+             </tbody>
+	    </table>
+          </div>
+	</div>
+        <div class="row">
+<?php } ?>
           <div class="span8">
            <h3>Network Interfaces</h3>
 	     <div class="accordion" id="network">

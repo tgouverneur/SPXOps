@@ -33,7 +33,7 @@ class Model extends mysqlObj
       'Model' => $this->name,
       'Platform' => $s->data('hw:platform'),
       'HW Class' => $s->data('hw:class'),
-      'Memory' => $s->data('hw:memory'),
+      'Memory' => Pool::formatBytes($s->data('hw:memory') * 1024 * 1024),
       'CPU Type' => $s->data('hw:cpu'),
       'CPU Speed' => $s->data('hw:cpuspeed'),
       'Num CPU' => $s->data('hw:nrcpu'),

@@ -371,7 +371,12 @@
        }
      break;
      case 'login':
-       if (!$lm->o_login->cRight('USR', R_EDIT)) {
+       $self = false;
+       if (!strcmp($_GET['i'], 'self') || $_GET['i'] == $lm->o_login->id) {
+         $_GET['i'] = $lm->o_login->id;
+         $self = true;
+       }
+       if (!$lm->o_login->cRight('USR', R_EDIT) && !$self) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
        if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -416,7 +421,7 @@
 	   goto screen;
 	 }
 	 /* Must crypt the password */
-	 if (!empty($obj->password)) $obj->bcrypt($obj->password);
+	 if (!empty($obj->password) && !empty($obj->password_c)) $obj->bcrypt($obj->password); // If password_c is empty then password has not been modified
          $obj->update();
          $content = new Template('../tpl/message.tpl');
 	 $content->set('msg', "User $obj has been updated to database");

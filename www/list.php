@@ -27,17 +27,13 @@
 
  $js = array();
  $css = array();
+ $npp = 20;
  array_push($css, 'jquery.dataTables.css');
  array_push($css, 'dataTables.bootstrap.css');
  array_push($js, 'jquery.dataTables.js');
  array_push($js, 'dataTables.bootstrap.js');
- $head_code = '<script type="text/javascript" charset="utf-8">'."\n";
- $head_code .= '		$(document).ready(function() {'."\n";
- $head_code .= "		$('#datatable').dataTable( { \"ordering\": false } );"."\n";
- $head_code .= '		} ); </script>'."\n";
  $head->set("js", $js);
  $head->set("css", $css);
- $head->set("head_code", $head_code);
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
@@ -149,6 +145,7 @@
        if (!$lm->o_login->cRight('PHY', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
+       $npp = Setting::get('display', 'pserverPerPage')->value;
        $a_list = PServer::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
@@ -168,6 +165,7 @@
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
+       $npp = Setting::get('display', 'vmPerPage')->value;
        $a_list = VM::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
@@ -180,6 +178,7 @@
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
+       $npp = Setting::get('display', 'serverPerPage')->value;
        $a_list = Server::getAll(true, array(), array('ASC:hostname'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
@@ -200,6 +199,7 @@
        if (!$lm->o_login->cRight('CLUSTER', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
+       $npp = Setting::get('display', 'clusterPerPage')->value;
        $a_list = Cluster::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
@@ -231,6 +231,7 @@
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        } 
+       $npp = Setting::get('display', 'jobPerPage')->value;
        $a_list = Job::getAll(true, array(), array('DESC:t_upd'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
@@ -244,6 +245,7 @@
        if (!$lm->o_login->cRight('USR', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        } 
+       $npp = Setting::get('display', 'loginPerPage')->value;
        $a_list = Login::getAll(true, array(), array('ASC:username'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
@@ -252,7 +254,7 @@
        if ($lm->o_login->cRight('USR', R_EDIT)) $content->set('canMod', true);
        if ($lm->o_login->cRight('USR', R_ADD)) {
          $actions = array(
-			'Add' => '/add/w/user',
+			'Add' => '/add/w/login',
 	 	    );
 	 $content->set('actions', $actions);
        }
@@ -293,6 +295,11 @@
 screen:
  $head->set('page', $page);
  if (isset($a_link)) $foot->set('a_link', $a_link);
+ $head_code = '<script type="text/javascript" charset="utf-8">'."\n";
+ $head_code .= '		$(document).ready(function() {'."\n";
+ $head_code .= "		$('#datatable').dataTable( { \"ordering\": false, \"pageLength\": $npp } );"."\n";
+ $head_code .= '		} ); </script>'."\n";
+ $head->set("head_code", $head_code);
  $index->set('head', $head);
  $index->set('content', $content);
  $index->set('foot', $foot);

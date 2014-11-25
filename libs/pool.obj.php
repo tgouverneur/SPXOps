@@ -19,6 +19,7 @@ class Pool extends mysqlObj
   public $type = '';
   public $size = -1;
   public $used = -1;
+  public $status = "";
   public $f_cluster = 0;
   public $fk_server = -1;
   public $t_add = -1;
@@ -38,6 +39,18 @@ class Pool extends mysqlObj
     Logger::log($str, $this);
   }
 
+  public function getTypeStats() {
+    $ret = array();
+    foreach($this->a_dataset as $ds) {
+      if (!isset($ret[$ds->type])) {
+        $ret[$ds->type] = $ds->used;
+      } else {
+        $ret[$ds->type] += $ds->used;
+      }
+    }
+    return $ret;
+  }
+
   public function equals($z) {
     if (!strcmp($this->name, $z->name) && $this->fk_server && $z->fk_server) {
       return true;
@@ -52,6 +65,10 @@ class Pool extends mysqlObj
         $this->fetchFK('fk_server');
       }
 
+      if ($all) {
+        $this->fetchRL('a_dataset');
+      }
+
     } catch (Exception $e) {
       throw($e);
     }
@@ -62,7 +79,66 @@ class Pool extends mysqlObj
   }
 
   public function dump(&$s) {
+    $this->log(sprintf("%15s: %s", 'ZPool', $this->name), LLOG_INFO);
   }
+
+  public static function printCols() {
+    return array('Name' => 'name',
+	         'Size' => 'size',
+	         'Used' => 'used',
+	         'Free' => 'free',
+		 'Status' => 'status',
+		 'Server' => 'server',
+		 'Added' => 't_add',
+		 'Updated' => 't_upd',
+		);
+  }
+
+  public function toArray() {
+    if (!$this->o_server && $this->fk_server > 0) {
+      $this->fetchFK('fk_server');
+    }
+    return array(
+		'name' => $this->name,
+		'size' => $this->size,
+		'used' => $this->used,
+		'free' => $this->size - $this->used,
+		'status' => $this->status,
+		'server' => ($this->o_server)?$this->o_server->name:'Unknown',
+		't_add' => $this->size,
+		't_upd' => $this->size,
+		);
+  }
+
+  public function htmlDump() {
+    if (!$this->o_server && $this->fk_server > 0) {
+      $this->fetchFK('fk_server');
+    }
+    return array(
+		'Name' => $this->name,
+		'Size' => Pool::formatBytes($this->size),
+		'Used' => Pool::formatBytes($this->used),
+		'Free' => Pool::formatBytes($this->size - $this->used),
+		'Status' => $this->status,
+		'Server' => ($this->o_server)?$this->o_server->link():'Unknown',
+		'Added on' => date('d-m-Y', $this->t_add),
+		'Last Updated' => date('d-m-Y', $this->t_upd),
+		);
+  }
+
+  public static function formatBytes($k) {
+    $k /= 1024;
+    if ($k < 1024) { return round($k, 2)." KB"; }
+    $k = $k / 1024;
+    if ($k < 1024) { return round($k, 2)." MB"; }
+    $k = $k / 1024;
+    if ($k < 1024) { return round($k, 2)." GB"; }
+    $k = $k / 1024;
+    if ($k < 1024) { return round($k, 2)." TB"; }
+    $k = $k / 1024;
+    return round($k, 2)." PB";
+  }
+
 
   public static function formatSize($size) {
     if (!strcmp($size, 'none')) return 0;
@@ -83,6 +159,9 @@ class Pool extends mysqlObj
       break;
       case "T":
         return round($size * 1024 * 1024 * 1024 * 1024);
+      break;
+      case "P":
+        return round($size * 1024 * 1024 * 1024 * 1024 * 1024);
       break;
       default:
         return -1;
@@ -110,6 +189,7 @@ class Pool extends mysqlObj
                         'type' => SQL_PROPE,
                         'size' => SQL_PROPE,
                         'used' => SQL_PROPE,
+                        'status' => SQL_PROPE,
                         'f_cluster' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
                         't_add' => SQL_PROPE,
@@ -121,6 +201,7 @@ class Pool extends mysqlObj
                         'type' => 'type',
                         'size' => 'size',
                         'used' => 'used',
+                        'status' => 'status',
                         'f_cluster' => 'f_cluster',
                         'fk_server' => 'fk_server',
                         't_add' => 't_add',

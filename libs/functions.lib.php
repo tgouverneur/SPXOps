@@ -58,11 +58,13 @@ function formatBytes($k) {
   $k /= 1024;
   if ($k < 1024) { return round($k, 2)." KB"; }
   $k = $k / 1024;
-  if ($k < 1024) { return round($k)." MB"; }
+  if ($k < 1024) { return round($k, 2)." MB"; }
   $k = $k / 1024;
-  if ($k < 1024) { return round($k)." GB"; }
+  if ($k < 1024) { return round($k, 2)." GB"; }
   $k = $k / 1024;
-  return round($k)." TB";
+  if ($k < 1024) { return round($k, 2)." TB"; }
+  $k = $k / 1024;
+  return round($k, 2)." PB";
 }
 
 
@@ -73,7 +75,9 @@ function formatBlocks($k) {
   $k = $k / 1024;
   if ($k < 1024) { return round($k, 2)." GB"; }
   $k = $k / 1024;
-  return round($k)." TB";
+  if ($k < 1024) { return round($k, 2)." TB"; }
+  $k = $k / 1024;
+  return round($k)." PB";
 }
 
 
