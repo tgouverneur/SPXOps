@@ -1,5 +1,6 @@
 logs/
 tests/
+keys/
 old/
 tmp/
 libs/config.inc.php
