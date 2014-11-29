@@ -27,7 +27,7 @@ class loginCM
     session_start();
     $this->checkLogin();
     if ($this->o_login) {
-      $this->o_login->i_raddr = $_SERVER['REMOTE_ADDR'];
+      $this->o_login->getAddr();
       $this->o_login->fetchData();
     }
   }
@@ -58,8 +58,8 @@ class loginCM
       $vstr = 'username='.$l->username.'&vstr='.$vstr;
       setcookie($config['sitename'], $vstr, time() + (24*3600*31)); // logged in for 1 month
     }
-    $this->o_login->i_raddr = $_SERVER['REMOTE_ADDR'];
-    Act::add("Logged in from ".$l->i_raddr, $this->o_login);
+    $this->o_login->getAddr();
+    Act::add("Logged in from ".$this->o_login->i_raddr, $this->o_login);
     return 0;
   }
 
@@ -70,7 +70,7 @@ class loginCM
     global $_SERVER;
     if ($this->isLogged) {
       if ($this->o_login) {
-        $this->o_login->i_raddr = $_SERVER['REMOTE_ADDR'];
+        $this->o_login->getAddr();
         Act::add("Logged out from ".$this->o_login->i_raddr, $this->o_login);
       }
       $this->isLogged = 0;

@@ -48,7 +48,8 @@
      goto screen;
    }
    $l = new Login(); $l->username = $username;
-   Act::add("[$l] Failed Login tentative from ".$_SERVER['REMOTE_ADDR'], $l);
+   $l->getAddr();
+   Act::add("[$l] Failed Login tentative from ".$l->i_raddr, $l);
    $content->set('error', $errors);
  }
 

@@ -31,6 +31,15 @@ class Login extends mysqlObj
 
   public $i_raddr = '';
 
+  public function getAddr() {
+    global $_SERVER;
+    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+      $this->i_raddr = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } else {
+      $this->i_raddr = $_SERVER['REMOTE_ADDR'];
+    }
+  }
+
   public function link() {
     return '<a href="/view/w/login/i/'.$this->id.'">'.$this.'</a>';
   }
