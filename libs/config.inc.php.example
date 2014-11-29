@@ -11,18 +11,19 @@
 
 $config['rootpath'] = '/srv/spxops';
 $config['sitename'] = 'SPXOps';
+$config['agentname'] = 'hostname';
 
-/* UCC Database NG */
+/* Database */
 $config['mysql']['host'] = 'localhost';
 $config['mysql']['user'] = 'spxops';
 $config['mysql']['pass'] = '';
 $config['mysql']['port'] = 3306;
-$config['mysql']['db'] = 'spxopsNG';
+$config['mysql']['db'] = 'spxops';
 
 /* MySQL Debug mode, comment to disable. */
-//$config['mysql']['DEBUG'] = '/tmp/mysqlcm.log';
+//$config['mysql']['DEBUG'] = $config['rootpath'].'/logs/mysql-debug.log';
 $config['mysql']['DEBUG'] = FALSE;
-$config['mysql']['ERRLOG'] = '/srv/spxops/logs/mysqlerr.log';
+$config['mysql']['ERRLOG'] = $config['rootpath'].'/logs/mysql-error.log';
 $config['mysql']['LOGNULL'] = FALSE;
 
 $config['curl']['timeout'] = 10;
@@ -34,7 +35,7 @@ $config['webgui']['time'] = true;
 $config['minpassword'] = 5;
 
 /* Logging */
-$config['spxopsd']['log'] = '/srv/spxops/logs/spxopsd.log';
+$config['spxopsd']['log'] = $config['rootpath'].'/logs/spxopsd.log';
 @require_once($config['rootpath'].'/libs/logger.obj.php');
 Logger::logLevel(LLOG_ERR);
 Logger::logLevel(LLOG_WARN);
