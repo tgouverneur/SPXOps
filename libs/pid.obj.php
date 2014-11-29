@@ -22,6 +22,8 @@ class Pid extends mysqlObj
   public $t_add = -1;
   public $t_upd = -1;
 
+  public $o_job = null;
+
 
   public static function ping(&$d) {
     global $config;
@@ -103,7 +105,7 @@ class Pid extends mysqlObj
   public function fetchAll($all = 1) {
 
     try {
-      echo '';
+      $this->fetchCurrentJob();
     } catch (Exception $e) {
       throw($e);
     }
@@ -119,17 +121,21 @@ class Pid extends mysqlObj
                  'Parent PID' => 'ppid',
                  'Master' => 'f_master',
                  'Last seen' => 't_upd',
+                 'Current Job' => 'current',
                  'Started' => 't_add',
                 );
   }
 
   public function toArray() {
 
+    $this->getCurrentJob();
+
     return array(
 	    'agent' => $this->agent,
 	    'pid' => $this->pid,
 	    'ppid' => $this->ppid,
 	    'f_master' => $this->f_master,
+	    'current' => ($this->o_job)?$this->o_job->link():'None',
 	    't_upd' => (time() - $this->t_upd).' sec ago',
 	    't_add' => date('Y-m-d H:m:s', $this->t_add),
 	   );
@@ -144,6 +150,17 @@ class Pid extends mysqlObj
       return null;
     }
     return $pid;
+  }
+
+  public function getCurrentJob() {
+    $j = new Job();
+    $j->fk_pid = $this->id;
+    $j->state = S_RUN;
+    if ($j->fetchFromFields(array('fk_pid', 'state'))) {
+      return -1;
+    }
+    $this->o_job = $j;
+    return 0;
   }
 
  /**

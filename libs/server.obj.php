@@ -372,6 +372,8 @@ class Server extends mysqlObj implements JsonSerializable
 
   public function delete() {
 
+    $this->fetchAll(1);
+    $this->fetchRL('a_result');
     foreach($this->_rel as $r) {
       if ($this->{$r->ar} && count($this->{$r->ar})) {
 	foreach($this->{$r->ar} as $e) {
@@ -666,6 +668,22 @@ class Server extends mysqlObj implements JsonSerializable
     $this->_log = Logger::getInstance();
 
   }
+  public static $_sql = <<< _EOF_
+	CREATE TABLE `list_server` (  
+	  `id` int(11) NOT NULL AUTO_INCREMENT,
+	  `hostname` varchar(100) NOT NULL,
+	  `description` varchar(255) NOT NULL,
+	  `fk_pserver` int(11) NOT NULL DEFAULT '-1',
+	  `fk_os` int(11) NOT NULL DEFAULT '-1',
+	  `fk_suser` int(11) NOT NULL DEFAULT '-1',
+	  `fk_cluster` int(11) NOT NULL DEFAULT '-1',
+	  `f_rce` int(1) NOT NULL DEFAULT '0',
+	  `f_upd` int(1) NOT NULL DEFAULT '0',
+	  `t_add` int(11) NOT NULL DEFAULT '-1',
+	  `t_upd` int(11) NOT NULL DEFAULT '-1',
+	  PRIMARY KEY (`id`)
+	) ENGINE=InnoDB;
+_EOF_;
 
 }
 ?>

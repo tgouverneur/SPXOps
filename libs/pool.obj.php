@@ -171,6 +171,15 @@ class Pool extends mysqlObj
 
   public function delete() {
 
+    $this->fetchAll(1);
+    foreach($this->_rel as $r) {
+      if ($this->{$r->ar} && count($this->{$r->ar})) {
+        foreach($this->{$r->ar} as $e) {
+          $e->delete();
+        }
+      }
+    }
+
     parent::_delAllJT();
     parent::delete();
   }

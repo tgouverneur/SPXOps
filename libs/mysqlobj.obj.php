@@ -664,8 +664,8 @@ class mysqlObj
     return;
   }
 
-  public function fetchRL($ar, $f_fetch = true) {
-    $this->_fetchRL($ar, $f_fetch);
+  public function fetchRL($ar, $f_fetch = true, $where = '') {
+    $this->_fetchRL($ar, $f_fetch, $where);
   }
 
   public function getTable() {
@@ -889,7 +889,7 @@ class mysqlObj
  }
 
 
-  protected function _fetchRL($name, $f_fetch = true) {
+  protected function _fetchRL($name, $f_fetch = true, $where = '') {
 
 
     if (!isset($this->_rel[$name])) {
@@ -906,8 +906,8 @@ class mysqlObj
      $table = $obj->getTable();
      $index = $obj->getIdx();
      $a_idx = $obj->getIdx(true);
-     $where = '';
      $w = 0;
+     if (!empty($where)) $w = 1;
 
      foreach($rel->fk as $src => $dst) {
        if ($w) { $where .= " AND "; } else { $where .= "WHERE "; }

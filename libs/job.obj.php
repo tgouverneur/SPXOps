@@ -69,7 +69,7 @@ class Job extends mysqlObj
 
   public static function cleanJobs(&$job) {
 
-    $t_old = time() - (3600*24*1); // 2 days
+    $t_old = time() - (3600*12); // 12h
     $table = "`list_job`";
     $index = "`id`";
     $cindex = "COUNT(`id`)";
@@ -163,6 +163,10 @@ class Job extends mysqlObj
   public function log($str) {
     if ($this->o_log) $this->o_log->log .= $str."\n";
     $this->o_log->update();
+  }
+
+  public function link() {
+    return '<a href="/view/w/job/i/'.$this->id.'">'.$this.'</a>';
   }
 
   public function fetchAll($all=0) {
