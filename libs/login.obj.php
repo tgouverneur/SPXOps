@@ -29,6 +29,8 @@ class Login extends mysqlObj
   public $a_ugroup = array();
   public $a_right = array();
 
+  public $i_raddr = '';
+
   public function link() {
     return '<a href="/view/w/login/i/'.$this->id.'">'.$this.'</a>';
   }

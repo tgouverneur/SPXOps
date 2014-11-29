@@ -47,6 +47,8 @@
      $content->set('msg', "Welcome ".$lm->o_login->fullname.", you are successfully logged in");
      goto screen;
    }
+   $l = new Login(); $l->username = $username;
+   Act::add("[$l] Failed Login tentative from ".$_SERVER['REMOTE_ADDR'], $l);
    $content->set('error', $errors);
  }
 
