@@ -77,7 +77,7 @@ class OSLinux extends OSType
       /* get the XML dump */
       $out_vdump = $s->exec($cmd_vdump.' '.$vm->name);
       $xmldump = trim($out_vdump);
-//TMP      if (strcmp($vm->xml, $xmldump)) {
+      if (strcmp($vm->xml, $xmldump)) {
         $vm->xml = $xmldump;
         $s->log("$vm XML dump updated", LLOG_INFO);
         $vm->parseXML();
@@ -113,7 +113,7 @@ class OSLinux extends OSType
 	  $s->log("$vm hw:memory => $vm_mem", LLOG_INFO);
           $u++;
         }
-//TMP      }
+      }
       /* get the state */
       $out_vstate = $s->exec($cmd_vstate.' '.$vm->name);
       $state = trim($out_vstate);
