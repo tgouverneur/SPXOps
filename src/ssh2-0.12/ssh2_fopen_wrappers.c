@@ -132,6 +132,31 @@ static int php_ssh2_channel_stream_flush(php_stream *stream TSRMLS_DC)
 	return libssh2_channel_flush_ex(abstract->channel, abstract->streamid);
 }
 
+static int php_ssh2_channel_stream_cast (php_stream *stream, int castas, void** ret TSRMLS_DC) {
+
+       php_ssh2_channel_data *abstract = (php_ssh2_channel_data*)stream->abstract;
+
+       int socket = libssh2_channel_socket_fd(abstract->channel);
+
+       // Load socket
+       switch(castas)  {
+               case PHP_STREAM_AS_FD_FOR_SELECT:
+                       if (ret) {
+                               *(int *)ret = socket;
+                       }
+                       return SUCCESS;
+               case PHP_STREAM_AS_FD:
+               case PHP_STREAM_AS_SOCKETD:
+                       if (ret) {
+                               *(int *)ret = socket;
+                       }
+                       return SUCCESS;
+               default:
+                       return FAILURE;
+       }
+       return SUCCESS;
+}
+
 static int php_ssh2_channel_stream_set_option(php_stream *stream, int option, int value, void *ptrparam TSRMLS_DC)
 {
 	php_ssh2_channel_data *abstract = (php_ssh2_channel_data*)stream->abstract;
@@ -172,7 +197,7 @@ php_stream_ops php_ssh2_channel_stream_ops = {
 	php_ssh2_channel_stream_flush,
 	PHP_SSH2_CHANNEL_STREAM_NAME,
 	NULL, /* seek */
-	NULL, /* cast */
+	php_ssh2_channel_stream_cast, /* cast */
 	NULL, /* stat */
 	php_ssh2_channel_stream_set_option,
 };

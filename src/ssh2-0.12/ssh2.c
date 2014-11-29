@@ -425,7 +425,7 @@ LIBSSH2_SESSION *php_ssh2_session_connect(char *host, int port, zval *methods, z
 		}
 	}
 
-	if (libssh2_session_startup(session, socket)) {
+	if (libssh2_session_handshake(session, socket)) {
 		int last_error = 0;
 		char *error_msg = NULL;
 
@@ -697,7 +697,7 @@ PHP_FUNCTION(ssh2_auth_pubkey_file)
 	}
 
 	/* TODO: Support passphrase callback */
-	if (libssh2_userauth_publickey_fromfile_ex(session, username, username_len, pubkey, privkey, passphrase)) {
+	if (libssh2_userauth_publickey_fromfile(session, username, pubkey, privkey, passphrase)) {
 		char *buf;
 		int len;
 		libssh2_session_last_error(session, &buf, &len, 0);

@@ -1,7 +1,6 @@
 logs/
 tests/
 old/
-sql/
 tmp/
 libs/config.inc.php
 *.swp
