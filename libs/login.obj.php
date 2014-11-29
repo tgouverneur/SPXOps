@@ -63,6 +63,7 @@ class Login extends mysqlObj
       }
     }
 
+    $lm = LoginCM::getInstance();
     if ($this->f_admin && !$lm->o_login->f_admin) {
       $ret[] = 'You cannot add an admin user as you aren\'t administrator yourself.';
       $this->f_admin = false;
