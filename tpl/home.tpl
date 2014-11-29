@@ -4,7 +4,7 @@
             <h1>Welcome to Espix Operations</h1>
             <p>You can manage different flavours of UNIX operating systems using this portal, simply browse through the menu or check the documentation to see how to get more benefit of this portal.</p>
   	    <p>
-  	      <a class="btn btn-primary btn-large" href="http://spxops.espix.net/docs">Documentation</a>
+  	      <a class="btn btn-primary btn-large" href="https://github.com/tgouverneur/SPXOps/wiki">Documentation</a>
 	    </p>
           </div>
           <div class="row">

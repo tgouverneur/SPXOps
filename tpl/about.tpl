@@ -19,6 +19,6 @@
             <li>AIX</li>
           </ul>
           <h3>Documentation</h3>
-	  <p>An online documentation of this application is available <a href="http://spxops.espix.net/docs">there</a>. If you have any more question or facing any issue, you can open a ticket by sending a mail to the <a href="mailto: support@espix.net">Espix Network Support</a>.</p>
+	  <p>An online documentation of this application is available <a href="https://github.com/tgouverneur/SPXOps/wiki">there</a>. If you have any more question or facing any issue, you can open a ticket by sending a mail to the <a href="mailto: support@espix.net">Espix Network Support</a>.</p>
         </div>
       </div>
