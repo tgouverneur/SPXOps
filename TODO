@@ -9,6 +9,7 @@ Medium:
 
  - find a way to inventorize custom metrics
  - [DONE][BUG] Edit his own profile is not working if not changing password and if you are and admin
+ - bin/ sbin/ path for libraries
 
 Cosmetics:
 ----------
