@@ -825,7 +825,8 @@ class OSSolaris extends OSType
 
   public static function update_network(&$s) {
 
-    if ($s->data('os:major') > 10) {
+    $major = $s->data('os:major');
+    if (empty($major) || !is_numeric($major) || $major > 10) {
       $ifs = OSSolaris::update_network_s11($s);
     } else {
       $ifs = OSSolaris::update_network_s10($s);
@@ -1891,7 +1892,9 @@ d101 1 1 /dev/dsk/emcpower58a
    */
   public static function update_zfs(&$s) {
 
-    if ($s->data('os:major') < 10) {
+    $major = $s->data('os:major');
+    /* if $major is empty or not a number, it could just be an illumos based machine */
+    if (!empty($major) && is_numeric($major) && $major < 10) {
       return 0;
     }
 
