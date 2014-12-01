@@ -4,7 +4,12 @@
 	  <p>Espix Operations, the simplest interface to manage and keep track of your UNIX servers.</p>
 	  <p>It currently support actively following OSes:</p>
 	  <ul>
-	    <li>Oracle Solaris from version 8 to 11;</li>
+	    <li>Solaris based:</li>
+		<ul>
+			<li>Solaris 8,9 and 10</li>
+			<li>Solaris 11</li>
+			<li>Openindiana</li>
+		</ul>
 	    <li>Linux, following distributions:
 		<ul>
 		  <li>Debian</li>
