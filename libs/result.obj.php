@@ -101,7 +101,7 @@ class Result extends mysqlObj
     $c_rc = 'error';
     if ($rc >= 0) $c_rc = 'success';
     else if ($rc == -1) $c_rc = 'warning';
-    else $c_rc = 'error';
+    else $c_rc = 'danger';
     return $c_rc;
   }
 

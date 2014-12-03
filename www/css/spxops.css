@@ -13,7 +13,7 @@
   border: 1px solid #FBEED5;
 }
 
-.tderror {
+.tddanger {
   background-color: #F2DEDE;
   border: 1px solid #EED3D7;
 }
@@ -25,7 +25,7 @@
 
   color: #C09853;
 }
-.tderror a, .tderror a:visited {
+.tddanger a, .tddanger a:visited {
   color: #B94A48;
 }
 
