@@ -57,6 +57,25 @@ class OSSolaris extends OSType
       $pagesize = trim($s->exec($pagesize));
       $kstat_out = $s->exec($kstat.' -p '.$kstat_keys);
       $lines = explode(PHP_EOL, $kstat_out);
+/*
+zfs:0:arcstats:l2_abort_lowmem  349
+zfs:0:arcstats:l2_cksum_bad     890636
+zfs:0:arcstats:l2_evict_lock_retry      0
+zfs:0:arcstats:l2_evict_reading 0
+zfs:0:arcstats:l2_feeds 1654297
+zfs:0:arcstats:l2_hdr_size      42533776
+zfs:0:arcstats:l2_hits  2832237
+zfs:0:arcstats:l2_io_error      0
+zfs:0:arcstats:l2_misses        37939686
+zfs:0:arcstats:l2_read_bytes    337036622336
+zfs:0:arcstats:l2_rw_clash      0
+zfs:0:arcstats:l2_size  18502909952
+zfs:0:arcstats:l2_write_bytes   2063272522752
+zfs:0:arcstats:l2_writes_done   376002
+zfs:0:arcstats:l2_writes_error  0
+zfs:0:arcstats:l2_writes_hdr_miss       0
+zfs:0:arcstats:l2_writes_sent   376002
+*/
       
       $vk = array();
       foreach($lines as $line) {
@@ -137,9 +156,19 @@ class OSSolaris extends OSType
       $demand_data_perc = 100*($demand_data_hits / $demand_data_total);
 
       $res .= '<h4>Graphs</h4>';
+      $res .= '<div class="row">';
+      $res .= '<div class="col-sm-6"><h6 class="text-center">ZFS Cache Hits</h6>';
       $res .= '<div id="pieCacheHits"></div>';
+      $res .= '</div>';
+      $res .= '<div class="col-sm-6"><h6 class="text-center">ZFS Cache Hits Demand Data</h6>';
       $res .= '<div id="pieCacheHitsDT"></div>';
+      $res .= '</div>';
+      $res .= '</div>';
+      $res .= '<div class="row">';
+      $res .= '<div class="col-sm-6"><h6 class="text-center">ZFS Cache Misses Demand Data</h6>';
       $res .= '<div id="pieCacheMissDT"></div>';
+      $res .= '</div>';
+      $res .= '</div>';
 
       $pie = array();
       $pie['pieCacheHits'] = array();

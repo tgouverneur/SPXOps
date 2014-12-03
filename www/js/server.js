@@ -36,9 +36,9 @@ function lActionError(jqXHR, textStatus, errorThrown) {
   $("#error-box").show();
 }
 
-function coucou() {
+function drawPies(e) {
     for (index = 0; index < window.pies.length; ++index) {
-        console.log(window.pies[index]);
+        console.log(window.pies[index] + ' ' + [window.piesValues[window.pies[index]]]);
         $.jqplot (window.pies[index], [window.piesValues[window.pies[index]]],
           {
             seriesDefaults: {
@@ -50,8 +50,8 @@ function coucou() {
                 showDataLabels: true
               }
             },
-            legend: { show:true, location: 'e' },
-            grid: { drawGridLines:false, shadow:false, borderWidth:0.0 }
+            legend: { show:true, showLabels: true, location: 'e' },
+	    grid: { background:"#ffffff", drawGridLines:false, shadow:false, borderWidth:0.0 },
           }
         );
     }
@@ -66,7 +66,7 @@ function lActionSuccess(data, textStatus, jqXHR) {
     c.innerHTML = data['res']['html'];
     if (data['res']['pie']) {
       updatePies(data['res']['pie']);
-      $('#actionModal').on('shown.bs.modal', coucou());
+      $('#actionModal').on('shown.bs.modal', drawPies);
     }
     $('#actionModal').modal('show');
   }
