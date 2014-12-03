@@ -28,9 +28,9 @@
  $js = array();
  $css = array();
  $npp = 20;
- array_push($css, 'jquery.dataTables.css');
+ array_push($css, 'jquery.dataTables.min.css');
  array_push($css, 'dataTables.bootstrap.css');
- array_push($js, 'jquery.dataTables.js');
+ array_push($js, 'jquery.dataTables.min.js');
  array_push($js, 'dataTables.bootstrap.js');
  $head->set("js", $js);
  $head->set("css", $css);

@@ -2,6 +2,8 @@
 
 class OSLinux extends OSType
 {
+  public static $extraActions = array();
+
   public static $binPaths = array(
     "/bin",
     "/usr/bin",

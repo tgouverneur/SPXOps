@@ -1,26 +1,21 @@
-      <div class="row">
-	<h1 class="span12">Check <?php echo $obj; ?></h1>
+	<div class="page-header"><h1>Check <?php echo $obj; ?></h1></div>
+        <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
+          <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+          <h4>Success!</h4>
+          <p id="success-msg"></p>
+        </div>
+        <div class="alert alert-block alert-warning fade in" id="warning-box" style="display:none;">
+          <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+          <h4>Warning!</h4>
+          <p id="warning-msg"></p>
+        </div>
+        <div class="alert alert-block alert-danger fade in" id="error-box" style="display:none;">
+          <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+          <h4>Error!</h4>
+          <p id="error-msg"></p>
+        </div>
         <div class="row">
-	 <div class="span12">
-	  <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
-	    <button type="button" class="close">×</button>
-	    <h4>Success!</h4>
-	    <p id="success-msg"></p>
-	  </div>
-          <div class="alert alert-block fade in" id="warning-box" style="display:none;">
-            <button type="button" class="close">×</button>
-            <h4>Warning!</h4>
-            <p id="warning-msg"></p>
-          </div>
-          <div class="alert alert-block alert-error fade in" id="error-box" style="display:none;">
-            <button type="button" class="close">×</button>
-            <h4>Error!</h4>
-            <p id="error-msg"></p>
-          </div>
-	 </div>
-	</div>
-        <div class="row">
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Basic Information</h3>
 	   <table class="table table-condensed">
 	     <tbody>
@@ -30,7 +25,7 @@
 	     </tbody>
 	   </table>
 	  </div>
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Groups</h3>
            <table id="LListsgroupTable" class="table table-condensed">
 	     <caption>Will be done on:</caption>
@@ -56,10 +51,10 @@
            </table>
 
           </div>
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Actions</h3>
-	    <ul class="nav nav-tabs nav-stacked">
-	      <li class="dropdown">
+	    <ul class="nav nav-pills nav-stacked">
+	      <li class="dropdown active">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
 	        <ul class="dropdown-menu">
                   <li><a href="/del/w/check/i/<?php echo $obj->id; ?>">Delete</a></li>
@@ -67,39 +62,44 @@
                   <li><a href="/log/w/check/i/<?php echo $obj->id; ?>">Add Log entry</a></li>
 	        </ul>
 	      </li>
-              <li class="dropdown">
+              <li class="dropdown active">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">View <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a data-toggle="modal" href="/modallist/w/logs/o/check/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
-                  <li><a data-toggle="modal" href="/modallist/w/results/i/<?php echo $obj->id; ?>" data-target="#resultsModal">View Result</a></li>
+                  <li><a href="/modallist/w/logs/o/check/i/<?php echo $obj->id; ?>" class="logsModalLink">View Logs</a></li>
+                  <li><a href="/modallist/w/results/i/<?php echo $obj->id; ?>" class="resultsModalLink">View Result</a></li>
                 </ul>
               </li>
             </ul>
 	  </div>
 	</div>
         <div class="row">
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Add Groups</h3>
-           <div class="input-append">
-             <select id="selectGroup">
+           <form class="form-inline">
+           <div class="form-group">
+	     <label class="sr-only" for="selectEGroup">Group to Add</label>
+             <select class="form-control input-md" id="selectGroup">
                <option value="-1">Choose a group to add</option>
 <?php foreach($a_sgroup as $l) { ?>
                <option value="<?php echo $l->id; ?>"><?php echo $l; ?></option>
-
 <?php } ?>  
-             </select> <button type="button" class="btn" onClick="addLList('check', <?php echo $obj->id; ?>, 'sgroup', '#selectGroup');">Add</button>
+             </select> <button type="button" class="btn btn-primary" onClick="addLList('check', <?php echo $obj->id; ?>, 'sgroup', '#selectGroup');">Add</button>
            </div>
-           <div class="input-append">
-             <select id="selectEGroup">
+          </form>
+           <form class="form-inline">
+           <div class="form-group">
+	     <label class="sr-only" for="selectEGroup">Group to Exempt</label>
+             <select class="form-control" id="selectEGroup">
                <option value="-1">Choose a group to exempt</option>
 <?php foreach($a_sgroup as $l) { ?>
                <option value="<?php echo $l->id; ?>"><?php echo $l; ?></option>
 
 <?php } ?>  
-             </select> <button type="button" class="btn" onClick="addLList('check', <?php echo $obj->id; ?>, 'esgroup', '#selectEGroup');">Add</button>
-           </div>
+             </select> <button type="button" class="btn btn-primary" onClick="addLList('check', <?php echo $obj->id; ?>, 'esgroup', '#selectEGroup');">Add</button>
           </div>
-          <div class="span8">
+          </div>
+          </form>
+          <div class="col-md-8">
            <h3>LUA Code</h3>
 	    <pre class="pre-scrollable">
 <?php echo $obj->lua; ?>
@@ -108,26 +108,57 @@
        </div>
       </div>
       <!-- Result Modal -->
-      <div class="modal large hide fade in" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="resultModalLabel">Disks list</h3>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <div class="modal fade" tabindex="-1" role="dialog" id="resultsModal" aria-labelledby="resultsModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+             <h4 class="modal-title" id="resultsModalLabel">Checks Results:</h3>
+           </div>
+           <div class="modal-body">
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
         </div>
       </div>
       <!-- Logs Modal -->
-      <div class="modal large hide fade in" id="logsModal" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="logsModalLabel">Disks list</h3>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <div class="modal fade" tabindex="-1" role="dialog" id="logsModal" aria-labelledby="logsModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+             <h4 class="modal-title" id="logsModalLabel">Logs entries:</h3>
+           </div>
+           <div class="modal-body">
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
         </div>
       </div>
+      <script class="code" type="text/javascript">
+        $('.resultsModalLink').click(function(e) {
+          var modal = $('#resultsModal'), modalBody = $('#resultsModal .modal-body');
+          modal.on('show.bs.modal', function () {
+            modalBody.load(e.currentTarget.href)
+          })
+        .modal();
+        e.preventDefault();
+        });
+        $('.logsModalLink').click(function(e) {
+          var modal = $('#logsModal'), modalBody = $('#logsModal .modal-body');
+          modal.on('show.bs.modal', function () {
+            modalBody.load(e.currentTarget.href)
+          })
+        .modal();
+        e.preventDefault();
+        });
+      </script>
+      <script class="code" type="text/javascript">
+        $('.alert .close').on('click', function() {
+          $(this).parent().hide();
+        });
+      </script>

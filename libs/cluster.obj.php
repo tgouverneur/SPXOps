@@ -281,7 +281,7 @@ class Cluster extends mysqlObj
     return array(
 	'Name' => $this->name,
 	'Description' => $this->description,
-	'Update?' => ($this->f_upd)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
+	'Update?' => ($this->f_upd)?'<span class="glyphicon glyphicon-ok-sign"></span>':'<span class="glyphicon glyphicon-remove-circle"></span>',
 	'Updated on' => date('d-m-Y', $this->t_upd),
 	'Added on' => date('d-m-Y', $this->t_add),
     );

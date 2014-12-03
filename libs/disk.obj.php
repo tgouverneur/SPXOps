@@ -93,7 +93,7 @@ class Disk extends mysqlObj
                  'product' => $this->product,
                  'size' => formatBytes($this->size),
                  'lunid' => $this->lunid,
-                 'san' => ($this->f_san)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
+                 'san' => ($this->f_san)?'<span class="glyphicon glyphicon-ok-sign"></span>':'<span class="glyphicon glyphicon-remove-circle"></span>',
                  'details' => '<a href="/view/w/disk/i/'.$this->id.'">View</a>',
                  't_add' => date('d-m-Y', $this->t_add),
                 );

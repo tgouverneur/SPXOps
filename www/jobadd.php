@@ -86,7 +86,7 @@
        $j->insert();
        Act::add("Requested an update of the server $s", $lm->o_login);
        $ret['rc'] = 0;
-       $ret['msg'] = "Job to update server $s has been succesfully added to the queue...";
+       $ret['msg'] = "Job to check server $s has been succesfully added to the queue...";
        goto screen;
      }
    break;

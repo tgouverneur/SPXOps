@@ -1,7 +1,6 @@
-      <div class="row">
-	<h1 class="span12">My User rights</h1>
+	<div class="page-header"><h1 class="col-md-12">My User rights</h1></div>
         <div class="row">
-          <div class="span8">
+          <div class="col-md-8">
            <h3>Rights list</h3>
 	   <table class="table table-condensed">
 	     <thead>
@@ -15,4 +14,3 @@
 	   </table>
 	  </div>
 	</div>
-      </div>

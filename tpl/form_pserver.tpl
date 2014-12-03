@@ -8,34 +8,32 @@ if (!isset($action) || !$action) {
   }
 }
 ?>
-      <div class="row">
-        <div class="span8 offset2">
 <?php if (isset($error)) { 
         if (!is_array($error)) {
           $error = array($error);
         }
         foreach($error as $e) {
 ?>
-	<div class="alert alert-error">
-	  <button type="button" class="close" data-dismiss="alert">×</button>
-	  <strong>Error!</strong> <?php echo $e; ?>
-	</div>
+        <div class="alert alert-danger alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <strong>Error!</strong> <?php echo $e; ?>
+        </div>
 <?php   }
       }
 ?>
-	<h2><?php echo $action; ?> a Physical Server</h2>
+	<div class="page-header">
+	  <h1><?php echo $action; ?> a Physical Server</h1>
+	</div>
         <form method="POST" action="/<?php echo strtolower($action); ?>/w/pserver" class="form-horizontal">
-          <div class="control-group">
-            <label class="control-label" for="inputName">Name</label>
-            <div class="controls">
-              <input type="text" name="name" value="<?php echo $obj->name; ?>" id="inputName" placeholder="Physical Name">
+          <div class="form-group">
+            <label class="col-sm-2 col-sm-offset-3 control-label" for="inputName">Name</label>
+            <div class="col-sm-3">
+              <input class="form-control" type="text" name="name" value="<?php echo $obj->name; ?>" id="inputName" placeholder="Physical Name">
             </div>
           </div>
-	  <div class="control-group">
-	    <div class="controls">
-	      <button type="submit" name="submit" value="1" class="btn"><?php echo $action; ?></button>
+	  <div class="form-group">
+	    <div class="col-sm-5 col-sm-offset-5">
+	      <button type="submit" name="submit" value="1" class="btn btn-primary"><?php echo $action; ?></button>
 	    </div>
 	  </div>
 	</form>
-        </div>
-      </div>

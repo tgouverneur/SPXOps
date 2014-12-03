@@ -1,6 +1,5 @@
-      <div class="row">
           <div class="row">
-	    <div class="span6">
+	    <div class="col-md-6">
 	      <h2>Storage Statistics</h2>
 		<dl class="dl-horizontal">
 		  <dt>Total Raw Storage:</dt>
@@ -13,7 +12,7 @@
                   <dd><?php echo $stats['storage_nbp']; ?> </dd>
 		</dl>
 	    </div>
-	    <div class="span6">
+	    <div class="col-md-6">
               <h2>Hardware</h2>
                 <dl class="dl-horizontal">
                   <dt># of CPU:</dt>
@@ -26,18 +25,17 @@
             </div>
   	  </div>
 	  <div class="row">
- 	    <div class="span6">
+ 	    <div class="col-md-6">
               <h2>Virtualization</h2>
                 <dl class="dl-horizontal">
                   <dt># of VMs:</dt>
                   <dd><?php echo $stats['vm_nb']; ?> </dd>
                 </dl>
             </div>
-            <div class="span4">
+            <div class="col-md-4">
               <h2>Placeholder</h2>
               <ul>
               </ul>
 	      <a class="btn" href="/list/w/results">More..</a>
             </div>
 	  </div>
-        </div>

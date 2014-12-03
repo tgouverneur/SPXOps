@@ -1,5 +1,12 @@
 <?php
 
+function getVal($ar, $name) {
+  if (isset($ar[$name])) {
+    return $ar[$name];
+  }
+  return null;
+}
+
 function parseFrequency($f) {
   if ($f >= 2678400) {
     $months = round($f/2678400);

@@ -2,12 +2,11 @@
   $cols = call_user_func($oc.'::printCols');
   if (!$a_list) $a_list = array();
 ?>
-      <div class="row">
-        <div class="row">
-  	  <h1 class="span8">List of <?php echo $what; ?></h1>
+        <div class="page-header">
+  	  <h1>List of <?php echo $what; ?></h1>
         </div>
         <div class="row">
-          <div class="span12">
+          <div class="col-md-12">
   	   <table id="datatable" class="table <?php if (!isset($notStripped)) echo "table-striped"; ?> table-bordered table-hover table-condensed">
   	    <thead>
 	     <tr>
@@ -59,15 +58,12 @@
          </div>
 	</div>
 <?php if (isset($actions)) { ?>
-        <div class="row">
-          <div class="span4">
-           <h3>Actions</h3>
-            <ul class="nav nav-tabs nav-stacked">
+ 	<div class="page-header">
+          <h1>Actions</h1>
+        </div>
+        <ul class="nav nav-pills nav-stacked">
 <?php foreach($actions as $name => $link) { ?>
-              <li><a href="<?php echo $link; ?>"><?php echo $name; ?></a></li>
+          <li class="col-md-2" role="presentation"><a href="<?php echo $link; ?>"><?php echo $name; ?></a></li>
 <?php } ?>
-            </ul>
-          </div>
-	</div>
+        </ul>
 <?php } ?>
-      </div>

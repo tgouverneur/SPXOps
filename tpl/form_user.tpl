@@ -9,69 +9,69 @@ if (!isset($action) || !$action) {
 }
 if (!isset($edit)) $edit = false;
 ?>
-      <div class="row">
-        <div class="span8 offset2">
 <?php if (isset($error)) { 
         if (!is_array($error)) {
           $error = array($error);
         }
         foreach($error as $e) {
 ?>
-	<div class="alert alert-error">
-	  <button type="button" class="close" data-dismiss="alert">×</button>
-	  <strong>Error!</strong> <?php echo $e; ?>
-	</div>
+        <div class="alert alert-danger alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <strong>Error!</strong> <?php echo $e; ?>
+        </div>
 <?php   }
       }
 ?>
-	<h2><?php echo $action; ?> an User</h2>
+	<div class="page-header"><h1><?php echo $action; ?> an User</h1></div>
         <form method="POST" action="/<?php echo strtolower($action); ?>/w/login<?php if ($edit) echo "/i/".$obj->id; ?>" class="form-horizontal">
-          <div class="control-group">
-            <label class="control-label" for="inputFullname">Fullname</label>
-            <div class="controls">
-              <input type="text" name="fullname" value="<?php echo $obj->fullname; ?>" id="inputFullname" placeholder="Full Name">
+          <div class="form-group">
+            <label class="col-sm-2 col-sm-offset-3 control-label" for="inputFullname">Fullname</label>
+            <div class="col-sm-3">
+              <input class="form-control" type="text" name="fullname" value="<?php echo $obj->fullname; ?>" id="inputFullname" placeholder="Full Name">
             </div>
 	  </div>
-          <div class="control-group">
-            <label class="control-label" for="inputEmail">E-Mail</label>
-            <div class="controls">
-              <input type="text" name="email" value="<?php echo $obj->email; ?>" id="inputEmail" placeholder="user@domain.tld">
+          <div class="form-group">
+            <label class="col-sm-2 col-sm-offset-3 control-label" for="inputEmail">E-Mail</label>
+            <div class="col-sm-3">
+              <input class="form-control" type="text" name="email" value="<?php echo $obj->email; ?>" id="inputEmail" placeholder="user@domain.tld">
             </div>
 	  </div>
-	  <div class="control-group">
-	    <label class="control-label" for="inputUsername">Username</label>
-	    <div class="controls">
-	      <input type="text" name="username" value="<?php echo $obj->username; ?>" id="inputUsername" placeholder="Username">
+	  <div class="form-group">
+	    <label class="col-sm-2 col-sm-offset-3 control-label" for="inputUsername">Username</label>
+	    <div class="col-sm-3">
+	      <input class="form-control" type="text" name="username" value="<?php echo $obj->username; ?>" id="inputUsername" placeholder="Username">
 	    </div>
 	  </div>
-	  <div class="control-group">
-	    <label class="control-label" for="inputPassword">Password</label>
-	    <div class="controls">
-	      <input type="password" name="password" id="inputPassword" placeholder="Password">
+	  <div class="form-group">
+	    <label class="col-sm-2 col-sm-offset-3 control-label" for="inputPassword">Password</label>
+	    <div class="col-sm-3">
+	      <input class="form-control" type="password" name="password" id="inputPassword" placeholder="Password">
 	    </div>
 	  </div>
-          <div class="control-group">
-            <label class="control-label" for="inputPasswordConfirm">Confirmation</label>
-            <div class="controls">
-              <input type="password" name="password_c" id="inputPasswordConfirm" placeholder="Confirmation">
+          <div class="form-group">
+            <label class="col-sm-2 col-sm-offset-3 control-label" for="inputPasswordConfirm">Confirmation</label>
+            <div class="col-sm-3">
+              <input class="form-control" type="password" name="password_c" id="inputPasswordConfirm" placeholder="Confirmation">
             </div>
           </div>
-          <div class="control-group">
-	    <label class="control-label" for="inputOptions">Options</label>
-            <div class="controls">
-              <label class="checkbox">
+          <div class="form-group">
+	    <label class="col-sm-2 col-sm-offset-3 control-label" for="inputOptions">Options</label>
+            <div class="col-sm-3">
+              <div class="checkbox">
+	       <label>
                 <input name="f_admin" type="checkbox" <?php if ($obj->f_admin) { echo "checked"; } ?>> Administrator
-              </label>
-              <label class="checkbox">
+               </label>
+              </div>
+              <div class="checkbox">
+	       <label>
                 <input name="f_ldap" type="checkbox" <?php if ($obj->f_ldap) { echo "checked"; } ?>> in LDAP
-              </label>
+               </label>
+              </div>
             </div>
           </div>
-	  <div class="control-group">
-	    <div class="controls">
-	      <button type="submit" name="submit" value="1" class="btn"><?php echo $action; ?></button>
+	  <div class="form-group">
+	    <div class="col-sm-offset-5 col-sm-3">
+	      <button type="submit" name="submit" value="1" class="btn btn-primary"><?php echo $action; ?></button>
 	    </div>
 	  </div>
 	</form>
-        </div>
-      </div>

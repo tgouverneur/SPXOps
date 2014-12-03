@@ -1,26 +1,21 @@
-      <div class="row">
-	<h1 class="span12">Server <?php echo $obj; ?></h1>
+	<div class="page-header"><h1>Server <?php echo $obj; ?></h1></div>
+        <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
+	  <button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4>Success!</h4>
+          <p id="success-msg"></p>
+        </div>
+        <div class="alert alert-block alert-warning fade in" id="warning-box" style="display:none;">
+	  <button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4>Warning!</h4>
+          <p id="warning-msg"></p>
+        </div>
+        <div class="alert alert-block alert-danger fade in" id="error-box" style="display:none;">
+	  <button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4>Error!</h4>
+          <p id="error-msg"></p>
+        </div>
         <div class="row">
-	 <div class="span12">
-	  <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
-	    <button type="button" class="close">×</button>
-	    <h4>Success!</h4>
-	    <p id="success-msg"></p>
-	  </div>
-          <div class="alert alert-block fade in" id="warning-box" style="display:none;">
-            <button type="button" class="close">×</button>
-            <h4>Warning!</h4>
-            <p id="warning-msg"></p>
-          </div>
-          <div class="alert alert-block alert-error fade in" id="error-box" style="display:none;">
-            <button type="button" class="close">×</button>
-            <h4>Error!</h4>
-            <p id="error-msg"></p>
-          </div>
-	 </div>
-	</div>
-        <div class="row">
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Basic Information</h3>
 	   <table class="table table-condensed">
 	     <tbody>
@@ -40,7 +35,7 @@
 	     </tbody>
 	   </table>
 	  </div>
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Hardware</h3>
            <table class="table table-condensed">
              <tbody>
@@ -52,10 +47,10 @@
              </tbody>
            </table>
           </div>
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Actions</h3>
-	    <ul class="nav nav-tabs nav-stacked">
-	      <li class="dropdown">
+	    <ul class="nav nav-pills nav-stacked">
+	      <li class="dropdown active">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
 	        <ul class="dropdown-menu">
                   <li><a href="/edit/w/server/i/<?php echo $obj->id; ?>">Edit</a></li>
@@ -63,31 +58,34 @@
                   <li><a href="/log/w/server/i/<?php echo $obj->id; ?>">Add Log entry</a></li>
 	        </ul>
 	      </li>
-              <li class="dropdown">
+              <li class="dropdown active">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Action <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="#" onClick="addJob('Update', 'jobServer', '<?php echo $obj->id; ?>');">Launch Update</a></li>
                   <li><a href="#" onClick="addJob('Check', 'jobServer', '<?php echo $obj->id; ?>');">Launch Check</a></li>
-                  <li><a href="#">Check ZFS Arc</a></li>
-                  <li><a href="#">Zone Stats</a></li>
+<?php
+  $ea = $obj->getExtraActions();
+  foreach($ea as $a) { ?>
+                  <li><a href="<?php echo $a->href($obj); ?>" <?php if (!empty($a->onclick)) { echo "onClick=\"".$a->onclick($obj)."\""; } ?>><?php echo $a->text; ?></a></li>
+<?php } ?>
                 </ul>
               </li>
-              <li class="dropdown">
+              <li class="dropdown active">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">View <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a data-toggle="modal" href="/modallist/w/patches/i/<?php echo $obj->id; ?>" data-target="#patchesModal">View Patches</a></li>
-                  <li><a data-toggle="modal" href="/modallist/w/packages/i/<?php echo $obj->id; ?>" data-target="#packagesModal">View Packages</a></li>
-                  <li><a data-toggle="modal" href="/modallist/w/projects/i/<?php echo $obj->id; ?>" data-target="#projectsModal">View Projects</a></li>
-                  <li><a data-toggle="modal" href="/modallist/w/disks/i/<?php echo $obj->id; ?>" data-target="#disksModal">View Disks</a></li>
-                  <li><a data-toggle="modal" href="/modallist/w/sresults/i/<?php echo $obj->id; ?>" data-target="#resultsModal">View Check Results</a></li>
-                  <li><a data-toggle="modal" href="/modallist/w/logs/o/Server/i/<?php echo $obj->id; ?>" data-target="#logsModal">View Logs</a></li>
+                  <li><a href="/modallist/w/patches/i/<?php echo $obj->id; ?>" class="patchesModalLink">View Patches</a></li>
+                  <li><a href="/modallist/w/packages/i/<?php echo $obj->id; ?>" class="packagesModalLink">View Packages</a></li>
+                  <li><a href="/modallist/w/projects/i/<?php echo $obj->id; ?>" class="projectsModalLink">View Projects</a></li>
+                  <li><a href="/modallist/w/disks/i/<?php echo $obj->id; ?>" class="disksModalLink">View Disks</a></li>
+                  <li><a href="/modallist/w/sresults/i/<?php echo $obj->id; ?>" class="resultsModalLink">View Check Results</a></li>
+                  <li><a href="/modallist/w/logs/o/Server/i/<?php echo $obj->id; ?>" class="logsModalLink">View Logs</a></li>
                 </ul>
               </li>
             </ul>
 	  </div>
 	</div>
         <div class="row">
-          <div class="span4">
+          <div class="col-md-4">
 <?php if ($obj->o_os->f_zone) { ?>
            <h3>Zones</h3>
 	   <table class="table table-condensed">
@@ -130,7 +128,7 @@
 <?php } ?>
           </div>
 <?php if (count($obj->a_pool)) {  ?>
-          <div class="span8">
+          <div class="col-md-8">
             <h3>Zpool</h3>
  	    <table class="table table-condensed">
              <thead>
@@ -156,19 +154,19 @@
 	</div>
         <div class="row">
 <?php } ?>
-          <div class="span8">
+          <div class="col-md-8">
            <h3>Network Interfaces</h3>
-	     <div class="accordion" id="network">
+	     <div class="panel-group" id="network">
 <?php $i = 0; foreach($obj->getNetworks() as $net) { ?>
-                <div class="accordion-group">
-                  <div class="accordion-heading">
-                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#network" href="#collapse<?php echo $i; ?>">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+		    <a data-toggle="collapse" data-parent="#accordion" href="#collapse<?php echo $i; ?>" aria-expanded="true" aria-controls="collapseOne">
                       <?php echo $net; ?> 
 <?php if ($net->f_ipmp) { ?>
 		      (Group: <?php echo $net->group; ?>)
 <?php } ?>
 		      (<?php echo count($net->a_addr); ?> address found)
-	              <span class="caret"></span>
+	              <col-md- class="caret"></col-md->
                     </a>
                   </div>
                   <div id="collapse<?php echo $i; ?>" class="accordion-body collapse">
@@ -201,74 +199,167 @@
        </div>
       </div>
       <!-- Patches Modal -->
-      <div class="modal hide fade in" id="patchesModal" tabindex="-1" role="dialog" aria-labelledby="patchesModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="patchesModalLabel">Patches Installed</h3>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <div class="modal fade" tabindex="-1" role="dialog" id="patchesModal" aria-labelledby="patchesModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+             <h4 class="modal-title" id="patchesModalLabel">Patches Installed</h3>
+           </div>
+           <div class="modal-body">
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
         </div>
       </div>
       <!-- Packages Modal -->
-      <div class="modal large hide fade in" id="packagesModal" tabindex="-1" role="dialog" aria-labelledby="packagesModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="packagesModalLabel">Packages Installed</h3>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <div class="modal fade" tabindex="-1" role="dialog" id="packagesModal" aria-labelledby="packagesModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+             <h4 class="modal-title" id="packagesModalLabel">Packages Installed</h3>
+           </div>
+           <div class="modal-body">
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
         </div>
       </div>
       <!-- Projects Modal -->
-      <div class="modal hide fade in" id="projectsModal" tabindex="-1" role="dialog" aria-labelledby="projectsModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="projectsModalLabel">Project list</h3>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <div class="modal fade" tabindex="-1" role="dialog" id="projectsModal" aria-labelledby="projectsModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> 
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+             <h4 class="modal-title" id="projectsModalLabel">Project list:</h3>
+           </div>
+           <div class="modal-body">
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
         </div>
       </div>
       <!-- Disks Modal -->
-      <div class="modal large hide fade in" id="disksModal" tabindex="-1" role="dialog" aria-labelledby="disksModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="disksModalLabel">Disks list</h3>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <div class="modal fade" tabindex="-1" role="dialog" id="disksModal" aria-labelledby="disksModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+             <h4 class="modal-title" id="disksModalLabel">Disks list:</h3>
+           </div>
+           <div class="modal-body">
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
         </div>
       </div>
       <!-- Result Modal -->
-      <div class="modal large hide fade in" id="resultsModal" tabindex="-1" role="dialog" aria-labelledby="resultsModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="resultsModalLabel">Results list</h3>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <div class="modal fade" tabindex="-1" role="dialog" id="resultsModal" aria-labelledby="resultsModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+             <h4 class="modal-title" id="resultsModalLabel">Checks Results:</h3>
+           </div>
+           <div class="modal-body">
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
         </div>
       </div>
       <!-- Logs Modal -->
-      <div class="modal large hide fade in" id="logsModal" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="logsModalLabel">Log Entries</h3>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <div class="modal fade" tabindex="-1" role="dialog" id="logsModal" aria-labelledby="logsModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+             <h4 class="modal-title" id="logsModalLabel">Logs entries:</h3>
+           </div>
+           <div class="modal-body">
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
         </div>
       </div>
+      <!-- Action Modal -->
+      <div class="modal fade" tabindex="-1" role="dialog" id="actionModal" aria-labelledby="actionModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> 
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+             <h4 class="modal-title" id="actionModalLabel"></h3>
+           </div>
+           <div id="actionModalBody" class="modal-body">
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
+        </div>
+      </div>
+      <script class="code" type="text/javascript">
+        $('.patchesModalLink').click(function(e) {
+          var modal = $('#patchesModal'), modalBody = $('#patchesModal .modal-body');
+          modal.on('show.bs.modal', function () {
+            modalBody.load(e.currentTarget.href)
+          })
+        .modal();
+        e.preventDefault();
+        });
+        $('.projectsModalLink').click(function(e) {
+          var modal = $('#projectsModal'), modalBody = $('#projectsModal .modal-body');
+          modal.on('show.bs.modal', function () {
+            modalBody.load(e.currentTarget.href)
+          })
+        .modal();
+        e.preventDefault();
+        });
+        $('.packagesModalLink').click(function(e) {
+          var modal = $('#packagesModal'), modalBody = $('#packagesModal .modal-body');
+          modal.on('show.bs.modal', function () {
+            modalBody.load(e.currentTarget.href)
+          })
+        .modal();
+        e.preventDefault();
+        });
+        $('.disksModalLink').click(function(e) {
+          var modal = $('#disksModal'), modalBody = $('#disksModal .modal-body');
+          modal.on('show.bs.modal', function () {
+            modalBody.load(e.currentTarget.href)
+          })
+        .modal();
+        e.preventDefault();
+        });
+        $('.resultsModalLink').click(function(e) {
+          var modal = $('#resultsModal'), modalBody = $('#resultsModal .modal-body');
+          modal.on('show.bs.modal', function () {
+            modalBody.load(e.currentTarget.href)
+          })
+        .modal();
+        e.preventDefault();
+        });
+        $('.logsModalLink').click(function(e) {
+          var modal = $('#logsModal'), modalBody = $('#logsModal .modal-body');
+          modal.on('show.bs.modal', function () {
+            modalBody.load(e.currentTarget.href)
+          })
+        .modal();
+        e.preventDefault();
+        });
+        $('.alert .close').on('click', function() {
+          $(this).parent().hide();
+        });
+      </script>

@@ -1,6 +1,4 @@
-      <div class="row">
-        <div class="span12">
-          <div class="hero-unit">
+          <div class="jumbotron">
             <h1>That's some bad hat Harry</h1>
 <?php if (isset($error)) { ?>
             <p><?php echo $error; ?></p>
@@ -11,5 +9,3 @@
   	      <a class="btn btn-primary btn-large" href="/report">Report</a>
 	    </p>
           </div>
-        </div>
-      </div>

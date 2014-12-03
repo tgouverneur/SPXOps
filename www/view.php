@@ -248,8 +248,10 @@
        $content = new Template('../tpl/view_server.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);
-       $js = array('jobs.js');
+       $js = array('server.js', 'jobs.js', 'jquery.jqplot.min.js', 'jqplot.pieRenderer.min.js', 'jqplot.donutRenderer.min.js');
+       $css = array('jquery.jqplot.min.css');
        $head->set('js', $js);
+       $head->set('css', $css);
      break;
      case 'cluster':
        if (!$lm->o_login->cRight('CLUSTER', R_VIEW)) {

@@ -1,29 +1,24 @@
 <?php 
  if (!isset($a_ugroup)) $a_ugroup = array();
 ?>
-      <div class="row">
-	<h1 class="span12">User <?php echo $obj; ?></h1>
+	<div class="page-header"><h1>User <?php echo $obj; ?></h1></div>
+        <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
+          <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+          <h4>Success!</h4>
+          <p id="success-msg"></p>
+        </div>
+        <div class="alert alert-block alert-warning fade in" id="warning-box" style="display:none;">
+          <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+          <h4>Warning!</h4>
+          <p id="warning-msg"></p>
+        </div>
+        <div class="alert alert-block alert-danger fade in" id="error-box" style="display:none;">
+          <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+          <h4>Error!</h4>
+          <p id="error-msg"></p>
+        </div>
         <div class="row">
-	 <div class="span12">
-	  <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
-	    <button type="button" class="close">×</button>
-	    <h4>Success!</h4>
-	    <p id="success-msg"></p>
-	  </div>
-          <div class="alert alert-block fade in" id="warning-box" style="display:none;">
-            <button type="button" class="close">×</button>
-            <h4>Warning!</h4>
-            <p id="warning-msg"></p>
-          </div>
-          <div class="alert alert-block alert-error fade in" id="error-box" style="display:none;">
-            <button type="button" class="close">×</button>
-            <h4>Error!</h4>
-            <p id="error-msg"></p>
-          </div>
-	 </div>
-	</div>
-        <div class="row">
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Basic Information</h3>
 	   <table class="table table-condensed">
 	     <tbody>
@@ -33,7 +28,7 @@
 	     </tbody>
 	   </table>
 	  </div>
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Groups</h3>
            <table id="LListugroupTable" class="table table-condensed">
              <tbody>
@@ -46,10 +41,10 @@
              </tbody>
            </table>
           </div>
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Actions</h3>
-	    <ul class="nav nav-tabs nav-stacked">
-	      <li class="dropdown">
+	    <ul class="nav nav-pills nav-stacked">
+	      <li class="dropdown active">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
 	        <ul class="dropdown-menu">
                   <li><a href="/del/w/login/i/<?php echo $obj->id; ?>">Delete</a></li>
@@ -60,23 +55,27 @@
 	  </div>
 	</div>
         <div class="row">
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Add Group</h3>
- 	   <div class="input-append">
-	     <select id="selectGroup">
+           <form class="form-inline">
+ 	   <div class="form-group">
+	     <select class="form-control" id="selectGroup">
 	       <option value="-1">Choose a group to add</option>
 <?php foreach($a_ugroup as $l) { ?>
 	       <option value="<?php echo $l->id; ?>"><?php echo $l; ?></option>
 
 <?php } ?>
-	     </select> <button type="button" class="btn" onClick="addLList('login', <?php echo $obj->id; ?>, 'ugroup', '#selectGroup');">Add</button>
+	     </select> <button type="button" class="btn btn-primary" onClick="addLList('login', <?php echo $obj->id; ?>, 'ugroup', '#selectGroup');">Add</button>
            </div>
-	   <div class="input-append">
-             <input id="inputGroup" type="text" placeholder="Group Regexp">
-             <button type="button" class="btn" onClick="addLListR('login', <?php echo $obj->id; ?>, 'ugroup', '#inputGroup');">Add</button>
+	   </form>
+           <form class="form-inline">
+	   <div class="form-group">
+             <input class="form-control" id="inputGroup" type="text" placeholder="Group Regexp">
+             <button type="button" class="btn btn-primary" onClick="addLListR('login', <?php echo $obj->id; ?>, 'ugroup', '#inputGroup');">Add</button>
            </div>
+ 	   </form>
           </div>
-          <div class="span8">
+          <div class="col-md-8">
            <h3>Last Activities</h3>
 	     <table class="table table-condensed">
 	      <tbody>
@@ -100,3 +99,8 @@
           <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         </div>
       </div>
+      <script class="code" type="text/javascript">
+        $('.alert .close').on('click', function() {
+          $(this).parent().hide();
+        });
+      </script>

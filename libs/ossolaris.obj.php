@@ -2,6 +2,8 @@
 
 class OSSolaris extends OSType
 {
+  public static $extraActions = array();
+
   public static $binPaths = array(
     "/bin",
     "/usr/bin",
@@ -37,6 +39,198 @@ class OSSolaris extends OSType
 //    "update_cdp",
 //    "update_swap",
   );
+
+
+  /* Extra actions functions */
+  public static function actionZFSArc(&$s) {
+    global $config;
+    @include_once($config['rootpath'].'/libs/functions.lib.php');
+
+    $ret = array();
+    $res = '<h3>ZFS Arc status</h3>'."\n";
+
+    try {
+      $s->connect();
+      $kstat = $s->findBin('kstat');
+      $kstat_keys = 'unix:0:system_pages:physmem unix:0:system_pages:freemem unix:0:system_pages:lotsfree zfs:0:arcstats:p zfs:0:arcstats:c zfs:0:arcstats:c_min zfs:0:arcstats:c_max zfs:0:arcstats:size zfs:0:arcstats:hits zfs:0:arcstats:misses zfs:0:arcstats:mfu_hits zfs:0:arcstats:mru_hits zfs:0:arcstats:mfu_ghost_hits zfs:0:arcstats:mru_ghost_hits zfs:0:arcstats:demand_data_hits zfs:0:arcstats:demand_metadata_hits zfs:0:arcstats:prefetch_data_hits zfs:0:arcstats:prefetch_metadata_hits zfs:0:arcstats:demand_data_misses zfs:0:arcstats:demand_metadata_misses zfs:0:arcstats:prefetch_data_misses zfs:0:arcstats:prefetch_metadata_misses';
+      $pagesize = $s->findBin('pagesize');
+      $pagesize = trim($s->exec($pagesize));
+      $kstat_out = $s->exec($kstat.' -p '.$kstat_keys);
+      $lines = explode(PHP_EOL, $kstat_out);
+      
+      $vk = array();
+      foreach($lines as $line) {
+        $line = trim($line);
+        if (empty($line)) {
+          continue;
+        }
+        $f = preg_split("/\s+/", $line);
+        if (count($f) < 2) {
+          continue; // malformed line
+        }
+        $name = trim($f[0]);
+        $value = trim($f[1]);
+        $vk[$name] = $value;
+      }
+
+      $phys_pages = getVal($vk, 'unix:0:system_pages:physmem');
+      $free_pages = getVal($vk, 'unix:0:system_pages:freemem');
+      $lotsfree_pages = getVal($vk, 'unix:0:system_pages:lotsfree');
+      $mru_size = getVal($vk, 'zfs:0:arcstats:p');
+      $target_size = getVal($vk, 'zfs:0:arcstats:c');
+      $arc_min_size = getVal($vk, 'zfs:0:arcstats:c_min');
+      $arc_max_size = getVal($vk, 'zfs:0:arcstats:c_max');
+      $arc_size = getVal($vk, 'zfs:0:arcstats:size');
+      $arc_hits = getVal($vk, 'zfs:0:arcstats:hits');
+      $arc_misses = getVal($vk, 'zfs:0:arcstats:misses');
+      $mfu_hits = getVal($vk, 'zfs:0:arcstats:mfu_hits');
+      $mru_hits = getVal($vk, 'zfs:0:arcstats:mru_hits');
+      $mfu_ghost_hits = getVal($vk, 'zfs:0:arcstats:mfu_ghost_hits');
+      $mru_ghost_hits = getVal($vk, 'zfs:0:arcstats:mru_ghost_hits');
+      $demand_data_hits = getVal($vk, 'zfs:0:arcstats:demand_data_hits');
+      $demand_metadata_hits = getVal($vk, 'zfs:0:arcstats:demand_metadata_hits');
+      $prefetch_data_hits = getVal($vk, 'zfs:0:arcstats:prefetch_data_hits');
+      $prefetch_metadata_hits = getVal($vk, 'zfs:0:arcstats:prefetch_metadata_hits');
+      $demand_data_misses = getVal($vk, 'zfs:0:arcstats:demand_data_misses');
+      $demand_metadata_misses = getVal($vk, 'zfs:0:arcstats:demand_metadata_misses');
+      $prefetch_data_misses = getVal($vk, 'zfs:0:arcstats:prefetch_data_misses');
+      $prefetch_metadata_misses = getVal($vk, 'zfs:0:arcstats:prefetch_metadata_misses');
+
+      /* calculations */
+      $phys_memory = ($phys_pages * $pagesize);
+      $free_memory = ($free_pages * $pagesize);
+      $lotsfree_memory = ($lotsfree_pages * $pagesize);
+
+      $mfu_size = $target_size - $mru_size;
+      $mru_perc = 100*($mru_size / $target_size);
+      $mfu_perc = 100*($mfu_size / $target_size);
+
+      $arc_accesses_total = ($arc_hits + $arc_misses);
+      $arc_hit_perc = 100*($arc_hits / $arc_accesses_total);
+      $arc_miss_perc = 100*($arc_misses / $arc_accesses_total);
+
+      $anon_hits = $arc_hits - ($mfu_hits + $mru_hits + $mfu_ghost_hits + $mru_ghost_hits);
+      $real_hits = ($mfu_hits + $mru_hits);
+      $real_hits_perc = 100*($real_hits / $arc_accesses_total);
+
+      $anon_hits_perc = 100*($anon_hits / $arc_hits);
+      $mfu_hits_perc = 100*($mfu_hits / $arc_hits);
+      $mru_hits_perc = 100*($mru_hits / $arc_hits);
+      $mfu_ghost_hits_perc = 100*($mfu_ghost_hits / $arc_hits);
+      $mru_ghost_hits_perc = 100*($mru_ghost_hits / $arc_hits);
+
+      $demand_data_hits_perc = 100*($demand_data_hits / $arc_hits);
+      $demand_metadata_hits_perc = 100*($demand_metadata_hits / $arc_hits);
+      $prefetch_data_hits_perc = 100*($prefetch_data_hits / $arc_hits);
+      $prefetch_metadata_hits_perc = 100*($prefetch_metadata_hits / $arc_hits);
+
+      $demand_data_misses_perc = 100*($demand_data_misses / $arc_misses);
+      $demand_metadata_misses_perc = 100*($demand_metadata_misses / $arc_misses);
+      $prefetch_data_misses_perc = 100*($prefetch_data_misses / $arc_misses);
+      $prefetch_metadata_misses_perc = 100*($prefetch_metadata_misses / $arc_misses);
+      $prefetch_data_total = ($prefetch_data_hits + $prefetch_data_misses);
+      $prefetch_data_perc = "00";
+      if ($prefetch_data_total > 0 ) {
+        $prefetch_data_perc = 100*($prefetch_data_hits / $prefetch_data_total);
+      }
+      $demand_data_total = ($demand_data_hits + $demand_data_misses);
+      $demand_data_perc = 100*($demand_data_hits / $demand_data_total);
+
+      $res .= '<h4>Graphs</h4>';
+      $res .= '<div id="pieCacheHits"></div>';
+      $res .= '<div id="pieCacheHitsDT"></div>';
+      $res .= '<div id="pieCacheMissDT"></div>';
+
+      $pie = array();
+      $pie['pieCacheHits'] = array();
+      $pie['pieCacheHits']['Anon'] = $anon_hits;
+      $pie['pieCacheHits']['MRU'] = $mru_hits;
+      $pie['pieCacheHits']['MFU'] = $mfu_hits;
+      $pie['pieCacheHits']['MRU Ghost'] = $mru_ghost_hits;
+      $pie['pieCacheHits']['MFU Ghost'] = $mfu_ghost_hits;
+      $pie['pieCacheHitsDT'] = array();
+      $pie['pieCacheHitsDT']['Demand data'] = $demand_data_hits;
+      $pie['pieCacheHitsDT']['Demand Metadata'] = $demand_metadata_hits;
+      $pie['pieCacheHitsDT']['Prefetch data'] = $prefetch_data_hits;
+      $pie['pieCacheHitsDT']['Prefetch Metadata'] = $prefetch_metadata_hits;
+      $pie['pieCacheMissDT'] = array();
+      $pie['pieCacheMissDT']['Demand data'] = $demand_data_misses;
+      $pie['pieCacheMissDT']['Demand Metadata'] = $demand_metadata_misses;
+      $pie['pieCacheMissDT']['Prefetch Data'] = $prefetch_data_misses;
+      $pie['pieCacheMissDT']['Prefetch Metadata'] = $prefetch_metadata_misses;
+
+      $res .= '<h4>System memory</h4>';
+      $res .= '<ul>';
+      $res .= sprintf("<li>Physical RAM: \t%d MB</li>", $phys_memory / 1024 / 1024);
+      $res .= sprintf("<li>Free Memory : \t%d MB</li>", $free_memory / 1024 / 1024);
+      $res .= sprintf("<li>LotsFree: \t%d MB</li>", $lotsfree_memory / 1024 / 1024);
+      $res .= '</ul>';
+
+      $res .= '<h4>ARC Size</h4>';
+      $res .= '<ul>';
+      $res .= sprintf("<li>Current Size:             %d MB (arcsize)</li>\n", $arc_size / 1024 / 1024);
+      $res .= sprintf("<li>Target Size (Adaptive):   %d MB (c)</li>\n", $target_size / 1024 / 1024);
+      $res .= sprintf("<li>Min Size (Hard Limit):    %d MB (zfs_arc_min)</li>\n", $arc_min_size / 1024 / 1024);
+      $res .= sprintf("<li>Max Size (Hard Limit):    %d MB (zfs_arc_max)</li>\n", $arc_max_size / 1024 / 1024);
+      $res .= '</ul>';
+
+      $res .= '<h4>ARC Size Breakdown</h4>';
+      $res .= '<ul>';
+      $res .= sprintf("<li>Most Recently Used Cache Size: \t %2d%% \t%d MB (p)</li>\n", $mru_perc, $mru_size / 1024 / 1024);
+      $res .= sprintf("<li>Most Frequently Used Cache Size: \t %2d%% \t%d MB (c-p)</li>\n", $mfu_perc, $mfu_size / 1024 / 1024);
+      $res .= '</ul>';
+
+      $res .= '<h4>ARC Efficiency</h4>';
+      $res .= '<ul>';
+      $res .= sprintf("<li>Cache Access Total:        \t %d</li>\n", $arc_accesses_total);
+      $res .= sprintf("<li>Cache Hit Ratio:      %2d%%\t %d   \t[Defined State for buffer]</li>\n", $arc_hit_perc, $arc_hits);
+      $res .= sprintf("<li>Cache Miss Ratio:     %2d%%\t %d   \t[Undefined State for Buffer]</li>\n", $arc_miss_perc, $arc_misses);
+      $res .= sprintf("<li>REAL Hit Ratio:       %2d%%\t %d   \t[MRU/MFU Hits Only]</li>\n", $real_hits_perc, $real_hits);
+      $res .= sprintf("<li>Data Demand   Efficiency:    %2d%%</li>\n", $demand_data_perc);
+      if ($prefetch_data_total == 0){
+        $res .= sprintf("<li>Data Prefetch Efficiency:    DISABLED (zfs_prefetch_disable)</li>\n");
+      } else {
+        $res .= sprintf("<li>Data Prefetch Efficiency:    %2d%%</li>\n", $prefetch_data_perc);
+      }
+
+      $res .= sprintf("<li>CACHE HITS BY CACHE LIST:\n");
+      $res .= '<ul>';
+      if ( $anon_hits < 1 ){
+        $res .= sprintf("<li> Anon:                       --%% \t Counter Rolled.</li>\n");
+      } else {
+        $res .= sprintf("<li> Anon:                       %2d%% \t %d            \t[ New Customer, First Cache Hit ]</li>\n", $anon_hits_perc, $anon_hits);
+      }
+      $res .= sprintf("<li> Most Recently Used:         %2d%% \t %d (mru)      \t[ Return Customer ]</li>\n", $mru_hits_perc, $mru_hits);
+      $res .= sprintf("<li> Most Frequently Used:       %2d%% \t %d (mfu)      \t[ Frequent Customer ]</li>\n", $mfu_hits_perc, $mfu_hits);
+      $res .= sprintf("<li> Most Recently Used Ghost:   %2d%% \t %d (mru_ghost)\t[ Return Customer Evicted, Now Back ]</li>\n", $mru_ghost_hits_perc, $mru_ghost_hits);
+      $res .= sprintf("<li> Most Frequently Used Ghost: %2d%% \t %d (mfu_ghost)\t[ Frequent Customer Evicted, Now Back ]</li>\n", $mfu_ghost_hits_perc, $mfu_ghost_hits);
+      $res .= '</ul></li>';
+
+      $res .= sprintf("<li>CACHE HITS BY DATA TYPE:\n");
+      $res .= sprintf("<li>  Demand Data:                %2d%% \t %d </li>\n", $demand_data_hits_perc, $demand_data_hits);
+      $res .= sprintf("<li>  Prefetch Data:              %2d%% \t %d </li>\n", $prefetch_data_hits_perc, $prefetch_data_hits);
+      $res .= sprintf("<li>  Demand Metadata:            %2d%% \t %d </li>\n", $demand_metadata_hits_perc, $demand_metadata_hits);
+      $res .= sprintf("<li>  Prefetch Metadata:          %2d%% \t %d </li>\n", $prefetch_metadata_hits_perc, $prefetch_metadata_hits);
+      $res .= '</ul></li>';
+
+      $res .= sprintf("<li>CACHE MISSES BY DATA TYPE:\n");
+      $res .= sprintf("<li>  Demand Data:                %2d%% \t %d </li>\n", $demand_data_misses_perc, $demand_data_misses);
+      $res .= sprintf("<li>  Prefetch Data:              %2d%% \t %d </li>\n", $prefetch_data_misses_perc, $prefetch_data_misses);
+      $res .= sprintf("<li>  Demand Metadata:            %2d%% \t %d </li>\n", $demand_metadata_misses_perc, $demand_metadata_misses);
+      $res .= sprintf("<li>  Prefetch Metadata:          %2d%% \t %d </li>\n", $prefetch_metadata_misses_perc, $prefetch_metadata_misses);
+      $res .= '</ul></li>';
+
+      $res .= '</ul>';
+
+      $s->disconnect();
+    } catch (Exception $e) {
+      $res .= '<p>'.$e.'</p>'."\n";
+    }
+
+    $ret['html'] = $res;
+    $ret['pie'] = $pie;
+    return $ret;
+  }
 
   /* Updates function for Solaris */
 
@@ -521,6 +715,13 @@ class OSSolaris extends OSType
       $cpu = '';
       foreach($f_cpu as $f) { $cpu .= $f.' '; }
       $cpu = trim($cpu);
+    } else {
+      /* just fix formatting of the cpu type */
+      $f_cpu = explode(' ', trim($last_line));
+      $cpu = '';
+      foreach($f_cpu as $f) { $cpu .= $f.' '; }
+      $cpu = trim($cpu);
+      $cpuspeed = 'unknown';
     }
 
     if ($s->data('hw:nrcpu') != $nrcpu) {
@@ -537,6 +738,7 @@ class OSSolaris extends OSType
       $s->setData('hw:nrstrand', $nrstrand);
       $s->log('Updated hw:nrstrand => '.$nrstrand, LLOG_INFO);
     }
+
 
     if (strcmp($s->data('hw:cpu'), $cpu)) {
       $s->setData('hw:cpu', $cpu);
@@ -2148,5 +2350,10 @@ slc8.mgmt/test/test2-clone  95.7G  75.6M         0   75.6M              0       
 
 
 }
+
+OSSolaris::$extraActions = array(
+  new eAction('Check ZFS Arc', '#', "lAction('actionZFSArc', '%d');", 'id', 'actionZFSArc'),
+  new eAction('Check Zone stats', '#', "lAction('actionZoneStats', '%d');", 'id', 'actionZoneStats'),
+);
 
 ?>

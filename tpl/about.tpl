@@ -1,6 +1,7 @@
-      <div class="row">
-        <div class="span12">
-          <h1>About</h1>
+          
+	  <div class="page-header">
+	    <h1>About</h1>
+	  </div>
 	  <p>Espix Operations, the simplest interface to manage and keep track of your UNIX servers.</p>
 	  <p>It currently support actively following OSes:</p>
 	  <ul>
@@ -24,7 +25,7 @@
             <li>AIX</li>
             <li>FreeBSD</li>
           </ul>
-          <h3>Documentation</h3>
+	  <div class="page-header">
+          <h1>Documentation</h1>
+   	  </div>
 	  <p>An online documentation of this application is available <a href="https://github.com/tgouverneur/SPXOps/wiki">there</a>. If you have any more question or facing any issue, you can open a ticket by sending a mail to the <a href="mailto: support@espix.net">Espix Network Support</a>.</p>
-        </div>
-      </div>

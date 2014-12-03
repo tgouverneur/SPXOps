@@ -11,6 +11,52 @@
  * @filesource
  */
 
+class eAction {
+  public $href = '';
+  public $onclick = '';
+  public $text = '';
+  public $arg = '';
+  public $fct = '';
+
+  public $res = null;
+  public function __construct($t, $h, $o, $a, $f) {
+    $this->href = $h;
+    $this->onclick = $o;
+    $this->text = $t;
+    $this->arg = $a;
+    $this->fct = $f;
+  }
+  public function call(&$s) {
+    $this->res = null;
+    if ($s->o_os) {
+      if (method_exists($s->o_os->class, $this->fct)) {
+        $class = $s->o_os->class;
+        $fct = $this->fct;
+        $this->res = $class::$fct($s);
+        if (!$this->res) {
+	  return -1; 
+	}
+	return 0;
+      }
+    }
+    return -1;
+  }
+  public function onclick($obj) {
+    $ret = $this->onclick;
+    if (!empty($this->arg)) {
+      $ret = sprintf($this->onclick, $obj->{$this->arg});
+    }
+    return $ret;
+  }
+  public function href($obj) {
+    $ret = $this->href;
+    if (!empty($this->arg)) {
+      $ret = sprintf($this->href, $obj->{$this->arg});
+    }
+    return $ret;
+  }
+}
+
 
 class Server extends mysqlObj implements JsonSerializable
 {
@@ -77,6 +123,14 @@ class Server extends mysqlObj implements JsonSerializable
       $this->vm_core += $vm->data('hw:nrcpu');
       $this->vm_mem += $vm->data('hw:memory');
     }
+  }
+
+  public function getExtraActions() {
+    if ($this->o_os) {
+      $class = $this->o_os->class;
+      return $class::$extraActions;
+    }
+    return array();
   }
 
   public function buildCheckList($force=false) {
@@ -538,8 +592,8 @@ class Server extends mysqlObj implements JsonSerializable
     $ret = array(
 	'Hostname' => $this->hostname,
 	'Description' => $this->description,
-	'Update?' => ($this->f_upd)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
-	'RCE' => ($this->f_rce)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
+	'Update?' => ($this->f_upd)?'<span class="glyphicon glyphicon-ok-sign"></span>':'<span class="glyphicon glyphicon-remove-circle"></span>',
+	'RCE' => ($this->f_rce)?'<span class="glyphicon glyphicon-ok-sign"></span>':'<span class="glyphicon glyphicon-remove-circle"></span>',
 	'Updated on' => date('d-m-Y', $this->t_upd),
 	'Added on' => date('d-m-Y', $this->t_add),
     );

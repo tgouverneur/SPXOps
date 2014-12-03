@@ -224,7 +224,7 @@ print_r($rc);
         'Error Message' => $this->m_error,
         'Warning Message' => $this->m_warn,
         'Frequency' => parseFrequency($this->frequency),
-        'Need root?' => ($this->f_root)?'<i class="icon-ok-sign"></i>':'<i class="icon-remove-sign"></i>',
+        'Need root?' => ($this->f_root)?'<span class="glyphicon glyphicon-ok-sign"></span>':'<span class="icon-remove-circle"></span>',
         'Updated on' => date('d-m-Y', $this->t_upd),
         'Added on' => date('d-m-Y', $this->t_add),
     );

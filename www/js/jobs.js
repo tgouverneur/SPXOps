@@ -1,6 +1,3 @@
-$('.alert .close').live("click", function(e) {
-    $(this).parent().hide();
-});
 
 function addJob(cla, fct, arg) {
   $.ajax({

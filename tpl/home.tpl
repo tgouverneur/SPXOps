@@ -1,6 +1,4 @@
-      <div class="row">
-        <div class="span12">
-          <div class="hero-unit">
+          <div class="jumbotron">
             <h1>Welcome to Espix Operations</h1>
             <p>You can manage different flavours of UNIX operating systems using this portal, simply browse through the menu or check the documentation to see how to get more benefit of this portal.</p>
   	    <p>
@@ -8,7 +6,7 @@
 	    </p>
           </div>
           <div class="row">
-	    <div class="span4">
+	    <div class="col-md-4">
 	      <h2>DB Statistics</h2>
 		<dl class="dl-horizontal">
 		  <dt>Servers:</dt>
@@ -39,37 +37,35 @@
 		  <dd><?php echo $stats['nbsuser']; ?> registered</dd>
 		</dl>
 	    </div>
-	    <div class="span8">
+	    <div class="col-md-8">
               <h2>User Activities</h2>
               <ul>
 <?php foreach($a_act as $act) { ?>
                 <li><?php echo $act->html(); ?></li>
 <?php } ?>
               </ul>
-	      <a class="btn" href="/list/w/act">More..</a>
+	      <a class="btn btn-default btn-sm" role="button" href="/list/w/act">More..</a>
             </div>
 
   	  </div>
 	  <div class="row">
- 	    <div class="span6">
+ 	    <div class="col-md-6">
               <h2>Last Jobs</h2>
               <ul>
 <?php foreach($a_job as $job) { ?>
                 <li><?php echo $job; ?></li>
 <?php } ?>
               </ul>
-	      <a class="btn" href="/list/w/jobs">More..</a>
+	      <a class="btn btn-default btn-sm" role="button" href="/list/w/jobs">More..</a>
             </div>
-            <div class="span4">
+            <div class="col-md-4">
               <h2>Last Checks</h2>
               <ul>
 <?php foreach($a_result as $check) { ?>
                 <li><?php echo $check->html(); ?></li>
 <?php } ?>
               </ul>
-	      <a class="btn" href="/list/w/results">More..</a>
+	      <a class="btn btn-default btn-sm" role="button" href="/list/w/results">More..</a>
             </div>
 
 	  </div>
-        </div>
-      </div>

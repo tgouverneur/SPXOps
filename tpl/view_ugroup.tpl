@@ -1,29 +1,24 @@
 <?php 
  if (!isset($a_login)) $a_login = array();
 ?>
-      <div class="row">
-	<h1 class="span12">User Group <?php echo $obj; ?></h1>
+	<div class="page-header"><h1>User Group <?php echo $obj; ?></h1></div>
+        <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
+          <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+          <h4>Success!</h4>
+          <p id="success-msg"></p>
+        </div>
+        <div class="alert alert-block alert-warning fade in" id="warning-box" style="display:none;">
+          <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+          <h4>Warning!</h4>
+          <p id="warning-msg"></p>
+        </div>
+        <div class="alert alert-block alert-danger fade in" id="error-box" style="display:none;">
+          <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+          <h4>Error!</h4>
+          <p id="error-msg"></p>
+        </div>
         <div class="row">
-	 <div class="span12">
-	  <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
-	    <button type="button" class="close">×</button>
-	    <h4>Success!</h4>
-	    <p id="success-msg"></p>
-	  </div>
-          <div class="alert alert-block fade in" id="warning-box" style="display:none;">
-            <button type="button" class="close">×</button>
-            <h4>Warning!</h4>
-            <p id="warning-msg"></p>
-          </div>
-          <div class="alert alert-block alert-error fade in" id="error-box" style="display:none;">
-            <button type="button" class="close">×</button>
-            <h4>Error!</h4>
-            <p id="error-msg"></p>
-          </div>
-	 </div>
-	</div>
-        <div class="row">
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Basic Information</h3>
 	   <table class="table table-condensed">
 	     <tbody>
@@ -33,7 +28,7 @@
 	     </tbody>
 	   </table>
 	  </div>
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Members</h3>
            <table id="LListloginTable" class="table table-condensed">
              <tbody>
@@ -46,10 +41,10 @@
              </tbody>
            </table>
           </div>
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Actions</h3>
-	    <ul class="nav nav-tabs nav-stacked">
-	      <li class="dropdown">
+	    <ul class="nav nav-pills nav-stacked">
+	      <li class="dropdown active">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
 	        <ul class="dropdown-menu">
                   <li><a href="/del/w/ugroup/i/<?php echo $obj->id; ?>">Delete</a></li>
@@ -60,23 +55,27 @@
 	  </div>
 	</div>
         <div class="row">
-          <div class="span4">
+          <div class="col-md-4">
            <h3>Add Login</h3>
- 	   <div class="input-append">
-	     <select id="selectLogin">
+           <form class="form-inline">
+ 	   <div class="form-group">
+	     <select id="selectLogin" class="form-control">
 	       <option value="-1">Choose a login to add</option>
 <?php foreach($a_login as $l) { ?>
 	       <option value="<?php echo $l->id; ?>"><?php echo $l; ?></option>
 
 <?php } ?>
-	     </select> <button type="button" class="btn" onClick="addLList('ugroup', <?php echo $obj->id; ?>, 'login', '#selectLogin');">Add</button>
+	     </select> <button type="button" class="btn btn-primary" onClick="addLList('ugroup', <?php echo $obj->id; ?>, 'login', '#selectLogin');">Add</button>
            </div>
-	   <div class="input-append">
-             <input id="inputLogin" type="text" placeholder="Login Regexp">
-             <button type="button" class="btn" onClick="addLListR('ugroup', <?php echo $obj->id; ?>, 'login', '#inputLogin');">Add</button>
+	   </form>
+           <form class="form-inline">
+	   <div class="form-group">
+             <input class="form-control" id="inputLogin" type="text" placeholder="Login Regexp">
+             <button type="button" class="btn btn-primary" onClick="addLListR('ugroup', <?php echo $obj->id; ?>, 'login', '#inputLogin');">Add</button>
            </div>
+	   </form>
           </div>
-          <div class="span8">
+          <div class="col-md-8">
            <h3>Rights</h3>
            <table class="table table-condensed">
 	    <thead>
@@ -105,7 +104,7 @@
 		<td><input <?php if (!$lm->o_login->f_admin) echo "disabled"; ?> type="checkbox" id="add_<?php echo $obj->id.'_'.$right->id; ?>" <?php if ($add_r) echo 'checked'; ?>/></td>
 		<td><input <?php if (!$lm->o_login->f_admin) echo "disabled"; ?> type="checkbox" id="edit_<?php echo $obj->id.'_'.$right->id; ?>" <?php if ($edit_r) echo 'checked'; ?>/></td>
 		<td><input <?php if (!$lm->o_login->f_admin) echo "disabled"; ?> type="checkbox" id="del_<?php echo $obj->id.'_'.$right->id; ?>" <?php if ($del_r) echo 'checked'; ?>/></td>
-		<td><?php if ($lm->o_login->f_admin) { ?><button class="btn btn-primary btn-mini" onClick="saveRight(<?php echo $obj->id; ?>, <?php echo $right->id; ?>);">Save</button><?php } ?></td>
+		<td><?php if ($lm->o_login->f_admin) { ?><button class="btn btn-primary btn-xs" onClick="saveRight(<?php echo $obj->id; ?>, <?php echo $right->id; ?>);">Save</button><?php } ?></td>
 	     </tr>
 <?php } ?>
 	    </tbody>
@@ -114,14 +113,33 @@
        </div>
       </div>
       <!-- Logs Modal -->
-      <div class="modal large hide fade in" id="logsModal" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-          <h3 id="logsModalLabel">Disks list</h3>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <div class="modal fade" tabindex="-1" role="dialog" id="logsModal" aria-labelledby="logsModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+             <h4 class="modal-title" id="logsModalLabel">Logs entries:</h3>
+           </div>
+           <div class="modal-body">
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
         </div>
       </div>
+      <script class="code" type="text/javascript">
+        $('.logsModalLink').click(function(e) {
+          var modal = $('#logsModal'), modalBody = $('#logsModal .modal-body');
+          modal.on('show.bs.modal', function () {
+            modalBody.load(e.currentTarget.href)
+          })
+        .modal();
+        e.preventDefault();
+        });
+      </script>
+      <script class="code" type="text/javascript">
+        $('.alert .close').on('click', function() {
+          $(this).parent().hide();
+        });
+      </script>

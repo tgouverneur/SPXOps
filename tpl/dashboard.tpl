@@ -5,9 +5,9 @@
  $keys = array_keys($a_list);
  $k = 0;
 ?>
-      <div class="row">
-        <div class="span12">
-          <h1>Dashboard</h1>
+	  <div class="page-header">
+            <h1>Dashboard</h1>
+	  </div>
 	  <table class="table table-bordered table-dashboard">
 	  <tbody>
   <?php for ($i=0; $i<$lines; $i++) { ?>
@@ -28,5 +28,3 @@
   <?php } ?>
 	  </tbody>
 	  </table>
-        </div>
-      </div>

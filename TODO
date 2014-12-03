@@ -2,6 +2,7 @@ Urgent:
 -------
 
  - Adapt SQL schema to have inter-table dependancies and on delete cascade
+ - Add rights checking into modallist.php
 
 Medium:
 -------
