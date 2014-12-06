@@ -14,10 +14,14 @@
   private $_foreground = false;
   private $_nrProcess = 1;
 
+  private $_networkPid = 0;
+  private $_network = null;
+
   public $pid = -1;
   public $ppid = -1;
   public $curProcess = 1;
   public $f_master = 0;
+  public $f_network = 0;
 
   public function setForeground($f = false) {
     $this->_foreground = $f;
@@ -63,6 +67,20 @@
 
     /* Check for other eventually died pids or locks */
     if ($this->f_master) {
+      /* check if network thread has died */
+      if ($this->f_network && $this->_networkPid) {
+        $this->_networkPid->checkMe($this);
+        if ($this->_networkPid->f_dead) {
+          Logger::log("Network Pid ".$this->_networkPid." has died", LLOG_DEBUG);
+          $this->_networkPid = 0;
+          $this->network = null;
+        }
+      }
+      /* check if we haven't yet started a network pid, if needed */
+      if ($this->f_network && !$this->_networkPid) {
+        $this->_networkPid = $this->spawnNetwork();
+	$this->log("Spawned network process: ".$this->_networkPid, LLOG_DEBUG);
+      }
       /* first, reap eventual dead childs */
       $this->sigchld();
       Pid::check($this);
@@ -82,14 +100,13 @@
 	if ($job->fk_pid > 0) {
         $pid = new Pid($job->fk_pid);
 	if ($pid->fetchFromId()) {
-          Logger::log("Set as STALLED stalled job $job because pid doesn't exist ", $d, LLOG_DEBUG);
+          Logger::log("Set as STALLED stalled job $job because pid doesn't exist ", $pid, LLOG_DEBUG);
           $job->state = S_STALL;
           $job->fk_pid = -1; 
           $job->update();
 	}
         }
       }
-
     }
 
     if (!$this->f_master ||
@@ -166,7 +183,6 @@
     if ($m->connect()) {
       die($argv[0]." Error with SQL db: ".$m->getError()."\n");
     }
-
   }
 
   public function cleanup() {
@@ -225,6 +241,20 @@
     }
   }
 
+  private function spawnNetwork() {
+    global $config;
+    $this->network = new SPXNet($config['server']['ipaddr'], $config['server']['port'], $this);
+    $daemon = new Daemon($this->network, false);
+    $m = MysqlCM::getInstance();
+    $m->connect();
+    $pid = new Pid();
+    $pid->agent = $config['agentname'];
+    $pid->pid = $daemon->getPid();
+    $pid->ppid = $this->pid;
+    $pid->f_master = 0;
+    return $pid;
+  }
+
   private function spawnProcess() {
     global $config;
     $newD = new SPXOpsd($this);
@@ -239,6 +269,7 @@
     return $pid;
   }
   public function getInterval() { return $this->_interval; }
+
  }
 
  // Connect to mysql
@@ -274,6 +305,9 @@
  $spxopsd->setInterval($interval->value);
  $spxopsd->setNrProcess($nrProcess->value);
  $spxopsd->f_master = 1;
+ if ($config['server']['enabled']) {
+   $spxopsd->f_network = 1;
+ }
 
  $m->disconnect();
 

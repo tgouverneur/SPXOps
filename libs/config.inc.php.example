@@ -47,4 +47,10 @@ if ($config['webgui']['time']) {
  $start_time = $start_time[1] + $start_time[0];
 }
 
+/* Network daemon */
+$config['server']['enabled'] = false;
+$config['server']['ipaddr'] = '0.0.0.0';
+$config['server']['port'] = 2142;
+$config['server']['key'] = '157d7c000573526a30991bff2ad6b8ee157d7c000573526a30991bff2ad6b8ee';
+
 ?>

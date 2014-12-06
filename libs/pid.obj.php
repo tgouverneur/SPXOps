@@ -22,6 +22,7 @@ class Pid extends mysqlObj
   public $t_add = -1;
   public $t_upd = -1;
 
+  public $f_dead = 0;
   public $o_job = null;
 
 
@@ -64,6 +65,12 @@ class Pid extends mysqlObj
         Logger::log("Lock $lock has been detected as dead...", $d, LLOG_DEBUG);
 	$lock->delete();
       }
+    }
+  }
+
+  public function checkMe(&$d) {
+    if (!posix_kill($this->pid, 0)) {
+      $this->f_dead = 1;
     }
   }
 
