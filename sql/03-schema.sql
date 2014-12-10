@@ -1,9 +1,3 @@
--- MySQL dump 10.13  Distrib 5.5.31, for solaris11 (i386)
---
--- Host: localhost    Database: spxops
--- ------------------------------------------------------
--- Server version	5.5.31
-
 --
 -- Table structure for table `jt_check_sgroup`
 --
@@ -616,6 +610,24 @@ CREATE TABLE `list_ugroup` (
 ) ENGINE=InnoDB;
 
 --
+-- Table structure for table `list_rrd`
+--
+
+CREATE TABLE `list_rrd` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `path` varchar(500) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `name` varchar(500) NOT NULL,
+  `f_lock` int(1) NOT NULL,
+  `fk_server` int(11) NOT NULL,
+  `fk_pool` int(11) NOT NULL,
+  `fk_disk` int(11) NOT NULL,
+  `t_add` int(11) NOT NULL,
+  `t_upd` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+--
 -- Table structure for table `list_vm`
 --
 
@@ -698,4 +710,3 @@ CREATE TABLE `nfo_zone` (
 ) ENGINE=InnoDB;
 
 
--- Dump completed on 2014-11-29 20:16:05

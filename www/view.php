@@ -228,6 +228,31 @@
        $js = array('jobs.js');
        $head->set('js', $js);
      break;
+     case 'rrd':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
+       $what = 'RRD';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       } 
+       $obj = new RRD($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       $obj->fetchAll(1);
+       $content = new Template('../tpl/view_rrd.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+       $js = array('rrd.js', 'jquery.jqplot.min.js', 'jqplot.logAxisRenderer.min.js', 'jqplot.dateAxisRenderer.min.js');
+       $css = array('jquery.jqplot.min.css');
+       $head->set('js', $js);
+       $head->set('css', $css);
+     break;
      case 'server':
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');

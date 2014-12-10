@@ -26,6 +26,7 @@ class eAction {
     $this->arg = $a;
     $this->fct = $f;
   }
+
   public function call(&$s) {
     $this->res = null;
     if ($s->o_os) {
@@ -92,6 +93,7 @@ class Server extends mysqlObj implements JsonSerializable
   public $a_disk = array();
   public $a_pool = array();
   public $a_result = array();
+  public $a_rrd = array();
 
   public $a_nfss = array(); /* nfs shares */
   public $a_nfsm = array(); /* nfs mount */
@@ -113,6 +115,15 @@ class Server extends mysqlObj implements JsonSerializable
   public $vm_nb = 0;
   public $vm_cores = 0;
   public $vm_mem = 0;
+
+  public function getRRD($path) {
+    foreach($this->a_rrd as $rrd) {
+      if (!strcmp($rrd->path, $path)) {
+        return $rrd;
+      }
+    }
+    return null;
+  }
 
   public function vmStats() {
     $this->vm_nb = count($this->a_vm);
@@ -306,6 +317,7 @@ class Server extends mysqlObj implements JsonSerializable
         $this->fetchRL('a_hba');
         $this->fetchRL('a_disk');
         $this->fetchRL('a_pool');
+        $this->fetchRL('a_rrd');
       }
 
       $this->fetchData();
@@ -489,6 +501,15 @@ class Server extends mysqlObj implements JsonSerializable
       $this->log('', LLOG_INFO);
       $this->log(sprintf("%15s:", 'Zones'), LLOG_INFO);
       foreach($this->a_zone as $z) {
+	$z->dump($this);
+      }
+    }
+
+    /* RRDs */
+    if (count($this->a_rrd)) {
+      $this->log('', LLOG_INFO);
+      $this->log(sprintf("%15s:", 'RRDs'), LLOG_INFO);
+      foreach($this->a_rrd as $z) {
 	$z->dump($this);
       }
     }
@@ -711,6 +732,7 @@ class Server extends mysqlObj implements JsonSerializable
     $this->_addRL("a_hba", "Hba", array('id' => 'fk_server'));
     $this->_addRL("a_disk", "Disk", array('id' => 'fk_server'));
     $this->_addRL("a_pool", "Pool", array('id' => 'fk_server'));
+    $this->_addRL("a_rrd", "RRD", array('id' => 'fk_server'));
     $this->_addRL("a_result", "Result", array('id' => 'fk_server'));
 
     $this->_addRL("a_nfss", "NFS", array('id' => 'fk_server', 'CST:share' => 'type'));
@@ -722,22 +744,5 @@ class Server extends mysqlObj implements JsonSerializable
     $this->_log = Logger::getInstance();
 
   }
-  public static $_sql = <<< _EOF_
-	CREATE TABLE `list_server` (  
-	  `id` int(11) NOT NULL AUTO_INCREMENT,
-	  `hostname` varchar(100) NOT NULL,
-	  `description` varchar(255) NOT NULL,
-	  `fk_pserver` int(11) NOT NULL DEFAULT '-1',
-	  `fk_os` int(11) NOT NULL DEFAULT '-1',
-	  `fk_suser` int(11) NOT NULL DEFAULT '-1',
-	  `fk_cluster` int(11) NOT NULL DEFAULT '-1',
-	  `f_rce` int(1) NOT NULL DEFAULT '0',
-	  `f_upd` int(1) NOT NULL DEFAULT '0',
-	  `t_add` int(11) NOT NULL DEFAULT '-1',
-	  `t_upd` int(11) NOT NULL DEFAULT '-1',
-	  PRIMARY KEY (`id`)
-	) ENGINE=InnoDB;
-_EOF_;
-
 }
 ?>

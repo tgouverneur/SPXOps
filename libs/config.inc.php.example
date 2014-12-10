@@ -49,8 +49,10 @@ if ($config['webgui']['time']) {
 
 /* Network daemon */
 $config['server']['enabled'] = false;
+$config['server']['rrdpath'] = $config['rootpath'].'/rrd'; 
 $config['server']['ipaddr'] = '0.0.0.0';
 $config['server']['port'] = 2142;
+/* @TODO: fix key generation */
 $config['server']['key'] = '157d7c000573526a30991bff2ad6b8ee157d7c000573526a30991bff2ad6b8ee';
 
 ?>

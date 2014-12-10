@@ -24,6 +24,7 @@ class Logger
   /**
    * Singleton variable
    */
+  private $_pid;
   protected static $_instance;
   protected static $_level = LLOG_NONE;
   protected static $_logfd = 0;

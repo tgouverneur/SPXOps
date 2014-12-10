@@ -71,7 +71,7 @@
       if ($this->f_network && $this->_networkPid) {
         $this->_networkPid->checkMe($this);
         if ($this->_networkPid->f_dead) {
-          Logger::log("Network Pid ".$this->_networkPid." has died", LLOG_DEBUG);
+          Logger::log("Network Pid ".$this->_networkPid." has died", $this, LLOG_DEBUG);
           $this->_networkPid = 0;
           $this->network = null;
         }
@@ -189,6 +189,7 @@
     if (!$this->_foreground) Logger::closeLog();
   }
 
+
   /* Signal management */
 
   public function sigchld() {
@@ -243,7 +244,7 @@
 
   private function spawnNetwork() {
     global $config;
-    $this->network = new SPXNet($config['server']['ipaddr'], $config['server']['port'], $this);
+    $this->network = new SPXNet($config['server']['ipaddr'], $config['server']['port'], $this, 1);
     $daemon = new Daemon($this->network, false);
     $m = MysqlCM::getInstance();
     $m->connect();

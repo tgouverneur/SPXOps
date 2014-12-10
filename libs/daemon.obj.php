@@ -50,7 +50,7 @@ class Daemon
       mysqlCM::delInstance();
       $this->pid = pcntl_fork();
       if ($this->pid) {
-        echo "Forked\n";
+        echo "Forked(".$this->pid."\n";
         return;
       } else {
         Logger::delInstance();
