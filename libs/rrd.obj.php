@@ -119,9 +119,13 @@ class RRD extends mysqlObj
                         'wb' => 'Bytes writen per second',
 
         );
+        if (!strcmp($what, 'all')) {
+          return $all;
+        }
         $f = explode(',', $what);
         $ret = array();
         foreach($f as $v) {
+          if (empty($v)) continue;
           if (isset($all[$v])) {
             $ret[$v] = $all[$v];
           }
@@ -144,6 +148,9 @@ class RRD extends mysqlObj
 			'bpc' => '% Busy',
 
 	);
+        if (!strcmp($what, 'all')) {
+          return $all;
+        }
         $f = explode(',', $what);
         $ret = array();
         foreach($f as $v) {

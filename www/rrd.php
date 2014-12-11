@@ -66,7 +66,13 @@
 
  $start = $_POST['start'];
  $what = $_POST['what'];
+ $cid = 1;
+ $mets = array();
  $n = $_POST['n'];
+ if (isset($_POST['cid'])) $cid = $_POST['cid'];
+ if (isset($_POST['mets'])) $mets = $_POST['mets'];
+
+ $ret['cid'] = $cid;
 
  if (!is_numeric($n)) {
    $ret['rc'] = 1;
@@ -79,23 +85,75 @@
    $ret['msg'] = 'You don\'t have the rights to run this action';
    goto screen;
  }
- $obj = new RRD($i);
- if ($obj->fetchFromId()) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'Cannot find RRD provided inside the database';
-   goto screen;
- }
 
- try {
-   $ret['res'] = $obj->getData($start, $what, $n);
+ if (!strcmp($i, 'group')) {
+   if (!isset($mets) || !count($mets)) {
+     $ret['rc'] = 1;
+     $ret['msg'] = 'There are no metric given, no data to graph';
+   }
+   /* simplify met list by aggregating per rrd */
+   $a_m = array();
+   foreach ($mets as $met) {
+     $rid = $met[1];
+     $mn = $met[2];
+     if (!isset($a_m[$rid])) { 
+       $a_m[$rid] = $mn;
+     } else {
+       $a_m[$rid] .= ','.$mn;
+     }
+   }
+   $res = array();
+   $res['values'] = array();
+   $res['labels'] = array();
+   foreach ($a_m as $rid => $what) {
+     $obj = new RRD($rid);
+     if ($obj->fetchFromId()) {
+       $ret['rc'] = 1;
+       $ret['msg'] = 'Cannot find RRD provided inside the database';
+       goto screen;
+     }
+     try {
+
+       $r = $obj->getData($start, $what, $n);
+       foreach($r['values'] as $e) {
+         $res['values'][] = $e;
+       }
+       foreach($r['labels'] as $e) {
+         foreach ($e as $l) {
+           $res['labels'][] = array('label' => $obj.'/'.$l);
+         }
+         //$res['labels'][] = $e;
+       }
+
+     } catch (SPXException $e) {
+
+       $ret['rc'] = 1;
+       $ret['res'] = $e.toString();
+       goto screen;
+     }
+   }
+   $ret['res'] = $res;
    $ret['rc'] = 0;
- } catch (SPXException $e) {
 
-   $ret['rc'] = 1;
-   $ret['res'] = $e.toString();
-   goto screen;
+ } else {
+
+  $obj = new RRD($i);
+  if ($obj->fetchFromId()) {
+    $ret['rc'] = 1;
+    $ret['msg'] = 'Cannot find RRD provided inside the database';
+    goto screen;
+  }
+
+  try {
+    $ret['res'] = $obj->getData($start, $what, $n);
+    $ret['rc'] = 0;
+  } catch (SPXException $e) {
+
+    $ret['rc'] = 1;
+    $ret['res'] = $e.toString();
+    goto screen;
+  }
  }
-
 
 screen:
  echo @json_encode($ret);

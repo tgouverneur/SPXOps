@@ -36,6 +36,79 @@
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
+     case 'saveslr':
+        if (!isset($_POST['name']) || empty($_POST['name'])) {
+         die('Missing argument');
+       }
+        if (!isset($_POST['mets']) || empty($_POST['mets'])) { 
+         die('Missing argument');
+       }
+       $name = $_POST['name'];
+       $mets = $_POST['mets'];
+       $slr = new SLR();
+       $slr->name = $name;
+       if (!$slr->fetchFromField('name')) { 
+         die('Name already taken');
+       }
+       $slr->definition = serialize($mets);
+       $slr->insert();
+       $ret = array('success');
+       header('Content-Type: application/json');
+       echo json_encode($ret);
+    break;
+     case 'lslr':
+       $a_s = SLR::getAll(true, array(), array('name'));
+       foreach($a_s as $s) $s->getArray();
+       header('Content-Type: application/json');
+       echo json_encode($a_s);
+     break;
+     case 'lserver':
+       $a_s = Server::getAll(true, array(), array('hostname'));
+       header('Content-Type: application/json');
+       echo json_encode($a_s);
+     break;
+     case 'lmet':
+       if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
+         die('Missing argument');
+       }
+       $id = $_GET['i'];
+       $rrd = new RRD($id);
+       if ($rrd->fetchFromId()) {
+         die('Wrong argument');
+       }
+       $val = $rrd->getWhat('all');
+       $ret = array();
+       $i = 0;
+       foreach($val as $k => $v) {
+         $ret[$i]['name'] = $k;
+         $ret[$i]['value'] = $v;
+	 $i++;
+       }
+       header('Content-Type: application/json');
+       echo json_encode($ret);
+     break;
+     case 'lrrd':
+       if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
+         die('Missing argument');
+       }
+       $id = $_GET['i'];
+       $a_rrd = RRD::getAll(true, array('fk_server' => 'CST:'.$id), array('type'));
+       header('Content-Type: application/json');
+       echo json_encode($a_rrd);
+     break;
+     case 'slr':
+       if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
+         die('Missing argument');
+       }
+       $id = $_GET['i'];
+       $slr = new SLR($id);
+       if ($slr->fetchFromId()) {
+         die('SLR not found in DB');
+       }
+       $slr->getArray();
+       header('Content-Type: application/json');
+       echo json_encode($slr);
+     break;
      case 'server':
        if (!isset($_GET['s']) || empty($_GET['s'])) {
 	  die('Missing argument');

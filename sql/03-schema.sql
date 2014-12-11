@@ -628,6 +628,19 @@ CREATE TABLE `list_rrd` (
 ) ENGINE=InnoDB;
 
 --
+-- Table structure for table `list_slr`
+--
+
+CREATE TABLE `list_slr` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `definition` text NOT NULL,
+  `t_add` int(11) NOT NULL,
+  `t_upd` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+--
 -- Table structure for table `list_vm`
 --
 

@@ -33,3 +33,6 @@
    text-align: center;   
 }
 
+.graphdiv {
+  min-height: 300px;
+}
