@@ -41,7 +41,7 @@ define('MAX_MSG_SIZE', 65000);
 
    private function _unserialize() {
      $this->a_v = @unserialize($this->_bs);
-     Logger::log("[-] Unserialized: ".$this->_bs, $this, LOG_DEBUG);
+     Logger::log("[-] Unserialized: $this", $this, LOG_DEBUG);
      return 0;
    }
 
@@ -65,7 +65,7 @@ define('MAX_MSG_SIZE', 65000);
        $this->_iv = substr($tmp, 0, $this->_ivsize);
        $ct = substr($tmp, $this->_ivsize);
        $this->_bs = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->_key, $ct, MCRYPT_MODE_CBC, $this->_iv);
-       Logger::log("[-] Decrypted: ".$this->_bs, $this, LOG_DEBUG);
+       Logger::log("[-] Decrypted: $this", $this, LOG_DEBUG);
      }
      return 1;
    }
@@ -73,7 +73,7 @@ define('MAX_MSG_SIZE', 65000);
    public function recv($sock) {
      $this->ebs = '';
      $this->len = socket_recvfrom($sock, $this->_ebs, MAX_MSG_SIZE, 0, $this->from, $this->port);
-     Logger::log("Received: ".$this->_ebs, $this);
+     Logger::log("Received: $this", $this);
      $this->_decrypt();
      $this->_unserialize();
      Logger::log("Received ".$this->len." bytes from ".$this->from.":".$this->port, $this);

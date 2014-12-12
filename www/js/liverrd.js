@@ -95,7 +95,7 @@ function addGraph() {
 
   $.ajax({
 	  type: 'GET',
-	  url: '/rpc/w/lserver',
+	  url: '/rpc/w/lserver/o/rrd',
 	  dataType: 'json',
           success: function(data) { var sel = $('#chart_' + window.cID + '_srv'); sel.empty(); sel.append('<option value="" selected>Choose a Server</option>'); for (var i=0; i<data.length; i++) { sel.append('<option value="' + data[i].id + '">' + data[i].hostname + '</option>'); } },
           error: UpdateRRDError,

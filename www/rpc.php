@@ -63,7 +63,21 @@
        echo json_encode($a_s);
      break;
      case 'lserver':
+       $o = null;
+       if (isset($_GET['o']) && !empty($_GET['o'])) {
+         $o = $_GET['o'];
+       }
        $a_s = Server::getAll(true, array(), array('hostname'));
+       if ($o && !strcmp($o, 'rrd')) {
+         $ret = array();
+         $a_rrd = RRD::getAll(true, array(), array('fk_server'));
+         foreach($a_s as $s) {
+           foreach($a_rrd as $r) {
+             if ($r->fk_server == $s->id) { array_push($ret, $s); break; }
+	   }
+         }
+         $a_s = $ret;
+       }
        header('Content-Type: application/json');
        echo json_encode($a_s);
      break;
