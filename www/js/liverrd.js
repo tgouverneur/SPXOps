@@ -61,17 +61,38 @@ function addGraph() {
     axes: {
       xaxis: {
         numberTicks: 4,
-        //renderer:$.jqplot.LogAxisRenderer,
-        //tickDistribution:'power'
-        //tickOptions:{formatString:'%s'},
         min : dataChart[0][0],
-        max: dataChart[dataChart.length-1][0]
+        max: dataChart[dataChart.length-1][0],
       },
       yaxis: {
         min:0,
-        //max: 1,
-        //numberTicks: 6,
-        //tickOptions:{formatString:'%.1f'}
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+        tickOptions: {  
+          formatter: function (format, val) { 
+                       if (typeof val == 'number') { 
+                         if (!format) { 
+                           format = '%.1f'; 
+                         }          
+                         if (Math.abs(val) >= 1000000000000 ) {
+                           return (val / 1000000000000).toFixed(1) + 'Ti';
+                         }          
+                         if (Math.abs(val) >= 1000000000 ) {
+                           return (val / 1000000000).toFixed(1) + 'Gi';
+                         }          
+                         if (Math.abs(val) >= 1000000 ) {
+                           return (val / 1000000 ).toFixed(1) + 'Mi';
+                         }          
+                         if (Math.abs(val) >= 1000) {
+                           return (val / 1000).toFixed(1) + 'Ki';
+                         }          
+                         return String(val.toFixed(1));
+                       }        
+                       else {   
+                         return String(val); 
+                       }        
+          },
+        }
+
       }
     },
     seriesDefaults: {

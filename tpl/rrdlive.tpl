@@ -67,34 +67,72 @@
           <div id="chart_2" class="col-md-8 graphdiv">
           </div>
           <div id="chart_2_options" class="col-md-4" style="display:none;">
-              <select class="form-control" id="chart_2_srv">
+              <select class="form-control input-sm" id="chart_2_sg">
+                <option value="-1">Load a saved graph</option>
+              </select>
+              <select class="form-control input-sm" id="chart_2_srv">
                 <option value="-1">Choose a Server</option>
               </select>
-              <select class="form-control" id="chart_2_rrd">
+              <select class="form-control input-sm" id="chart_2_rrd">
                 <option value="-1">Choose a Source</option>
               </select>
-              <select class="form-control" id="chart_2_met">
+              <select class="form-control input-sm" id="chart_2_met">
                 <option value="-1">Choose a Metric</option>
               </select>
-              <button type="submit" onClick="addMet(2);" name="submit" class="btn btn-primary">Add</button>
+              <div class="form-inline row">
+                <div class="form-group col-sm-3">
+                  <div class="input-group">
+                    <button type="submit" onClick="addMet(2);" name="submit" class="btn btn-sm btn-primary">Add / Load</button>
+                  </div>
+                </div>
+                <div class="form-group col-sm-6">
+                  <div class="input-group">
+                    <input type="text" class="form-control input-sm" id="chart_2_name" placeholder="Graph Name">
+                  </div>
+                </div>
+                <div class="form-group col-sm-3">
+                  <div class="input-group">
+                    <button type="submit" onClick="saveGraph(2);" name="submit" class="btn btn-sm btn-primary">Save!</button>
+                  </div>
+                </div>
+              </div>
           </div>
-	</div>
+        </div>
         <div class="row">
           <div id="chart_3" class="col-md-8 graphdiv">
           </div>
           <div id="chart_3_options" class="col-md-4" style="display:none;">
-              <select class="form-control" id="chart_3_srv">
+              <select class="form-control input-sm" id="chart_3_sg">
+                <option value="-1">Load a saved graph</option>
+              </select>
+              <select class="form-control input-sm" id="chart_3_srv">
                 <option value="-1">Choose a Server</option>
               </select>
-              <select class="form-control" id="chart_3_rrd">
+              <select class="form-control input-sm" id="chart_3_rrd">
                 <option value="-1">Choose a Source</option>
               </select>
-              <select class="form-control" id="chart_3_met">
+              <select class="form-control input-sm" id="chart_3_met">
                 <option value="-1">Choose a Metric</option>
               </select>
-              <button type="submit" onClick="addMet(3);" name="submit" class="btn btn-primary">Add</button>
+              <div class="form-inline row">
+                <div class="form-group col-sm-3">
+                  <div class="input-group">
+                    <button type="submit" onClick="addMet(3);" name="submit" class="btn btn-sm btn-primary">Add / Load</button>
+                  </div>
+                </div>
+                <div class="form-group col-sm-6">
+                  <div class="input-group">
+                    <input type="text" class="form-control input-sm" id="chart_3_name" placeholder="Graph Name">
+                  </div>
+                </div>
+                <div class="form-group col-sm-3">
+                  <div class="input-group">
+                    <button type="submit" onClick="saveGraph(3);" name="submit" class="btn btn-sm btn-primary">Save!</button>
+                  </div>
+                </div>
+              </div>
           </div>
-	</div>
+        </div>
        </div>
       <script class="code" type="text/javasocript">
         $('.alert .close').on('click', function() {
