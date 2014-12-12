@@ -72,6 +72,7 @@
        if (!$lm->o_login->cRight('SRVGRP', R_ADD)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
+       $what = 'Server Group';
        $obj = new SGroup();
        $content = new Template('../tpl/form_sgroup.tpl');
        $page['title'] .= $what;
