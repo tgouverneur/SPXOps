@@ -167,15 +167,15 @@ function addGraph(id) {
 function getRRDList(id) {
   $.ajax({
           type: 'GET',
-          url: '/rpc/w/lrrd/i/' + $('#chart_' + window.cID + '_srv').val(),
+          url: '/rpc/w/lrrd/i/' + $('#chart_' + id + '_srv').val(),
           dataType: 'json',
-          success: function(data) { var sel = $('#chart_' + window.cID + '_rrd'); sel.empty(); sel.append('<option value="" selected>Choose a Source</option>'); for (var i=0; i<data.length; i++) { sel.append('<option value="' + data[i].id + '">' + data[i].type + '/' + data[i].name + '</option>'); } },
+          success: function(data) { var sel = $('#chart_' + id + '_rrd'); sel.empty(); sel.append('<option value="" selected>Choose a Source</option>'); for (var i=0; i<data.length; i++) { sel.append('<option value="' + data[i].id + '">' + data[i].type + '/' + data[i].name + '</option>'); } },
           error: UpdateRRDError,
           cache: false
    });
 
-  $('#chart_' + window.cID + '_rrd').change(function() {
-    getMETList(window.cID);
+  $('#chart_' + id + '_rrd').change(function() {
+    getMETList(id);
   });
 
 }
@@ -183,9 +183,9 @@ function getRRDList(id) {
 function getMETList(id) {
   $.ajax({
           type: 'GET',
-          url: '/rpc/w/lmet/i/' + $('#chart_' + window.cID + '_rrd').val(),
+          url: '/rpc/w/lmet/i/' + $('#chart_' + id + '_rrd').val(),
           dataType: 'json',
-          success: function(data) { var sel = $('#chart_' + window.cID + '_met'); sel.empty(); sel.append('<option value="" selected>Choose a Metric</option>'); for (var i=0; i<data.length; i++) { sel.append('<option value="' + data[i].name + '">' + data[i].value + '</option>'); } },
+          success: function(data) { var sel = $('#chart_' + id + '_met'); sel.empty(); sel.append('<option value="" selected>Choose a Metric</option>'); for (var i=0; i<data.length; i++) { sel.append('<option value="' + data[i].name + '">' + data[i].value + '</option>'); } },
           error: UpdateRRDError,
           cache: false
    });
