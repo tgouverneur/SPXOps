@@ -63,6 +63,27 @@ function addGraph() {
         numberTicks: 4,
         min : dataChart[0][0],
         max: dataChart[dataChart.length-1][0],
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+        tickOptions: {
+          formatter: function (format, val) {
+                       if (typeof val == 'number') {
+                         if (!format) {
+                           format = '%s';
+                         }
+   			 var date = new Date(val*1000);
+			 var hours = date.getHours();
+			 if (hours <= 9) hours = '0'+hours;
+			 var minutes = date.getMinutes();
+			 if (minutes <= 9) minutes = '0'+minutes;
+			 var seconds = date.getSeconds();
+			 if (seconds <= 9) seconds = '0'+seconds;
+                         return String(hours+':'+minutes+':'+seconds);
+                       }
+                       else {
+                         return String(val);
+                       }
+          },
+        },
       },
       yaxis: {
         min:0,

@@ -80,17 +80,58 @@
             axes: {   	    
                xaxis: {   	   	   
                   numberTicks: 4,            
-                  //renderer:$.jqplot.LogAxisRenderer,           
-		  //tickDistribution:'power'
-                  //tickOptions:{formatString:'%s'},            
                   min : dataChart[0][0],           
-                  max: dataChart[dataChart.length-1][0] 	   
+                  max: dataChart[dataChart.length-1][0],
+		  labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                  tickOptions: {
+                    formatter: function (format, val) {
+                       if (typeof val == 'number') {
+                         if (!format) {
+                           format = '%s';
+                         }
+                         var date = new Date(val*1000);
+                         var hours = date.getHours();
+                         if (hours <= 9) hours = '0'+hours;
+                         var minutes = date.getMinutes();
+                         if (minutes <= 9) minutes = '0'+minutes;
+                         var seconds = date.getSeconds();
+                         if (seconds <= 9) seconds = '0'+seconds;
+                         return String(hours+':'+minutes+':'+seconds);
+                       }
+                       else {
+                         return String(val);
+                       }
+                    }
+                  },
                }, 	    
                yaxis: {
                   min:0, 
-                  //max: 1,
-                  //numberTicks: 6,   	        
-                  //tickOptions:{formatString:'%.1f'}  	    
+                  labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                  tickOptions: {
+                    formatter: function (format, val) {
+                       if (typeof val == 'number') {
+                         if (!format) {
+                           format = '%.1f';
+                         }
+                         if (Math.abs(val) >= 1000000000000 ) {
+                           return (val / 1000000000000).toFixed(1) + 'Ti';
+                         }
+                         if (Math.abs(val) >= 1000000000 ) {
+                           return (val / 1000000000).toFixed(1) + 'Gi';
+                         }
+                         if (Math.abs(val) >= 1000000 ) {
+                           return (val / 1000000 ).toFixed(1) + 'Mi';
+                         }
+                         if (Math.abs(val) >= 1000) {
+                           return (val / 1000).toFixed(1) + 'Ki';
+                         }
+                         return String(val.toFixed(1));
+                       }
+                       else {
+                         return String(val);
+                       }
+                    }
+                  },
                }      
             },      
             seriesDefaults: {   	    
