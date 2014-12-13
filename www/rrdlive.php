@@ -33,7 +33,7 @@
  $content = new Template('../tpl/rrdlive.tpl');
  $page['title'] .= 'Live RRD';
  $content->set('a_s', $a_s);
- $js = array('liverrd.js', 'jquery.jqplot.min.js', 'jqplot.logAxisRenderer.min.js', 'jqplot.dateAxisRenderer.min.js');
+ $js = array('liverrd.js', 'jquery.jqplot.min.js', 'jqplot.highlighter.min.js', 'jqplot.logAxisRenderer.min.js', 'jqplot.dateAxisRenderer.min.js');
  $css = array('jquery.jqplot.min.css');
  $head->set('js', $js);
  $head->set('css', $css);

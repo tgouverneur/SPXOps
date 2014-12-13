@@ -60,6 +60,7 @@ function addGraph(id) {
 
   var dataChart = [ [0,0] ];
   var dataLabels = [ [0,0] ];
+  $.jqplot.config.enablePlugins = true;
   window.options = {
     axes: {
       xaxis: {
@@ -117,7 +118,14 @@ function addGraph(id) {
           },
         }
 
-      }
+      },
+    },
+    highlighter: {
+       sizeAdjust: 10,
+       tooltipLocation: 'n',
+       tooltipAxes: 'y',
+       tooltipFormatString: '%s',
+       useAxesFormatters: true,
     },
     seriesDefaults: {
       rendererOptions: { smooth: true}

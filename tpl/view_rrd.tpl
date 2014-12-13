@@ -76,6 +76,7 @@
         $(document).ready(function(){
           var dataChart = [ [0,0] ];
           var dataLabels = [ [0,0] ];
+	  $.jqplot.config.enablePlugins = true;
           window.options = {      
             axes: {   	    
                xaxis: {   	   	   
@@ -139,6 +140,13 @@
             },
             legend: { show:true, location: 'e' },
             grid: { background:"#ffffff", drawGridLines:false, shadow:false, borderWidth:0.0 },
+	    highlighter: {
+	       sizeAdjust: 10,
+	       tooltipLocation: 'n',
+	       tooltipAxes: 'y',
+	       tooltipFormatString: '%s',
+	       useAxesFormatters: true,
+	    },
           };  
 	  $.jqplot.config.enablePlugins = true;
 	  window.chartPlot1 = $.jqplot('chart', [dataLabels, dataChart], window.options);

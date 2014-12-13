@@ -248,7 +248,7 @@
        $content = new Template('../tpl/view_rrd.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);
-       $js = array('rrd.js', 'jquery.jqplot.min.js', 'jqplot.logAxisRenderer.min.js', 'jqplot.dateAxisRenderer.min.js');
+       $js = array('rrd.js', 'jquery.jqplot.min.js', 'jqplot.highlighter.min.js', 'jqplot.logAxisRenderer.min.js', 'jqplot.dateAxisRenderer.min.js');
        $css = array('jquery.jqplot.min.css');
        $head->set('js', $js);
        $head->set('css', $css);
