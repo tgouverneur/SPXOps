@@ -24,7 +24,7 @@ function addMet(gid) {
 	  type: 'GET',
 	  url: '/rpc/w/slr/i/' + sgid,
 	  dataType: 'json',
-          success: function(data) { window[gmet] = data.a_def; console.log(data.a_def); },
+          success: function(data) { window[gmet] = data.a_def; },
           error: UpdateRRDError,
           cache: false
      });
@@ -44,16 +44,19 @@ function SavedGraph() {
   $("#success-box").show();
 }
 
-function addGraph() {
-  if (window.cID >= 3) {
+function addGraph(id) {
+  if (id > 3) {
     $("#error-msg").text('Maximum graph is currently limited to 3.');
     $("#error-box").show();
   }
   window.cID++;
-  divname = 'chart_' + window.cID;
-  optname = 'chart_' + window.cID + '_options';
-  plotname = 'plot' + window.cID;
-  elements = 'elem' + window.cID;
+  $('#addgraphhref').attr('onclick', 'addGraph('+window.cID+');');
+  //$('#addgraphhref').unbind('click');
+  //$('#addgraphhref').setAttribute('onclick','addGraph('+window.cID+');');
+  divname = 'chart_' + id;
+  optname = 'chart_' + id + '_options';
+  plotname = 'plot' + id;
+  elements = 'elem' + id;
 
   var dataChart = [ [0,0] ];
   var dataLabels = [ [0,0] ];
@@ -130,7 +133,7 @@ function addGraph() {
 	  type: 'GET',
 	  url: '/rpc/w/lslr',
 	  dataType: 'json',
-          success: function(data) { var sel = $('#chart_' + window.cID + '_sg'); sel.empty(); sel.append('<option value="" selected>Choose a Saved Graph</option>'); for (var i=0; i<data.length; i++) { sel.append('<option value="' + data[i].id + '">' + data[i].name + '</option>'); } },
+          success: function(data) { var sel = $('#chart_' + id + '_sg'); sel.empty(); sel.append('<option value="" selected>Choose a Saved Graph</option>'); for (var i=0; i<data.length; i++) { sel.append('<option value="' + data[i].id + '">' + data[i].name + '</option>'); } },
           error: UpdateRRDError,
           cache: false
    });
@@ -139,18 +142,18 @@ function addGraph() {
 	  type: 'GET',
 	  url: '/rpc/w/lserver/o/rrd',
 	  dataType: 'json',
-          success: function(data) { var sel = $('#chart_' + window.cID + '_srv'); sel.empty(); sel.append('<option value="" selected>Choose a Server</option>'); for (var i=0; i<data.length; i++) { sel.append('<option value="' + data[i].id + '">' + data[i].hostname + '</option>'); } },
+          success: function(data) { var sel = $('#chart_' + id + '_srv'); sel.empty(); sel.append('<option value="" selected>Choose a Server</option>'); for (var i=0; i<data.length; i++) { sel.append('<option value="' + data[i].id + '">' + data[i].hostname + '</option>'); } },
           error: UpdateRRDError,
           cache: false
    });
 
-  $('#chart_' + window.cID + '_srv').change(function() {
-    getRRDList(window.cID);
+  $('#chart_' + id + '_srv').change(function() {
+    getRRDList(id);
   });
 
   $('#'+optname).show();
 
-  setInterval(function() { getGRRDData(window.cID); }, 1000);
+  setInterval(function() { getGRRDData(id); }, 1000);
 }
 
 function getRRDList(id) {
@@ -243,4 +246,4 @@ function UpdateRRDSuccess(data, textStatus, jqXHR) {
   }
 }
 
-$(document).ready(function(){ window.cID = 0; });
+$(document).ready(function(){ window.cID = 1; });

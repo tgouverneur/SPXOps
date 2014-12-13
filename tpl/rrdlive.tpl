@@ -22,7 +22,7 @@
               <li class="dropdown active">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Action <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="#" onClick="addGraph();">Add Graph</a></li>
+                  <li><a id="addgraphhref" href="#" onClick="addGraph(1);">Add Graph</a></li>
                 </ul>
               </li>
             </ul>

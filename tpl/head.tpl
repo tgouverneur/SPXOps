@@ -100,6 +100,7 @@
                 <ul class="dropdown-menu" role="menu">
                   <li><a href="/list/w/jobs#">Jobs list</a></li>
                   <li><a href="/tools/w/cdp">CDP Packets</a></li>
+                  <li><a href="/rrdlive">RRD Live</a></li>
                   <li><a href="/tools/w/stats">Statistics</a></li>
                   <li><a href="/tools/w/rce">Remote Code Execution</a></li>
                 </ul>
