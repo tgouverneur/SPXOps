@@ -108,6 +108,41 @@ class RRD extends mysqlObj
 
   public function getWhat($what) {
     switch ($this->type) {
+      case 'mpstat':
+        if (!strcmp($what, 'default')) {
+          $what = 'usr,sys,idl';
+        }
+        $all = array(
+                        'minf' => 'Minor faults',
+                        'mjf' => 'Major faults',
+                        'xcal' => 'IPC Calls',
+                        'intr' => 'Interrupts',
+                        'ithr' => 'Interrupts as threads',
+                        'csw' => 'Context switches',
+                        'icsw' => 'Involuntary CSW',
+                        'migr' => 'Threads migrations',
+                        'smtx' => 'Spins on mutexes',
+                        'srw' => 'Spins on r/w locks',
+                        'syscl' => 'Syscalls',
+                        'usr' => 'User time',
+                        'sys' => 'System time',
+                        'st' => 'st',
+                        'idl' => 'Idle time',
+
+        );
+        if (!strcmp($what, 'all')) {
+          return $all;
+        }
+        $f = explode(',', $what);
+        $ret = array();
+        foreach($f as $v) {
+          if (empty($v)) continue;
+          if (isset($all[$v])) {
+            $ret[$v] = $all[$v];
+          }
+        }
+        return $ret;
+      break;
       case 'ziostat':
         if (!strcmp($what, 'default')) {
           $what = 'rb,wb';
@@ -179,6 +214,29 @@ class RRD extends mysqlObj
     }
 
     switch($this->type) {
+      case 'mpstat':
+        $creator = new RRDCreator($this->getPath(), "now -10d", 1);
+        $creator->addDataSource('minf:GAUGE:1:0:U');
+        $creator->addDataSource('mjf:GAUGE:1:0:U');
+        $creator->addDataSource('xcal:GAUGE:1:0:U');
+        $creator->addDataSource('intr:GAUGE:1:0:U');
+        $creator->addDataSource('ithr:GAUGE:1:0:U');
+        $creator->addDataSource('csw:GAUGE:1:0:U');
+        $creator->addDataSource('icsw:GAUGE:1:0:U');
+        $creator->addDataSource('migr:GAUGE:1:0:U');
+        $creator->addDataSource('smtx:GAUGE:1:0:U');
+        $creator->addDataSource('srw:GAUGE:1:0:U');
+        $creator->addDataSource('syscl:GAUGE:1:0:U');
+        $creator->addDataSource('usr:GAUGE:1:0:U');
+        $creator->addDataSource('sys:GAUGE:1:0:U');
+        $creator->addDataSource('st:GAUGE:1:0:U');
+        $creator->addDataSource('idl:GAUGE:1:0:U');
+        $creator->addArchive('AVERAGE:0:1:604800');
+        $creator->addArchive('AVERAGE:0.5:60:44640');
+        $creator->addArchive('AVERAGE:0.5:300:105120');
+        $creator->save();
+        Logger::log('RRD '.$this->path.' created with MPSTAT type', $this, LOG_DEBUG);
+      break;
       case 'ziostat':
         $creator = new RRDCreator($this->getPath(), "now -10d", 1);
         $creator->addDataSource('rops:GAUGE:1:0:U');
@@ -215,6 +273,51 @@ class RRD extends mysqlObj
     }
     return 0;
   }
+
+  public static function parseMPstat(&$s, $a) {
+
+    if (!isset($a['values']) || !count($a['values'])) {
+      throw new SPXException('No values provided');
+    }
+
+    if (!isset($a['ts']) || !is_numeric($a['ts'])) {
+      throw new SPXException('No correct TS provided');
+    }
+    $ts = $a['ts'];
+    unset($a['values']['sze']);
+
+    try {
+      /* find RRD by path */
+      $path = $s->hostname.'-mpstat.rrd';
+      $rrd = new RRD();
+      $rrd->path = $path;
+      if ($rrd->fetchFromField('path')) {
+        Logger::log("lock() $rrd", $this, LOG_DEBUG);
+        $rrd->lock();
+	$rrd->path = $path;
+	$rrd->type = 'mpstat';
+	$rrd->name = '';
+  	$rrd->fk_server = $s->id;
+        if (!$rrd->checklock()) { throw new SPXException($path.': lock was not acquired properly'); }
+        $rrd->insert();
+        if (!$rrd->checklock()) { $rrd->delete(); throw new SPXException($path.': lock was not acquired properly'); }
+        $rrd->create();
+        Logger::log("create() $rrd", $this, LOG_DEBUG);
+        if (!$rrd->checklock()) { $rrd->delete(); throw new SPXException($path.': lock was not acquired properly'); }
+        $rrd->unlock();
+        Logger::log("unlock() $rrd", $this, LOG_DEBUG);
+        }
+      $rc = $rrd->rupdate($ts, $a['values']);
+      if ($rc) {
+        Logger::log("Updated $rrd", $this, LOG_DEBUG);
+      } else {
+        Logger::log("Failure while updating $rrd", $this, LOG_DEBUG);
+      }
+    } catch (Exception $e) {
+        Logger::log("Failed using data for $rrd: $e", $this, LOG_DEBUG);
+    }
+  }
+
 
   public static function parseZIostat(&$s, $a) {
 
@@ -314,6 +417,11 @@ class RRD extends mysqlObj
       throw new SPXException('no type specified');
     }
     switch($a['type']) {
+      case 'mpstat':
+	Logger::log('entering parseMPstat()', $this, LLOG_DEBUG);
+        return RRD::parseMPstat($s, $a);
+	Logger::log('left parseMPstat()', $this, LLOG_DEBUG);
+      break;
       case 'ziostat':
 	Logger::log('entering parseZIostat()', $this, LLOG_DEBUG);
         return RRD::parseZIostat($s, $a);

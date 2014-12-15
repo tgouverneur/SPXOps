@@ -2,8 +2,9 @@ function saveGraph(gid) {
   var gmet = 'elem'+gid;
   var gname = 'chart_'+gid+'_name';
   var graphname = $('#'+gname).val();
+  var rscale = $('#chart_'+gid+'_scale').val();
   
-   var data = { name: graphname, mets: window[gmet] };
+   var data = { name: graphname, mets: window[gmet], scale: rscale };
    $.ajax({
         type: 'POST',
         url: '/rpc/w/saveslr',
@@ -54,17 +55,19 @@ function addGraph(id) {
   //$('#addgraphhref').unbind('click');
   //$('#addgraphhref').setAttribute('onclick','addGraph('+window.cID+');');
   divname = 'chart_' + id;
+  rscalename = 'chart_' + id+'_scale';
   optname = 'chart_' + id + '_options';
   plotname = 'plot' + id;
   elements = 'elem' + id;
+  window.rscale[id] = 30;
 
   var dataChart = [ [0,0] ];
   var dataLabels = [ [0,0] ];
   $.jqplot.config.enablePlugins = true;
-  window.options = {
+  window.options[id] = {
     axes: {
       xaxis: {
-        numberTicks: 4,
+        //numberTicks: 4,
         min : dataChart[0][0],
         max: dataChart[dataChart.length-1][0],
         labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
@@ -134,7 +137,7 @@ function addGraph(id) {
     grid: { background:"#ffffff", drawGridLines:false, shadow:false, borderWidth:0.0 },
   };
   $.jqplot.config.enablePlugins = true;
-  window[plotname] = $.jqplot(divname, [dataLabels, dataChart], window.options);
+  window[plotname] = $.jqplot(divname, [dataLabels, dataChart], window.options[id]);
   window[elements] = [];
 
   $.ajax({
@@ -197,7 +200,7 @@ function getGRRDData(gid) {
    if (window[gm].length < 1) {
      return;
    }
-   var data = { start: "NOW", what: "default", n: 30, cid: gid, mets: window[gm] };
+   var data = { start: "NOW", what: "default", n: window.rscale[gid], cid: gid, mets: window[gm] };
    $.ajax({
         type: 'POST',
         url: '/rrd/i/group',
@@ -207,6 +210,11 @@ function getGRRDData(gid) {
         error: UpdateRRDError,
         cache: false
    });
+}
+
+function saveScale(gid) {
+  var scalename = '#chart_'+gid+'_scale';
+  window.rscale[gid] = $(scalename).val();
 }
 
 function SavedGraphError(jqXHR, textStatus, errorThrown) {
@@ -241,17 +249,18 @@ function UpdateRRDSuccess(data, textStatus, jqXHR) {
     divname = 'chart_' + data['cid'];
     plotname = 'plot' + data['cid'];
     var plot = window[plotname];
+    var gid = data['cid'];
 
     if (plot) {
       plot.destroy();
     }
     plot.series[0].data = data['res']['values']; 
-    window.options.axes.xaxis.min = data['res']['values'][0][0][0];
-    window.options.axes.xaxis.max = data['res']['values'][0][data['res']['values'][0].length-1][0];
-    window.options.series = data['res']['labels'];
-    plot = $.jqplot (divname, data['res']['values'], window.options);
+    window.options[gid].axes.xaxis.min = data['res']['values'][0][0][0];
+    window.options[gid].axes.xaxis.max = data['res']['values'][0][data['res']['values'][0].length-1][0];
+    window.options[gid].series = data['res']['labels'];
+    plot = $.jqplot (divname, data['res']['values'], window.options[gid]);
     window[plotname] = plot1;
   }
 }
 
-$(document).ready(function(){ window.cID = 1; });
+$(document).ready(function(){ window.rscale = []; window.cID = 1; window.options = []; });

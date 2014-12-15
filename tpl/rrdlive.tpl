@@ -57,7 +57,21 @@
                 </div>
                 <div class="form-group col-sm-3">
                   <div class="input-group">
-                    <button type="submit" onClick="saveGraph(1);" name="submit" class="btn btn-sm btn-primary">Save!</button>
+                    <button type="submit" onClick="saveGraph(1);" name="submit" class="btn btn-sm btn-primary">&nbsp;&nbsp;Save!&nbsp;&nbsp;</button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-inline row">
+                <div class="form-group col-sm-3">
+		</div>
+                <div class="form-group col-sm-6">
+                  <div class="input-group">
+                    <input type="text" class="form-control input-sm" id="chart_1_scale" placeholder="Scale (default:30s)">
+                  </div>
+                </div>
+                <div class="form-group col-sm-3">
+                  <div class="input-group">
+                    <button type="submit" onClick="saveScale(1);" name="submit" class="btn btn-sm btn-primary">Update!</button>
                   </div>
                 </div>
               </div>
