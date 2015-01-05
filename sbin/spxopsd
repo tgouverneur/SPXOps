@@ -62,8 +62,8 @@
     Setting::fetchAll();
     $interval = Setting::get('daemon', 'sleepTime');
     $nrProcess = Setting::get('daemon', 'nrProcess');
-    $this->setInterval($interval->value);
-    $this->setNrProcess($nrProcess->value);
+    if ($interval) $this->setInterval($interval->value);
+    if ($nrProcess) $this->setNrProcess($nrProcess->value);
 
     /* Check for other eventually died pids or locks */
     if ($this->f_master) {

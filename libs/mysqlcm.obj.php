@@ -56,6 +56,8 @@ class mysqlCM
 
   private $_reconnect = true;
 
+  private $_pid = -1;
+
   /**
    * Debug mode
    */
@@ -80,6 +82,15 @@ class mysqlCM
   }
 
   /**
+   * is _link not null?
+   */
+  public function isLink() {
+    if ($this->_link)
+      return true;
+    return false;
+  }
+
+  /**
    * Returns the singleton instance
    */
   public static function getInstance()
@@ -87,6 +98,12 @@ class mysqlCM
     if (!isset(self::$_instance)) {
      $c = __CLASS__;
      self::$_instance = new $c;
+    }
+    if (self::$_instance->_pid != getmypid()) {
+      self::delInstance();
+      $c = __CLASS__;
+      self::$_instance = new $c;
+      self::$_instance->_eprint('['.time().']['.self::$_instance->_pid.'] fork() detected'."\n");
     }
     return self::$_instance;
   }
@@ -182,7 +199,7 @@ class mysqlCM
   { 
     global $config;
 
-    if ($this->_link) $this->disconnect();
+    //if ($this->_link) $this->disconnect();
 
     if ($config['mysql']['DEBUG'] && $this->_dfd) {
       fclose($this->_dfd);
@@ -196,13 +213,15 @@ class mysqlCM
   public function __construct()
   {
     global $config;
+
+    $this->_pid = getmypid();
+
     if ($config['mysql']['DEBUG']) {
       $this->_debug($config['mysql']['DEBUG']);
     }
     if ($config['mysql']['ERRLOG']) {
       $this->_errlog($config['mysql']['ERRLOG']);
     }
-
   }
 
   /**
@@ -243,6 +262,7 @@ class mysqlCM
   			       array(PDO::ATTR_PERSISTENT => true,
 				     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 	$this->_link->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        //$this->_link->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
 
       } catch (PDOException $e) {
         $this->_error = $e->getMessage();
@@ -251,7 +271,7 @@ class mysqlCM
            $this->_error = null;
         }
         if ($this->_debug)
-          $this->_dprint("[".time()."] Connection failed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+          $this->_dprint("[".time()."][$attempts] Connection failed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
         return -1;
       }
     } while ($attempts++ < 3);
@@ -296,6 +316,8 @@ class mysqlCM
       if (count($row)) $row = $row[0];
       if (isset($row['COUNT(*)']))
 	$data = $row['COUNT(*)'];
+
+      $this->_res->closeCursor();
       unset($this->_res);
 
       return $data;
@@ -328,6 +350,7 @@ class mysqlCM
 //        for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
 //          $data[$i] = $r;
 //      }
+      $this->_res->closeCursor();
       unset($this->_res);
       return $data;
     }
@@ -414,6 +437,7 @@ class mysqlCM
 //        for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
 //          $data[$i] = $r;
 //      }
+      $this->_res->closeCursor();
       unset($this->_res);
       return $data;
     }
@@ -432,6 +456,11 @@ class mysqlCM
     if (!$this->_link) return -1;
     $attempts = 0;
 
+    if (isset($this->_res) && $this->_res) {
+      $this->_res->closeCursor();
+      unset($this->_res);
+    }
+
     do {
       try {
         unset($this->_res);
@@ -447,7 +476,7 @@ class mysqlCM
 
           if ($this->_debug) $this->_time();
           if ($this->_errlog) {
-            $this->_eprint("[".time()."] Failed _rquery (".$this->_affect."): $query\n");
+            $this->_eprint("[".time()."][".$this->_pid."] Failed _rquery (".$this->_affect."): $query\n");
             $this->_eprint("\tError: ".$this->_error."\n");
           }
           return -1;
@@ -461,6 +490,11 @@ class mysqlCM
       } catch (PDOException $e) {
         if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
            $this->reconnect();
+        }
+        if ($this->_debug) $this->_time();
+        if ($this->_errlog) {
+          $this->_eprint("[".time()."][$attempts] Failed _query: $query\n");
+          $this->_eprint("\tError: ".$e->getMessage()."\n");
         }
       }
     } while ($attempts++ < 3);
@@ -483,6 +517,12 @@ class mysqlCM
 
     do {
       try {
+
+        if (isset($this->_res) && $this->_res) {
+          $this->_res->closeCursor();
+	  unset($this->_res);
+        }
+
         $this->_res = $this->_link->prepare($query);
         if (@$this->_res->execute($args)) {
     
@@ -501,7 +541,7 @@ class mysqlCM
           }
           if ($this->_debug) $this->_time();
           if ($this->_errlog) { 
-            $this->_eprint("[".time()."] Failed _query: $query\n");
+            $this->_eprint("[".time()."][".$this->_pid."] Failed _query: $query\n");
             $this->_eprint("\tError: ".$this->_error."\n");
           }
           return -1;
@@ -510,6 +550,12 @@ class mysqlCM
         if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
            $this->reconnect();
         }
+        if ($this->_debug) $this->_time();
+        if ($this->_errlog) { 
+          $this->_eprint("[".time()."][$attempts][".$this->_pid."] Failed _query: $query\n");
+          $this->_eprint("\tError: ".$e->getMessage()."\n");
+        }
+
       }
     } while ($attempts++ < 3);
     return -1;

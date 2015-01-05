@@ -330,6 +330,7 @@ zfs:0:arcstats:l2_writes_sent   376002
 
     foreach($s->a_nfss as $ns) {
       if (isset($found_n[''.$ns])) {
+	unset($found_n[''.$ns]); /* avoid duplicates */
         continue;
       }
       $s->log("Removing NFS $ns", LLOG_INFO);
@@ -422,6 +423,7 @@ zfs:0:arcstats:l2_writes_sent   376002
 
     foreach($s->a_nfsm as $ns) {
       if (isset($found_n[''.$ns])) {
+	unset($found_n[''.$ns]); /* avoid duplicates */
         continue;
       }
       $s->log("Removing NFS $ns", LLOG_INFO);
@@ -560,6 +562,7 @@ zfs:0:arcstats:l2_writes_sent   376002
 
     foreach($s->a_pkg as $po) {
       if (isset($found_p[$po->name])) {
+	unset($found_p[$po->name]);
         continue;
       }
       $s->log("Removing package $po", LLOG_INFO);
@@ -608,6 +611,7 @@ zfs:0:arcstats:l2_writes_sent   376002
 
     foreach($s->a_patch as $po) {
       if (isset($found_p[$po->patch])) {
+	unset($found_p[$po->patch]);
         continue;
       }
       $s->log("Removing patch $po", LLOG_INFO);
@@ -678,6 +682,7 @@ zfs:0:arcstats:l2_writes_sent   376002
 
     foreach($s->a_zone as $sz) {
       if (isset($found_z[$sz->name])) {
+	unset($found_z[$sz->name]);
         continue;
       }
       $s->log("Removing zone $sz", LLOG_INFO);
@@ -1116,6 +1121,7 @@ zfs:0:arcstats:l2_writes_sent   376002
     foreach($s->a_net as $n) {
       $n->fetchAll();
       if (isset($found_if[''.$n])) {
+	unset($found_if[''.$n]);
         continue;
       }
       $s->log("Removing net $n", LLOG_INFO);
@@ -1427,6 +1433,7 @@ zfs:0:arcstats:l2_writes_sent   376002
 
     foreach($s->a_prj as $p) {
       if (isset($found_p[$p->prjid])) {
+	unset($found_p[$p->prjid]);
         continue;
       }
       $s->log("Removing prj $p", LLOG_INFO);
@@ -1572,6 +1579,7 @@ zfs:0:arcstats:l2_writes_sent   376002
 
     foreach($s->a_hba as $p) {
       if (isset($found_hba[$p->wwn])) {
+	unset($found_hba[$p->wwn]);
         continue;
       }
       $s->log("Removing hba $p", LLOG_INFO);
@@ -1930,6 +1938,7 @@ zfs:0:arcstats:l2_writes_sent   376002
 
     foreach($s->a_disk as $p) {
       if (isset($found_d[$p->dev])) {
+	unset($found_d[$p->dev]);
         continue;
       }
       $s->log("Removing disk $p", LLOG_INFO);
@@ -2193,6 +2202,7 @@ d101 1 1 /dev/dsk/emcpower58a
     }
     foreach($s->a_pool as $p) {
       if (isset($found_z[$p->name])) {
+	unset($found_z[$p->name]); // if found multiple time, remove duplicates (BUGFIX)
         continue;
       }
       $s->log("Removing pool $p", LLOG_INFO);

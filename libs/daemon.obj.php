@@ -47,10 +47,16 @@ class Daemon
  
     if (!$f) {
 
+      $reco = false;
+      if (mysqlCM::getInstance()->isLink()) {
+	$reco = true;
+      }
+
       mysqlCM::delInstance();
       $this->pid = pcntl_fork();
       if ($this->pid) {
-        echo "Forked(".$this->pid."\n";
+        $m = mysqlCM::getInstance();
+        if ($reco) $m->connect();
         return;
       } else {
         Logger::delInstance();

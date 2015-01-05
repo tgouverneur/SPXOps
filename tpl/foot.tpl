@@ -9,7 +9,7 @@
         </ul>
 <?php } ?>
       <hr>
-      <footer class="col-md-offset-1">&copy; 2012-2014 <a href="http://espix.net">Espix Network SPRL</a> - <a href="https://github.com/tgouverneur/SPXOps/wiki">SPXOps</a> vDEVEL</footer>
+      <footer class="col-md-offset-1">&copy; 2012-2015 <a href="http://espix.net">Espix Network SPRL</a> - <a href="https://github.com/tgouverneur/SPXOps/wiki">SPXOps</a> vDEVEL</footer>
     </div> <!-- /container -->
 <?php if (isset($js)) { foreach($js as $j) { ?>
     <script src="/js/<?php echo $j; ?>"></script>
