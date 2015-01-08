@@ -80,7 +80,11 @@ class Job extends mysqlObj
 
     while(($j = $it->next())) {
       $j->fetchFromId();
+      try {
       $j->fetchFK('fk_log');
+      } catch (Exception $e) {
+	$j->o_log = null; // don't care... clean anyway
+      }
       Logger::log("Removing job $j and its log", $slog, LLOG_INFO);
       if ($j->o_log) $j->o_log->delete();
       $j->delete();
