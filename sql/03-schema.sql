@@ -28,6 +28,7 @@ CREATE TABLE `jt_disk_pool` (
   `fk_disk` int(11) NOT NULL,
   `fk_pool` int(11) NOT NULL,
   `slice` int(2) NOT NULL DEFAULT '0',
+  `role` varchar(50) NOT NULL,
   PRIMARY KEY (`fk_disk`,`fk_pool`)
 ) ENGINE=InnoDB;
 

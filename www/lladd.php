@@ -227,7 +227,7 @@
        $ret['msg'] = 'Cannot find User Group provided inside the database';
        goto screen;
      }
-     if (!strcmp($o)) {
+     if (!strcmp($o, 'login')) {
        $obj->fetchJT('a_login');
        if (!$r || $r == 0) {
          $tobj = new Login($t);

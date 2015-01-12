@@ -55,7 +55,7 @@
 	  </div>
 	</div>
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-md-7">
            <h3>Dataset</h3>
            <table class="table table-condensed">
              <thead>
@@ -78,6 +78,27 @@
              </tbody>
            </table>
           </div>
+	  <div class="col-md-5">
+	    <h3>Disks</h3>
+           <table class="table table-condensed">
+             <thead>
+               <tr>
+                 <th>Dev</th>
+                 <th>Role</th>
+                 <th>Size</th>
+               </tr>
+             </thead>
+             <tbody>
+<?php foreach ($obj->a_disk as $disk) { ?>
+                <tr>
+                  <td><?php echo $disk->dev; ?></td>
+                  <td><?php echo $disk->role[''.$obj]; ?></td>
+                  <td><?php echo Pool::formatBytes($disk->size); ?></td>
+                </tr>
+<?php } ?>  
+	     </tbody>
+	   </table>
+	  </div>
        </div>
       <!-- Disks Modal -->
       <div class="modal fade" tabindex="-1" role="dialog" id="disksModal" aria-labelledby="disksModal" aria-hidden="true">

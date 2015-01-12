@@ -789,7 +789,6 @@ class mysqlObj
          $values .= '\''.$fobj->{$r}[''.$this].'\'';
        }
      }
-
      $my->insert($names, $values, $table);
      array_push($this->{$rel->ar}, $fobj);
 

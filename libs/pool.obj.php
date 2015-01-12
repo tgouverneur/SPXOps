@@ -31,6 +31,7 @@ class Pool extends mysqlObj
 
   /* JT attrs */
   public $slice = array();
+  public $role = array();
 
   /* Logging */
   private $_log = null;
@@ -67,6 +68,7 @@ class Pool extends mysqlObj
 
       if ($all) {
         $this->fetchRL('a_dataset');
+        $this->fetchJT('a_disk');
       }
 
     } catch (Exception $e) {
@@ -222,7 +224,7 @@ class Pool extends mysqlObj
     $this->_addRL("a_dataset", "Dataset", array('id' => 'fk_pool'));
 
    	        /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
-    $this->_addJT('a_disk', 'Disk', 'jt_disk_pool', array('id' => 'fk_pool'), array('id' => 'fk_disk'), array('slice'));
+    $this->_addJT('a_disk', 'Disk', 'jt_disk_pool', array('id' => 'fk_pool'), array('id' => 'fk_disk'), array('slice', 'role'));
 
     $this->_log = Logger::getInstance();
 

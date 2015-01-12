@@ -2214,6 +2214,7 @@ d101 1 1 /dev/dsk/emcpower58a
     $cmd_status = "$zpool status %s";
     $zfs = $s->findBin('zfs');
     $cmd_dset = "$zfs list -H -r -o space,type,quota %s";
+    $role = '';
 
     foreach($s->a_pool as $p) {
       $p->fetchJT('a_disk');
@@ -2242,8 +2243,11 @@ d101 1 1 /dev/dsk/emcpower58a
 	  continue;
 	}
 
-        /* @TODO: add the type of device */
-        if ($vdev_list && !preg_match('/^mirror|^raid|^log|^spare|^cache/', $line)) {
+        if ($vdev_list && preg_match('/^mirror|^raid|^log|^spare|^cache/', $line)) {
+	  $f = preg_split("/\s+/", $line);
+	  if (!strcmp($role, 'logs') && preg_match('/^mirror/', $f[0])) continue; // skip this case
+          $role = $f[0];
+	} else if ($vdev_list && !preg_match('/^mirror|^raid|^log|^spare|^cache/', $line)) {
 
 	  /* we should have a dev here... */
           $f = preg_split("/\s+/", $line);
@@ -2262,17 +2266,17 @@ d101 1 1 /dev/dsk/emcpower58a
 	  $do->fk_server = $s->id;
 	  $do->dev = $dev;
 	  $do->slice[''.$p] = $slice;
+	  $do->role[''.$p] = $role;
 	  if ($do->fetchFromFields(array('fk_server', 'dev'))) {
 	    $s->log("Disk $do was not found on $s for pool $p", LLOG_ERR);
 	    continue;
 	  }
 	  
- 	  if (!$p->isInJT('a_disk', $do, array('slice'))) {
-	    $s->log("add $do slice $slice to $p", LLOG_INFO);
+ 	  if (!$p->isInJT('a_disk', $do, array('slice', 'role'))) {
+	    $s->log("add $do slice $slice/$role to $p", LLOG_INFO);
 	    $p->addToJT('a_disk', $do);
 	  }
           $found_v[$do->dev] = $do;
-	  
 	  continue;
         }
       }

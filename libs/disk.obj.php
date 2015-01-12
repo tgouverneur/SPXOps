@@ -34,6 +34,7 @@ class Disk extends mysqlObj
 
   /* JT Attrs */
   public $slice = array();
+  public $role = array();
 
   public $a_pool = array();
 
@@ -151,7 +152,7 @@ class Disk extends mysqlObj
     $this->_addFK("fk_server", "o_server", "Server");
 
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
-    $this->_addJT('a_pool', 'Pool', 'jt_disk_pool', array('id' => 'fk_disk'), array('id' => 'fk_pool'), array('slice'));
+    $this->_addJT('a_pool', 'Pool', 'jt_disk_pool', array('id' => 'fk_disk'), array('id' => 'fk_pool'), array('slice', 'role'));
 
 
     $this->_log = Logger::getInstance();
