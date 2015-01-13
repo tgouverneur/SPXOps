@@ -2,7 +2,7 @@
  /**
   * Autoload
   * @author Gouverneur Thomas <tgo@espix.net>
-  * @copyright Copyright (c) 2007-2012, Gouverneur Thomas
+  * @copyright Copyright (c) 2007-2015, Gouverneur Thomas
   * @version 1.0
   * @package objects
   * @subpackage mysql
@@ -18,7 +18,7 @@
     if (file_exists($file)) {
       require_once($file);
     } else {
-      throw new SPXException("Cannot load $file...\n");
+      throw new Exception("Cannot load $file...\n");
     }
   }
 ?>

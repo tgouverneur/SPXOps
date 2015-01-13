@@ -2,7 +2,7 @@
 /**
  * HTTP class
  *
- * @author Gouverneur Thomas <tgo@ians.be>
+ * @author Gouverneur Thomas <tgo@espix.net>
  * @copyright Copyright (c) 2007-2008, Gouverneur Thomas
  * @version 1.0
  * @package libs

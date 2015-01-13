@@ -6,3 +6,5 @@ old/
 tmp/
 libs/config.inc.php
 *.swp
+plugins/*
+!plugins/test

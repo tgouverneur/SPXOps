@@ -55,4 +55,13 @@ $config['server']['port'] = 2142;
 /* @TODO: fix key generation */
 $config['server']['key'] = '157d7c000573526a30991bff2ad6b8ee157d7c000573526a30991bff2ad6b8ee';
 
+/* Plugins */
+$config['pluginspath']  = $config['rootpath'].'/plugins';
+$config['plugins'] = array();
+//$config['plugins']['test'] = true; /* Enable plugin test */
+
+/* bootstrap plugin system (might move elsewhere later on...) */
+new Plugin();
+Plugin::registerPlugins();
+
 ?>
