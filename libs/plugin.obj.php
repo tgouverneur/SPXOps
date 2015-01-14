@@ -23,9 +23,12 @@ class PluginWME {
   public $desc = '';
   public $fct = null;
 
+  public $n_right = null;
+  public $n_level = 0;
+
   public $o_plugin = null;
 
-  public function __construct($p, $n, $f) {
+  public function __construct($p = null, $n = '', $f = null) {
     $this->o_plugin = $p;
     $this->name = $n;
     $this->fct = $f;
@@ -113,12 +116,27 @@ class Plugin
     return Plugin::$_wmenu[$n];
   }
 
+  public static function getWebAction($p, $n) {
+    foreach(Plugin::$_plugins as $plugin) {
+      if (!strcmp($p, $plugin->name)) {
+        foreach($plugin->a_web as $wa) {
+	  if (!strcmp($wa->name, $n)) {
+	    return $wa;
+	  }
+        }
+        return null;
+      }
+    }
+  }
+
   /**
    * Below is the actual object instance plugin code
    */
   public $name = '';
   public $version = '0.0';
   public $author = '';
+
+  public $a_web = array();
 
   public function __construct($n = '', $v = '0.0') {
     $this->name = $n;
