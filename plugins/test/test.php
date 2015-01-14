@@ -17,6 +17,13 @@ class TestPlugin extends Plugin {
     Plugin::registerWeb('tools', $o);
     $this->a_web[] = $o;
 
+    $o = new PluginWME($this, 'testtool', webDummy);
+    $o->desc = 'Dummy Plugin Tool';
+    $o->cat = 'Test Plugin';
+    $o->is_std = false;
+    Plugin::registerWeb('test', $o);
+    $this->a_web[] = $o;
+
     Plugin::__construct($n, $v);
   }
 }

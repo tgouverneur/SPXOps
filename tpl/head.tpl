@@ -108,6 +108,25 @@
 <?php } ?>
                 </ul>
               </li>
+<?php /* list non-default cat from plugins... */
+      foreach(Plugin::getWebCat() as $cat) {
+        $links = Plugin::getWebLinks($cat);
+        $name = '';
+        if (count($links) > 0) { /* at least one element */
+          $name = $links[0]->cat;
+        } else {
+          continue;
+        }
+?>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $name; ?> <b class="caret"></b></a>
+                <ul class="dropdown-menu" role="menu">
+<?php    foreach($links as $l) { ?>
+                  <li><a href="<?php echo $l->getHref(); ?>"><?php echo $l->desc; ?></a></li>
+<?php    } ?>
+                </ul>
+              </li>
+<?php } ?>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
                 <ul class="dropdown-menu" role="menu">
@@ -118,6 +137,9 @@
                   <li><a href="/list/w/ugroup#">Groups management</a></li>
                   <li><a href="/list/w/susers#">Connect Users management</a></li>
                   <li><a href="/list/w/pid">Show Daemons</a></li>
+<?php foreach(Plugin::getWebLinks('settings') as $l) { ?>
+                  <li><a href="<?php echo $l->getHref(); ?>"><?php echo $l->desc; ?></a></li>
+<?php } ?>
                 </ul>
               </li>
               <li><a href="/about">About</a></li>

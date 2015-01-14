@@ -21,7 +21,10 @@ if (!defined('PLUGIN_LOADED')) {
 class PluginWME {
   public $name = '';
   public $desc = '';
+  public $cat = '';
   public $fct = null;
+
+  public $is_std = true; /* is this category standard */
 
   public $n_right = null;
   public $n_level = 0;
@@ -114,6 +117,18 @@ class Plugin
 
   public static function getWebLinks($n) {
     return Plugin::$_wmenu[$n];
+  }
+
+  public static function getWebCat($n) {
+    $ret = array();
+    foreach(Plugin::$_wmenu as $name => $cat) {
+      if (is_array($cat) && count($cat) > 0) { /* at least one element here */
+	if (!$cat[0]->is_std) { /* non std, use it! */
+	  $ret[] = $name;
+	}
+      }
+    }
+    return $ret;
   }
 
   public static function getWebAction($p, $n) {
