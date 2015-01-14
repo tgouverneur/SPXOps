@@ -1,3 +1,5 @@
+* UR == User Request
+
 Urgent:
 -------
 
@@ -7,8 +9,9 @@ Urgent:
 Medium:
 -------
 
- - find a way to inventorize custom metrics
- - bin/ sbin/ path for libraries
+ - find a way to inventorize custom metrics (might be implemented through plugins)
+ - [UR] Per-user settings for lists (set list of columns to show)
+ - [UR] inventorize KVM VNC ports and add link to KVM VNC console on VM page
 
 Cosmetics:
 ----------
