@@ -40,6 +40,19 @@ class Pool extends mysqlObj
     Logger::log($str, $this);
   }
 
+  public function isSlog() {
+    if (!count($this->role)) {
+      $this->fetchJT('a_disk');
+    }
+
+    foreach($this->role as $role) {
+      if (!strcmp($role, 'logs')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public function getTypeStats() {
     $ret = array();
     foreach($this->a_dataset as $ds) {

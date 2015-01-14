@@ -46,7 +46,7 @@
          }
        }
        $content = null;
-       $wa->call(); /* supposed to fill $content */
+       $wa->call($wa); /* supposed to fill $content */
 
        if (!$content) {
 	 HTTP::errWWW('Something wrong happened in plugin '.$wa->o_plugin->name);

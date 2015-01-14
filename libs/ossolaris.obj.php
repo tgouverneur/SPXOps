@@ -1849,9 +1849,9 @@ zfs:0:arcstats:l2_writes_sent   376002
       if ($do->fetchFromFields(array('dev', 'fk_server'))) {
         $s->log("Added $do", LLOG_INFO);
         $do->insert();
+        $s->a_disk[] = $do;
       }
       $found_d[$dname] = $do;
-      $s->a_disk[] = $do;
     }
 
     $iostat = $s->findBin('iostat');
