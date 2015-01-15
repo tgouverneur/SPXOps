@@ -348,7 +348,7 @@
          goto screen;
        }
        try {
-       $obj->fetchAll(1);
+         $obj->fetchAll(1);
        } catch (Exception $e) {
 	 echo '';
 	 /* @TODO: maybe we should log theses exception to a special log to allow debugging... */

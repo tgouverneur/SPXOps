@@ -53,6 +53,10 @@ class Pool extends mysqlObj
     return false;
   }
 
+  public function link() {
+    return '<a href="/view/w/pool/i/'.$this->id.'">'.$this.'</a>';
+  }
+
   public function getTypeStats() {
     $ret = array();
     foreach($this->a_dataset as $ds) {

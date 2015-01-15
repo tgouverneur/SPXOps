@@ -116,10 +116,14 @@ class Plugin
   }
 
   public static function getWebLinks($n) {
-    return Plugin::$_wmenu[$n];
+    if (isset(Plugin::$_wmenu[$n])) {
+      return Plugin::$_wmenu[$n];
+    } else {
+      return array();
+    }
   }
 
-  public static function getWebCat($n) {
+  public static function getWebCat() {
     $ret = array();
     foreach(Plugin::$_wmenu as $name => $cat) {
       if (is_array($cat) && count($cat) > 0) { /* at least one element here */
