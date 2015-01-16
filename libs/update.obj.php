@@ -113,6 +113,24 @@ class Update
     return -1;
   }
 
+  public static function cleanVMs(&$job) {
+    $table = "`list_vm`";
+    $index = "`id`";
+    $cindex = "COUNT(`id`)";
+    $where = "WHERE `fk_server`='-1'";
+    $it = new mIterator('VM', $index, $table, $where, $cindex);
+    $slog = new Server();
+    $slog->_job = $job;
+
+    while(($vm = $it->next())) {
+      $vm->fetchFromId();
+      if ($vm->t_upd < (time() - (3600*24*10))) {
+        $job->log("Removing $vm, has not been updated in last 10 days", null, LLOG_INFO);
+	$vm->delete();
+      }
+    }
+  }
+
   public static function allServers(&$job) {
     $table = "`list_server`";
     $index = "`id`";
