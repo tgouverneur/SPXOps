@@ -142,6 +142,24 @@
        header('Content-Type: application/json');
        echo json_encode($a_server);
      break;
+     case 'cr':
+       if (!$lm->o_login->cRight('CHK', R_VIEW)) {
+	 die('Not Authorized');
+       }
+       if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
+         die('Missing argument');
+       }
+       $id = $_GET['i'];
+       $cr = new Result($id);
+       if ($cr->fetchFromId()) {
+         die('Cannot fetch Result');
+       }
+       $ret = array();
+       $ret['id'] = $cr->id;
+       $ret['message'] = $cr->message;
+       $ret['details'] = $cr->details;
+       echo json_encode($ret);
+     break;
      case 'job':
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {
 	 die('Not Authorized');

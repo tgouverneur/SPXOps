@@ -3,8 +3,8 @@
 Urgent:
 -------
 
- - Adapt SQL schema to have inter-table dependancies and on delete cascade
  - Add rights checking into modallist.php
+ - Send notifications on failed check / recovered / status changes
 
 Medium:
 -------
@@ -16,7 +16,6 @@ Medium:
 Cosmetics:
 ----------
 
- - Modif mysqlCM to include some stripslashes and mysql_escape_string directly
  - Add a check_config table to configure the variables of checks like minimal versions and so on...
  - dashboard show servers in random order
 

@@ -48,7 +48,7 @@ class Result extends mysqlObj
         return 'N/A';
       }
     } else {
-      return '<button type="button" class="btn btn-primary btn-mini" onClick="ackCheck('.$this->id.');">Ack!</button>';
+      return '<button type="button" class="btn-xs btn btn-primary btn-mini" onClick="ackCheck('.$this->id.');">Ack!</button>';
     }
   }
 

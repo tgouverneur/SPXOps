@@ -83,8 +83,29 @@ CODE;
     try {
 
       $lua->eval($this->lua);
-      $rc = $lua->call("check");
-      $s->log("$this check on $s returned value: $rc", LLOG_DEBUG);
+      $ret = $lua->call("check");
+
+      $rc = -1;
+      $msg = 'Check failed';
+      if (!empty($ret)) {
+        if (is_numeric($ret)) {
+          $rc = $ret;
+  	  $msg = '';
+        } else if (preg_match('/^([^:]*):([^$]*)/', $ret, $match)) {
+          if (is_numeric($match[1])) {
+            $rc = $match[1];
+            if (isset($match[2])) {
+              $msg = $match[2];
+            }
+          } else {
+            $rc = -1;
+          }
+        }
+      } else {
+        $rc = 0;
+        $msg = '';
+      }
+      $s->log("$this check on $s returned value: $rc ($msg)", LLOG_DEBUG);
 
       $r = new Result();
       $r->fk_check = $this->id;
@@ -95,22 +116,22 @@ CODE;
         case 0:
 	  $r->f_ack = 1;
 	  $r->message = '';
-	  $r->extended = '';
+	  $r->details = $msg;
 	break;
 	case -1: // WARNING
 	  $r->f_ack = 0;
 	  $r->message = $this->m_warn;
-	  $r->extended = '';
+	  $r->details = $msg;
 	break;
 	case -2: // ERROR
 	  $r->f_ack = 0;
 	  $r->message = $this->m_error;
-	  $r->extended = '';
+	  $r->details = $msg;
 	break;
 	default:
 	  $r->f_ack = 0;
 	  $r->message = 'Unexpected return code, please check deeper...';
-	  $r->extended = '';
+	  $r->details = $msg;
 	break;
       }
       $done = false;
