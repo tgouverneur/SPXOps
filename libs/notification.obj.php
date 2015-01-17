@@ -17,6 +17,10 @@ class Notification
   public static function sendResult(&$s, $cr, $oldcr = null) {
     $a_login = array();
 
+    if ($cr->rc == 0 && !$oldcr) { // First check result and it's OK, don't send anything.
+      return;
+    }
+
     Logger::log('Notification request...'.$cr.' / '.$oldcr, LLOG_DEBUG);
 
     if (!$cr->o_server && $cr->fk_server > 0) {
