@@ -14,7 +14,13 @@
 
  $page = array();
  $page['title'] = 'List of ';
- if ($lm->o_login) $page['login'] = &$lm->o_login;
+
+ if ($lm->o_login) {
+   $page['login'] = &$lm->o_login;
+   $lm->o_login->fetchRights();
+ } else {
+   HTTP::errWWW('You must be logged-in to access this page');
+ }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
@@ -48,6 +54,9 @@
        $content->set('oc', 'Log');
      break;
      case 'rs':
+       if (!$lm->o_login->cRight('CLUSTER', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Resource group ID not provided');
@@ -65,6 +74,9 @@
        $content->set('oc', 'CLRs');
      break;
      case 'patches':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Server ID not provided');
@@ -82,6 +94,9 @@
        $content->set('oc', 'Patch');
      break;
      case 'results':
+       if (!$lm->o_login->cRight('CHKBOARD', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Check ID not provided');
@@ -93,6 +108,9 @@
        $content->set('oc', 'Result');
      break;
      case 'sresults':
+       if (!$lm->o_login->cRight('CHKBOARD', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Server ID not provided');
@@ -105,6 +123,9 @@
        $content->set('notStripped', true);
      break;
      case 'projects':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Server ID not provided');
@@ -122,6 +143,9 @@
        $content->set('oc', 'Prj');
      break;
      case 'packages':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Server ID not provided');
@@ -139,6 +163,9 @@
        $content->set('oc', 'Pkg');
      break;
      case 'disks':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         HTTP::errWWW('Access Denied, please check your access rights!');
+       }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Server ID not provided');
