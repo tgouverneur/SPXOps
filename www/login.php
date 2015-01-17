@@ -50,6 +50,10 @@
    $l = new Login(); $l->username = $username;
    $l->getAddr();
    Act::add("[$l] Failed Login tentative from ".$l->i_raddr, $l);
+   //$at = new AlertType();
+   //$at->short = 'LOGIN';
+   //$at->fetchFromField('short');
+   //Notification::sendAlert($at, 'User Login', $this->o_login.' Logged in from '.$this->o_login->i_raddr);
    $content->set('error', $errors);
  }
 

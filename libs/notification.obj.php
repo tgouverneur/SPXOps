@@ -71,7 +71,39 @@ class Notification
     }
   }
 
-  public static function sendAlert($at, $msg) {
+  public static function sendAlert($at, $short, $msg) {
+    $a_login = array();
+
+    Logger::log('Notification request...'.$at, LLOG_DEBUG);
+
+    /* fetch Server groups */
+    $at->fetchJT('a_ugroup');
+
+    /* for each user group, add each login where notifications are enabled */
+    foreach($at->a_ugroup as $ug) {
+      $ug->fetchJT('a_login');
+      foreach($ug->a_login as $ugl) {
+        if (!isset($a_login[$ugl->id]) && !$ugl->f_noalerts) {
+          $a_login[$ugl->id] = $ugl;
+        }
+      }
+    }
+
+    $mfrom = Setting::get('general', 'mailfrom')->value;
+    $mname = Setting::get('general', 'sitename')->value;
+    $domain = explode('@', $mfrom);
+    $domain = $domain[0];
+    $subject = '['.$at.'] '.$short;
+    $headers = 'From: '. $mfrom . "\r\n";
+    $headers .= 'X-Mailer: SPXOps' . "\r\n";
+    $headers .= 'Reply-To: no-reply@'.$domain . "\r\n"; 
+    $msg .= 'When: '.date('d-m-Y H:m:s', $cr->t_upd) . "\r\n";
+    $msg .= 'Message: '.$msg."\r\n";
+
+    foreach($a_login as $l) {
+     Logger::log('Going to send notification for check '.$cr->o_check.' to '.$l, LLOG_DEBUG);
+     mail($l->email, $subject, $msg, $headers);
+    }
 
   }
 
