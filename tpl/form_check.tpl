@@ -70,10 +70,16 @@ if (!isset($pservers)) $pservers = array();
             <div class="col-sm-7">
               <div class="checkbox">
 		<label>
-                 <input name="f_root" type="checkbox" <?php if ($obj->f_root) { echo "checked"; } ?>>
-		 <a href="#" rel="tooltip" title="This check need root access">Need root</a>
+                 <input name="f_noalerts" type="checkbox" <?php if ($obj->f_noalerts) { echo "checked"; } ?>>
+		 <a href="#" rel="tooltip" title="Disable alerting for this check">Alerts Disabled</a>
                 </label>
   	       </div>
+              <div class="checkbox">
+                <label>
+                 <input name="f_root" type="checkbox" <?php if ($obj->f_root) { echo "checked"; } ?>>
+                 <a href="#" rel="tooltip" title="This check need root access">Need root</a>
+                </label>
+               </div>
             </div>
           </div>
 	  <div class="form-group">

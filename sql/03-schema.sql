@@ -21,6 +21,27 @@ CREATE TABLE `jt_clrg_server` (
 ) ENGINE=InnoDB;
 
 --
+-- Table structure for table `jt_sgroup_ugroup`
+--
+
+CREATE TABLE `jt_sgroup_ugroup` (
+  `fk_sgroup` int(11) NOT NULL,
+  `fk_ugroup` int(11) NOT NULL,
+  PRIMARY KEY (`fk_sgroup`,`fk_ugroup`)
+) ENGINE=InnoDB;
+
+
+--
+-- Table structure for table `jt_alerttype_ugroup`
+--
+
+CREATE TABLE `jt_alerttype_ugroup` (
+  `fk_alerttype` int(11) NOT NULL,
+  `fk_ugroup` int(11) NOT NULL,
+  PRIMARY KEY (`fk_alerttype`,`fk_ugroup`)
+) ENGINE=InnoDB;
+
+--
 -- Table structure for table `jt_disk_pool`
 --
 
@@ -88,6 +109,7 @@ CREATE TABLE `list_check` (
   `lua` longtext NOT NULL,
   `m_error` varchar(200) NOT NULL,
   `m_warn` varchar(200) NOT NULL,
+  `f_noalerts` int(1) NOT NULL DEFAULT '0',
   `f_root` int(1) NOT NULL DEFAULT '0',
   `t_add` int(11) NOT NULL,
   `t_upd` int(11) NOT NULL,
@@ -170,6 +192,21 @@ CREATE TABLE `list_dataset` (
   `t_upd` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
+
+--
+-- Table structure for table `list_alerttype`
+--
+
+CREATE TABLE `list_alerttype` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `short` varchar(200) NOT NULL,
+  `name` varchar(200) NOT NULL,
+  `desc` varchar(50) NOT NULL,
+  `t_add` int(11) NOT NULL DEFAULT '-1',
+  `t_upd` int(11) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
 
 --
 -- Table structure for table `list_disk`
@@ -291,6 +328,7 @@ CREATE TABLE `list_login` (
   `password` varchar(255) NOT NULL,
   `fullname` varchar(255) NOT NULL,
   `email` varchar(200) NOT NULL,
+  `f_noalerts` int(1) NOT NULL DEFAULT '0',
   `f_admin` int(1) NOT NULL DEFAULT '0',
   `f_ldap` int(1) NOT NULL DEFAULT '0',
   `t_last` int(11) NOT NULL,

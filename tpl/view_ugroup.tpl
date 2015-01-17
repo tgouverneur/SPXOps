@@ -56,6 +56,43 @@
 	</div>
         <div class="row">
           <div class="col-md-4">
+	   <h3>Alerts</h3>
+	   <table class="table table-condensed">
+            <thead>
+             <tr>
+                <th>Alert Type</th>
+                <th>Enabled</th>
+                <th></th>
+             </tr>
+            </thead>
+            <tbody>
+<?php 
+  foreach($a_alerttype as $at) {
+?>
+             <tr>
+                <td><?php echo $at->name; ?></td>
+                <td><input type="checkbox" id="at_<?php echo $obj->id.'_'.$at->id; ?>" <?php if ($obj->isAlertType($at)) echo 'checked'; ?>/></td>
+                <td><button class="btn btn-primary btn-xs" onClick="saveATS(<?php echo $obj->id; ?>, <?php echo $at->id; ?>);">Save</button></td>
+             </tr>
+<?php } ?>
+	    </tbody>
+            <thead>
+             <tr>
+                <th>Server Grp</th>
+                <th>Enabled</th>
+                <th></th>
+             </tr>
+            </thead>
+	    <tbody>
+<?php foreach($a_sgroup as $sg) { ?>
+             <tr>
+                <td><?php echo $sg->name; ?></td>
+                <td><input type="checkbox" id="sg_<?php echo $obj->id.'_'.$sg->id; ?>" <?php if ($obj->isSGroup($sg)) echo 'checked'; ?>/></td>
+                <td><button class="btn btn-primary btn-xs" onClick="saveATG(<?php echo $obj->id; ?>, <?php echo $sg->id; ?>);">Save</button></td>
+             </tr>
+<?php } ?>
+	    </tbody>
+	   </table>
            <h3>Add Login</h3>
            <form class="form-inline">
  	   <div class="form-group">
@@ -89,7 +126,7 @@
 	     </tr>
 	    </thead>
 	    <tbody>
-<?php $obj->fetchJT('a_right'); 
+<?php 
       $lm = loginCM::getInstance();
       foreach($a_right as $right) { 
 	$l = $obj->getRight($right);

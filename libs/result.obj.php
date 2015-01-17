@@ -31,7 +31,8 @@ class Result extends mysqlObj
   public function equals($r) {
     if ($r->rc == $this->rc &&
 	$r->fk_check == $this->fk_check &&
-	$r->fk_server == $this->fk_server) {
+	$r->fk_server == $this->fk_server &&
+        !strcmp($r->details, $this->details)) {
       return true;
     }
     return false;

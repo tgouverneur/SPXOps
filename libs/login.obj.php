@@ -20,6 +20,7 @@ class Login extends mysqlObj
   public $password_c = ''; /* only for form-based validation */
   public $fullname = '';
   public $email = '';
+  public $f_noalerts = 0;
   public $f_admin = 0;
   public $f_ldap = 0;
   public $t_last = -1;
@@ -172,6 +173,7 @@ class Login extends mysqlObj
     return array('Username' => 'username',
                  'Fullname' => 'fullname',
                  'E-Mail' => 'email',
+                 'No Alerting' => 'f_noalerts',
                  'Admin' => 'f_admin',
                  'LDAP' => 'f_ldap',
                  'Added' => 't_add',
@@ -184,6 +186,7 @@ class Login extends mysqlObj
                  'username' => $this->username,
                  'fullname' => $this->fullname,
                  'email' => $this->email,
+                 'f_noalerts' => $this->f_noalerts,
                  'f_admin' => $this->f_admin,
                  'f_ldap' => $this->f_ldap,
                  't_add' => date('d-m-Y', $this->t_add),
@@ -195,6 +198,7 @@ class Login extends mysqlObj
         'Username' => $this->username,
         'Full Name' => $this->fullname,
         'E-Mail' => $this->email,
+        'No Alerts?' => ($this->f_noalerts)?'<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>':'<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Admin?' => ($this->f_admin)?'<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>':'<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'LDAP?' => ($this->f_ldap)?'<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>':'<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Last seen' => date('d-m-Y', $this->t_last),
@@ -223,6 +227,7 @@ class Login extends mysqlObj
                         'password' => SQL_PROPE,
                         'fullname' => SQL_PROPE,
                         'email' => SQL_PROPE,
+                        'f_noalerts' => SQL_PROPE,
                         'f_admin' => SQL_PROPE,
                         'f_ldap' => SQL_PROPE,
                         't_last' => SQL_PROPE,
@@ -237,6 +242,7 @@ class Login extends mysqlObj
                         'password' => 'password',
                         'fullname' => 'fullname',
                         'email' => 'email',
+                        'f_noalerts' => 'f_noalerts',
                         'f_admin' => 'f_admin',
                         'f_ldap' => 'f_ldap',
                         't_last' => 't_last',

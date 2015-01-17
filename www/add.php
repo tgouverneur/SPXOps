@@ -203,7 +203,7 @@
        $content = new Template('../tpl/form_check.tpl');
        $page['title'] .= $what;
        if (isset($_POST['submit'])) { /* clicked on the Add button */
-         $fields = array('name', 'description', 'f_root', 'frequency', 'm_error', 'm_warn', 'lua');
+         $fields = array('name', 'description', 'f_noalerts', 'f_root', 'frequency', 'm_error', 'm_warn', 'lua');
          foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
              if (isset($_POST[$field])) {
@@ -390,7 +390,7 @@
        $content = new Template('../tpl/form_user.tpl');
        $page['title'] .= $what;
        if (isset($_POST['submit'])) { /* clicked on the Add button */
-         $fields = array('fullname', 'email', 'username', 'password', 'password_c', 'f_admin', 'f_ldap');
+         $fields = array('fullname', 'email', 'username', 'password', 'password_c', 'f_noalerts', 'f_admin', 'f_ldap');
 	 foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
 	     if (isset($_POST[$field])) {

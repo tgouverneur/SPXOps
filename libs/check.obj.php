@@ -27,6 +27,7 @@ class Check extends mysqlObj
 CODE;
   public $m_error = '';
   public $m_warn = '';
+  public $f_noalerts = 0;
   public $f_root = 0;
   public $t_add = -1;
   public $t_upd = -1;
@@ -147,8 +148,15 @@ CODE;
 	$s->log("Check result not found for $this / $s", LLOG_DEBUG);
       }
       if (!$done) { // new check result
+        $oldcr = null; 
+	if (isset($s->a_lr[$this->id])) {
+	  $oldcr = $s->a_lr[$this->id];
+	}
         $s->a_lr[$this->id] = $r;
 	$s->a_lr[$this->id]->insert();
+        if (!$this->f_noalerts) {
+          Notification::sendResult($s, $r, $oldcr);
+        }
       }
 
     } catch (Exception $e) {
@@ -221,6 +229,7 @@ CODE;
                  'Description' => 'description',
                  'Frequency' => 'frequency',
                  'Need Root' => 'f_root',
+                 'Alerts Disabled' => 'f_noalerts',
                 );
   }
 
@@ -232,6 +241,7 @@ CODE;
                  'description' => $this->description,
                  'frequency' => parseFrequency($this->frequency),
                  'f_root' => $this->f_root,
+                 'f_noalerts' => $this->f_noalerts,
                 );
   }
 
@@ -244,7 +254,8 @@ CODE;
         'Error Message' => $this->m_error,
         'Warning Message' => $this->m_warn,
         'Frequency' => parseFrequency($this->frequency),
-        'Need root?' => ($this->f_root)?'<span class="glyphicon glyphicon-ok-sign"></span>':'<span class="icon-remove-circle"></span>',
+        'No Alerts?' => ($this->f_root)?'<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>':'<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
+        'Need root?' => ($this->f_root)?'<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>':'<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Updated on' => date('d-m-Y', $this->t_upd),
         'Added on' => date('d-m-Y', $this->t_add),
     );
@@ -333,6 +344,7 @@ CODE;
                         'lua' => SQL_PROPE,
                         'm_error' => SQL_PROPE,
                         'm_warn' => SQL_PROPE,
+                        'f_noalerts' => SQL_PROPE,
                         'f_root' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE
@@ -345,6 +357,7 @@ CODE;
                         'lua' => 'lua',
                         'm_error' => 'm_error',
                         'm_warn' => 'm_warn',
+                        'f_noalerts' => 'f_noalerts',
                         'f_root' => 'f_root',
                         't_add' => 't_add',
                         't_upd' => 't_upd'

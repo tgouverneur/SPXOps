@@ -118,12 +118,17 @@
          goto screen;
        }
        $obj->fetchJT('a_login');
+       $obj->fetchJT('a_right');
+       $obj->fetchJT('a_alerttype');
+       $obj->fetchJT('a_sgroup');
        $content = new Template('../tpl/view_ugroup.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);
        $content->set('a_login', Login::getAll(true, array(), array('ASC:username')));
        $content->set('a_right', Right::getAll(true, array(), array('ASC:short')));
-       $js = array('llist.js', 'rights.js');
+       $content->set('a_alerttype', AlertType::getAll(true, array(), array('ASC:short')));
+       $content->set('a_sgroup', SGroup::getAll(true, array(), array('ASC:name')));
+       $js = array('llist.js', 'rights.js', 'alerts.js');
        $head->set('js', $js);
      break;
      case 'suser':

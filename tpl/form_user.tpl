@@ -67,6 +67,11 @@ if (!isset($edit)) $edit = false;
                 <input name="f_ldap" type="checkbox" <?php if ($obj->f_ldap) { echo "checked"; } ?>> in LDAP
                </label>
               </div>
+              <div class="checkbox">
+               <label>
+                <input name="f_noalerts" type="checkbox" <?php if ($obj->f_noalerts) { echo "checked"; } ?>> Disable Alerts 
+               </label>
+              </div>
             </div>
           </div>
 	  <div class="form-group">

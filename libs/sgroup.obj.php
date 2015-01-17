@@ -24,6 +24,9 @@ class SGroup extends mysqlObj
   public $a_check = array();
   public $f_except = array();
 
+  /* for alerts */
+  public $a_ugroup = array();
+
   public function __toString() {
     return $this->name;
   }
@@ -126,6 +129,7 @@ class SGroup extends mysqlObj
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
     $this->_addJT('a_server', 'Server', 'jt_server_sgroup', array('id' => 'fk_sgroup'), array('id' => 'fk_server'), array());
     $this->_addJT('a_check', 'Check', 'jt_check_sgroup', array('id' => 'fk_sgroup'), array('id' => 'fk_check'), array('f_except'));
+    $this->_addJT('a_ugroup', 'UGroup', 'jt_sgroup_ugroup', array('id' => 'fk_sgroup'), array('id' => 'fk_ugroup'), array());
 
 
   }

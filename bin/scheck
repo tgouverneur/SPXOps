@@ -65,6 +65,8 @@
     exit(2);
   }
 
+  $s->a_lr[$c->id] = Result::getLast($c, $s);
+
   echo "[-] Connecting to $s\n";
   $s->connect();
 

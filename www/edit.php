@@ -242,7 +242,7 @@
        $content->set('page', $page);
        $page['title'] .= $what;
        if (isset($_POST['submit'])) { /* clicked on the Edit button */
-         $fields = array('description', 'm_error', 'm_warn', 'f_root', 'frequency', 'lua');
+         $fields = array('description', 'm_error', 'm_warn', 'f_noalerts', 'f_root', 'frequency', 'lua');
          foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
              if (isset($_POST[$field])) {
@@ -400,7 +400,7 @@
        $content->set('page', $page);
        $page['title'] .= $what;
        if (isset($_POST['submit'])) { /* clicked on the Edit button */
-         $fields = array('fullname', 'email', 'password', 'password_c', 'f_admin', 'f_ldap');
+         $fields = array('fullname', 'email', 'password', 'password_c', 'f_noalerts', 'f_admin', 'f_ldap');
 	 foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
 	     if (isset($_POST[$field])) {
