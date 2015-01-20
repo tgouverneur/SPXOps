@@ -3,6 +3,8 @@
  $total = count($a_list);
  $lines = $total / $columns;
  $keys = array_keys($a_list);
+ //natsort($keys);
+ sort($keys);
  $k = 0;
 ?>
 	  <div class="page-header">

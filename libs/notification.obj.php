@@ -66,7 +66,7 @@ class Notification
     $msg .= 'When: '.date('d-m-Y H:m:s', $cr->t_upd) . "\r\n";
     $msg .= 'Details: '.$cr->details."\r\n";
     if ($oldcr && strcmp($cr->details, $oldcr->details)) {
-      $msg .= 'Details was: '.$oldcr->details;
+      $msg .= 'Old Details: '.$oldcr->details;
     }
 
     foreach($a_login as $l) {
