@@ -582,28 +582,85 @@ class Server extends mysqlObj implements JsonSerializable
     }
   }
 
-  public static function printCols() {
-    return array('Hostname' => 'hostname',
+  public static function printCols($cfs = array()) {
+    $defaults = array('Hostname' => 'hostname',
                  'Description' => 'description',
                  'OS' => 'os',
                  'Update?' => 'f_upd',
                  'RCE' => 'f_rce',
                 );
-  }
 
-  public function toArray() {
+    $optional = array(
+			'# VM' => 'nrvms',
+			'# VM Cores' => 'nrvmscores',
+			'# VM Memory' => 'nrvmsram',
+		);
 
-    if (!$this->o_os && $this->fk_os > 0) {
-      $this->fetchFK('fk_os');
+    if (!is_array($cfs) && !strcmp($cfs, 'all')) {
+      return array_merge($defaults, $optional);
     }
 
-    return array(
-                 'hostname' => $this->hostname,
-                 'description' => $this->description,
-                 'os' => ($this->o_os)?$this->o_os->name:'Unknown',
-                 'f_rce' => $this->f_rce,
-                 'f_upd' => $this->f_upd,
-                );
+    if (!count($cfs))
+      return $defaults;
+
+    $ret = array();
+    foreach($cfs as $col) {
+      foreach($defaults as $n => $v) {
+        if (!strcmp($col, $v)) {
+          $ret[$n] = $v;
+        }
+      }
+      foreach($optional as $n => $v) {
+        if (!strcmp($col, $v)) {
+          $ret[$n] = $v;
+        }
+      }
+    }
+    return $ret;
+  }
+
+  public function toArray($cfs = array()) {
+
+    $ret = array();
+
+    foreach($cfs as $c) {
+      switch($c) {
+	case 'hostname':
+	case 'description':
+	case 'f_rce':
+	case 'f_upd':
+	  $ret[$c] = $this->{$c};
+	break;
+	case 'os':
+          if (!$this->o_os && $this->fk_os > 0) {
+            $this->fetchFK('fk_os');
+          }
+ 	  $ret['os'] = ($this->o_os)?$this->o_os->name:'Unknown';
+	break;
+        case 'nrvms':
+          if (!count($this->a_vm)) {
+            $this->fetchRL('a_vm');
+            $this->vmStats();
+	  }
+          $ret[$c] = $this->vm_nb;
+	break;
+        case 'nrvmscores':
+          if (!count($this->a_vm)) {
+            $this->fetchRL('a_vm');
+            $this->vmStats();
+	  }
+          $ret[$c] = $this->vm_core;
+	break;
+        case 'nrvmsram':
+          if (!count($this->a_vm)) {
+            $this->fetchRL('a_vm');
+            $this->vmStats();
+	  }
+          $ret[$c] = Pool::formatBytes($this->vm_mem * 1024);
+	break;
+      }
+    }
+    return $ret;
   }
 
   public function htmlDump() {

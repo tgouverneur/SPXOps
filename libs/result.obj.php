@@ -89,7 +89,7 @@ class Result extends mysqlObj
     }
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Check' => 'check',
                  'Server' => 'server',
                  'Result' => '_color',
@@ -106,7 +106,7 @@ class Result extends mysqlObj
     return $c_rc;
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     if (!$this->o_server && $this->fk_server > 0) {
       $this->fetchFK('fk_server');

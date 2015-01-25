@@ -41,14 +41,14 @@ class SLR extends mysqlObj
     return false;
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
                  'Definition' => 'definition',
                  'Added' => 't_add',
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     return array(
                  'name' => $this->name,

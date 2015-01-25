@@ -97,7 +97,7 @@ class PServer extends mysqlObj
     }
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
                  'Serial' => 'serial',
                  'Vendor' => 'vendor',
@@ -105,7 +105,7 @@ class PServer extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     if (!$this->o_model && $this->fk_model > 0) {
       $this->fetchFK('fk_model');

@@ -74,14 +74,14 @@ class CLRg extends mysqlObj
     return $this->name;
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Patch-ID' => 'patch',
                  'More Info' => 'minfo',
                  'Added on' => 't_add',
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     return array(
                  'patch' => $this->patch,

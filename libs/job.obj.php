@@ -196,7 +196,7 @@ class Job extends mysqlObj
 
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Class' => 'class',
                  'Function' => 'fct',
                  'State' => 'state',
@@ -205,7 +205,7 @@ class Job extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     return array(
                  'class' => $this->class,

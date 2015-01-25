@@ -70,14 +70,14 @@ class SGroup extends mysqlObj
   }
 
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
                  'Description' => 'description',
                  'Last Update' => 't_upd',
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     return array(
                  'name' => $this->name,

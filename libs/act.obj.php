@@ -56,14 +56,14 @@ class Act extends mysqlObj
     return $act;
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Who' => 'who',
                  'Message' => 'msg',
                  'When' => 't_add',
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     $rc = array();
 

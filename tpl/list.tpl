@@ -1,5 +1,8 @@
 <?php 
-  $cols = call_user_func($oc.'::printCols');
+  if (!isset($cfs) || !count($cfs)) { /* default fields list */
+    $cfs = array();
+  }
+  $cols = call_user_func($oc.'::printCols', $cfs);
   if (!$a_list) $a_list = array();
 ?>
         <div class="page-header">
@@ -25,14 +28,14 @@
 	     </tr>
 	    </thead>
 	    <tbody>
-<?php foreach($a_list as $e) { $a = $e->toArray(); ?>
+<?php foreach($a_list as $e) { $a = $e->toArray($cols); ?>
              <tr<?php if (isset($a["_color"])) { echo ' class="'.$a['_color'].'" '; } ?>>
    <?php foreach($cols as $v) { 
 	   if (preg_match('/^f_/', $v)) {
 	     if ($a[$v]) {
-	       $fl = '<i class="icon-ok-sign"></i>';
+	       $fl = '<span class="glyphicon glyphicon-ok-sign"></span>';
 	     } else {
-	       $fl = '<i class="icon-remove-sign"></i>';
+	       $fl = '<span class="glyphicon glyphicon-remove-circle"></span>';
 	     }
     ?>
                <td><?php echo $fl; ?></td>

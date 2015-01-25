@@ -32,6 +32,20 @@ class Login extends mysqlObj
 
   public $i_raddr = '';
 
+  public function setListPref($list, $val) {
+    return $this->setData('list:'.$list, @serialize($val));
+  }
+
+  public function getListPref($list) {
+    if (!empty($this->_datas)) {
+      $this->fetchData();
+    }
+    $val = $this->data('list:'.$list);
+    if (!$val) 
+      return null;
+    return @unserialize($val);
+  }
+
   public function getAddr() {
     global $_SERVER;
     if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -169,7 +183,7 @@ class Login extends mysqlObj
     }
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Username' => 'username',
                  'Fullname' => 'fullname',
                  'E-Mail' => 'email',
@@ -180,7 +194,7 @@ class Login extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     return array(
                  'username' => $this->username,
@@ -220,7 +234,7 @@ class Login extends mysqlObj
   {
     $this->id = $id;
     $this->_table = 'list_login';
-    $this->_nfotable = NULL;
+    $this->_nfotable = 'nfo_login';
     $this->_my = array(
                         'id' => SQL_INDEX,
                         'username' => SQL_PROPE|SQL_EXIST,

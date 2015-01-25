@@ -57,7 +57,7 @@ class Prj extends mysqlObj
     return $this->name;
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
                  'PrjID' => 'prjid',
                  'Added on' => 't_add',
@@ -65,7 +65,7 @@ class Prj extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     return array(
                  'name' => $this->name,

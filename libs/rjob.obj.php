@@ -97,7 +97,7 @@ class RJob extends mysqlObj
 
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Class' => 'class',
                  'Function' => 'fct',
                  'Frequency' => 'frequency',
@@ -107,7 +107,7 @@ class RJob extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
     global $config;
     @include_once($config['rootpath'].'/libs/functions.lib.php');
     return array(

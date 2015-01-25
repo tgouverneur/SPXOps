@@ -55,7 +55,7 @@ class SUser extends mysqlObj
   }
 
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Username' => 'username',
                  'Description' => 'description',
                  'Pubkey' => 'pubkey',
@@ -64,7 +64,7 @@ class SUser extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     return array(
                  'username' => $this->username,

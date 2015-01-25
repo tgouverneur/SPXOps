@@ -59,7 +59,7 @@ class Log extends mysqlObj
   //    $s->log(sprintf("\t%15s - %s", '[layer3]', ''.$this), LLOG_INFO);
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Who' => 'who',
                  'Message' => 'msg',
                  'On' => 'on',
@@ -67,7 +67,7 @@ class Log extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     $rc = array();
 

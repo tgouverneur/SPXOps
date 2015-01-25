@@ -62,7 +62,7 @@ class Pkg extends mysqlObj
   }
 
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
                  'Version' => 'version',
                  'Details' => 'details',
@@ -70,7 +70,7 @@ class Pkg extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     return array(
                  'name' => $this->name,

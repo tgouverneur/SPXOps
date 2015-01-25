@@ -714,6 +714,19 @@ CREATE TABLE `list_zone` (
 ) ENGINE=InnoDB;
 
 --
+-- Table structure for table `nfo_login`
+--
+
+CREATE TABLE `nfo_login` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `value` text NOT NULL,
+  `u` int(11) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`id`,`name`)
+) ENGINE=InnoDB;
+
+
+--
 -- Table structure for table `nfo_cluster`
 --
 

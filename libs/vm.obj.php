@@ -120,14 +120,14 @@ class VM extends mysqlObj
     $this->o_xml = $xo;
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
                  'Status' => 'status',
                  'Server' => 'server',
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     if (!$this->o_server && $this->fk_server > 0) {
       $this->fetchFK('fk_server');

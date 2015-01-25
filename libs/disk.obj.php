@@ -73,7 +73,7 @@ class Disk extends mysqlObj
 							$this->vendor, $this->product, $this->serial, $this->lunid, LLOG_INFO));
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Device' => 'dev',
                  'Vendor' => 'vendor',
                  'Size' => 'size',
@@ -83,7 +83,7 @@ class Disk extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     global $config;
     @include_once($config['rootpath'].'/libs/functions.lib.php');

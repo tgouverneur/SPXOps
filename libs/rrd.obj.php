@@ -479,7 +479,7 @@ class RRD extends mysqlObj
   }
 
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Type' => 'type',
                  'Path' => 'path',
                  'Server' => 'server',
@@ -488,7 +488,7 @@ class RRD extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     if (!$this->o_server && $this->fk_server > 0) {
       $this->fetchFK('fk_server');

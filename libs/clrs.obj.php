@@ -51,7 +51,7 @@ class CLRs extends mysqlObj
     return $this->name;
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
                  'Description' => 'description',
                  'State' => 'state',
@@ -62,7 +62,7 @@ class CLRs extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     return array(
                  'name' => $this->name,

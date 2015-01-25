@@ -122,7 +122,7 @@ class Pid extends mysqlObj
     return $this->agent.':'.$this->pid;
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Agent' => 'agent',
                  'PID' => 'pid',
                  'Parent PID' => 'ppid',
@@ -133,7 +133,7 @@ class Pid extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     $this->getCurrentJob();
 

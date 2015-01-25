@@ -259,7 +259,7 @@ class Cluster extends mysqlObj
 */
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
                  'Description' => 'description',
                  'Update?' => 'f_upd',
@@ -267,7 +267,7 @@ class Cluster extends mysqlObj
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     return array(
                  'name' => $this->name,

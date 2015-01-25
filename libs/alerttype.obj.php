@@ -38,13 +38,13 @@ class AlertType extends mysqlObj
     return $this->name;
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
                  'Description' => 'desc',
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
 
     global $config;
     return array(

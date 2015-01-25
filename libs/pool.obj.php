@@ -101,7 +101,7 @@ class Pool extends mysqlObj
     $this->log(sprintf("%15s: %s", 'ZPool', $this->name), LLOG_INFO);
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
 	         'Size' => 'size',
 	         'Used' => 'used',
@@ -113,7 +113,7 @@ class Pool extends mysqlObj
 		);
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
     if (!$this->o_server && $this->fk_server > 0) {
       $this->fetchFK('fk_server');
     }

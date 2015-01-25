@@ -178,6 +178,8 @@
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
+       /* get custom fields for user */
+       $cfs = $lm->o_login->getListPref('server');
        $npp = Setting::get('display', 'serverPerPage')->value;
        $a_list = Server::getAll(true, array(), array('ASC:hostname'));
        $content = new Template('../tpl/list.tpl');
@@ -187,12 +189,14 @@
        if ($lm->o_login->cRight('SRV', R_ADD)) {
          $actions = array( 
                         'Add' => '/add/w/server',
+                        'Display settings' => '/ds/w/server',
                     );
          $content->set('actions', $actions);
        }
        $content->set('canView', true);
        $content->set('what', 'Servers');
        $content->set('oc', 'Server');
+       $content->set('cfs', $cfs);
        $page['title'] .= 'Servers';
      break;
      case 'cluster':

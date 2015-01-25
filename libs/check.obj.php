@@ -224,7 +224,7 @@ CODE;
     
   }
 
-  public static function printCols() {
+  public static function printCols($cfs = array()) {
     return array('Name' => 'name',
                  'Description' => 'description',
                  'Frequency' => 'frequency',
@@ -233,7 +233,7 @@ CODE;
                 );
   }
 
-  public function toArray() {
+  public function toArray($cfs = array()) {
     global $config;
     @include_once($config['rootpath'].'/libs/functions.lib.php');
     return array(
