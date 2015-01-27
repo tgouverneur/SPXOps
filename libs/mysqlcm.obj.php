@@ -358,6 +358,56 @@ class mysqlCM
       return -1;
   }
 
+  /**
+   * Call stored procedure with provided arguments
+   * and get back values
+   * @return 0=success -1=error
+   */
+  public function call($proc, $args = array(), &$ret = array())
+  {
+    $cq = 'CALL '.$proc.'(';
+    $first = 1;
+    foreach($args as $name => $value) {
+      if (!$first--) {
+        $cq .= ',';
+      }
+      $cq .= ':'.$name;
+    }
+    foreach($ret as $name => $value) {
+      if (!$first--) {
+        $cq .= ',';
+      }
+      $cq .= '@'.$name;
+    }
+    $cq .= ')';
+    $this->_res = $this->_link->prepare($cq);
+    foreach($args as $name => $value) {
+      $this->_res->bindParam($name, $value);
+    }
+    if (!$this->_res->execute()) {
+      $this->_res = null;
+      return -1;
+    }
+    $this->_res->closeCursor();
+    
+    /* fetch params */
+    $pq = 'SELECT ';
+    $first = 1;
+    foreach($ret as $name => $value) {
+      if (!$first--) {
+        $pq .= '.';
+      }
+      $pq .= '@'.$name.' AS '.$name;
+    }
+    $pq .= ';';
+    $r = $this->_link->query($pq)->fetch(PDO::FETCH_ASSOC);
+    foreach($ret as $name => $value) {
+      if (isset($r[$name])) {
+        $ret[$name] = $r[$name];
+      }
+    }
+    return 0;
+  }
 
 
   /**

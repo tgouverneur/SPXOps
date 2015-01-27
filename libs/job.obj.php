@@ -41,21 +41,19 @@ class Job extends mysqlObj
 
   public static function fetchFirst(&$daemon) {
 
-    $index = '`id`';
-    $table = 'list_job';
-    $where = "WHERE state='".S_NEW."' ORDER BY rand() LIMIT 0,1";
     $m = mysqlCM::getInstance();
-    if (($idx = $m->fetchIndex($index, $table, $where)))
-    {
-      if (isset($idx[0])) {
-	$t = $idx[0];
-        $j = new Job($t['id'], $daemon);
-        $j->fetchFromId();
-        $j->fetchAll(1);
-	return $j;
-      }
+    $args = array('pid' => $daemon->pid);
+    $ret = array('id' => -1);
+    if ($m->call('getFirstJob', $args, $ret)) {
+      return null;
     }
-    return null;
+    $j = null;
+    if ($ret['id'] > 0) {
+      $j = new Job($ret['id'], $daemon);
+      $j->fetchFromId();
+      $j->fetchAll(1);
+    }
+    return $j;
   }
 
   public function __toString() {
