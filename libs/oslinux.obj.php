@@ -132,6 +132,7 @@ class OSLinux extends OSType
     }
     foreach($s->a_vm as $svm) {
       if (isset($found_vm[$svm->name])) {
+        unset($found_vm[$svm->name]);
         continue;
       } 
       $s->log("Removing VM $svm from this server", LLOG_INFO);
