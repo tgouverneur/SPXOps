@@ -368,13 +368,13 @@ class mysqlCM
     $cq = 'CALL '.$proc.'(';
     $first = 1;
     foreach($args as $name => $value) {
-      if (!$first--) {
+      if ($first-- < 1) {
         $cq .= ',';
       }
       $cq .= ':'.$name;
     }
     foreach($ret as $name => $value) {
-      if (!$first--) {
+      if ($first-- < 1) {
         $cq .= ',';
       }
       $cq .= '@'.$name;

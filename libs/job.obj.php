@@ -41,8 +41,13 @@ class Job extends mysqlObj
 
   public static function fetchFirst(&$daemon) {
 
+    $pid = Pid::getMyPid();
+    if (!$pid) {
+      return null;
+    }
     $m = mysqlCM::getInstance();
-    $args = array('pid' => $daemon->pid);
+    $args = array('pid' => $pid->id
+		);
     $ret = array('id' => -1);
     if ($m->call('getFirstJob', $args, $ret)) {
       return null;
@@ -52,6 +57,7 @@ class Job extends mysqlObj
       $j = new Job($ret['id'], $daemon);
       $j->fetchFromId();
       $j->fetchAll(1);
+      $j->o_pid = $pid;
     }
     return $j;
   }
@@ -125,9 +131,9 @@ class Job extends mysqlObj
     $this->o_log->insert();
     $this->fk_log = $this->o_log->id;
     $this->t_start = time();
-    $this->state = S_RUN;
-    $this->o_pid = Pid::getMyPid();
-    $this->fk_pid = $this->o_pid->id;
+//    $this->state = S_RUN;
+//    $this->o_pid = Pid::getMyPid();
+//    $this->fk_pid = $this->o_pid->id;
     $this->update();
 
     if (!class_exists($this->class) || !method_exists($this->class, $this->fct)) {
