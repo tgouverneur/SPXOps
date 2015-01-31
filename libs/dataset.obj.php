@@ -28,6 +28,15 @@ class Dataset extends mysqlObj
   /* Logging */
   private $_log = null;
  
+  public function getFullName() {
+    $ret = '';
+    if ($this->o_pool) {
+      $ret .= $this->o_pool.'/';
+    }
+    $ret .= $this->name;
+    return $ret;
+  }
+
   public function log($str) {
     Logger::log($str, $this);
   }

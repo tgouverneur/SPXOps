@@ -48,7 +48,9 @@
               <li class="dropdown active">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Action <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="#">Placeholder</a></li>
+                <?php foreach (Plugin::getActionLinks('VMACTION') as $l) { ?>
+                  <li><a href="<?php echo $l->getHref($obj->id); ?>"><?php echo $l->desc; ?></a></li>
+                <?php } ?>
                 </ul>
               </li>
               <li class="dropdown active">

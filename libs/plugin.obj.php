@@ -41,8 +41,8 @@ class PluginWME {
     return $this->o_plugin->{$this->fct}($arg);
   }
 
-  public function getHref() {
-    return '/plugin/p/'.$this->o_plugin->name.'/w/'.$this->name;
+  public function getHref($a = null) {
+    return '/plugin/p/'.$this->o_plugin->name.'/w/'.$this->name.(($a)?'/r/'.$a:'');
   }
 }
 
@@ -81,6 +81,17 @@ class Plugin
   /* Links added to the web page menu */
   private static $_wmenu = array();
 
+  /* Links added to any given action page */
+  private static $_amenu = array();
+
+  public static function registerAction($n, $o) {
+    if (!isset(Plugin::$_amenu[$n])) {
+      Plugin::$_amenu[$n] = array();
+    }
+    array_push(Plugin::$_amenu[$n], $o);
+    return true;
+  }
+
   public static function registerWeb($n, $o) {
     if (!isset(Plugin::$_wmenu[$n])) {
       Plugin::$_wmenu[$n] = array();
@@ -113,6 +124,14 @@ class Plugin
       //Logger::log("Plugin $name is now active..", null, LLOG_DEBUG);
     }
     Plugin::$_done = true;
+  }
+
+  public static function getActionLinks($n) {
+    if (isset(Plugin::$_amenu[$n])) {
+      return Plugin::$_amenu[$n];
+    } else {
+      return array();
+    }
   }
 
   public static function getWebLinks($n) {
