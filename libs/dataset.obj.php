@@ -71,7 +71,7 @@ class Dataset extends mysqlObj
   {
     $this->id = $id;
     $this->_table = 'list_dataset';
-    $this->_nfotable = null;
+    $this->_nfotable = 'nfo_dataset';
     $this->_my = array(
                         'id' => SQL_INDEX,
                         'name' => SQL_PROPE|SQL_EXIST,

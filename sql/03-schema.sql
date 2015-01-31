@@ -751,6 +751,18 @@ CREATE TABLE `nfo_server` (
 ) ENGINE=InnoDB;
 
 --
+-- Table structure for table `nfo_dataset`
+--
+
+CREATE TABLE `nfo_dataset` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `value` text NOT NULL,
+  `u` int(11) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`id`,`name`)
+) ENGINE=InnoDB;
+
+--
 -- Table structure for table `nfo_vm`
 --
 
