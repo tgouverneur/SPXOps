@@ -51,6 +51,8 @@ class Dataset extends mysqlObj
   public function fetchAll($all = 1) {
 
     try {
+      $this->fetchData();
+
       if (!$this->o_pool && $this->fk_pool > 0) {
         $this->fetchFK('fk_pool');
       }

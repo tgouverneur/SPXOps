@@ -173,8 +173,12 @@ class Job extends mysqlObj
     $this->o_log->update();
   }
 
-  public function link() {
-    return '<a href="/view/w/job/i/'.$this->id.'">'.$this.'</a>';
+  public function link($short='') {
+      if (empty($short)) {
+        return '<a href="/view/w/job/i/'.$this->id.'">'.$this.'</a>';
+      } else {
+        return '<a href="/view/w/job/i/'.$this->id.'">'.$short.'</a>';
+      }
   }
 
   public function fetchAll($all=0) {

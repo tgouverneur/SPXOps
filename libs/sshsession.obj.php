@@ -17,6 +17,9 @@ class SSHSession {
   public $hostname;
   public $port;
   public $o_user = null;
+
+  private $_progress = false;
+  private $_stream = null;
   
   private $_con, $_connected, $_shell;
 
@@ -50,6 +53,62 @@ class SSHSession {
 
   public function sendFile($source, $dest, $rights = 0644) {
     return ssh2_scp_send($this->_con, $source, $dest, $rights);
+  }
+
+  public function execNB($c) { /* exec non blocking */
+    $c = $c.";echo \"__COMMAND_FINISHED__\"";
+    if ($this->_progress) {
+      throw new SPXException('Another command is already in progress.');
+    }
+    if (!($this->_stream = ssh2_exec($this->_con, $c))) {
+      $this->_stream = null;
+      throw new SPXException('Cannot get SSH Stream');
+    } else {
+      stream_set_blocking($this->_stream, false);
+      $this->_progress = true;
+      return;
+    }
+  }
+
+  public function stillRunning() {
+      if ($this->_progress) {
+          return true;
+      }
+      return false;
+  }
+
+  public function readFromStream() {
+      if (!$this->_progress) {
+          throw new SPXException('No command running ATM.');
+      }
+      $buf = '';
+      while(1) {
+          $wa = NULL;
+          $ex = NULL;
+          $ra = array($this->_stream);
+          $nc = stream_select($ra, $wa, $ex, 0, 500000);
+          if ($nc) {
+            $buf .= stream_get_line($this->_stream, 4096, PHP_EOL).PHP_EOL;
+            if (strpos($buf,"__COMMAND_FINISHED__") !== false) {
+              fclose($this->_stream);
+              $this->_progress = false;
+              $buf = str_replace("__COMMAND_FINISHED__\n", "", $buf);
+              return $buf;
+            }
+          } else {
+            return $buf;
+          }
+      }
+      return null;
+  }
+
+  public function forceClose() {
+      if (!$this->_progress) {
+          throw new SPXException('No command running ATM.');
+      }
+      fclose($this->_stream);
+      $this->_progress = false;
+      return;
   }
  
   public function execSecure($c, $timeout=30) {
@@ -87,7 +146,6 @@ class SSHSession {
   }
 
   public function exec($c) {
-
     if (!($stream = ssh2_exec($this->_con, $c))) {
       return -1;
     } else {

@@ -97,14 +97,14 @@
       */
       $jobs = Job::getAll(true, array('state' => S_RUN));
       foreach($jobs as $job) {
-	if ($job->fk_pid > 0) {
-        $pid = new Pid($job->fk_pid);
-	if ($pid->fetchFromId()) {
-          Logger::log("Set as STALLED stalled job $job because pid doesn't exist ", $pid, LLOG_DEBUG);
-          $job->state = S_STALL;
-          $job->fk_pid = -1; 
-          $job->update();
-	}
+        if ($job->fk_pid > 0) {
+            $pid = new Pid($job->fk_pid);
+            if ($pid->fetchFromId()) {
+              Logger::log("Set as STALLED stalled job $job because pid doesn't exist ", $pid, LLOG_DEBUG);
+              $job->state = S_STALL;
+              $job->fk_pid = -1; 
+              $job->update();
+            }
         }
       }
     }

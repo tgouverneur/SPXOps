@@ -351,6 +351,46 @@ class Server extends mysqlObj implements JsonSerializable
     $this->_ssh = null;
   }
 
+  public function execNB($cmd, $args=null, $timeout=30) {
+
+    $v_cmd = '';
+
+    if ($args) {
+      $v_cmd = vsprintf($cmd, $args);
+    } else {
+      $v_cmd = $cmd;
+    }
+    try {
+
+      $this->_ssh->execNB($v_cmd, $timeout);
+
+    } catch (Exception $e) {
+      throw $e;
+    }
+    return;
+  }
+
+  public function stillRunning() {
+      return $this->_ssh->stillRunning();
+  }
+
+  public function readFromStream() {
+      try {
+          return $this->_ssh->readFromStream();
+      } catch (Exception $e) {
+          return false;
+      }
+  }
+
+  public function forceCloseExec() {
+      try {
+          $this->_ssh->forceClose();
+          return true;
+      } catch (Exception $e) {
+          return false;
+      }
+  }
+
   public function exec($cmd, $args=null, $timeout=30) {
 
     $v_cmd = '';
