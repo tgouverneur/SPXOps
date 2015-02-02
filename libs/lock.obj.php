@@ -43,6 +43,7 @@ class Lock extends mysqlObj
 
     $m = MysqlCM::getInstance();
     $locked = false;
+    $pid = Pid::getMyPid();
 
     /* Lock the table */
     $rc = $m->lockTable('list_lock');
@@ -50,10 +51,10 @@ class Lock extends mysqlObj
       return $locked;
     }
     if (!self::isFctLocked($fct)) {
-      $rc = self::lockFct($fct);
+      $rc = self::lockFct($fct, $pid);
       if ($rc) {
         /* Something bad happened, try anyway to delete lock... */
-        self::unlockFct($fct);
+        self::unlockFct($fct, $pid);
       } else {
 	$locked = true;
       }
@@ -64,20 +65,18 @@ class Lock extends mysqlObj
   }
 
   /* Fct locking */
-  public static function lockFct($fct) {
+  public static function lockFct($fct, $pid = null) {
     $cl = new Lock();
     $cl->fct = $fct;
-    $pid = Pid::getMyPid();
     if ($pid) {
       $cl->fk_pid = $pid->id;
     }
     return $cl->insert();
   }
 
-  public static function unlockFct($fct) {
+  public static function unlockFct($fct, $pid = null) {
     $cl = new Lock();
     $cl->fct = $fct;
-    $pid = Pid::getMyPid();
     if ($pid) {
       $cl->fk_pid = $pid->id;
     }
