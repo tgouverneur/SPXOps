@@ -23,6 +23,8 @@
   public $f_master = 0;
   public $f_network = 0;
 
+  public $nr = 0;
+
   public function setForeground($f = false) {
     $this->_foreground = $f;
   }
@@ -37,6 +39,9 @@
 
     try {
       $m = mysqlCM::getInstance();
+      if ($m->isLink()) {
+          $m->disconnect();
+      }
       if ($m->connect()) {
         $this->log(" Error with SQL db: ".$m->getError());
         sleep($this->_interval);
@@ -47,7 +52,7 @@
       throw($e);
     }
 
-    $this->log("Entering run()", LLOG_DEBUG);
+    $this->log('Entering run() ['.$this->f_master.']('.$this->pid.':'.$this->ppid.')', LLOG_DEBUG);
    
     /* update last run time */
     $this->_lrun = $this->_crun;
@@ -56,14 +61,26 @@
     $this->log("New run: ".$this->_crun, LLOG_DEBUG);
     
     /* Ping pid() */
-    Pid::ping($this);
+    try {
+        $this->log('>'.$this->nr++.' Pid::ping($this)', LLOG_DEBUG);
+        Pid::ping($this);
+        $this->log('<Pid::ping($this)', LLOG_DEBUG);
+    } catch (Exception $e) {
+        $this->log('Pid::ping() error: '.$e->getMesssage(), LLOG_DEBUG);
+        $this->log('BT: '.$e->getTraceAsString().':', LLOG_DEBUG);
+    }
 
     /* refresh main settings */
-    Setting::fetchAll();
-    $interval = Setting::get('daemon', 'sleepTime');
-    $nrProcess = Setting::get('daemon', 'nrProcess');
-    if ($interval) $this->setInterval($interval->value);
-    if ($nrProcess) $this->setNrProcess($nrProcess->value);
+    try { 
+        Setting::fetchAll();
+        $interval = Setting::get('daemon', 'sleepTime');
+        $nrProcess = Setting::get('daemon', 'nrProcess');
+        if ($interval) $this->setInterval($interval->value);
+        if ($nrProcess) $this->setNrProcess($nrProcess->value);
+    } catch (Exception $e) {
+        $this->log('Cannot fetch Settings::fetchAll():'.$e->getMessage(), LLOG_DEBUG);
+        $this->log('BT: '.$e->getTraceAsString().':', LLOG_DEBUG);
+    }
 
     /* Check for other eventually died pids or locks */
     if ($this->f_master) {
@@ -79,7 +96,7 @@
       /* check if we haven't yet started a network pid, if needed */
       if ($this->f_network && !$this->_networkPid) {
         $this->_networkPid = $this->spawnNetwork();
-	$this->log("Spawned network process: ".$this->_networkPid, LLOG_DEBUG);
+        $this->log("Spawned network process: ".$this->_networkPid, LLOG_DEBUG);
       }
       /* first, reap eventual dead childs */
       $this->sigchld();
@@ -88,7 +105,7 @@
       if (!$this->_foreground) {
         while($this->curProcess < $this->_nrProcess) {
           $pid = $this->spawnProcess();
-	  $this->log("Spawned other process: $pid", LLOG_DEBUG);
+          $this->log("Spawned other process: $pid", LLOG_DEBUG);
           $this->curProcess++;
         }
       }
@@ -127,9 +144,9 @@
         $this->log("Locked RJob function for our usage", LLOG_DEBUG);
         $rjobs = RJob::getAll();
         foreach($rjobs as $rjob) {
-  	  if (($rjob->t_last + $rjob->frequency) <= $this->_crun) { // RUN IT FFS!
+          if (($rjob->t_last + $rjob->frequency) <= $this->_crun) { // RUN IT FFS!
             $this->log("Added $rjob to the job queue ", LLOG_INFO);
-	    $rjob->addIt();
+            $rjob->addIt();
             $rjob->t_last = $this->_crun;
             $rjob->update();
           }
@@ -148,8 +165,8 @@
         $fjobs = Job::getAll(true, $f);
         foreach($fjobs as $fjob) {
           $fjob->state = S_FAIL;
-	  $fjob->update();
-  	  $this->log("Job $fjob has been set to FAILED as we were responsible for it...", LLOG_WARN);
+          $fjob->update();
+          $this->log("Job $fjob has been set to FAILED as we were responsible for it...", LLOG_WARN);
         }
       } catch (Exception $e) {
         sleep($this->_interval);
@@ -179,10 +196,13 @@
     if (!$this->_foreground) Logger::openLog();
 
     $m = mysqlCM::getInstance();
-    $m->disconnect();
-    if ($m->connect()) {
-      die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+    if ($m->isLink()) {
+        $m->disconnect();
     }
+    //$m->disconnect();
+    //if ($m->connect()) {
+    //  die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+    // }
   }
 
   public function cleanup() {

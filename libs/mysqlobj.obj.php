@@ -959,7 +959,7 @@ class mysqlObj
   protected function _fetchFK($name, $f_fetch = true) {
 
     if (!isset($this->_fks[$name])) {
-      throw new SPXException('FK association $name not found');
+      throw new SPXException('FK association '.$name.' not found');
     }
     
     try {

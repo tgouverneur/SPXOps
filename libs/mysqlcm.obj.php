@@ -261,7 +261,7 @@ class mysqlCM
                                $config['mysql']['pass'],
   			       array(PDO::ATTR_PERSISTENT => true,
 				     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-	$this->_link->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        $this->_link->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         //$this->_link->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
 
       } catch (PDOException $e) {
@@ -311,7 +311,7 @@ class mysqlCM
       try {
         $row = $this->_res->fetchAll(PDO::FETCH_ASSOC);
       } catch (PDOException $e) {
-	return -1;
+        return -1;
       }
       if (count($row)) $row = $row[0];
       if (isset($row['COUNT(*)']))
@@ -336,7 +336,7 @@ class mysqlCM
 
     $this->_nres = null;
 
-    if (!$this->_query($query, null))
+    if (!$this->_query($query))
     {
       $data = array();
 //      $this->_nres = @$this->_link->rowCount();
@@ -385,6 +385,7 @@ class mysqlCM
       $this->_res->bindParam($name, $value);
     }
     if (!$this->_res->execute()) {
+    $this->_res->closeCursor();
       $this->_res = null;
       return -1;
     }
@@ -480,7 +481,7 @@ class mysqlCM
       try {
         $data = $this->_res->fetchAll(PDO::FETCH_ASSOC);
       } catch (PDOException $e) { 
-        return -1;
+        throw($e);
       } 
 
 //      if ($this->_nres) {
@@ -519,6 +520,10 @@ class mysqlCM
           $this->_error = $this->_link->errorInfo();
           $this->_error = $this->_error[2];
 
+          if (strpos($this->_error, 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
+             $this->reconnect();
+             continue;
+          }
           if (strpos($this->_error, 'has gone away') !== false && $this->_reconnect) {
              $this->reconnect();
              continue;
@@ -541,10 +546,16 @@ class mysqlCM
         if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
            $this->reconnect();
         }
+        if (strpos($e->getMessage(), 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
+          $this->reconnect();
+          continue;
+        }
         if ($this->_debug) $this->_time();
         if ($this->_errlog) {
           $this->_eprint("[".time()."][$attempts] Failed _query: $query\n");
           $this->_eprint("\tError: ".$e->getMessage()."\n");
+          $e = new Exception();
+          $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
         }
       }
     } while ($attempts++ < 3);
@@ -559,7 +570,7 @@ class mysqlCM
    * Query database and handle errors
    * @return 0 if ok, non-zero if any error
    */
-  private function _query($query, $args=null)
+  private function _query($query, $args=array())
   {
     $attempts = 0;
     if ($this->_debug) $this->_time();
@@ -570,14 +581,14 @@ class mysqlCM
 
         if (isset($this->_res) && $this->_res) {
           $this->_res->closeCursor();
-	  unset($this->_res);
+          unset($this->_res);
         }
 
         $this->_res = $this->_link->prepare($query);
         if (@$this->_res->execute($args)) {
     
           if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
-	  $this->_nres = $this->_res->rowCount();
+          $this->_nres = $this->_res->rowCount();
     
           return 0;
         } else {
@@ -589,10 +600,17 @@ class mysqlCM
              $this->reconnect();
              continue;
           }
+          if (strpos($this->_error, 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
+            $this->reconnect();
+            continue;
+          }
           if ($this->_debug) $this->_time();
           if ($this->_errlog) { 
             $this->_eprint("[".time()."][".$this->_pid."] Failed _query: $query\n");
             $this->_eprint("\tError: ".$this->_error."\n");
+            $e = new Exception();
+            $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
+
           }
           return -1;
         }
@@ -600,10 +618,16 @@ class mysqlCM
         if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
            $this->reconnect();
         }
+        if (strpos($e->getMessage(), 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
+          $this->reconnect();
+          continue;
+        }
         if ($this->_debug) $this->_time();
         if ($this->_errlog) { 
           $this->_eprint("[".time()."][$attempts][".$this->_pid."] Failed _query: $query\n");
           $this->_eprint("\tError: ".$e->getMessage()."\n");
+          $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
+
         }
 
       }

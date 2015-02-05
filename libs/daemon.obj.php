@@ -49,10 +49,11 @@ class Daemon
 
       $reco = false;
       if (mysqlCM::getInstance()->isLink()) {
-	$reco = true;
+        $reco = true;
       }
 
       mysqlCM::delInstance();
+      gc_collect_cycles();
       $this->pid = pcntl_fork();
       if ($this->pid) {
         $m = mysqlCM::getInstance();
@@ -60,13 +61,15 @@ class Daemon
         return;
       } else {
         Logger::delInstance();
+        mysqlCM::delInstance();
         pcntl_signal(SIGTERM,array($obj,'sigterm'));
         pcntl_signal(SIGHUP,array($obj,'sighup'));
         pcntl_signal(SIGCHLD,array($obj,'sigchld'));
         pcntl_signal(SIGUSR1,array($obj,'sigusr1')); 
         pcntl_signal(SIGUSR2,array($obj,'sigusr2')); 
+        gc_collect_cycles();
         $m = mysqlCM::getInstance();
- 
+
         $this->pid = posix_getpid();
         $obj->pid = $this->pid;
         $obj->start();
@@ -75,12 +78,12 @@ class Daemon
             if ($obj->run()) {
               exit(0);
             }
-	  } catch (Exception $e) {
-	    Logger::log("Exception catched in run(): $e", $onull, LLOG_ERR);
-	    $m = MysqlCM::getInstance();
-	    $m->disconnect();
-	    continue;
-	  }
+          } catch (Exception $e) {
+            Logger::log("Exception catched in run(): $e", $onull, LLOG_ERR);
+            $m = MysqlCM::getInstance();
+            $m->disconnect();
+            continue;
+          }
         }
       }
     } else {
