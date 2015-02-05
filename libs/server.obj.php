@@ -759,7 +759,6 @@ class Server extends mysqlObj implements JsonSerializable
         $d->t_upd = $t["t_upd"];
         $d->f_ack = $t["f_ack"];
         $d->rc = $t["rc"];
-        $d->message = $t["message"];
         if (!isset($a[$d->fk_server])) {
           $a[$d->fk_server] = new Server($d->fk_server);
           $a[$d->fk_server]->fetchFromId();
