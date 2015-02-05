@@ -3,12 +3,12 @@
 Urgent:
 -------
 
+ - Add indexes on tables
 
 Medium:
 -------
 
  - find a way to inventorize custom metrics (might be implemented through plugins)
- - [UR] Per-user settings for lists (set list of columns to show)
  - [UR] inventorize KVM VNC ports and add link to KVM VNC console on VM page
  - Replace mail() call with something like Pear::Mail_Queue
  - Send notification from frontend action (without slowing the whole thing down...)

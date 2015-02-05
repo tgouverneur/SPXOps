@@ -102,6 +102,7 @@ class Server extends mysqlObj implements JsonSerializable
   public $a_check = array();
   public $a_lr = array();
   public $rc = 0;
+  public $ack = false;
 
   /* SSH */
   private $_ssh = null;
@@ -741,8 +742,8 @@ class Server extends mysqlObj implements JsonSerializable
     */
     $a = array();
     $m = mysqlCM::getInstance();
-    $index = "`fk_server`,`fk_check`,`t_upd`,`rc`,`message`,`f_ack`";
-    $table = "(select * from `list_result` order by `t_upd` desc) a";
+    $index = "`fk_server`,`fk_check`,`t_upd`,`rc`,`f_ack`";
+    $table = "(select `fk_server`,`fk_check`,`t_upd`,`rc`,`f_ack` from `list_result` order by `t_upd` desc) a";
     if ($fk_os) {
       $where = " WHERE `fk_server` ".$f_in;
       $where .= " group by `fk_server`,`fk_check` order by `t_upd` desc";
@@ -760,20 +761,23 @@ class Server extends mysqlObj implements JsonSerializable
         $d->rc = $t["rc"];
         $d->message = $t["message"];
         if (!isset($a[$d->fk_server])) {
-	  $a[$d->fk_server] = new Server($d->fk_server);
-	  $a[$d->fk_server]->fetchFromId();
-	}
+          $a[$d->fk_server] = new Server($d->fk_server);
+          $a[$d->fk_server]->fetchFromId();
+          $a[$d->fk_server]->ack = false;
+        }
         if (!$a[$d->fk_server]->a_lr) {
           $a[$d->fk_server]->a_lr = array();
         }
         if (isset($a[$d->fk_server]->rc)) {
           if ($d->rc < $a[$d->fk_server]->rc && !$d->f_ack) {
-	    $a[$d->fk_server]->rc = $d->rc;
-	  }
-	} else {
-	  if (!$d->f_ack)
-  	    $a[$d->fk_server]->rc = $d->rc;
-	}
+            $a[$d->fk_server]->rc = $d->rc;
+          } 
+        } else {
+            $a[$d->fk_server]->rc = $d->rc;
+        }
+        if ($d->rc && $d->f_ack) {
+          $a[$d->fk_server]->ack = true;
+        }
         array_push($a[$d->fk_server]->a_lr, $d);
       }
     }

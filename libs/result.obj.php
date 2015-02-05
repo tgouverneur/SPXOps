@@ -98,11 +98,12 @@ class Result extends mysqlObj
                 );
   }
 
-  public static function colorRC($rc) {
+  public static function colorRC($rc, $ack = false) {
     $c_rc = 'error';
-    if ($rc >= 0) $c_rc = 'success';
+    if ($rc >= 0 && !$ack) $c_rc = 'success';
     else if ($rc == -1) $c_rc = 'warning';
-    else $c_rc = 'danger';
+    else if ($rc == -2) $c_rc = 'danger';
+    else if ($ack) $c_rc = 'info';
     return $c_rc;
   }
 

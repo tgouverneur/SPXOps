@@ -18,6 +18,14 @@
   border: 1px solid #EED3D7;
 }
 
+.tdinfo {
+  background-color: #d9edf7;
+  border: 1px solid #ddd;
+}
+
+.tdinfo a, .tdinfo a:visited {
+  color: #337ab7;
+}
 .tdsuccess a, .tdsuccess a:visited {
   color: #468847;
 }
