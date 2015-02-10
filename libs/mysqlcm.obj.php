@@ -10,26 +10,24 @@
  * @subpackage backend
  * @filesource
  */
-
-
 if (!defined('SQL_NONE')) {
- define ('SQL_NONE',   0);  /* not used */
- define ('SQL_INDEX', 1);   /* is the property an index ? */
- define ('SQL_WHERE', 2);   /* is the property an part of the where condition when search for object */
- define ('SQL_EXIST', 4);   /* is the property a part of the condition for the object to exist in the db */
- define ('SQL_PROPE', 8);   /* is the property should be fetched ? */
- define ('SQL_SORTA', 16);  /* sort with this field by ASC ? */
- define ('SQL_SORTD', 32);  /* sort with this field by DESC ? */
+    define('SQL_NONE',   0);  /* not used */
+ define('SQL_INDEX', 1);   /* is the property an index ? */
+ define('SQL_WHERE', 2);   /* is the property an part of the where condition when search for object */
+ define('SQL_EXIST', 4);   /* is the property a part of the condition for the object to exist in the db */
+ define('SQL_PROPE', 8);   /* is the property should be fetched ? */
+ define('SQL_SORTA', 16);  /* sort with this field by ASC ? */
+ define('SQL_SORTD', 32);  /* sort with this field by DESC ? */
 }
 
 /**
-  * MySQL Connection Manager
-  * 
-  * @category classes
-  * @package objects
-  * @subpackage config
-  * @author Gouverneur Thomas <tgo@espix.net>
-  */
+ * MySQL Connection Manager
+ *
+ * @category classes
+ * @package objects
+ * @subpackage config
+ * @author Gouverneur Thomas <tgo@espix.net>
+ */
 class mysqlCM
 {
   /**
@@ -54,40 +52,44 @@ class mysqlCM
    */
   private $_affect = null;
 
-  private $_reconnect = true;
+    private $_reconnect = true;
 
-  private $_pid = -1;
+    private $_pid = -1;
 
   /**
    * Debug mode
    */
   private $_debug = false;
-  private $_dfile = false;
-  private $_dfd = null;
-  private $_elapsed = 0;
+    private $_dfile = false;
+    private $_dfd = null;
+    private $_elapsed = 0;
   /**
    * Error logging
    */
   private $_errlog = false;
-  private $_errfile = false;
-  private $_efd = null;
- 
+    private $_errfile = false;
+    private $_efd = null;
+
   /**
    * Singleton variable
    */
   private static $_instance;
 
-  public static function delInstance() {
-    self::$_instance = null;
-  }
+    public static function delInstance()
+    {
+        self::$_instance = null;
+    }
 
   /**
    * is _link not null?
    */
-  public function isLink() {
-    if ($this->_link)
-      return true;
-    return false;
+  public function isLink()
+  {
+      if ($this->_link) {
+          return true;
+      }
+
+      return false;
   }
 
   /**
@@ -95,42 +97,46 @@ class mysqlCM
    */
   public static function getInstance()
   {
-    if (!isset(self::$_instance)) {
-     $c = __CLASS__;
-     self::$_instance = new $c;
-    }
-    if (self::$_instance->_pid != getmypid()) {
-      self::delInstance();
-      $c = __CLASS__;
-      self::$_instance = new $c;
-      self::$_instance->_eprint('['.time().']['.self::$_instance->_pid.'] fork() detected'."\n");
-    }
-    return self::$_instance;
+      if (!isset(self::$_instance)) {
+          $c = __CLASS__;
+          self::$_instance = new $c();
+      }
+      if (self::$_instance->_pid != getmypid()) {
+          self::delInstance();
+          $c = __CLASS__;
+          self::$_instance = new $c();
+          self::$_instance->_eprint('['.time().']['.self::$_instance->_pid.'] fork() detected'."\n");
+      }
+
+      return self::$_instance;
   }
 
-  public function quote($str) {
-    if ($this->_link) {
-      return $this->_link->quote($str);
-    } else {
-      throw new SPXException("Cannot use MysqlCM::quote when disconnected");
+    public function quote($str)
+    {
+        if ($this->_link) {
+            return $this->_link->quote($str);
+        } else {
+            throw new SPXException("Cannot use MysqlCM::quote when disconnected");
+        }
     }
-  }
 
   /**
    * Enable error logging
    */
   private function _errlog($fname)
   {
-    $this->_errlog = true;
-    $this->_errfile = $fname;
-    $this->_efd = null;
-    if (!($this->_efd = fopen($this->_errfile, "a"))) {
-      $this->_errfile = "";
+      $this->_errlog = true;
+      $this->_errfile = $fname;
       $this->_efd = null;
-      $this->_errlog = false;
-      return false;
-    }
-    return true;
+      if (!($this->_efd = fopen($this->_errfile, "a"))) {
+          $this->_errfile = "";
+          $this->_efd = null;
+          $this->_errlog = false;
+
+          return false;
+      }
+
+      return true;
   }
 
   /**
@@ -138,32 +144,34 @@ class mysqlCM
    */
   private function _eprint($line, $args = null)
   {
-    if ($this->_errlog && $this->_efd && !empty($line)) {
-      if ($args) {
-        return vfprintf($this->_efd, $line, $args);
-      } else {
-        return fprintf($this->_efd, "%s", $line);
+      if ($this->_errlog && $this->_efd && !empty($line)) {
+          if ($args) {
+              return vfprintf($this->_efd, $line, $args);
+          } else {
+              return fprintf($this->_efd, "%s", $line);
+          }
       }
-    }
-    return false;
-  }
 
+      return false;
+  }
 
   /**
    * Enable debug mode
    */
   private function _debug($fname)
   {
-    $this->_debug = true;
-    $this->_dfile = $fname;
-    $this->_dfd = null;
-    if (!($this->_dfd = fopen($this->_dfile, "a"))) {
-      $this->_dfile = "";
+      $this->_debug = true;
+      $this->_dfile = $fname;
       $this->_dfd = null;
-      $this->_debug = false;
-      return false;
-    }
-    return true;
+      if (!($this->_dfd = fopen($this->_dfile, "a"))) {
+          $this->_dfile = "";
+          $this->_dfd = null;
+          $this->_debug = false;
+
+          return false;
+      }
+
+      return true;
   }
 
   /**
@@ -171,57 +179,59 @@ class mysqlCM
    */
   private function _dprint($line, $args = null)
   {
-    if ($this->_debug && $this->_dfd) {
-      return vfprintf($this->_dfd, $line, $args);
-    }
-    return false;
+      if ($this->_debug && $this->_dfd) {
+          return vfprintf($this->_dfd, $line, $args);
+      }
+
+      return false;
   }
 
   /**
    * Measure the time taken between two call of this function
    */
-  private function _time() {
-    if (!$this->_elapsed) {
-      $this->_elapsed = time();
-      return $this->_elapsed;
-    }
-    else { 
-      $ret = (time() - $this->_elapsed); 
-      $this->_elapsed = 0; 
-      return $ret; 
-    }
+  private function _time()
+  {
+      if (!$this->_elapsed) {
+          $this->_elapsed = time();
+
+          return $this->_elapsed;
+      } else {
+          $ret = (time() - $this->_elapsed);
+          $this->_elapsed = 0;
+
+          return $ret;
+      }
   }
 
   /**
    * Destructor
    */
   public function __destruct()
-  { 
-    global $config;
+  {
+      global $config;
 
     //if ($this->_link) $this->disconnect();
 
     if ($config['mysql']['DEBUG'] && $this->_dfd) {
-      fclose($this->_dfd);
+        fclose($this->_dfd);
     }
   }
-
 
   /**
    * Constructor
    */
   public function __construct()
   {
-    global $config;
+      global $config;
 
-    $this->_pid = getmypid();
+      $this->_pid = getmypid();
 
-    if ($config['mysql']['DEBUG']) {
-      $this->_debug($config['mysql']['DEBUG']);
-    }
-    if ($config['mysql']['ERRLOG']) {
-      $this->_errlog($config['mysql']['ERRLOG']);
-    }
+      if ($config['mysql']['DEBUG']) {
+          $this->_debug($config['mysql']['DEBUG']);
+      }
+      if ($config['mysql']['ERRLOG']) {
+          $this->_errlog($config['mysql']['ERRLOG']);
+      }
   }
 
   /**
@@ -229,17 +239,24 @@ class mysqlCM
    */
   public function __clone()
   {
-    trigger_error("Cannot clone a singlton object, use ::instance()", E_USER_ERROR);
+      trigger_error("Cannot clone a singlton object, use ::instance()", E_USER_ERROR);
   }
 
   /**
    * Accessors
    */
-
-  public function getError() { return $this->_error; }
-  public function getNR() { return $this->_nres; }
-  public function getAffect() { return $this->_affect; }
-
+  public function getError()
+  {
+      return $this->_error;
+  }
+    public function getNR()
+    {
+        return $this->_nres;
+    }
+    public function getAffect()
+    {
+        return $this->_affect;
+    }
 
   /**
    * Connect to the database
@@ -248,36 +265,39 @@ class mysqlCM
    */
   public function connect()
   {
-    global $config;
-    $attempts = 0;
+      global $config;
+      $attempts = 0;
 
-    $dbstring = "mysql:host=".$config['mysql']['host'];
-    $dbstring .= "; port=".$config['mysql']['port'];
-    $dbstring .= "; dbname=".$config['mysql']['db'];
-    do {
-      try {
-        $this->_link = @new PDO($dbstring, 
-                               $config['mysql']['user'], 
+      $dbstring = "mysql:host=".$config['mysql']['host'];
+      $dbstring .= "; port=".$config['mysql']['port'];
+      $dbstring .= "; dbname=".$config['mysql']['db'];
+      do {
+          try {
+              $this->_link = @new PDO($dbstring,
+                               $config['mysql']['user'],
                                $config['mysql']['pass'],
-  			       array(PDO::ATTR_PERSISTENT => true,
-				     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-        $this->_link->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+                   array(PDO::ATTR_PERSISTENT => true,
+                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, ));
+              $this->_link->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         //$this->_link->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
+          } catch (PDOException $e) {
+              $this->_error = $e->getMessage();
+              if (strpos($this->_error, '2006 MySQL') !== false && $this->_reconnect) {
+                  $this->reconnect();
+                  $this->_error = null;
+              }
+              if ($this->_debug) {
+                  $this->_dprint("[".time()."][$attempts] Connection failed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+              }
 
-      } catch (PDOException $e) {
-        $this->_error = $e->getMessage();
-	if (strpos($this->_error, '2006 MySQL') !== false && $this->_reconnect) {
-           $this->reconnect();
-           $this->_error = null;
-        }
-        if ($this->_debug)
-          $this->_dprint("[".time()."][$attempts] Connection failed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
-        return -1;
+              return -1;
+          }
+      } while ($attempts++ < 3);
+      if ($this->_debug) {
+          $this->_dprint("[".time()."] Connection succesfull to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
       }
-    } while ($attempts++ < 3);
-    if ($this->_debug)
-      $this->_dprint("[".time()."] Connection succesfull to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
-    return 0;
+
+      return 0;
   }
 
   /**
@@ -286,89 +306,91 @@ class mysqlCM
    */
   public function disconnect()
   {
-    global $config;
-    if ($this->_debug)
-      $this->_dprint("[".time()."] Connection closed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+      global $config;
+      if ($this->_debug) {
+          $this->_dprint("[".time()."] Connection closed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+      }
 
-    unset($this->_link);
-    $this->_link = null;
+      unset($this->_link);
+      $this->_link = null;
 
-    return 0;
+      return 0;
   }
 
   /**
    * Count object matching criteria
    * @return -1 if error, else the number of row
    */
-  public function count($table, $where="")
+  public function count($table, $where = "")
   {
-    $this->_nres = null;
-    $args = array();
+      $this->_nres = null;
+      $args = array();
 
-    if (is_array($where)) {
-      $query = "SELECT COUNT(*) FROM `".$table."` ".$where['q'];
-      $args = $where['a'];
-    } else {
-      $query = "SELECT COUNT(*) FROM `".$table."` ".$where;
-    }
-    
-    
-    if (!$this->_query($query, $args))
-    {
-      try {
-        $row = $this->_res->fetchAll(PDO::FETCH_ASSOC);
-      } catch (PDOException $e) {
-        return -1;
+      if (is_array($where)) {
+          $query = "SELECT COUNT(*) FROM `".$table."` ".$where['q'];
+          $args = $where['a'];
+      } else {
+          $query = "SELECT COUNT(*) FROM `".$table."` ".$where;
       }
-      if (count($row)) $row = $row[0];
-      if (isset($row['COUNT(*)']))
-        $data = $row['COUNT(*)'];
 
-      $this->_res->closeCursor();
-      unset($this->_res);
+      if (!$this->_query($query, $args)) {
+          try {
+              $row = $this->_res->fetchAll(PDO::FETCH_ASSOC);
+          } catch (PDOException $e) {
+              return -1;
+          }
+          if (count($row)) {
+              $row = $row[0];
+          }
+          if (isset($row['COUNT(*)'])) {
+              $data = $row['COUNT(*)'];
+          }
 
-      return $data;
-    }
-    else
-      return -1;
+          $this->_res->closeCursor();
+          unset($this->_res);
+
+          return $data;
+      } else {
+          return -1;
+      }
   }
 
   /**
    * Query mysql server for select
    * @return datas selected or -1 if error
    */
-  public function select($fields, $table, $where="", $sort="")
+  public function select($fields, $table, $where = "", $sort = "")
   {
-    $this->_nres = null;
-    $args = array();
+      $this->_nres = null;
+      $args = array();
 
-    if (is_array($where)) {
-        $query = "SELECT ".$fields." FROM `".$table."` ".$where['q']." ".$sort;
-        $args = $where['a'];
-    } else {
-        $query = "SELECT ".$fields." FROM `".$table."` ".$where." ".$sort;
-    }
+      if (is_array($where)) {
+          $query = "SELECT ".$fields." FROM `".$table."` ".$where['q']." ".$sort;
+          $args = $where['a'];
+      } else {
+          $query = "SELECT ".$fields." FROM `".$table."` ".$where." ".$sort;
+      }
 
-    if (!$this->_query($query, $args))
-    {
-      $data = array();
+      if (!$this->_query($query, $args)) {
+          $data = array();
 //      $this->_nres = @$this->_link->rowCount();
       try {
-        $data = $this->_res->fetchAll(PDO::FETCH_ASSOC);
+          $data = $this->_res->fetchAll(PDO::FETCH_ASSOC);
       } catch (PDOException $e) {
-        return -1;
+          return -1;
       }
-      $this->_nres = count($data);
+          $this->_nres = count($data);
 //      if ($this->_nres) {
 //        for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
 //          $data[$i] = $r;
 //      }
       $this->_res->closeCursor();
-      unset($this->_res);
-      return $data;
-    }
-    else 
-      return -1;
+          unset($this->_res);
+
+          return $data;
+      } else {
+          return -1;
+      }
   }
 
   /**
@@ -378,51 +400,52 @@ class mysqlCM
    */
   public function call($proc, $args = array(), &$ret = array())
   {
-    $cq = 'CALL '.$proc.'(';
-    $first = 1;
-    foreach($args as $name => $value) {
-      if ($first-- < 1) {
-        $cq .= ',';
+      $cq = 'CALL '.$proc.'(';
+      $first = 1;
+      foreach ($args as $name => $value) {
+          if ($first-- < 1) {
+              $cq .= ',';
+          }
+          $cq .= ':'.$name;
       }
-      $cq .= ':'.$name;
-    }
-    foreach($ret as $name => $value) {
-      if ($first-- < 1) {
-        $cq .= ',';
+      foreach ($ret as $name => $value) {
+          if ($first-- < 1) {
+              $cq .= ',';
+          }
+          $cq .= '@'.$name;
       }
-      $cq .= '@'.$name;
-    }
-    $cq .= ')';
-    $this->_res = $this->_link->prepare($cq);
-    foreach($args as $name => $value) {
-      $this->_res->bindParam($name, $value);
-    }
-    if (!$this->_res->execute()) {
-    $this->_res->closeCursor();
-      $this->_res = null;
-      return -1;
-    }
-    $this->_res->closeCursor();
-    
+      $cq .= ')';
+      $this->_res = $this->_link->prepare($cq);
+      foreach ($args as $name => $value) {
+          $this->_res->bindParam($name, $value);
+      }
+      if (!$this->_res->execute()) {
+          $this->_res->closeCursor();
+          $this->_res = null;
+
+          return -1;
+      }
+      $this->_res->closeCursor();
+
     /* fetch params */
     $pq = 'SELECT ';
-    $first = 1;
-    foreach($ret as $name => $value) {
-      if (!$first--) {
-        $pq .= '.';
+      $first = 1;
+      foreach ($ret as $name => $value) {
+          if (!$first--) {
+              $pq .= '.';
+          }
+          $pq .= '@'.$name.' AS '.$name;
       }
-      $pq .= '@'.$name.' AS '.$name;
-    }
-    $pq .= ';';
-    $r = $this->_link->query($pq)->fetch(PDO::FETCH_ASSOC);
-    foreach($ret as $name => $value) {
-      if (isset($r[$name])) {
-        $ret[$name] = $r[$name];
+      $pq .= ';';
+      $r = $this->_link->query($pq)->fetch(PDO::FETCH_ASSOC);
+      foreach ($ret as $name => $value) {
+          if (isset($r[$name])) {
+              $ret[$name] = $r[$name];
+          }
       }
-    }
-    return 0;
-  }
 
+      return 0;
+  }
 
   /**
    * Insert data into table
@@ -430,17 +453,15 @@ class mysqlCM
    */
   public function insert($fields, $values, $table)
   {
-    $query = "INSERT INTO ".$table."(".$fields.") VALUES(".$values.")";
-    
-    if (!$this->_rquery($query))
-    {
-      $this->_nres = $this->_link->lastInsertId();
-      return 0;
-    }
-    else 
-    {
-     return -1;
-    }
+      $query = "INSERT INTO ".$table."(".$fields.") VALUES(".$values.")";
+
+      if (!$this->_rquery($query)) {
+          $this->_nres = $this->_link->lastInsertId();
+
+          return 0;
+      } else {
+          return -1;
+      }
   }
 
   /**
@@ -449,16 +470,13 @@ class mysqlCM
    */
   public function delete($table, $cond)
   {
-    $query = "DELETE FROM ".$table." ".$cond;
-    
-    if (!$this->_rquery($query))
-    {
-      return $this->_affect;
-    }
-    else
-    {
-      return -1;
-    }
+      $query = "DELETE FROM ".$table." ".$cond;
+
+      if (!$this->_rquery($query)) {
+          return $this->_affect;
+      } else {
+          return -1;
+      }
   }
 
   /**
@@ -467,205 +485,219 @@ class mysqlCM
    */
   public function update($table, $set, $where)
   {
-    $query = "UPDATE `".$table."` SET ".$set." ".$where;
-  
-    if (!$this->_rquery($query))
-    {
-      return 0;
-    }
-    else
-    {
-      return -1;
-    }
+      $query = "UPDATE `".$table."` SET ".$set." ".$where;
+
+      if (!$this->_rquery($query)) {
+          return 0;
+      } else {
+          return -1;
+      }
   }
 
   /**
    * Fetch index of a table following $where condition
    * @return The index datas of the table
    */
-  function fetchIndex($index, $table, $where)
+  public function fetchIndex($index, $table, $where)
   {
-    $this->_nres = null;
-    $args = array();
+      $this->_nres = null;
+      $args = array();
 
-    if (is_array($where)) {
-      $query = "SELECT ".$index." FROM ".$table." ".$where['q'];
-      $args = $where['a'];
-    } else {
-      $query = "SELECT ".$index." FROM ".$table." ".$where;
-    }
+      if (is_array($where)) {
+          $query = "SELECT ".$index." FROM ".$table." ".$where['q'];
+          $args = $where['a'];
+      } else {
+          $query = "SELECT ".$index." FROM ".$table." ".$where;
+      }
 
-    if (!$this->_query($query, $args))
-    {
-      $data = array();
-      try {
-        $data = $this->_res->fetchAll(PDO::FETCH_ASSOC);
-      } catch (PDOException $e) { 
-        throw($e);
-      } 
+      if (!$this->_query($query, $args)) {
+          $data = array();
+          try {
+              $data = $this->_res->fetchAll(PDO::FETCH_ASSOC);
+          } catch (PDOException $e) {
+              throw($e);
+          }
 
 //      if ($this->_nres) {
 //        for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
 //          $data[$i] = $r;
 //      }
       $this->_res->closeCursor();
-      unset($this->_res);
-      return $data;
-    }
-    else {
-      return 0;
-    }
+          unset($this->_res);
+
+          return $data;
+      } else {
+          return 0;
+      }
   }
-   
+
   /**
    * RAW Query database and handle errors
    * @return 0 if ok, non-zero if any error
    */
-  private function _rquery($query, $args=null)
+  private function _rquery($query, $args = null)
   {
-    if ($this->_debug) $this->_time();
-    if (!$this->_link) return -1;
-    $attempts = 0;
-
-    if (isset($this->_res) && $this->_res) {
-      $this->_res->closeCursor();
-      unset($this->_res);
-    }
-
-    do {
-      try {
-        unset($this->_res);
-        if (($this->_affect = @$this->_link->exec($query)) === FALSE) {
-
-          $this->_error = $this->_link->errorInfo();
-          $this->_error = $this->_error[2];
-
-          if (strpos($this->_error, 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
-             $this->reconnect();
-             continue;
-          }
-          if (strpos($this->_error, 'has gone away') !== false && $this->_reconnect) {
-             $this->reconnect();
-             continue;
-          }
-
-          if ($this->_debug) $this->_time();
-          if ($this->_errlog) {
-            $this->_eprint("[".time()."][".$this->_pid."] Failed _rquery (".$this->_affect."): $query\n");
-            $this->_eprint("\tError: ".$this->_error."\n");
-          }
-          return -1;
-
-        } else {
-
-          if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
-          return 0;
-
-        }
-      } catch (PDOException $e) {
-        if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
-           $this->reconnect();
-        }
-        if (strpos($e->getMessage(), 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
-          $this->reconnect();
-          continue;
-        }
-        if ($this->_debug) $this->_time();
-        if ($this->_errlog) {
-          $this->_eprint("[".time()."][$attempts] Failed _query: $query\n");
-          $this->_eprint("\tError: ".$e->getMessage()."\n");
-          $e = new Exception();
-          $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
-        }
+      if ($this->_debug) {
+          $this->_time();
       }
-    } while ($attempts++ < 3);
+      if (!$this->_link) {
+          return -1;
+      }
+      $attempts = 0;
+
+      if (isset($this->_res) && $this->_res) {
+          $this->_res->closeCursor();
+          unset($this->_res);
+      }
+
+      do {
+          try {
+              unset($this->_res);
+              if (($this->_affect = @$this->_link->exec($query)) === false) {
+                  $this->_error = $this->_link->errorInfo();
+                  $this->_error = $this->_error[2];
+
+                  if (strpos($this->_error, 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
+                      $this->reconnect();
+                      continue;
+                  }
+                  if (strpos($this->_error, 'has gone away') !== false && $this->_reconnect) {
+                      $this->reconnect();
+                      continue;
+                  }
+
+                  if ($this->_debug) {
+                      $this->_time();
+                  }
+                  if ($this->_errlog) {
+                      $this->_eprint("[".time()."][".$this->_pid."] Failed _rquery (".$this->_affect."): $query\n");
+                      $this->_eprint("\tError: ".$this->_error."\n");
+                  }
+
+                  return -1;
+              } else {
+                  if ($this->_debug) {
+                      $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
+                  }
+
+                  return 0;
+              }
+          } catch (PDOException $e) {
+              if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
+                  $this->reconnect();
+              }
+              if (strpos($e->getMessage(), 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
+                  $this->reconnect();
+                  continue;
+              }
+              if ($this->_debug) {
+                  $this->_time();
+              }
+              if ($this->_errlog) {
+                  $this->_eprint("[".time()."][$attempts] Failed _query: $query\n");
+                  $this->_eprint("\tError: ".$e->getMessage()."\n");
+                  $e = new Exception();
+                  $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
+              }
+          }
+      } while ($attempts++ < 3);
   }
 
-
-  public function rawQuery($q) {
-    return $this->_query($q);
-  }
+    public function rawQuery($q)
+    {
+        return $this->_query($q);
+    }
 
   /**
    * Query database and handle errors
    * @return 0 if ok, non-zero if any error
    */
-  private function _query($query, $args=array())
+  private function _query($query, $args = array())
   {
-    $attempts = 0;
-    if ($this->_debug) $this->_time();
-    if (!$this->_link) return -1;
-
-    do {
-      try {
-
-        if (isset($this->_res) && $this->_res) {
-          $this->_res->closeCursor();
-          unset($this->_res);
-        }
-
-        $this->_res = $this->_link->prepare($query);
-
-        if (is_array($args)) {
-            foreach($args as $n => $v) {
-                if (is_array($v)) {
-                    $this->_res->bindParam($n, $v[0], $v[1]);
-                    if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") Param ".$n." bound with ".$v[0]." \n");
-                } else {
-                    $this->_res->bindParam($n, $v);
-                    if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") Param ".$n." bound with ".$v." \n");
-                }
-            }
-        }
-
-        if (@$this->_res->execute($args)) {
-    
-          if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
-          $this->_nres = $this->_res->rowCount();
-          return 0;
-
-        } else {
-
-          $this->_error = $this->_res->errorInfo();
-          $this->_error = $this->_error[2];
-
-          if (strpos($this->_error, 'has gone away') !== false && $this->_reconnect) {
-             $this->reconnect();
-             continue;
-          }
-          if (strpos($this->_error, 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
-            $this->reconnect();
-            continue;
-          }
-          if ($this->_debug) $this->_time();
-          if ($this->_errlog) { 
-            $this->_eprint("[".time()."][".$this->_pid."] Failed _query: $query\n");
-            $this->_eprint("\tError: ".$this->_error."\n");
-            $e = new Exception();
-            $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
-
-          }
-          return -1;
-        }
-      } catch (PDOException $e) {
-        if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
-           $this->reconnect();
-        }
-        if (strpos($e->getMessage(), 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
-          $this->reconnect();
-          continue;
-        }
-        if ($this->_debug) $this->_time();
-        if ($this->_errlog) { 
-          $this->_eprint("[".time()."][$attempts][".$this->_pid."] Failed _query: $query\n");
-          $this->_eprint("\tError: ".$e->getMessage()."\n");
-          $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
-
-        }
-
+      $attempts = 0;
+      if ($this->_debug) {
+          $this->_time();
       }
-    } while ($attempts++ < 3);
-    return -1;
+      if (!$this->_link) {
+          return -1;
+      }
+
+      do {
+          try {
+              if (isset($this->_res) && $this->_res) {
+                  $this->_res->closeCursor();
+                  unset($this->_res);
+              }
+
+              $this->_res = $this->_link->prepare($query);
+
+              if (is_array($args)) {
+                  foreach ($args as $n => $v) {
+                      if (is_array($v)) {
+                          $this->_res->bindParam($n, $v[0], $v[1]);
+                          if ($this->_debug) {
+                              $this->_dprint("[".time()."] (".$this->_time().") Param ".$n." bound with ".$v[0]." \n");
+                          }
+                      } else {
+                          $this->_res->bindParam($n, $v);
+                          if ($this->_debug) {
+                              $this->_dprint("[".time()."] (".$this->_time().") Param ".$n." bound with ".$v." \n");
+                          }
+                      }
+                  }
+              }
+
+              if (@$this->_res->execute($args)) {
+                  if ($this->_debug) {
+                      $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
+                  }
+                  $this->_nres = $this->_res->rowCount();
+
+                  return 0;
+              } else {
+                  $this->_error = $this->_res->errorInfo();
+                  $this->_error = $this->_error[2];
+
+                  if (strpos($this->_error, 'has gone away') !== false && $this->_reconnect) {
+                      $this->reconnect();
+                      continue;
+                  }
+                  if (strpos($this->_error, 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
+                      $this->reconnect();
+                      continue;
+                  }
+                  if ($this->_debug) {
+                      $this->_time();
+                  }
+                  if ($this->_errlog) {
+                      $this->_eprint("[".time()."][".$this->_pid."] Failed _query: $query\n");
+                      $this->_eprint("\tError: ".$this->_error."\n");
+                      $e = new Exception();
+                      $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
+                  }
+
+                  return -1;
+              }
+          } catch (PDOException $e) {
+              if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
+                  $this->reconnect();
+              }
+              if (strpos($e->getMessage(), 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
+                  $this->reconnect();
+                  continue;
+              }
+              if ($this->_debug) {
+                  $this->_time();
+              }
+              if ($this->_errlog) {
+                  $this->_eprint("[".time()."][$attempts][".$this->_pid."] Failed _query: $query\n");
+                  $this->_eprint("\tError: ".$e->getMessage()."\n");
+                  $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
+              }
+          }
+      } while ($attempts++ < 3);
+
+      return -1;
   }
 
   /**
@@ -674,16 +706,13 @@ class mysqlCM
    */
   public function lockTable($table, $what = "WRITE")
   {
-    $query = "LOCK TABLE $table $what";
+      $query = "LOCK TABLE $table $what";
 
-    if (!$this->_rquery($query))
-    {
-      return 0;
-    }
-    else
-    {
-     return -1;
-    }
+      if (!$this->_rquery($query)) {
+          return 0;
+      } else {
+          return -1;
+      }
   }
 
   /**
@@ -692,27 +721,22 @@ class mysqlCM
    */
   public function unlockTables()
   {
-    $query = "UNLOCK TABLES";
+      $query = "UNLOCK TABLES";
 
-    if (!$this->_rquery($query))
-    {
-      return 0;
-    }
-    else
-    {
-     return -1;
-    }
+      if (!$this->_rquery($query)) {
+          return 0;
+      } else {
+          return -1;
+      }
   }
 
-  private function reconnect() {
-    $this->disconnect();
-    if ($this->_errlog) {
-      $this->_eprint("[".time()."] Reconnection in progress...\n");
+    private function reconnect()
+    {
+        $this->disconnect();
+        if ($this->_errlog) {
+            $this->_eprint("[".time()."] Reconnection in progress...\n");
+        }
+        $this->_eprint("\tError: ".$this->_error."\n");
+        $this->connect();
     }
-    $this->_eprint("\tError: ".$this->_error."\n");
-    $this->connect();
-  }
-  
 }
-
-?>

@@ -10,73 +10,75 @@
  * @subpackage backend
  * @filesource
  */
-
-
 class Hba extends mysqlObj
 {
   public $id = -1;
-  public $wwn = '';
-  public $vendor = '';
-  public $model = '';
-  public $firmware = '';
-  public $fcode = '';
-  public $serial = '';
-  public $drv = '';
-  public $drv_ver = '';
-  public $state = '';
-  public $osdev = '';
-  public $curspeed = '';
-  public $fk_server = -1;
-  public $t_add = -1;
-  public $t_upd = -1;
+    public $wwn = '';
+    public $vendor = '';
+    public $model = '';
+    public $firmware = '';
+    public $fcode = '';
+    public $serial = '';
+    public $drv = '';
+    public $drv_ver = '';
+    public $state = '';
+    public $osdev = '';
+    public $curspeed = '';
+    public $fk_server = -1;
+    public $t_add = -1;
+    public $t_upd = -1;
 
-  public $o_server = null;
+    public $o_server = null;
 
   /* Logging */
   private $_log = null;
- 
-  public function log($str) {
-    Logger::log($str, $this);
-  }
 
-  public function equals($z) {
-    if (!strcmp($this->wwn, $z->wwn) && $this->fk_server && $z->fk_server) {
-      return true;
+    public function log($str)
+    {
+        Logger::log($str, $this);
     }
-    return false;
-  }
 
-  public function fetchAll($all = 1) {
+    public function equals($z)
+    {
+        if (!strcmp($this->wwn, $z->wwn) && $this->fk_server && $z->fk_server) {
+            return true;
+        }
 
-    try {
-      if (!$this->o_server && $this->fk_server > 0) {
-        $this->fetchFK('fk_server');
-      }
-
-    } catch (Exception $e) {
-      throw($e);
+        return false;
     }
-  }
 
-  public function __toString() {
-    return $this->wwn;
-  }
+    public function fetchAll($all = 1)
+    {
+        try {
+            if (!$this->o_server && $this->fk_server > 0) {
+                $this->fetchFK('fk_server');
+            }
+        } catch (Exception $e) {
+            throw($e);
+        }
+    }
 
-  public function dump($s) {
-    $s->log(sprintf("\t%15s %s", '['.$this->vendor.']', 'Model '.$this->model.' / WWN: '.$this->wwn), LLOG_INFO);
-    $s->log(sprintf("\t\t\t %s", 'Firmware: '.$this->firmware.' / FC: '.$this->fcode.' / Driver: '.$this->drv.' v'.$this->drv_ver), LLOG_INFO);
-    $s->log(sprintf("\t\t\t %s", 'State: '.$this->state.' / Speed: '.$this->curspeed), LLOG_INFO);
-  }
+    public function __toString()
+    {
+        return $this->wwn;
+    }
 
- /**
-  * ctor
-  */
-  public function __construct($id=-1)
+    public function dump($s)
+    {
+        $s->log(sprintf("\t%15s %s", '['.$this->vendor.']', 'Model '.$this->model.' / WWN: '.$this->wwn), LLOG_INFO);
+        $s->log(sprintf("\t\t\t %s", 'Firmware: '.$this->firmware.' / FC: '.$this->fcode.' / Driver: '.$this->drv.' v'.$this->drv_ver), LLOG_INFO);
+        $s->log(sprintf("\t\t\t %s", 'State: '.$this->state.' / Speed: '.$this->curspeed), LLOG_INFO);
+    }
+
+  /**
+   * ctor
+   */
+  public function __construct($id = -1)
   {
-    $this->id = $id;
-    $this->_table = 'list_hba';
-    $this->_nfotable = null;
-    $this->_my = array(
+      $this->id = $id;
+      $this->_table = 'list_hba';
+      $this->_nfotable = null;
+      $this->_my = array(
                         'id' => SQL_INDEX,
                         'wwn' => SQL_PROPE|SQL_EXIST,
                         'vendor' => SQL_PROPE,
@@ -91,9 +93,9 @@ class Hba extends mysqlObj
                         'curspeed' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
                         't_add' => SQL_PROPE,
-                        't_upd' => SQL_PROPE
+                        't_upd' => SQL_PROPE,
                  );
-    $this->_myc = array( /* mysql => class */
+      $this->_myc = array( /* mysql => class */
                         'id' => 'id',
                         'wwn' => 'wwn',
                         'vendor' => 'vendor',
@@ -108,14 +110,11 @@ class Hba extends mysqlObj
                         'curspeed' => 'curspeed',
                         'fk_server' => 'fk_server',
                         't_add' => 't_add',
-                        't_upd' => 't_upd'
+                        't_upd' => 't_upd',
                  );
 
-    $this->_addFK("fk_server", "o_server", "Server");
+      $this->_addFK("fk_server", "o_server", "Server");
 
-    $this->_log = Logger::getInstance();
-
+      $this->_log = Logger::getInstance();
   }
-
 }
-?>

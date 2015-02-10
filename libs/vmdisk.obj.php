@@ -10,10 +10,11 @@
  * @subpackage backend
  * @filesource
  */
-
-class VMdisk {
+class VMdisk
+{
   public $file = '';
-  public function __construct($f) { $this->file = $f; }
+    public function __construct($f)
+    {
+        $this->file = $f;
+    }
 }
-
-?>

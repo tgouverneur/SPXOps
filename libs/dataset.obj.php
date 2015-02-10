@@ -10,71 +10,74 @@
  * @subpackage backend
  * @filesource
  */
-
-
 class Dataset extends mysqlObj
 {
   public $id = -1;
-  public $name = '';
-  public $size = -1;
-  public $used = -1;
-  public $type = '';
-  public $fk_pool = -1;
-  public $t_add = -1;
-  public $t_upd = -1;
+    public $name = '';
+    public $size = -1;
+    public $used = -1;
+    public $type = '';
+    public $fk_pool = -1;
+    public $t_add = -1;
+    public $t_upd = -1;
 
-  public $o_pool = null;
+    public $o_pool = null;
 
   /* Logging */
   private $_log = null;
- 
-  public function getFullName() {
-    $ret = '';
-    if ($this->o_pool) {
-      $ret .= $this->o_pool.'/';
+
+    public function getFullName()
+    {
+        $ret = '';
+        if ($this->o_pool) {
+            $ret .= $this->o_pool.'/';
+        }
+        $ret .= $this->name;
+
+        return $ret;
     }
-    $ret .= $this->name;
-    return $ret;
-  }
 
-  public function log($str) {
-    Logger::log($str, $this);
-  }
-
-  public function equals($z) {
-    if (!strcmp($this->name, $z->name) && $this->fk_pool && $z->fk_pool) {
-      return true;
+    public function log($str)
+    {
+        Logger::log($str, $this);
     }
-    return false;
-  }
 
-  public function fetchAll($all = 1) {
+    public function equals($z)
+    {
+        if (!strcmp($this->name, $z->name) && $this->fk_pool && $z->fk_pool) {
+            return true;
+        }
 
-    try {
-      $this->fetchData();
-
-      if (!$this->o_pool && $this->fk_pool > 0) {
-        $this->fetchFK('fk_pool');
-      }
-
-    } catch (Exception $e) {
-      throw($e);
+        return false;
     }
-  }
 
-  public function __toString() {
-    return $this->name;
-  }
+    public function fetchAll($all = 1)
+    {
+        try {
+            $this->fetchData();
 
- /**
-  * ctor
-  */
-  public function __construct($id=-1)
+            if (!$this->o_pool && $this->fk_pool > 0) {
+                $this->fetchFK('fk_pool');
+            }
+        } catch (Exception $e) {
+            throw($e);
+        }
+    }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
+
+  /**
+   * ctor
+   */
+  public function __construct($id = -1)
   {
-    $this->id = $id;
-    $this->_table = 'list_dataset';
-    $this->_nfotable = 'nfo_dataset';
-    $this->_my = array(
+      $this->id = $id;
+      $this->_table = 'list_dataset';
+      $this->_nfotable = 'nfo_dataset';
+      $this->_my = array(
                         'id' => SQL_INDEX,
                         'name' => SQL_PROPE|SQL_EXIST,
                         'size' => SQL_PROPE,
@@ -82,9 +85,9 @@ class Dataset extends mysqlObj
                         'type' => SQL_PROPE,
                         'fk_pool' => SQL_PROPE,
                         't_add' => SQL_PROPE,
-                        't_upd' => SQL_PROPE
+                        't_upd' => SQL_PROPE,
                  );
-    $this->_myc = array( /* mysql => class */
+      $this->_myc = array( /* mysql => class */
                         'id' => 'id',
                         'name' => 'name',
                         'size' => 'size',
@@ -92,14 +95,11 @@ class Dataset extends mysqlObj
                         'type' => 'type',
                         'fk_pool' => 'fk_pool',
                         't_add' => 't_add',
-                        't_upd' => 't_upd'
+                        't_upd' => 't_upd',
                  );
 
-    $this->_addFK("fk_pool", "o_pool", "Pool");
+      $this->_addFK("fk_pool", "o_pool", "Pool");
 
-    $this->_log = Logger::getInstance();
-
+      $this->_log = Logger::getInstance();
   }
-
 }
-?>

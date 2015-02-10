@@ -2,9 +2,4 @@
 
 class SPXException extends Exception
 {
-
-
 }
-
-
-?>

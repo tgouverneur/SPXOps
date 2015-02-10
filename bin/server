@@ -1,122 +1,120 @@
 #!/usr/bin/php
 <?php
-/**
- * server management
- *
- * @author Gouverneur Thomas <tgo@espix.net>
- * @copyright Copyright (c) 2012, Gouverneur Thomas
- * @version 1.0
- * @package CLI
- * @category utils
- * @subpackage list
- * @filesource
- */
-
-  require_once(dirname(__FILE__).'/../libs/autoload.lib.php');
-  require_once(dirname(__FILE__).'/../libs/config.inc.php');
+  /**
+   * server management
+   *
+   * @author Gouverneur Thomas <tgo@espix.net>
+   * @copyright Copyright (c) 2012, Gouverneur Thomas
+   * @version 1.0
+   * @package CLI
+   * @category utils
+   * @subpackage list
+   * @filesource
+   */
+  require_once dirname(__FILE__).'/../libs/autoload.lib.php';
+  require_once dirname(__FILE__).'/../libs/config.inc.php';
 
   $shortopts = "F::u::s::Uhadv";
   $opts = getopt($shortopts);
 
   if (isset($opts['h']) || count($argv) < 2) {
-    echo $argv[0]."\n";
-    echo "\t [-s=<server>]\n";
-    echo "\t [-u=<user>]\n";
-    echo "\t [-F=<function>]\n";
-    echo "\t [-h] this help\n";
-    echo "\t [-a] Add\n";
-    echo "\t [-d] Delete\n";
-    echo "\t [-v] Verbose\n";
-    echo "\t [-U] Update server\n";
-    exit();
+      echo $argv[0]."\n";
+      echo "\t [-s=<server>]\n";
+      echo "\t [-u=<user>]\n";
+      echo "\t [-F=<function>]\n";
+      echo "\t [-h] this help\n";
+      echo "\t [-a] Add\n";
+      echo "\t [-d] Delete\n";
+      echo "\t [-v] Verbose\n";
+      echo "\t [-U] Update server\n";
+      exit();
   }
   $sname = $fname = $uname = '';
 
   if (isset($opts['v'])) {
-    Logger::logLevel(LLOG_DEBUG);
+      Logger::logLevel(LLOG_DEBUG);
   }
 
   if (isset($opts['s']) && !empty($opts['s'])) {
-    $sname = $opts['s'];
+      $sname = $opts['s'];
   } else {
-    echo "[!] You must provide server name (check -h for syntax)\n";
-    exit(1);
+      echo "[!] You must provide server name (check -h for syntax)\n";
+      exit(1);
   }
 
   if (isset($opts['F']) && !empty($opts['F'])) {
-    $fname = $opts['F'];
+      $fname = $opts['F'];
   }
   if (isset($opts['u']) && !empty($opts['u'])) {
-    $uname = $opts['u'];
+      $uname = $opts['u'];
   }
 
   $m = mysqlCM::getInstance();
   if ($m->connect()) {
-    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+      die($argv[0]." Error with SQL db: ".$m->getError()."\n");
   }
 
   $s = new Server();
   $s->hostname = $sname;
   if (isset($opts['a'])) {
-    if ($s->fetchFromField("hostname")) {
-      $uo = new SUser();
-      $uo->username = $uname;
-      if ($uo->fetchFromField('username')) {
-        echo "[!] Username not found in database\n";
-	exit(5);
+      if ($s->fetchFromField("hostname")) {
+          $uo = new SUser();
+          $uo->username = $uname;
+          if ($uo->fetchFromField('username')) {
+              echo "[!] Username not found in database\n";
+              exit(5);
+          }
+          $co = new PServer();
+          $co->name = $sname;
+          if ($co->fetchFromField('name')) {
+              echo "[-] Chassis is being added...";
+              $co->insert();
+              echo "done\n";
+          }
+          $s->fk_suser = $uo->id;
+          $s->fk_pserver = $co->id;
+          $s->f_upd = 1;
+          $s->insert();
+          echo "[-] Server added\n";
+      } else {
+          echo "[!] Server is already present\n";
+          exit(3);
       }
-      $co = new PServer();
-      $co->name = $sname;
-      if ($co->fetchFromField('name')) {
-        echo "[-] Chassis is being added...";
-	$co->insert();
-	echo "done\n";
-      }
-      $s->fk_suser = $uo->id;
-      $s->fk_pserver = $co->id;
-      $s->f_upd = 1;
-      $s->insert();
-      echo "[-] Server added\n";
-    } else {
-      echo "[!] Server is already present\n";
-      exit(3);
-    }
-    exit(0);
+      exit(0);
   }
 
   if (isset($opts['U'])) {
-    if ($s->fetchFromField("hostname")) {
-      echo "[!] Server not found in DB..\n";
-      exit(2);
-    }
-    echo "[-] Connecting to $s\n";
-    $s->connect();
-    echo "[-] Launching the update:\n";
-    if (empty($fname)) {
-      Update::server($s);
-    } else {
-      Update::server($s, $fname);
-    }
-    exit(0);
+      if ($s->fetchFromField("hostname")) {
+          echo "[!] Server not found in DB..\n";
+          exit(2);
+      }
+      echo "[-] Connecting to $s\n";
+      $s->connect();
+      echo "[-] Launching the update:\n";
+      if (empty($fname)) {
+          Update::server($s);
+      } else {
+          Update::server($s, $fname);
+      }
+      exit(0);
   }
 
-
   if (isset($opts['d'])) {
-    if ($s->fetchFromField("hostname")) {
-      echo "[!] Server not found in DB..\n";
-      exit(2);
-    }
-    $s->fetchAll();
-    echo "[-] Fetch of $s complete, now deleting...\n";
-    $s->delete();
-    echo "[-] Deleted $s\n";
-    exit(0);
+      if ($s->fetchFromField("hostname")) {
+          echo "[!] Server not found in DB..\n";
+          exit(2);
+      }
+      $s->fetchAll();
+      echo "[-] Fetch of $s complete, now deleting...\n";
+      $s->delete();
+      echo "[-] Deleted $s\n";
+      exit(0);
   }
 
   /* if we're here, we should show the server... */
   if ($s->fetchFromField("hostname")) {
-    echo "[!] Server not found in DB..\n";
-    exit(2);
+      echo "[!] Server not found in DB..\n";
+      exit(2);
   }
   $s->fetchAll(1);
   $s->dump();

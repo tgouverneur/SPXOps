@@ -10,26 +10,25 @@
  * @category libs
  * @filesource
  */
-
 class Hook
 {
   private $_class = null;
-  private $_fct = null;
-  private $_hn = -1; // Hook Number
+    private $_fct = null;
+    private $_hn = -1; // Hook Number
 
-  public function __construct($hn, $class, $fct) {
-    $this->_class = $class;
-    $this->_fct = $fct;
-    $this->_hn = $hn;
+  public function __construct($hn, $class, $fct)
+  {
+      $this->_class = $class;
+      $this->_fct = $fct;
+      $this->_hn = $hn;
   }
 
-  public function call($arg = null) {
-    if ($this->_class) {
-      return call_user_func_array(array($this->_class, $this->_fct), $arg);
-    } else {
-      return call_user_func_array($this->_fct, $arg);
+    public function call($arg = null)
+    {
+        if ($this->_class) {
+            return call_user_func_array(array($this->_class, $this->_fct), $arg);
+        } else {
+            return call_user_func_array($this->_fct, $arg);
+        }
     }
-  }
 }
-
-?>

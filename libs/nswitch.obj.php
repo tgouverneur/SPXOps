@@ -10,75 +10,76 @@
  * @subpackage backend
  * @filesource
  */
-
-
 class NSwitch extends mysqlObj
 {
   public $id = -1;
-  public $did = '';
-  public $name = '';
-  public $sfver = '';
-  public $platform = '';
-  public $location = '';
-  public $oid = '';
-  public $t_add = -1;
-  public $t_upd = -1;
-  
-  public $a_net = array();
+    public $did = '';
+    public $name = '';
+    public $sfver = '';
+    public $platform = '';
+    public $location = '';
+    public $oid = '';
+    public $t_add = -1;
+    public $t_upd = -1;
+
+    public $a_net = array();
 
   /* Logging */
   private $_log = null;
- 
-  public function log($str, $level) {
-    Logger::log($str, $this, $level);
-  }
 
-  public function fetchAll($all = 1) {
-
-    try {
-
-      $this->fetchRL('a_net');
-
-    } catch (Exception $e) {
-      throw($e);
-    }
-  }
-
-  public function delete() {
-
-    $this->log("Asked to delete $this", LLOG_DEBUG);
-    foreach($this->_rel as $r) {
-      $this->log("Treating $r", LLOG_DEBUG);
-      if ($this->{$r->ar} && count($this->{$r->ar})) {
-	foreach($this->{$r->ar} as $e) {
-          $this->log("Deleting $e", LLOG_DEBUG);
-	  $e->delete();
-	}
-      }
+    public function log($str, $level)
+    {
+        Logger::log($str, $this, $level);
     }
 
-    $this->log('Deleting now myself...', LLOG_INFO);
-    parent::delete();
-  }
+    public function fetchAll($all = 1)
+    {
+        try {
+            $this->fetchRL('a_net');
+        } catch (Exception $e) {
+            throw($e);
+        }
+    }
 
-  public function __toString() {
-    if (!empty($this->name)) return $this->name;
-    return $this->did;
-  }
+    public function delete()
+    {
+        $this->log("Asked to delete $this", LLOG_DEBUG);
+        foreach ($this->_rel as $r) {
+            $this->log("Treating $r", LLOG_DEBUG);
+            if ($this->{$r->ar} && count($this->{$r->ar})) {
+                foreach ($this->{$r->ar} as $e) {
+                    $this->log("Deleting $e", LLOG_DEBUG);
+                    $e->delete();
+                }
+            }
+        }
 
-  public function dump() {
+        $this->log('Deleting now myself...', LLOG_INFO);
+        parent::delete();
+    }
 
-  }
+    public function __toString()
+    {
+        if (!empty($this->name)) {
+            return $this->name;
+        }
 
- /**
-  * ctor
-  */
-  public function __construct($id=-1)
+        return $this->did;
+    }
+
+    public function dump()
+    {
+    }
+
+  /**
+   * ctor
+   */
+  public function __construct($id = -1)
   {
-    $this->id = $id;
-    $this->_table = 'list_switch';
-    $this->_nfotable = null;
-    $this->_my = array(
+      $this->id = $id;
+      $this->_table = 'list_switch';
+      $this->_nfotable = null;
+      $this->_my = array(
                         'id' => SQL_INDEX,
                         'did' => SQL_PROPE|SQL_EXIST,
                         'name' => SQL_PROPE,
@@ -87,9 +88,9 @@ class NSwitch extends mysqlObj
                         'location' => SQL_PROPE,
                         'oid' => SQL_PROPE,
                         't_add' => SQL_PROPE,
-                        't_upd' => SQL_PROPE
+                        't_upd' => SQL_PROPE,
                  );
-    $this->_myc = array( /* mysql => class */
+      $this->_myc = array( /* mysql => class */
                         'id' => 'id',
                         'did' => 'did',
                         'name' => 'name',
@@ -98,14 +99,11 @@ class NSwitch extends mysqlObj
                         'location' => 'location',
                         'oid' => 'oid',
                         't_add' => 't_add',
-                        't_upd' => 't_upd'
+                        't_upd' => 't_upd',
                  );
 
-    $this->_addRL("a_net", "Net", array('id' => 'fk_switch'));
+      $this->_addRL("a_net", "Net", array('id' => 'fk_switch'));
 
-    $this->_log = Logger::getInstance();
-
+      $this->_log = Logger::getInstance();
   }
-
 }
-?>

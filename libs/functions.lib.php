@@ -1,56 +1,69 @@
 <?php
 
-function getVal($ar, $name) {
-  if (isset($ar[$name])) {
-    return $ar[$name];
-  }
-  return null;
-}
-
-function parseFrequency($f) {
-  if ($f >= 2678400) {
-    $months = round($f/2678400);
-    return $months.'m';
-  }
-  if ($f >= 604800) {
-    $week = round($f/604800);
-    return $week.'w';
-  }
-  if ($f >= 86400) {
-    $day = round($f/86400);
-    return $day.'d';
-  }
-  if ($f >= 3600) {
-    $hour = round($f/3600);
-    return $hour.'h';
-  }
-   if ($f >= 60) {
-    $min = round($f/60);
-    return $min.'m';
-  }
-  return $f.'s';
-}
-
-function parseVars($c) {
-  $lines = explode(PHP_EOL, $c);
-  $rc = array();
-  foreach($lines as $line) {
-    $line = trim($line);
-    if (empty($line))
-      continue;
-
-    $v = explode('=', $line, 2);
-    if (count($v) == 2) {
-      $v[1] = trim(preg_replace('/(^"|"$)/', '', $v[1]));
-      $v[0] = trim($v[0]);
-      $rc[$v[0]] = $v[1];
+function getVal($ar, $name)
+{
+    if (isset($ar[$name])) {
+        return $ar[$name];
     }
-  }
-  return $rc;
+
+    return;
 }
 
-function parseBool($b) {
-  switch (strtoupper($b)) {
+function parseFrequency($f)
+{
+    if ($f >= 2678400) {
+        $months = round($f/2678400);
+
+        return $months.'m';
+    }
+    if ($f >= 604800) {
+        $week = round($f/604800);
+
+        return $week.'w';
+    }
+    if ($f >= 86400) {
+        $day = round($f/86400);
+
+        return $day.'d';
+    }
+    if ($f >= 3600) {
+        $hour = round($f/3600);
+
+        return $hour.'h';
+    }
+    if ($f >= 60) {
+        $min = round($f/60);
+
+        return $min.'m';
+    }
+
+    return $f.'s';
+}
+
+function parseVars($c)
+{
+    $lines = explode(PHP_EOL, $c);
+    $rc = array();
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if (empty($line)) {
+            continue;
+        }
+
+        $v = explode('=', $line, 2);
+        if (count($v) == 2) {
+            $v[1] = trim(preg_replace('/(^"|"$)/', '', $v[1]));
+            $v[0] = trim($v[0]);
+            $rc[$v[0]] = $v[1];
+        }
+    }
+
+    return $rc;
+}
+
+function parseBool($b)
+{
+    switch (strtoupper($b)) {
     case "TRUE":
       return 1;
     break;
@@ -61,31 +74,47 @@ function parseBool($b) {
   }
 }
 
-function formatBytes($k) {
-  $k /= 1024;
-  if ($k < 1024) { return round($k, 2)." KB"; }
-  $k = $k / 1024;
-  if ($k < 1024) { return round($k, 2)." MB"; }
-  $k = $k / 1024;
-  if ($k < 1024) { return round($k, 2)." GB"; }
-  $k = $k / 1024;
-  if ($k < 1024) { return round($k, 2)." TB"; }
-  $k = $k / 1024;
-  return round($k, 2)." PB";
+function formatBytes($k)
+{
+    $k /= 1024;
+    if ($k < 1024) {
+        return round($k, 2)." KB";
+    }
+    $k = $k / 1024;
+    if ($k < 1024) {
+        return round($k, 2)." MB";
+    }
+    $k = $k / 1024;
+    if ($k < 1024) {
+        return round($k, 2)." GB";
+    }
+    $k = $k / 1024;
+    if ($k < 1024) {
+        return round($k, 2)." TB";
+    }
+    $k = $k / 1024;
+
+    return round($k, 2)." PB";
 }
 
+function formatBlocks($k)
+{
+    if ($k < 1024) {
+        return round($k)." KB";
+    }
+    $k = $k / 1024;
+    if ($k < 1024) {
+        return round($k, 2)." MB";
+    }
+    $k = $k / 1024;
+    if ($k < 1024) {
+        return round($k, 2)." GB";
+    }
+    $k = $k / 1024;
+    if ($k < 1024) {
+        return round($k, 2)." TB";
+    }
+    $k = $k / 1024;
 
-function formatBlocks($k) {
-  if ($k < 1024) { return round($k)." KB"; }
-  $k = $k / 1024;
-  if ($k < 1024) { return round($k, 2)." MB"; }
-  $k = $k / 1024;
-  if ($k < 1024) { return round($k, 2)." GB"; }
-  $k = $k / 1024;
-  if ($k < 1024) { return round($k, 2)." TB"; }
-  $k = $k / 1024;
-  return round($k)." PB";
+    return round($k)." PB";
 }
-
-
-?>

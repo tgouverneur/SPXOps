@@ -10,239 +10,266 @@
  * @category libs
  * @filesource
  */
-
-
 class HTTP
 {
   private static $_instance;    /* instance of the class */
 
   public $argc;
-  public $argv;
-  public $css;
+    public $argv;
+    public $css;
 
-  public function isAjax()
-  {
-    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-	$_SERVER['HTTP_X_REQUESTED_WITH'] == "XMLHttpRequest") {
-      return true;
+    public function isAjax()
+    {
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+    $_SERVER['HTTP_X_REQUESTED_WITH'] == "XMLHttpRequest") {
+            return true;
+        }
+
+        return false;
     }
-    return false;
-  }
 
-  public static function errMysql() {
-    global $start_time;
-    $index = new Template("../tpl/index.tpl");
-    $head = new Template("../tpl/head.tpl");
-    $foot = new Template("../tpl/foot.tpl");
-    $foot->set("start_time", $start_time);
-    $content = new Template("../tpl/error.tpl");
-    $content->set('error', "An error has occurred with the SQL Server and we were unable to process your request...");
-    $index->set("head", $head);
-    $index->set("content", $content);
-    $index->set("foot", $foot);
-    echo $index->fetch();
-    exit(0);
-  }
+    public static function errMysql()
+    {
+        global $start_time;
+        $index = new Template("../tpl/index.tpl");
+        $head = new Template("../tpl/head.tpl");
+        $foot = new Template("../tpl/foot.tpl");
+        $foot->set("start_time", $start_time);
+        $content = new Template("../tpl/error.tpl");
+        $content->set('error', "An error has occurred with the SQL Server and we were unable to process your request...");
+        $index->set("head", $head);
+        $index->set("content", $content);
+        $index->set("foot", $foot);
+        echo $index->fetch();
+        exit(0);
+    }
 
-  public static function errWWW($e) {
-    global $start_time;
-    $lm = loginCM::getInstance();
+    public static function errWWW($e)
+    {
+        global $start_time;
+        $lm = loginCM::getInstance();
 
-    $index = new Template("../tpl/index.tpl");
-    $head = new Template("../tpl/head.tpl");
-    $foot = new Template("../tpl/foot.tpl");
-    $foot->set("start_time", $start_time);
-    $content = new Template("../tpl/error.tpl");
-    $content->set("error", $e);
+        $index = new Template("../tpl/index.tpl");
+        $head = new Template("../tpl/head.tpl");
+        $foot = new Template("../tpl/foot.tpl");
+        $foot->set("start_time", $start_time);
+        $content = new Template("../tpl/error.tpl");
+        $content->set("error", $e);
 
-    $page = array();
-    $page['title'] = 'That\'s some bad hat harry';
-    if ($lm->o_login) $page['login'] = &$lm->o_login;
+        $page = array();
+        $page['title'] = 'That\'s some bad hat harry';
+        if ($lm->o_login) {
+            $page['login'] = &$lm->o_login;
+        }
 
-    $head->set('page', $page);
-    $index->set("head", $head);
-    $index->set("content", $content);
-    $index->set("foot", $foot);
-    echo $index->fetch();
-    exit(0);
-  }
+        $head->set('page', $page);
+        $index->set("head", $head);
+        $index->set("content", $content);
+        $index->set("foot", $foot);
+        echo $index->fetch();
+        exit(0);
+    }
 
-  public function parseUrl() {
-    /*if (count($_GET)) {
-	return;
+    public function parseUrl()
+    {
+        /*if (count($_GET)) {
+    return;
     }*/
-    if(!isset($_SERVER['PATH_INFO'])) {
-      return;
+    if (!isset($_SERVER['PATH_INFO'])) {
+        return;
     }
-    $url = explode('/',$_SERVER['PATH_INFO']);
-    $g = array();
-    $idx = "";
-    $val = "";
-    for ($i=1,$s=0; $i<count($url); $i++) {
-      if ($s == 0) {
-	$idx = $url[$i];
-	$g[$idx] = "";
-	$s++;
-      } else {
-        $val = $url[$i];
-	$g[$idx] = $val;
+        $url = explode('/', $_SERVER['PATH_INFO']);
+        $g = array();
         $idx = "";
-	$val = "";
-	$s=0;
-      }
-    }
+        $val = "";
+        for ($i = 1, $s = 0; $i<count($url); $i++) {
+            if ($s == 0) {
+                $idx = $url[$i];
+                $g[$idx] = "";
+                $s++;
+            } else {
+                $val = $url[$i];
+                $g[$idx] = $val;
+                $idx = "";
+                $val = "";
+                $s = 0;
+            }
+        }
     //$_GET = $g;
     $_GET = array_merge($_GET, $g);
-    return;
-  }
 
-  public static function eval_img($cond) {
-    if ($cond) {
-      return '<img src="/img/tick.png" alt="true"/>';
-    } else {
-      return '<img src="/img/cross.png" alt="false"/>';
+        return;
     }
-  }
 
-  public static function redirect($url) {
-    header("Status: 301 Moved Permanently");
-    header("Location: ".$url);
-    exit();
-  }
+    public static function eval_img($cond)
+    {
+        if ($cond) {
+            return '<img src="/img/tick.png" alt="true"/>';
+        } else {
+            return '<img src="/img/cross.png" alt="false"/>';
+        }
+    }
 
- /**
-  * return the instance of HTTP object
-  */
+    public static function redirect($url)
+    {
+        header("Status: 301 Moved Permanently");
+        header("Location: ".$url);
+        exit();
+    }
+
+  /**
+   * return the instance of HTTP object
+   */
   public static function getInstance()
-  { 
-    if (!isset(self::$_instance)) {
-     $c = __CLASS__;
-     self::$_instance = new $c;
-    }
-    return self::$_instance;
+  {
+      if (!isset(self::$_instance)) {
+          $c = __CLASS__;
+          self::$_instance = new $c();
+      }
+
+      return self::$_instance;
   }
 
- /**
-  * Avoid the __clone method to be called
-  */
+  /**
+   * Avoid the __clone method to be called
+   */
   public function __clone()
-  { 
-    trigger_error("Cannot clone a singlton object, use ::instance()", E_USER_ERROR);
+  {
+      trigger_error("Cannot clone a singlton object, use ::instance()", E_USER_ERROR);
   }
 
- /**
-  * Get the http post/get variable
-  * @arg Name of the variable to get
-  * @return the variable, with POST->GET priority
-  */
-  public function getHTTPVar($name) {
-    global $_GET, $_POST;
-   
+  /**
+   * Get the http post/get variable
+   * @arg Name of the variable to get
+   * @return the variable, with POST->GET priority
+   */
+  public function getHTTPVar($name)
+  {
+      global $_GET, $_POST;
+
     /* first check POST, then fallback on GET */
-    if (isset($_POST[$name])) return $_POST[$name];
-    if (isset($_GET[$name])) return $_GET[$name];
-    return NULL;
-  }
-
- /**
-  * Sanitize an array by escaping the strings inside.
-  * @arg Name of the variable to sanitize
-  */
-  public function sanitizeArray(&$var) {
-
-    foreach($var as $name => $value) {
-
-      if (is_array($value)) { 
-        $this->sanitizeArray($value); 
-        continue; 
+    if (isset($_POST[$name])) {
+        return $_POST[$name];
+    }
+      if (isset($_GET[$name])) {
+          return $_GET[$name];
       }
 
-      $var[$name] = mysql_escape_string($value);
-
-    }
+      return;
   }
 
-  public static function checkEmail($email) {
-      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-          return false;
+  /**
+   * Sanitize an array by escaping the strings inside.
+   * @arg Name of the variable to sanitize
+   */
+  public function sanitizeArray(&$var)
+  {
+      foreach ($var as $name => $value) {
+          if (is_array($value)) {
+              $this->sanitizeArray($value);
+              continue;
+          }
+
+          $var[$name] = mysql_escape_string($value);
       }
-      return true;
   }
 
-  public static function getDateTimeFormat() {
-    global $config;
-    return $config['datetimeFormat'];
-  } 
+    public static function checkEmail($email)
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
 
-  public static function getDateFormat() {
-    global $config;
-    return $config['dateFormat'];
-  } 
-
-  public static function pagine($current_page, $nb_pages, $link='/page/%d', $around=3, $firstlast=1) {
-	$pagination = '';
-	$link = preg_replace('`%([^d])`', '%%$1', $link);
-	if ( !preg_match('`(?<!%)%d`', $link) ) $link .= '%d';
-	if ( $nb_pages > 1 ) {
-
-		// Lien précédent
-		if ( $current_page > 1 )
-			$pagination .= '<a class="prevnext" href="'.sprintf($link, $current_page-1).'" title="Previous">&lt;&lt; Previous</a>';
-		else
-			$pagination .= '<span class="prevnext disabled">&lt;&lt; Previous</span>';
-
-		// Lien(s) début
-		for ( $i=1 ; $i<=$firstlast ; $i++ ) {
-			$pagination .= ' ';
-			$pagination .= ($current_page==$i) ? '<span class="current">'.$i.'</span>' : '<a href="'.sprintf($link, $i).'">'.$i.'</a>';
-		}
-
-		// ... après pages début ?
-		if ( ($current_page-$around) > $firstlast+1 )
-			$pagination .= ' &hellip;';
-
-		// On boucle autour de la page courante
-		$start = ($current_page-$around)>$firstlast ? $current_page-$around : $firstlast+1;
-		$end = ($current_page+$around)<=($nb_pages-$firstlast) ? $current_page+$around : $nb_pages-$firstlast;
-		for ( $i=$start ; $i<=$end ; $i++ ) {
-			$pagination .= ' ';
-			if ( $i==$current_page )
-				$pagination .= '<span class="current">'.$i.'</span>';
-			else
-				$pagination .= '<a href="'.sprintf($link, $i).'">'.$i.'</a>';
-		}
-
-		// ... avant page nb_pages ?
-		if ( ($current_page+$around) < $nb_pages-$firstlast )
-			$pagination .= ' &hellip;';
-
-		// Lien(s) fin
-		$start = $nb_pages-$firstlast+1;
-		if( $start <= $firstlast ) $start = $firstlast+1;
-		for ( $i=$start ; $i<=$nb_pages ; $i++ ) {
-			$pagination .= ' ';
-			$pagination .= ($current_page==$i) ? '<span class="current">'.$i.'</span>' : '<a href="'.sprintf($link, $i).'">'.$i.'</a>';
-		}
-
-		// Lien suivant
-		if ( $current_page < $nb_pages )
-			$pagination .= ' <a class="prevnext" href="'.sprintf($link, ($current_page+1)).'" title="Next">Next &gt;&gt;</a>';
-		else
-			$pagination .= ' <span class="prevnext disabled">Next &gt;&gt;</span>';
-	}
-	return $pagination;
-  }
-
-  public static function linkize($str) {
-    if (preg_match("/[0-9]{6}-[0-9]{2}/", $str)) {
-      $str = preg_replace('/([0-9]{6}-[0-9]{2})/i', '<a href="/patch/id/$1">$1</a>', $str);
-      return $str;
+        return true;
     }
-    return $str;
-  }
 
+    public static function getDateTimeFormat()
+    {
+        global $config;
 
+        return $config['datetimeFormat'];
+    }
+
+    public static function getDateFormat()
+    {
+        global $config;
+
+        return $config['dateFormat'];
+    }
+
+    public static function pagine($current_page, $nb_pages, $link = '/page/%d', $around = 3, $firstlast = 1)
+    {
+        $pagination = '';
+        $link = preg_replace('`%([^d])`', '%%$1', $link);
+        if (!preg_match('`(?<!%)%d`', $link)) {
+            $link .= '%d';
+        }
+        if ($nb_pages > 1) {
+
+        // Lien précédent
+        if ($current_page > 1) {
+            $pagination .= '<a class="prevnext" href="'.sprintf($link, $current_page-1).'" title="Previous">&lt;&lt; Previous</a>';
+        } else {
+            $pagination .= '<span class="prevnext disabled">&lt;&lt; Previous</span>';
+        }
+
+        // Lien(s) début
+        for ($i = 1; $i <= $firstlast; $i++) {
+            $pagination .= ' ';
+            $pagination .= ($current_page == $i) ? '<span class="current">'.$i.'</span>' : '<a href="'.sprintf($link, $i).'">'.$i.'</a>';
+        }
+
+        // ... après pages début ?
+        if (($current_page-$around) > $firstlast+1) {
+            $pagination .= ' &hellip;';
+        }
+
+        // On boucle autour de la page courante
+        $start = ($current_page-$around)>$firstlast ? $current_page-$around : $firstlast+1;
+            $end = ($current_page+$around) <= ($nb_pages-$firstlast) ? $current_page+$around : $nb_pages-$firstlast;
+            for ($i = $start; $i <= $end; $i++) {
+                $pagination .= ' ';
+                if ($i == $current_page) {
+                    $pagination .= '<span class="current">'.$i.'</span>';
+                } else {
+                    $pagination .= '<a href="'.sprintf($link, $i).'">'.$i.'</a>';
+                }
+            }
+
+        // ... avant page nb_pages ?
+        if (($current_page+$around) < $nb_pages-$firstlast) {
+            $pagination .= ' &hellip;';
+        }
+
+        // Lien(s) fin
+        $start = $nb_pages-$firstlast+1;
+            if ($start <= $firstlast) {
+                $start = $firstlast+1;
+            }
+            for ($i = $start; $i <= $nb_pages; $i++) {
+                $pagination .= ' ';
+                $pagination .= ($current_page == $i) ? '<span class="current">'.$i.'</span>' : '<a href="'.sprintf($link, $i).'">'.$i.'</a>';
+            }
+
+        // Lien suivant
+        if ($current_page < $nb_pages) {
+            $pagination .= ' <a class="prevnext" href="'.sprintf($link, ($current_page+1)).'" title="Next">Next &gt;&gt;</a>';
+        } else {
+            $pagination .= ' <span class="prevnext disabled">Next &gt;&gt;</span>';
+        }
+        }
+
+        return $pagination;
+    }
+
+    public static function linkize($str)
+    {
+        if (preg_match("/[0-9]{6}-[0-9]{2}/", $str)) {
+            $str = preg_replace('/([0-9]{6}-[0-9]{2})/i', '<a href="/patch/id/$1">$1</a>', $str);
+
+            return $str;
+        }
+
+        return $str;
+    }
 }
-
-
-?>

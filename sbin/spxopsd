@@ -1,65 +1,69 @@
 #!/usr/bin/php
 <?php
- require_once(dirname(__FILE__)."/../libs/autoload.lib.php");
- require_once(dirname(__FILE__)."/../libs/config.inc.php");
- require_once(dirname(__FILE__)."/../libs/daemon.obj.php");
+ require_once dirname(__FILE__)."/../libs/autoload.lib.php";
+ require_once dirname(__FILE__)."/../libs/config.inc.php";
+ require_once dirname(__FILE__)."/../libs/daemon.obj.php";
 
- class SPXOpsd implements Daemonizable {
+ class SPXOpsd implements Daemonizable
+ {
 
   private $_lrun = 0;
-  private $_crun = 0;
-  private $_jexec = 0;
-  private $_interval = 1;
-  private $_logfd = 0;
-  private $_foreground = false;
-  private $_nrProcess = 1;
+     private $_crun = 0;
+     private $_jexec = 0;
+     private $_interval = 1;
+     private $_logfd = 0;
+     private $_foreground = false;
+     private $_nrProcess = 1;
 
-  private $_networkPid = 0;
-  private $_network = null;
+     private $_networkPid = 0;
+     private $_network = null;
 
-  public $pid = -1;
-  public $ppid = -1;
-  public $curProcess = 1;
-  public $f_master = 0;
-  public $f_network = 0;
+     public $pid = -1;
+     public $ppid = -1;
+     public $curProcess = 1;
+     public $f_master = 0;
+     public $f_network = 0;
 
-  public $nr = 0;
+     public $nr = 0;
 
-  public function setForeground($f = false) {
-    $this->_foreground = $f;
-  }
+     public function setForeground($f = false)
+     {
+         $this->_foreground = $f;
+     }
 
-  public function log($str, $lvl = LLOG_INFO) {
-    $obj = null;
-    Logger::log($str, $obj, $lvl);
-  }
+     public function log($str, $lvl = LLOG_INFO)
+     {
+         $obj = null;
+         Logger::log($str, $obj, $lvl);
+     }
 
   /* Main run () */
-  public function run() {
+  public function run()
+  {
+      try {
+          $m = mysqlCM::getInstance();
+          if ($m->isLink()) {
+              $m->disconnect();
+          }
+          if ($m->connect()) {
+              $this->log(" Error with SQL db: ".$m->getError());
+              sleep($this->_interval);
 
-    try {
-      $m = mysqlCM::getInstance();
-      if ($m->isLink()) {
-          $m->disconnect();
+              return -1;
+          }
+      } catch (Exception $e) {
+          sleep($this->_interval);
+          throw($e);
       }
-      if ($m->connect()) {
-        $this->log(" Error with SQL db: ".$m->getError());
-        sleep($this->_interval);
-        return -1;
-      }
-    } catch (Exception $e) {
-      sleep($this->_interval);
-      throw($e);
-    }
 
-    $this->log('Entering run() ['.$this->f_master.']('.$this->pid.':'.$this->ppid.')', LLOG_DEBUG);
-   
+      $this->log('Entering run() ['.$this->f_master.']('.$this->pid.':'.$this->ppid.')', LLOG_DEBUG);
+
     /* update last run time */
     $this->_lrun = $this->_crun;
-    $this->_crun = time();
-    $this->log("Previous run: ".$this->_lrun, LLOG_DEBUG);
-    $this->log("New run: ".$this->_crun, LLOG_DEBUG);
-    
+      $this->_crun = time();
+      $this->log("Previous run: ".$this->_lrun, LLOG_DEBUG);
+      $this->log("New run: ".$this->_crun, LLOG_DEBUG);
+
     /* Ping pid() */
     try {
         $this->log('>'.$this->nr++.' Pid::ping($this)', LLOG_DEBUG);
@@ -71,12 +75,16 @@
     }
 
     /* refresh main settings */
-    try { 
+    try {
         Setting::fetchAll();
         $interval = Setting::get('daemon', 'sleepTime');
         $nrProcess = Setting::get('daemon', 'nrProcess');
-        if ($interval) $this->setInterval($interval->value);
-        if ($nrProcess) $this->setNrProcess($nrProcess->value);
+        if ($interval) {
+            $this->setInterval($interval->value);
+        }
+        if ($nrProcess) {
+            $this->setNrProcess($nrProcess->value);
+        }
     } catch (Exception $e) {
         $this->log('Cannot fetch Settings::fetchAll():'.$e->getMessage(), LLOG_DEBUG);
         $this->log('BT: '.$e->getTraceAsString().':', LLOG_DEBUG);
@@ -84,219 +92,244 @@
 
     /* Check for other eventually died pids or locks */
     if ($this->f_master) {
-      /* check if network thread has died */
+        /* check if network thread has died */
       if ($this->f_network && $this->_networkPid) {
-        $this->_networkPid->checkMe($this);
-        if ($this->_networkPid->f_dead) {
-          Logger::log("Network Pid ".$this->_networkPid." has died", $this, LLOG_DEBUG);
-          $this->_networkPid = 0;
-          $this->network = null;
-        }
+          $this->_networkPid->checkMe($this);
+          if ($this->_networkPid->f_dead) {
+              Logger::log("Network Pid ".$this->_networkPid." has died", $this, LLOG_DEBUG);
+              $this->_networkPid = 0;
+              $this->network = null;
+          }
       }
       /* check if we haven't yet started a network pid, if needed */
       if ($this->f_network && !$this->_networkPid) {
-        $this->_networkPid = $this->spawnNetwork();
-        $this->log("Spawned network process: ".$this->_networkPid, LLOG_DEBUG);
+          $this->_networkPid = $this->spawnNetwork();
+          $this->log("Spawned network process: ".$this->_networkPid, LLOG_DEBUG);
       }
       /* first, reap eventual dead childs */
       $this->sigchld();
-      Pid::check($this);
-      Pid::checkLocks($this);
-      if (!$this->_foreground) {
-        while($this->curProcess < $this->_nrProcess) {
-          $pid = $this->spawnProcess();
-          $this->log("Spawned other process: $pid", LLOG_DEBUG);
-          $this->curProcess++;
-        }
-      }
-      /* Check that running jobs have an associated valid pid,
-	 otherwise, they should be flagged as stalled jobs
-      */
-      $jobs = Job::getAll(true, array('state' => S_RUN));
-      foreach($jobs as $job) {
-        if ($job->fk_pid > 0) {
-            $pid = new Pid($job->fk_pid);
-            if ($pid->fetchFromId()) {
-              Logger::log("Set as STALLED stalled job $job because pid doesn't exist ", $pid, LLOG_DEBUG);
-              $job->state = S_STALL;
-              $job->fk_pid = -1; 
-              $job->update();
+        Pid::check($this);
+        Pid::checkLocks($this);
+        if (!$this->_foreground) {
+            while ($this->curProcess < $this->_nrProcess) {
+                $pid = $this->spawnProcess();
+                $this->log("Spawned other process: $pid", LLOG_DEBUG);
+                $this->curProcess++;
             }
         }
-      }
+      /* Check that running jobs have an associated valid pid,
+     otherwise, they should be flagged as stalled jobs
+      */
+      $jobs = Job::getAll(true, array('state' => S_RUN));
+        foreach ($jobs as $job) {
+            if ($job->fk_pid > 0) {
+                $pid = new Pid($job->fk_pid);
+                if ($pid->fetchFromId()) {
+                    Logger::log("Set as STALLED stalled job $job because pid doesn't exist ", $pid, LLOG_DEBUG);
+                    $job->state = S_STALL;
+                    $job->fk_pid = -1;
+                    $job->update();
+                }
+            }
+        }
     }
 
-    if (!$this->f_master ||
-	$this->_foreground) { /* Only child are doing the reluctant work ... */
+      if (!$this->f_master ||
+    $this->_foreground) { /* Only child are doing the reluctant work ... */
       try {
-        $j = Job::fetchFirst($this);
-        if ($j) {
-          $this->log("Trying to execute job :$j", LLOG_DEBUG);
-          $j->runJob();
-        }
+          $j = Job::fetchFirst($this);
+          if ($j) {
+              $this->log("Trying to execute job :$j", LLOG_DEBUG);
+              $j->runJob();
+          }
       } catch (Exception $e) {
-        sleep($this->_interval);
-        throw($e);
+          sleep($this->_interval);
+          throw($e);
       }
 
       /* See if it's time to add some recurrent jobs */
       if (Lock::lockFctIfNot('rjob')) {
-        $this->log("Locked RJob function for our usage", LLOG_DEBUG);
-        $rjobs = RJob::getAll();
-        foreach($rjobs as $rjob) {
-          if (($rjob->t_last + $rjob->frequency) <= $this->_crun) { // RUN IT FFS!
+          $this->log("Locked RJob function for our usage", LLOG_DEBUG);
+          $rjobs = RJob::getAll();
+          foreach ($rjobs as $rjob) {
+              if (($rjob->t_last + $rjob->frequency) <= $this->_crun) { // RUN IT FFS!
             $this->log("Added $rjob to the job queue ", LLOG_INFO);
-            $rjob->addIt();
-            $rjob->t_last = $this->_crun;
-            $rjob->update();
+                  $rjob->addIt();
+                  $rjob->t_last = $this->_crun;
+                  $rjob->update();
+              }
           }
-        }
-        $this->log("Unlocking RJob function", LLOG_DEBUG);
-        Lock::unlockFct('rjob');
+          $this->log("Unlocking RJob function", LLOG_DEBUG);
+          Lock::unlockFct('rjob');
       } else {
-        $this->log("RJob function locked or cannot acquire lock..", LLOG_WARN);
+          $this->log("RJob function locked or cannot acquire lock..", LLOG_WARN);
       }
 
       /* Check for Stalled jobs */
       try {
-        $f = array();
-        $f['state'] = 'CST:'.S_RUN;
-        $f['pid'] = $this->pid;
-        $fjobs = Job::getAll(true, $f);
-        foreach($fjobs as $fjob) {
-          $fjob->state = S_FAIL;
-          $fjob->update();
-          $this->log("Job $fjob has been set to FAILED as we were responsible for it...", LLOG_WARN);
-        }
+          $f = array();
+          $f['state'] = 'CST:'.S_RUN;
+          $f['pid'] = $this->pid;
+          $fjobs = Job::getAll(true, $f);
+          foreach ($fjobs as $fjob) {
+              $fjob->state = S_FAIL;
+              $fjob->update();
+              $this->log("Job $fjob has been set to FAILED as we were responsible for it...", LLOG_WARN);
+          }
       } catch (Exception $e) {
-        sleep($this->_interval);
-        throw($e);
+          sleep($this->_interval);
+          throw($e);
       }
-    }
-    $m->disconnect();
-    $this->log("sleeping..", LLOG_DEBUG);
-    sleep($this->_interval);
+      }
+      $m->disconnect();
+      $this->log("sleeping..", LLOG_DEBUG);
+      sleep($this->_interval);
 //    pcntl_signal_dispatch();
     return 0;
   }
 
-  public function setNrProcess($i) {
-    $this->_nrProcess = $i;
-  }
+     public function setNrProcess($i)
+     {
+         $this->_nrProcess = $i;
+     }
 
-  public function setInterval($i) {
-    $this->_interval = $i;
-  }
+     public function setInterval($i)
+     {
+         $this->_interval = $i;
+     }
 
-  public function start() {
-    global $config;
-    if (!$this->f_master && $this->ppid) {
-      $config['spxopsd']['log'] = $config['spxopsd']['log'].'-'.$this->pid;
-    }
-    if (!$this->_foreground) Logger::openLog();
+     public function start()
+     {
+         global $config;
+         if (!$this->f_master && $this->ppid) {
+             $config['spxopsd']['log'] = $config['spxopsd']['log'].'-'.$this->pid;
+         }
+         if (!$this->_foreground) {
+             Logger::openLog();
+         }
 
-    $m = mysqlCM::getInstance();
-    if ($m->isLink()) {
-        $m->disconnect();
-    }
+         $m = mysqlCM::getInstance();
+         if ($m->isLink()) {
+             $m->disconnect();
+         }
     //$m->disconnect();
     //if ($m->connect()) {
     //  die($argv[0]." Error with SQL db: ".$m->getError()."\n");
     // }
-  }
+     }
 
-  public function cleanup() {
-    if (!$this->_foreground) Logger::closeLog();
-  }
-
+     public function cleanup()
+     {
+         if (!$this->_foreground) {
+             Logger::closeLog();
+         }
+     }
 
   /* Signal management */
 
-  public function sigchld() {
-    while(true) {
-       $p = pcntl_waitpid(-1, $status, WNOHANG);  
-       if($p > 0){ 
-         $this->log("We just reaped a child: $p", LLOG_WARN);
-       } else {
-         return;
-       }
-    }
+  public function sigchld()
+  {
+      while (true) {
+          $p = pcntl_waitpid(-1, $status, WNOHANG);
+          if ($p > 0) {
+              $this->log("We just reaped a child: $p", LLOG_WARN);
+          } else {
+              return;
+          }
+      }
   }
 
-  public function sigterm() {
-    $this->cleanup();
-    die();
-  }
+     public function sigterm()
+     {
+         $this->cleanup();
+         die();
+     }
 
-  public function sighup() {
-    if (!$this->_foreground) Logger::openLog();
-    if (!$this->_foreground) Logger::closeLog();
-  }
- 
-  public function sigkill() {
-    $this->cleanup();
-    die();
-  }
+     public function sighup()
+     {
+         if (!$this->_foreground) {
+             Logger::openLog();
+         }
+         if (!$this->_foreground) {
+             Logger::closeLog();
+         }
+     }
 
-  public function sigusr1() {
-  }
+     public function sigkill()
+     {
+         $this->cleanup();
+         die();
+     }
 
-  public function sigusr2() {
-  }
+     public function sigusr1()
+     {
+     }
 
-  public function help() {
-    global $argv;
-    echo "$argv[0] [-hvf]\n";
-  }
+     public function sigusr2()
+     {
+     }
+
+     public function help()
+     {
+         global $argv;
+         echo "$argv[0] [-hvf]\n";
+     }
 
   /* Log management */
-  public function __construct($parent = null) {
-    if ($parent) {
-      $this->f_master = 0;
-      $this->ppid = $parent->pid;
-      $this->setForeground(false);
-      $this->_interval = $parent->getInterval();
-    } else {
-      $j = new Job();
-      unset($j);
-    }
+  public function __construct($parent = null)
+  {
+      if ($parent) {
+          $this->f_master = 0;
+          $this->ppid = $parent->pid;
+          $this->setForeground(false);
+          $this->_interval = $parent->getInterval();
+      } else {
+          $j = new Job();
+          unset($j);
+      }
   }
 
-  private function spawnNetwork() {
-    global $config;
-    $this->network = new SPXNet($config['server']['ipaddr'], $config['server']['port'], $this, 1);
-    $daemon = new Daemon($this->network, false);
-    $m = MysqlCM::getInstance();
-    $m->connect();
-    $pid = new Pid();
-    $pid->agent = $config['agentname'];
-    $pid->pid = $daemon->getPid();
-    $pid->ppid = $this->pid;
-    $pid->f_master = 0;
-    return $pid;
-  }
+     private function spawnNetwork()
+     {
+         global $config;
+         $this->network = new SPXNet($config['server']['ipaddr'], $config['server']['port'], $this, 1);
+         $daemon = new Daemon($this->network, false);
+         $m = MysqlCM::getInstance();
+         $m->connect();
+         $pid = new Pid();
+         $pid->agent = $config['agentname'];
+         $pid->pid = $daemon->getPid();
+         $pid->ppid = $this->pid;
+         $pid->f_master = 0;
 
-  private function spawnProcess() {
-    global $config;
-    $newD = new SPXOpsd($this);
-    $daemon = new Daemon($newD, false);
-    $m = MysqlCM::getInstance();
-    $m->connect();
-    $pid = new Pid();
-    $pid->agent = $config['agentname'];
-    $pid->pid = $daemon->getPid();
-    $pid->ppid = $this->pid;
-    $pid->f_master = 0;
-    return $pid;
-  }
-  public function getInterval() { return $this->_interval; }
+         return $pid;
+     }
 
+     private function spawnProcess()
+     {
+         global $config;
+         $newD = new SPXOpsd($this);
+         $daemon = new Daemon($newD, false);
+         $m = MysqlCM::getInstance();
+         $m->connect();
+         $pid = new Pid();
+         $pid->agent = $config['agentname'];
+         $pid->pid = $daemon->getPid();
+         $pid->ppid = $this->pid;
+         $pid->f_master = 0;
+
+         return $pid;
+     }
+     public function getInterval()
+     {
+         return $this->_interval;
+     }
  }
 
  // Connect to mysql
  $m = mysqlCM::getInstance();
  if ($m->connect()) {
-   die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+     die($argv[0]." Error with SQL db: ".$m->getError()."\n");
  }
 
  $spxopsd = new SPXOpsd();
@@ -305,18 +338,18 @@
  $options = getopt($opts);
 
  if (isset($options["h"])) {
-  $spxopsd->help();
-  exit(0);
+     $spxopsd->help();
+     exit(0);
  }
 
  if (isset($options["v"])) {
-   Logger::logLevel(LLOG_DEBUG);
+     Logger::logLevel(LLOG_DEBUG);
  }
 
  if (isset($options["f"])) {
-  $o['f'] = true;
+     $o['f'] = true;
  } else {
-  $o['f'] = false;
+     $o['f'] = false;
  }
 
  $spxopsd->setForeground($o['f']);
@@ -327,11 +360,11 @@
  $spxopsd->setNrProcess($nrProcess->value);
  $spxopsd->f_master = 1;
  if ($config['server']['enabled']) {
-   $spxopsd->f_network = 1;
+     $spxopsd->f_network = 1;
  }
 
  $m->disconnect();
 
- $daemon = new Daemon($spxopsd, $o['f']);  
+ $daemon = new Daemon($spxopsd, $o['f']);
 
 ?>

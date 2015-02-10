@@ -10,12 +10,15 @@
  * @subpackage backend
  * @filesource
  */
-
-class VMnet {
+class VMnet
+{
   public $mac = '';
-  public $net = '';
-  public $model = '';
-  public function __construct($m, $n, $mo) { $this->mac = $m; $this->net = $n; $this->model = $mo; }
+    public $net = '';
+    public $model = '';
+    public function __construct($m, $n, $mo)
+    {
+        $this->mac = $m;
+        $this->net = $n;
+        $this->model = $mo;
+    }
 }
-
-?>

@@ -10,81 +10,81 @@
  * @subpackage backend
  * @filesource
  */
-
-
 class OS extends mysqlObj
 {
   public $id = -1;
-  public $name = '';
-  public $uname = '';
-  public $class = '';
-  public $f_zone = 0;
+    public $name = '';
+    public $uname = '';
+    public $class = '';
+    public $f_zone = 0;
 
-  public static $binPaths = array(
+    public static $binPaths = array(
     "/bin",
     "/sbin",
     "/usr/bin",
     "/usr/sbin",
   );
 
-  public static function detect($s) {
+    public static function detect($s)
+    {
+        if (!$s) {
+            throw new SPXException('No server provided');
+        }
 
-    if (!$s) {
-      throw new SPXException('No server provided');
+        try {
+            $uname = $s->findBin('uname', OS::$binPaths);
+            $r = $s->exec($uname);
+            $oso = new OS();
+            $oso->uname = $r;
+            if ($oso->fetchFromField('uname')) {
+                throw new SPXException('OS unknown: '.$r);
+            }
+
+            return $oso;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
-   
-    try {
 
-      $uname = $s->findBin('uname', OS::$binPaths);
-      $r = $s->exec($uname);
-      $oso = new OS();
-      $oso->uname = $r;
-      if ($oso->fetchFromField('uname')) {
-        throw new SPXException('OS unknown: '.$r);
-      }
-      return $oso;
-
-    } catch (Exception $e) {
-      throw $e;
+    public function __toString()
+    {
+        return $this->name;
     }
-  }
 
-  public function __toString() {
-    return $this->name;
-  }
+    public function dump($s)
+    {
+        $oclass = $this->class;
+        $hostid = $s->data('os:hostid');
 
-  public function dump($s) {
+        $oclass::dump($s);
 
-    $oclass = $this->class;
-    $hostid = $s->data('os:hostid');
+        if (!empty($hostid)) {
+            $s->log(sprintf("%15s: %s", 'Hostid', $hostid), LLOG_INFO);
+        }
+    }
 
-    $oclass::dump($s);
+    public function htmlDump($s)
+    {
+        $oclass = $this->class;
+        $hostid = $s->data('os:hostid');
+        $spec = $oclass::htmlDump($s);
 
-    if (!empty($hostid)) 
-      $s->log(sprintf("%15s: %s", 'Hostid', $hostid), LLOG_INFO);
-  }
-
-  public function htmlDump($s) {
-    $oclass = $this->class;
-    $hostid = $s->data('os:hostid');
-    $spec = $oclass::htmlDump($s);
-
-    $myar = array(
-		'OS Name' => $this->name,
+        $myar = array(
+        'OS Name' => $this->name,
             );
 
-    return array_merge($myar, $spec);
-  }
+        return array_merge($myar, $spec);
+    }
 
- /**
-  * ctor
-  */
-  public function __construct($id=-1)
+  /**
+   * ctor
+   */
+  public function __construct($id = -1)
   {
-    $this->id = $id;
-    $this->_table = "list_os";
-    $this->_nfotable = NULL;
-    $this->_my = array(
+      $this->id = $id;
+      $this->_table = "list_os";
+      $this->_nfotable = null;
+      $this->_my = array(
                         "id" => SQL_INDEX,
                         "name" => SQL_PROPE|SQL_EXIST,
                         "uname" => SQL_PROPE,
@@ -92,8 +92,7 @@ class OS extends mysqlObj
                         "f_zone" => SQL_PROPE,
                  );
 
-
-    $this->_myc = array( /* mysql => class */
+      $this->_myc = array( /* mysql => class */
                         "id" => "id",
                         "name" => "name",
                         "uname" => "uname",
@@ -101,6 +100,4 @@ class OS extends mysqlObj
                         "f_zone" => "f_zone",
                  );
   }
-
 }
-?>

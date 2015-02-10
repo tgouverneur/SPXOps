@@ -10,44 +10,40 @@
  * @subpackage backend
  * @filesource
  */
-
-
 class ELog extends mysqlObj
 {
   public $id = -1;
-  public $fk_login = '';
-  public $what = '';
-  public $t_add = -1;
+    public $fk_login = '';
+    public $what = '';
+    public $t_add = -1;
 
-  public $o_login = null;
+    public $o_login = null;
 
-  public function __toString() {
-    return $this->what;
-  }
+    public function __toString()
+    {
+        return $this->what;
+    }
 
- /**
-  * ctor
-  */
-  public function __construct($id=-1)
+  /**
+   * ctor
+   */
+  public function __construct($id = -1)
   {
-    $this->id = $id;
-    $this->_table = 'list_logs';
-    $this->_nfotable = NULL;
-    $this->_my = array(
+      $this->id = $id;
+      $this->_table = 'list_logs';
+      $this->_nfotable = null;
+      $this->_my = array(
                         'id' => SQL_INDEX,
                         'fk_login' => SQL_PROPE,
                         'what' => SQL_PROPE,
-                        't_add' => SQL_PROPE
+                        't_add' => SQL_PROPE,
                  );
 
-
-    $this->_myc = array( /* mysql => class */
+      $this->_myc = array( /* mysql => class */
                         'id' => 'id',
                         'fk_login' => 'fk_login',
                         'what' => 'what',
-                        't_add' => 't_add'
+                        't_add' => 't_add',
                  );
   }
-
 }
-?>

@@ -1,59 +1,58 @@
 #!/usr/bin/php
 <?php
-/**
- * scheck
- *
- * @author Gouverneur Thomas <tgo@espix.net>
- * @copyright Copyright (c) 2012, Gouverneur Thomas
- * @version 1.0
- * @package CLI
- * @category utils
- * @subpackage list
- * @filesource
- */
-
-  require_once(dirname(__FILE__).'/../libs/autoload.lib.php');
-  require_once(dirname(__FILE__).'/../libs/config.inc.php');
+  /**
+   * scheck
+   *
+   * @author Gouverneur Thomas <tgo@espix.net>
+   * @copyright Copyright (c) 2012, Gouverneur Thomas
+   * @version 1.0
+   * @package CLI
+   * @category utils
+   * @subpackage list
+   * @filesource
+   */
+  require_once dirname(__FILE__).'/../libs/autoload.lib.php';
+  require_once dirname(__FILE__).'/../libs/config.inc.php';
 
   $shortopts = "c::s::hv";
   $opts = getopt($shortopts);
 
   if (isset($opts['h']) || count($argv) < 2) {
-    echo $argv[0]."\n";
-    echo "\t [-s=<server>]\n";
-    echo "\t [-c=<check>]\n";
-    echo "\t [-h] this help\n";
-    echo "\t [-v] Verbose\n";
-    exit();
+      echo $argv[0]."\n";
+      echo "\t [-s=<server>]\n";
+      echo "\t [-c=<check>]\n";
+      echo "\t [-h] this help\n";
+      echo "\t [-v] Verbose\n";
+      exit();
   }
   $sname = $cname = '';
 
   if (isset($opts['v'])) {
-    Logger::logLevel(LLOG_DEBUG);
+      Logger::logLevel(LLOG_DEBUG);
   }
 
   if (isset($opts['s']) && !empty($opts['s'])) {
-    $sname = $opts['s'];
+      $sname = $opts['s'];
   } else {
-    echo "[!] You must provide server name (check -h for syntax)\n";
-    exit(1);
+      echo "[!] You must provide server name (check -h for syntax)\n";
+      exit(1);
   }
 
   if (isset($opts['c']) && !empty($opts['c'])) {
-    $cname = $opts['c'];
+      $cname = $opts['c'];
   }
 
   $m = mysqlCM::getInstance();
   if ($m->connect()) {
-    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+      die($argv[0]." Error with SQL db: ".$m->getError()."\n");
   }
 
   $s = new Server();
   $s->hostname = $sname;
 
   if ($s->fetchFromField("hostname")) {
-    echo "[!] Server not found in DB..\n";
-    exit(2);
+      echo "[!] Server not found in DB..\n";
+      exit(2);
   }
   $s->fetchAll(1);
 
@@ -61,8 +60,8 @@
   $c->name = $cname;
 
   if ($c->fetchFromField("name")) {
-    echo "[!] Check not found in DB..\n";
-    exit(2);
+      echo "[!] Check not found in DB..\n";
+      exit(2);
   }
 
   $s->a_lr[$c->id] = Result::getLast($c, $s);
