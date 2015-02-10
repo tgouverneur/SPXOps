@@ -10,67 +10,6 @@
   * @filesource
   */
 
-class mJT {
-   public $ar = '';
-   public $oc = '';
-   public $jt = '';
-   public $src = array();
-   public $dst = array();
-   public $attrs = array();
-
-   public function __construct($ar, $oc, $jt, $src, $dst, $attrs = array()) {
-     $this->ar = $ar;
-     $this->oc = $oc;
-     $this->jt = $jt;
-     $this->src = $src;
-     $this->dst = $dst;
-     $this->attrs = $attrs;
-   }
-}
-
-class mRL {
- 
-   public $ar = '';
-   public $oc = '';
-   public $fks = array();
-
-   public function __construct($ar, $oc, $fk) {
-     $this->ar = $ar;
-     $this->oc = $oc;
-     $this->fk = $fk;
-   }
-
-   public function __toString() {
-     return $this->ar.'/'.$this->oc;
-   }
-}
-
-class mFK {
- 
-   public $in = '';
-   public $on = '';
-   public $oc = '';
-
-   public function fetch($pthis, $f_fetch = true) {
-
-     $pthis->{$this->on} = new $this->oc($pthis->{$this->in});
-
-     if ($f_fetch) {
-       $rc = $pthis->{$this->on}->fetchFromId();
-       if ($rc) {
-         throw new SPXException('Cannot fetch '.$this->oc.' object with id '.$pthis->{$this->in});
-       }
-     }
-     return;
-   }
-
-   public function __construct($in, $on, $oc) {
-     $this->in = $in;
-     $this->on = $on;
-     $this->oc = $oc;
-   }
-}
-
 /**
  * Base class for all object that use mysql
  */
