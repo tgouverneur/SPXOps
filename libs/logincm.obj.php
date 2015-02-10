@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class loginCM
+class LoginCM
 {
   /**
    * Singleton variable

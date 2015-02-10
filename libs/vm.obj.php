@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class VM extends mysqlObj
+class VM extends MySqlObj
 {
   use logTrait;
     public static $RIGHT = 'SRV';

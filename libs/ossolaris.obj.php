@@ -17,27 +17,27 @@ class OSSolaris extends OSType
   );
 
     protected static $_update = array(
-    "update_uname",
-    "update_prtdiag",
-    "update_prtconf",
-    "update_release",
-    "update_sneep",
-    "update_network",
-    "update_cpu",
-    "update_hostid",
-    "update_zones",
-    "update_patches",
-    "update_packages",
-    "update_nfs_shares",
-    "update_nfs_mount",
-    "update_projects",
-    "update_disk",
-//    "update_fcinfo",
-    "update_zfs",
-    "update_sds",
-    "update_swap",
-//    "update_cdp",
-//    "update_swap",
+    "updateUname",
+    "updatePrtDiag",
+    "updatePrtConf",
+    "updateRelease",
+    "updateSneep",
+    "updateNetwork",
+    "updateCpu",
+    "updateHostId",
+    "updateZones",
+    "updatePatches",
+    "updatePackages",
+    "updateNfsShares",
+    "updateNfsMounts",
+    "updateProjects",
+    "updateDisk",
+//    "updateFcInfo",
+    "updateZfs",
+    "updateSds",
+    "updateSwap",
+//    "updateCdp",
+//    "updateSwap",
   );
 
   /* Extra actions functions */
@@ -262,12 +262,12 @@ zfs:0:arcstats:l2_writes_sent   376002
       return $ret;
   }
 
-  /* Updates function for Solaris */
+  /* updates function for Solaris */
 
   /**
    * nfs_shares
    */
-  public static function update_nfs_shares(&$s)
+  public static function updateNfsShares(&$s)
   {
       $cat = $s->findBin('cat');
       $cmd_cat = "$cat /etc/dfs/sharetab";
@@ -346,7 +346,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * nfs_mount
    */
-  public static function update_nfs_mount(&$s)
+  public static function updateNfsMounts(&$s)
   {
       $cat = $s->findBin('cat');
       $cmd_cat = "$cat /etc/mnttab";
@@ -438,7 +438,7 @@ zfs:0:arcstats:l2_writes_sent   376002
       return 0;
   }
 
-    public static function update_packages_s10(&$s)
+    public static function updatePackagesS10(&$s)
     {
         $pkginfo = $s->findBin('pkginfo');
         $cmd_pkginfo = "$pkginfo -l";
@@ -505,7 +505,7 @@ zfs:0:arcstats:l2_writes_sent   376002
         return $found_p;
     }
 
-    public static function update_packages_s11(&$s)
+    public static function updatePackagesS11(&$s)
     {
         $pkg = $s->findBin('pkg');
         $cmd_pkg = "$pkg list -H -v";
@@ -537,12 +537,12 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * packages
    */
-  public static function update_packages(&$s)
+  public static function updatePackages(&$s)
   {
       if ($s->data('os:major') > 10) {
-          $found_p = OSSolaris::update_packages_s11($s);
+          $found_p = OSSolaris::updatePackagesS11($s);
       } else {
-          $found_p = OSSolaris::update_packages_s10($s);
+          $found_p = OSSolaris::updatePackagesS10($s);
       }
 
       foreach ($found_p as $pkg) {
@@ -581,7 +581,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * patches
    */
-  public static function update_patches(&$s)
+  public static function updatePatches(&$s)
   {
       if ($s->data('os:major') > 10) {
           return 0; /* no more patch with solaris > 10 */
@@ -630,7 +630,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * zones
    */
-  public static function update_zones(&$s)
+  public static function updateZones(&$s)
   {
 
     /* get hostid */
@@ -682,7 +682,7 @@ zfs:0:arcstats:l2_writes_sent   376002
               $u++;
           }
           if ($u) {
-              $s->log("Updated $u infos about zone $z", LLOG_INFO);
+              $s->log("updated $u infos about zone $z", LLOG_INFO);
               $z->update();
           }
           $found_z[$z->name] = $z;
@@ -703,7 +703,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * hostid
    */
-  public static function update_hostid(&$s)
+  public static function updateHostId(&$s)
   {
 
     /* get hostid */
@@ -723,7 +723,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * cpu info
    */
-  public static function update_cpu(&$s)
+  public static function updateCpu(&$s)
   {
       $psrinfo = $s->findBin('psrinfo');
       $cmd_psrinfo = "$psrinfo -pv";
@@ -774,27 +774,27 @@ zfs:0:arcstats:l2_writes_sent   376002
 
       if ($s->data('hw:nrcpu') != $nrcpu) {
           $s->setData('hw:nrcpu', $nrcpu);
-          $s->log('Updated hw:nrcpu => '.$nrcpu, LLOG_INFO);
+          $s->log('updated hw:nrcpu => '.$nrcpu, LLOG_INFO);
       }
 
       if ($s->data('hw:nrcore') != $nrcore) {
           $s->setData('hw:nrcore', $nrcore);
-          $s->log('Updated hw:nrcore => '.$nrcore, LLOG_INFO);
+          $s->log('updated hw:nrcore => '.$nrcore, LLOG_INFO);
       }
 
       if ($s->data('hw:nrstrand') != $nrstrand) {
           $s->setData('hw:nrstrand', $nrstrand);
-          $s->log('Updated hw:nrstrand => '.$nrstrand, LLOG_INFO);
+          $s->log('updated hw:nrstrand => '.$nrstrand, LLOG_INFO);
       }
 
       if (strcmp($s->data('hw:cpu'), $cpu)) {
           $s->setData('hw:cpu', $cpu);
-          $s->log('Updated hw:cpu=> '.$cpu, LLOG_INFO);
+          $s->log('updated hw:cpu=> '.$cpu, LLOG_INFO);
       }
 
       if (strcmp($s->data('hw:cpuspeed'), $cpuspeed)) {
           $s->setData('hw:cpuspeed', $cpuspeed);
-          $s->log('Updated hw:cpuspeed => '.$cpuspeed, LLOG_INFO);
+          $s->log('updated hw:cpuspeed => '.$cpuspeed, LLOG_INFO);
       }
 
       return 0;
@@ -803,7 +803,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * network
    */
-  public static function update_network_s10(&$s)
+  public static function updateNetworkS10(&$s)
   {
       $found_if = array();
 
@@ -921,7 +921,7 @@ zfs:0:arcstats:l2_writes_sent   376002
       return $found_if;
   }
 
-    public static function update_network_s11(&$s)
+    public static function updateNetworkS11(&$s)
     {
         $found_if = array();
         $dladm = $s->findBin('dladm');
@@ -1061,13 +1061,13 @@ zfs:0:arcstats:l2_writes_sent   376002
         return $found_if;
     }
 
-    public static function update_network(&$s)
+    public static function updateNetwork(&$s)
     {
         $major = $s->data('os:major');
         if (empty($major) || !is_numeric($major) || $major > 10) {
-            $ifs = OSSolaris::update_network_s11($s);
+            $ifs = OSSolaris::updateNetworkS11($s);
         } else {
-            $ifs = OSSolaris::update_network_s10($s);
+            $ifs = OSSolaris::updateNetworkS10($s);
         }
 
         $f = array(
@@ -1165,7 +1165,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * sneep
    */
-  public static function update_sneep(&$s)
+  public static function updateSneep(&$s)
   {
 
     /* get sneep */
@@ -1180,7 +1180,7 @@ zfs:0:arcstats:l2_writes_sent   376002
           if ($s->o_pserver) {
               if ($s->o_pserver->serial != $out_sneep) {
                   $s->o_pserver->serial = $out_sneep;
-                  $s->log("Updated serial number: $out_sneep", LLOG_INFO);
+                  $s->log("updated serial number: $out_sneep", LLOG_INFO);
                   $s->o_pserver->update();
               }
           }
@@ -1192,7 +1192,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * cat /etc/release
    */
-  public static function update_release(&$s)
+  public static function updateRelease(&$s)
   {
 
     /* get cat */
@@ -1243,7 +1243,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * prtconf
    */
-  public static function update_prtconf(&$s)
+  public static function updatePrtConf(&$s)
   {
       if ($s->data('hw:cpu') == 'sparc') {
           return 0;
@@ -1278,7 +1278,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * prtdiag
    */
-  public static function update_prtdiag(&$s)
+  public static function updatePrtDiag(&$s)
   {
 
     /* get prtdiag */
@@ -1351,7 +1351,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * uname -a
    */
-  public static function update_uname(&$s)
+  public static function updateUname(&$s)
   {
 
     /* get uname -a */
@@ -1381,7 +1381,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * uname -a
    */
-  public static function update_projects(&$s)
+  public static function updateProjects(&$s)
   {
       $cat = $s->findBin('cat');
       $cmd_cat = "$cat /etc/project";
@@ -1450,7 +1450,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * fcinfo
    */
-  public static function update_fcinfo(&$s)
+  public static function updateFcInfo(&$s)
   {
 
     /* Port infos */
@@ -1731,13 +1731,13 @@ zfs:0:arcstats:l2_writes_sent   376002
           try {
               switch ($v) {
       case 'HP':
-        OSSolaris::update_disk_hp($s);
+        OSSolaris::updateDiskHp($s);
       break;
       case 'EMC':
-        OSSolaris::update_disk_emc($s);
+        OSSolaris::updateDiskEmc($s);
       break;
       case 'EMC_MPXIO':
-        OSSolaris::update_disk_emc_mpxio($s);
+        OSSolaris::updateDiskEmcMpxIO($s);
           break;
         }
           } catch (Exception $e) {
@@ -1748,7 +1748,7 @@ zfs:0:arcstats:l2_writes_sent   376002
       return 0;
   }
 
-    public static function update_disk_hp(&$s)
+    public static function updateDiskHp(&$s)
     {
         $sudo = $s->findBin('sudo');
         $xpinfo = $s->findBin('xpinfo');
@@ -1760,7 +1760,7 @@ zfs:0:arcstats:l2_writes_sent   376002
         return 0;
     }
 
-    public static function update_disk_emc_mpxio(&$s)
+    public static function updateDiskEmcMpxIO(&$s)
     {
         $paths = OSSolaris::$binPaths;
         $paths[] = '/opt/emc/SYMCLI/bin';
@@ -1820,7 +1820,7 @@ zfs:0:arcstats:l2_writes_sent   376002
         return 0;
     }
 
-    public static function update_disk_emc(&$s)
+    public static function updateDiskEmc(&$s)
     {
         $paths = OSSolaris::$binPaths;
         $paths[] = '/etc';
@@ -1839,7 +1839,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * disk
    */
-  public static function update_disk(&$s)
+  public static function updateDisk(&$s)
   {
       $ls = $s->findBin('ls');
       $cmd_ls = "$ls /dev/dsk/*s2";
@@ -1964,7 +1964,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * CDP
    */
-  public static function update_cdp(&$s)
+  public static function updateCdp(&$s)
   {
       $sudo = $s->findBin('sudo');
       $snoop = $s->findBin('snoop');
@@ -2076,7 +2076,7 @@ zfs:0:arcstats:l2_writes_sent   376002
   /**
    * sds
    */
-  public static function update_sds(&$s)
+  public static function updateSds(&$s)
   {
       $metastat = $s->findBin('metastat');
       $cmd_metastat = "$metastat -p";
@@ -2110,7 +2110,7 @@ d101 1 1 /dev/dsk/emcpower58a
   /**
    * swap
    */
-  public static function update_swap(&$s)
+  public static function updateSwap(&$s)
   {
       $swap = $s->findBin('swap');
       $cmd_swap = "$swap -l";
@@ -2145,7 +2145,7 @@ d101 1 1 /dev/dsk/emcpower58a
   /**
    * zfs
    */
-  public static function update_zfs(&$s)
+  public static function updateZfs(&$s)
   {
       $major = $s->data('os:major');
     /* if $major is empty or not a number, it could just be an illumos based machine */
@@ -2226,7 +2226,7 @@ d101 1 1 /dev/dsk/emcpower58a
           $p->delete();
       }
 
-    /* Update zpool devices */
+    /* update zpool devices */
 
     $cmd_status = "$zpool status %s";
       $zfs = $s->findBin('zfs');

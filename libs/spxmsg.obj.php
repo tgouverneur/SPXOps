@@ -40,7 +40,7 @@ define('MAX_MSG_SIZE', 65000);
          }
      }
 
-     private function _unserialize()
+     private function _unSerialize()
      {
          $this->a_v = @unserialize($this->_bs);
          Logger::log("[-] Unserialized: $this", $this, LOG_DEBUG);
@@ -55,10 +55,10 @@ define('MAX_MSG_SIZE', 65000);
          return 0;
      }
 
-     private function _encrypt()
+     private function _enCrypt()
      {
          if ($this->_bs) {
-             $this->_ebs = base64_encode($this->_iv.mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->_key, $this->_bs, MCRYPT_MODE_CBC, $this->_iv));
+             $this->_ebs = base64_encode($this->_iv.mcrypt_enCrypt(MCRYPT_RIJNDAEL_128, $this->_key, $this->_bs, MCRYPT_MODE_CBC, $this->_iv));
 
              return 0;
          }
@@ -66,13 +66,13 @@ define('MAX_MSG_SIZE', 65000);
          return 1;
      }
 
-     private function _decrypt()
+     private function _deCrypt()
      {
          if ($this->_ebs) {
              $tmp = base64_decode($this->_ebs);
              $this->_iv = substr($tmp, 0, $this->_ivsize);
              $ct = substr($tmp, $this->_ivsize);
-             $this->_bs = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->_key, $ct, MCRYPT_MODE_CBC, $this->_iv);
+             $this->_bs = mcrypt_deCrypt(MCRYPT_RIJNDAEL_128, $this->_key, $ct, MCRYPT_MODE_CBC, $this->_iv);
              Logger::log("[-] Decrypted: $this", $this, LOG_DEBUG);
          }
 
@@ -84,8 +84,8 @@ define('MAX_MSG_SIZE', 65000);
          $this->ebs = '';
          $this->len = socket_recvfrom($sock, $this->_ebs, MAX_MSG_SIZE, 0, $this->from, $this->port);
          Logger::log("Received: $this", $this);
-         $this->_decrypt();
-         $this->_unserialize();
+         $this->_deCrypt();
+         $this->_unSerialize();
          Logger::log("Received ".$this->len." bytes from ".$this->from.":".$this->port, $this);
      }
 
@@ -94,7 +94,7 @@ define('MAX_MSG_SIZE', 65000);
          global $config;
          $this->a_v['hostname'] = $config['agentname'];
          $this->_serialize();
-         $this->_encrypt();
+         $this->_enCrypt();
          $len = socket_sendto($sock, $this->_ebs, strlen($this->_ebs), 0, $to, $port);
          echo "[-] Sent $len bytes to $to:$port\n";
 

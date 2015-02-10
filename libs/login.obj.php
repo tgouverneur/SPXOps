@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Login extends mysqlObj
+class Login extends MySqlObj
 {
   public $id = -1;
     public $username = '';

@@ -12,19 +12,19 @@ class OSAix extends OSType
   );
 
     protected static $_update = array(
-    "update_prtconf",
-    "update_lparstat",
-    "update_hostid",
-    "update_oslevel",
-    "update_uname",
-    "update_network",
-  //  "update_nfs_shares",
-  //  "update_nfs_mount",
+    "updatePrtConf",
+    "updateLParStat",
+    "updateHostId",
+    "updateOsLevel",
+    "updateUname",
+    "updateNetwork",
+  //  "updateNfsShares",
+  //  "updateNfsMounts",
   );
 
-  /* Updates function for AIX */
+  /* updates function for AIX */
 
-  public static function update_network_ifs(&$s)
+  public static function updateNetworkIfs(&$s)
   {
       $found_if = array();
 
@@ -129,9 +129,9 @@ class OSAix extends OSType
       return $found_if;
   }
 
-    public static function update_network(&$s)
+    public static function updateNetwork(&$s)
     {
-        $ifs = OSAix::update_network_ifs($s);
+        $ifs = OSAix::updateNetworkIfs($s);
 
         $f = array(
                 'ifname',
@@ -226,7 +226,7 @@ class OSAix extends OSType
   /**
    * hostid
    */
-  public static function update_hostid(&$s)
+  public static function updateHostId(&$s)
   {
 
     /* get hostid */
@@ -243,7 +243,7 @@ class OSAix extends OSType
       return 0;
   }
 
-    public static function update_lparstat(&$s)
+    public static function updateLParStat(&$s)
     {
 
     /* get lparstat */
@@ -288,7 +288,7 @@ class OSAix extends OSType
 
         if ($s->data('hw:nrstrand') != $nrstrand) {
             $s->setData('hw:nrstrand', $nrstrand);
-            $s->log('Updated hw:nrstrand => '.$nrstrand, LLOG_INFO);
+            $s->log('updated hw:nrstrand => '.$nrstrand, LLOG_INFO);
         }
 
         if ($memsize && $s->data('hw:memory') != $memsize) {
@@ -299,7 +299,7 @@ class OSAix extends OSType
         return 0;
     }
 
-    public static function update_prtconf(&$s)
+    public static function updatePrtConf(&$s)
     {
 
     /* get prtconf */
@@ -336,25 +336,25 @@ class OSAix extends OSType
 
         if ($s->data('hw:nrcpu') != $nrcpu) {
             $s->setData('hw:nrcpu', $nrcpu);
-            $s->log('Updated hw:nrcpu => '.$nrcpu, LLOG_INFO);
+            $s->log('updated hw:nrcpu => '.$nrcpu, LLOG_INFO);
         }
         if ($s->data('hw:cpu') != $cputype) {
             $s->setData('hw:cpu', $cputype);
-            $s->log('Updated hw:cpu => '.$cputype, LLOG_INFO);
+            $s->log('updated hw:cpu => '.$cputype, LLOG_INFO);
         }
         if ($s->data('hw:class') != $hwclass) {
             $s->setData('hw:class', $hwclass);
-            $s->log('Updated hw:class => '.$hwclass, LLOG_INFO);
+            $s->log('updated hw:class => '.$hwclass, LLOG_INFO);
         }
         if ($s->data('hw:cpuspeed') != $cpuspeed) {
             $s->setData('hw:cpuspeed', $cpuspeed);
-            $s->log('Updated hw:cpuspeed => '.$cpuspeed, LLOG_INFO);
+            $s->log('updated hw:cpuspeed => '.$cpuspeed, LLOG_INFO);
         }
 
         return 0;
     }
 
-    public static function update_oslevel(&$s)
+    public static function updateOsLevel(&$s)
     {
 
     /* get prtconf */
@@ -384,7 +384,7 @@ class OSAix extends OSType
   /**
    * uname
    */
-  public static function update_uname(&$s)
+  public static function updateUname(&$s)
   {
 
     /* get uname -a */
@@ -424,7 +424,7 @@ class OSAix extends OSType
           }
           if ($s->o_pserver->serial != $serial) {
               $s->o_pserver->serial = $serial;
-              $s->log("Updated serial number: $serial", LLOG_INFO);
+              $s->log("updated serial number: $serial", LLOG_INFO);
               $s->o_pserver->update();
           }
       }

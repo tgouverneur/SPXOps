@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Check extends mysqlObj
+class Check extends MySqlObj
 {
   use logTrait;
     public static $RIGHT = 'CHK';

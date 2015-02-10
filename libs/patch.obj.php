@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Patch extends mysqlObj
+class Patch extends MySqlObj
 {
   public $id = -1;
     public $patch = '';

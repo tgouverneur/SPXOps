@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class PServer extends mysqlObj
+class PServer extends MySqlObj
 {
   use logTrait;
     public static $RIGHT = 'PHY';

@@ -1,6 +1,6 @@
 <?php
 /**
- * mysqlObj management
+ * MySqlObj management
  * @author Gouverneur Thomas <tgo@espix.net>
  * @copyright Copyright (c) 2007-2012, Gouverneur Thomas
  * @version 1.0
@@ -13,7 +13,7 @@
 /**
  * Base class for all object that use mysql
  */
-class mysqlObj
+class MySqlObj
 {
   protected $_my = array();
     protected $_myc = array();

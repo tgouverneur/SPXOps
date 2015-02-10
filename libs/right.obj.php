@@ -18,7 +18,7 @@ if (!defined('R_NONE')) {
     define('R_DEL', 8);
 }
 
-class Right extends mysqlObj
+class Right extends MySqlObj
 {
   public $id = -1;
     public $name = '';

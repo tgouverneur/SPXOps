@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Cluster extends mysqlObj
+class Cluster extends MySqlObj
 {
   use logTrait;
     public static $RIGHT = 'CLUSTER';

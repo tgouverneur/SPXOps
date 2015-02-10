@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class AlertType extends mysqlObj
+class AlertType extends MySqlObj
 {
   public $id = -1;
     public $short = '';

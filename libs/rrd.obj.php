@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class RRD extends mysqlObj
+class RRD extends MySqlObj
 {
   public static $RIGHT = 'SRV';
 

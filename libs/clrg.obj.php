@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class CLRg extends mysqlObj
+class CLRg extends MySqlObj
 {
   public $id = -1;
     public $name = '';

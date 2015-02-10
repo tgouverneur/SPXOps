@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Model extends mysqlObj
+class Model extends MySqlObj
 {
   public $id = -1;
     public $name = '';

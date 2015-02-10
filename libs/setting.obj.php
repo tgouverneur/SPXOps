@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Setting extends mysqlObj
+class Setting extends MySqlObj
 {
   public $id = -1;
     public $cat = '';

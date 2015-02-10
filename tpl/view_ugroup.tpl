@@ -127,7 +127,7 @@
 	    </thead>
 	    <tbody>
 <?php 
-      $lm = loginCM::getInstance();
+      $lm = LoginCM::getInstance();
       foreach($a_right as $right) { 
 	$l = $obj->getRight($right);
         $view_r = $l & R_VIEW;

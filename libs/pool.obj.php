@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Pool extends mysqlObj
+class Pool extends MySqlObj
 {
   public $id = -1;
     public $name = '';

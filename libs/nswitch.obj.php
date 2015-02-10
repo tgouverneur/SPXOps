@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class NSwitch extends mysqlObj
+class NSwitch extends MySqlObj
 {
   public $id = -1;
     public $did = '';

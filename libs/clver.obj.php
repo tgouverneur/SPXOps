@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class CLVer extends mysqlObj
+class CLVer extends MySqlObj
 {
   public $id = -1;
     public $name = '';

@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Zone extends mysqlObj
+class Zone extends MySqlObj
 {
   public $id = -1;
     public $name = '';

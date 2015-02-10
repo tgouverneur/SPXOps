@@ -18,7 +18,7 @@ if (!defined('S_NONE')) {
     define('S_STALL', 16);
 }
 
-class Job extends mysqlObj
+class Job extends MySqlObj
 {
   public $id = -1;        /* ID in the MySQL table */
   public $class = '';
@@ -287,7 +287,7 @@ class Job extends mysqlObj
          );
 
       $this->_addFK("fk_login", "o_login", "Login");
-      $this->_addFK("fk_log", "o_log", "jobLog");
+      $this->_addFK("fk_log", "o_log", "JobLog");
       $this->_addFK("fk_pid", "o_pid", "Pid");
   }
 }

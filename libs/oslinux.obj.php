@@ -14,27 +14,27 @@ class OSLinux extends OSType
   );
 
     protected static $_update = array(
-    "update_uname",
-    "update_release",
-    "update_linux_vms",
-    "update_dmidecode",
-    "update_network",
-    "update_hostid",
-    "update_packages",
-    "update_proc",
-    "update_nfs_shares",
-    "update_nfs_mount",
-    "update_lvm",
-//    "update_cdp",
-//    "update_swap",
+    "updateUname",
+    "updateRelease",
+    "updateLinuxVms",
+    "updateDmiDecode",
+    "updateNetwork",
+    "updateHostId",
+    "updatePackages",
+    "updateProc",
+    "updateNfsShares",
+    "updateNfsMounts",
+    "updateLvm",
+//    "updateCdp",
+//    "updateSwap",
   );
 
-  /* Updates function for Linux */
+  /* updates function for Linux */
 
   /**
    * VMs
    */
-  public static function update_linux_vms(&$s)
+  public static function updateLinuxVms(&$s)
   {
       $virsh = $s->findBin('virsh');
 
@@ -127,7 +127,7 @@ class OSLinux extends OSType
               $u++;
           }
           if ($u) {
-              $s->log("Updated $u infos about VM $vm", LLOG_INFO);
+              $s->log("updated $u infos about VM $vm", LLOG_INFO);
               $vm->update();
           }
           $found_vm[$vm->name] = $vm;
@@ -148,7 +148,7 @@ class OSLinux extends OSType
   /**
    * nfs_shares
    */
-  public static function update_nfs_shares(&$s)
+  public static function updateNfsShares(&$s)
   {
       $cat = $s->findBin('cat');
       $cmd_cat = "$cat /etc/exports";
@@ -223,7 +223,7 @@ class OSLinux extends OSType
   /**
    * nfs_mount
    */
-  public static function update_nfs_mount(&$s)
+  public static function updateNfsMounts(&$s)
   {
       $cat = $s->findBin('cat');
       $cmd_cat = "$cat /proc/mounts";
@@ -310,7 +310,7 @@ class OSLinux extends OSType
   /**
    * packages
    */
-  public static function update_packages_deb(&$s)
+  public static function updatePackagesDeb(&$s)
   {
       //dpkg-qu ery -W -f '${Package};${Version};${Architecture};${Status};${binary:Summary}\n' '*'
     $dpkg = $s->findBin('dpkg-query');
@@ -342,7 +342,7 @@ class OSLinux extends OSType
       return $found_p;
   }
 
-    public static function update_packages_rpm(&$s)
+    public static function updatePackagesRpm(&$s)
     {
         $rpm = $s->findBin('rpm');
         $cmd_rpm = "$rpm -qa --qf '%{NAME};%{VERSION};%{ARCH};;%{SUMMARY}\n'";
@@ -373,7 +373,7 @@ class OSLinux extends OSType
         return $found_p;
     }
 
-    public static function update_packages_ebd(&$s)
+    public static function updatePackagesEbd(&$s)
     {
         $equery = $s->findBin('equery');
         $cmd_equery = "$equery -C l -F '\$name;\$fullversion;;;\$category' '*'";
@@ -401,7 +401,7 @@ class OSLinux extends OSType
         return $found_p;
     }
 
-    public static function update_packages(&$s)
+    public static function updatePackages(&$s)
     {
         $distrib = $s->data('linux:name');
         if (empty($distrib)) {
@@ -409,14 +409,14 @@ class OSLinux extends OSType
         }
         switch ($s->data('linux:name')) {
       case 'Debian':
-        $found_p = OSLinux::update_packages_deb($s);
+        $found_p = OSLinux::updatePackagesDeb($s);
       break;
       case 'RHEL':
       case 'SLES':
-        $found_p = OSLinux::update_packages_rpm($s);
+        $found_p = OSLinux::updatePackagesRpm($s);
       break;
       case 'Gentoo':
-        $found_p = OSLinux::update_packages_ebd($s);
+        $found_p = OSLinux::updatePackagesEbd($s);
       break;
       default:
         return 0;
@@ -460,7 +460,7 @@ class OSLinux extends OSType
   /**
    * hostid
    */
-  public static function update_hostid(&$s)
+  public static function updateHostId(&$s)
   {
 
     /* get hostid */
@@ -480,7 +480,7 @@ class OSLinux extends OSType
   /**
    * network
    */
-  public static function update_network(&$s)
+  public static function updateNetwork(&$s)
   {
       $ip = $s->findBin('ip');
       $cmd_ip = "$ip addr";
@@ -511,7 +511,7 @@ class OSLinux extends OSType
               }
               if (strcmp($pnet->flags, $m[2])) {
                   $pnet->flags = $m[2];
-                  $s->log("Updated flags for $pnet to be ".$pnet->flags, LLOG_DEBUG);
+                  $s->log("updated flags for $pnet to be ".$pnet->flags, LLOG_DEBUG);
                   $pnet->update();
               }
               $c_if = $pnet;
@@ -520,7 +520,7 @@ class OSLinux extends OSType
               $f_eth = explode(' ', $line);
               if (strcmp($c_if->address, $f_eth[1])) {
                   $c_if->address = $f_eth[1];
-                  $s->log("Updated layer 2 address for $c_if to be ".$c_if->address, LLOG_DEBUG);
+                  $s->log("updated layer 2 address for $c_if to be ".$c_if->address, LLOG_DEBUG);
                   $c_if->update();
                   $found_if[''.$c_if] = $c_if;
               }
@@ -546,7 +546,7 @@ class OSLinux extends OSType
                   if (count($alias) == 2) {
                       if (strcmp($vnet->alias, $alias[1])) {
                           $vnet->alias = $alias[1];
-                          $s->log("Updated alias for $vnet to be ".$vnet->alias, LLOG_DEBUG);
+                          $s->log("updated alias for $vnet to be ".$vnet->alias, LLOG_DEBUG);
                           $vnet->update();
                       }
                   }
@@ -571,7 +571,7 @@ class OSLinux extends OSType
                   if (count($alias) == 2) {
                       if (strcmp($vnet->alias, $alias[1])) {
                           $vnet->alias = $alias[1];
-                          $s->log("Updated alias6 for $vnet to be ".$vnet->alias, LLOG_DEBUG);
+                          $s->log("updated alias6 for $vnet to be ".$vnet->alias, LLOG_DEBUG);
                           $vnet->update();
                       }
                   }
@@ -624,7 +624,7 @@ class OSLinux extends OSType
   /**
    * dmidecode
    */
-  public static function update_dmidecode(&$s)
+  public static function updateDmiDecode(&$s)
   {
       $dmidecode = $s->findBin('dmidecode');
       $sudo = $s->findBin('sudo');
@@ -666,7 +666,7 @@ class OSLinux extends OSType
           if ($s->o_pserver) {
               if ($s->o_pserver->serial != $serial) {
                   $s->o_pserver->serial = $serial;
-                  $s->log("Updated serial number: $serial", LLOG_INFO);
+                  $s->log("updated serial number: $serial", LLOG_INFO);
                   $s->o_pserver->update();
               }
           }
@@ -692,7 +692,7 @@ class OSLinux extends OSType
   /**
    * cat /etc/release
    */
-  public static function update_release(&$s)
+  public static function updateRelease(&$s)
   {
       global $config;
       @include_once $config['rootpath'].'/libs/functions.lib.php';
@@ -827,7 +827,7 @@ class OSLinux extends OSType
   /**
    * /proc parsing
    */
-  public static function update_proc(&$s)
+  public static function updateProc(&$s)
   {
 
     /* get cat */
@@ -887,15 +887,15 @@ class OSLinux extends OSType
       }
       if ($s->data('hw:nrcpu') != $physical) {
           $s->setData('hw:nrcpu', $physical);
-          $s->log('Updated hw:nrcpu => '.$physical, LLOG_INFO);
+          $s->log('updated hw:nrcpu => '.$physical, LLOG_INFO);
       }
       if ($s->data('hw:nrcore') != $cores) {
           $s->setData('hw:nrcore', $cores);
-          $s->log('Updated hw:nrcore => '.$cores, LLOG_INFO);
+          $s->log('updated hw:nrcore => '.$cores, LLOG_INFO);
       }
       if ($s->data('hw:nrstrand') != $thread) {
           $s->setData('hw:nrstrand', $thread);
-          $s->log('Updated hw:nrstrand => '.$thread, LLOG_INFO);
+          $s->log('updated hw:nrstrand => '.$thread, LLOG_INFO);
       }
       if ($s->data('hw:cpuspeed') != $cpuspeed) {
           $s->setData('hw:cpuspeed', $cpuspeed);
@@ -933,7 +933,7 @@ class OSLinux extends OSType
   /**
    * uname
    */
-  public static function update_uname(&$s)
+  public static function updateUname(&$s)
   {
 
     /* get uname -a */
@@ -974,7 +974,7 @@ class OSLinux extends OSType
   /**
    * LVM
    */
-  public static function update_lvm(&$s)
+  public static function updateLvm(&$s)
   {
       $sudo = $s->findBin('sudo');
       $vgs = $s->findBin('vgs');
@@ -1087,7 +1087,7 @@ class OSLinux extends OSType
   /**
    * CDP
    */
-  public static function update_cdp(&$s)
+  public static function updateCdp(&$s)
   {
       $sudo = $s->findBin('sudo');
       $tcpdump = $s->findBin('tcpdump');

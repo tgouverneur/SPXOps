@@ -9,7 +9,7 @@
  * @category classes
  * @filesource
  */
-class RJob extends mysqlObj
+class RJob extends MySqlObj
 {
   public $id = -1;        /* ID in the MySQL table */
   public $class = '';

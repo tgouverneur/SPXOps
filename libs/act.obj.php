@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Act extends mysqlObj
+class Act extends MySqlObj
 {
   public $id = -1;
     public $msg = '';

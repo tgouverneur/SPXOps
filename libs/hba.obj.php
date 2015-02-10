@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Hba extends mysqlObj
+class Hba extends MySqlObj
 {
   public $id = -1;
     public $wwn = '';

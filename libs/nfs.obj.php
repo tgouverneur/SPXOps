@@ -13,7 +13,7 @@
 
 /* @TODO: Add description of nfs share */
 
-class NFS extends mysqlObj
+class NFS extends MySqlObj
 {
   public $id = -1;
     public $type = '';

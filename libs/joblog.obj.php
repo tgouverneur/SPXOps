@@ -1,6 +1,6 @@
 <?php
 /**
- * jobLog object
+ * JobLog object
  * @author Gouverneur Thomas <tgo@espix.net>
  * @copyright Copyright (c) 2007-2012, Gouverneur Thomas
  * @version 1.0
@@ -9,7 +9,7 @@
  * @category classes
  * @filesource
  */
-class jobLog extends mysqlObj
+class JobLog extends MySqlObj
 {
   public $id = -1;        /* ID in the MySQL table */
   public $rc = 0;

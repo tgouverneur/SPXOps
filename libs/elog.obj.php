@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class ELog extends mysqlObj
+class ELog extends MySqlObj
 {
   public $id = -1;
     public $fk_login = '';

@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Log extends mysqlObj
+class Log extends MySqlObj
 {
   public $id = -1;
     public $msg = '';

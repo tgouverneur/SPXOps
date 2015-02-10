@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Net extends mysqlObj
+class Net extends MySqlObj
 {
   public $id = -1;
     public $ifname = '';

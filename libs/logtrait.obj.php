@@ -10,7 +10,7 @@ trait logTrait
 
     public function addLog($msg)
     {
-        $lm = loginCM::getInstance();
+        $lm = LoginCM::getInstance();
 
         $lo = new Log();
         if ($lm->o_login) {

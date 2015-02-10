@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class SLR extends mysqlObj
+class SLR extends MySqlObj
 {
   public $id = -1;
     public $name = '';

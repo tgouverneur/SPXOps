@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Prj extends mysqlObj
+class Prj extends MySqlObj
 {
   public $id = -1;
     public $name = '';

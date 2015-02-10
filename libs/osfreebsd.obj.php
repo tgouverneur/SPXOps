@@ -14,24 +14,24 @@ class OSFreeBSD extends OSType
   );
 
     protected static $_update = array(
-    "update_uname",
-    "update_dmidecode",
-    "update_sysctl",
-    "update_zfs",
-    "update_network",
-    "update_packages",
-    "update_swap",
-//    "update_cpu",
-//    "update_nfs_shares",
-//    "update_nfs_mount",
-//    "update_disk",
-//    "update_cdp",
+    "updateUname",
+    "updateDmiDecode",
+    "updateSysCtl",
+    "updateZfs",
+    "updateNetwork",
+    "updatePackages",
+    "updateSwap",
+//    "updateCpu",
+//    "updateNfsShares",
+//    "updateNfsMounts",
+//    "updateDisk",
+//    "updateCdp",
   );
 
   /**
    * dmidecode
    */
-  public static function update_dmidecode(&$s)
+  public static function updateDmiDecode(&$s)
   {
       $dmidecode = $s->findBin('dmidecode');
       $sudo = $s->findBin('sudo');
@@ -73,7 +73,7 @@ class OSFreeBSD extends OSType
           if ($s->o_pserver) {
               if ($s->o_pserver->serial != $serial) {
                   $s->o_pserver->serial = $serial;
-                  $s->log("Updated serial number: $serial", LLOG_INFO);
+                  $s->log("updated serial number: $serial", LLOG_INFO);
                   $s->o_pserver->update();
               }
           }
@@ -98,7 +98,7 @@ class OSFreeBSD extends OSType
   /**
    * sysctl
    */
-  public static function update_sysctl(&$s)
+  public static function updateSysCtl(&$s)
   {
       $sysctl = $s->findBin('sysctl');
       $cmd_sysctl = "$sysctl hw.ncpu hw.model hw.physmem hw.clockrate";
@@ -145,38 +145,38 @@ class OSFreeBSD extends OSType
 
       if ($s->data('hw:nrcpu') != $nrcpu) {
           $s->setData('hw:nrcpu', $nrcpu);
-          $s->log('Updated hw:nrcpu => '.$nrcpu, LLOG_INFO);
+          $s->log('updated hw:nrcpu => '.$nrcpu, LLOG_INFO);
       }
 
       if ($s->data('hw:nrcore') != $nrcore) {
           $s->setData('hw:nrcore', $nrcore);
-          $s->log('Updated hw:nrcore => '.$nrcore, LLOG_INFO);
+          $s->log('updated hw:nrcore => '.$nrcore, LLOG_INFO);
       }
 
       if ($s->data('hw:nrstrand') != $nrstrand) {
           $s->setData('hw:nrstrand', $nrstrand);
-          $s->log('Updated hw:nrstrand => '.$nrstrand, LLOG_INFO);
+          $s->log('updated hw:nrstrand => '.$nrstrand, LLOG_INFO);
       }
 
       if (strcmp($s->data('hw:cpu'), $cpu)) {
           $s->setData('hw:cpu', $cpu);
-          $s->log('Updated hw:cpu=> '.$cpu, LLOG_INFO);
+          $s->log('updated hw:cpu=> '.$cpu, LLOG_INFO);
       }
 
       if (strcmp($s->data('hw:cpuspeed'), $cpuspeed)) {
           $s->setData('hw:cpuspeed', $cpuspeed);
-          $s->log('Updated hw:cpuspeed => '.$cpuspeed, LLOG_INFO);
+          $s->log('updated hw:cpuspeed => '.$cpuspeed, LLOG_INFO);
       }
 
       return 0;
   }
 
-  /* Updates function for Solaris */
+  /* updates function for Solaris */
 
   /**
    * nfs_shares
    */
-  public static function update_nfs_shares(&$s)
+  public static function updateNfsShares(&$s)
   {
       $cat = $s->findBin('cat');
       $cmd_cat = "$cat /etc/dfs/sharetab";
@@ -254,7 +254,7 @@ class OSFreeBSD extends OSType
   /**
    * nfs_mount
    */
-  public static function update_nfs_mount(&$s)
+  public static function updateNfsMounts(&$s)
   {
       $cat = $s->findBin('cat');
       $cmd_cat = "$cat /etc/mnttab";
@@ -345,7 +345,7 @@ class OSFreeBSD extends OSType
       return 0;
   }
 
-    public static function update_packages_fbsd(&$s)
+    public static function updatePackageFBsd(&$s)
     {
         $pkg = $s->findBin('pkg');
         $cmd_pkg = "$pkg version";
@@ -376,9 +376,9 @@ class OSFreeBSD extends OSType
   /**
    * packages
    */
-  public static function update_packages(&$s)
+  public static function updatePackages(&$s)
   {
-      $found_p = OSFreeBSD::update_packages_fbsd($s);
+      $found_p = OSFreeBSD::updatePackageFBsd($s);
 
       foreach ($found_p as $pkg) {
           $po = new Pkg();
@@ -414,7 +414,7 @@ class OSFreeBSD extends OSType
   /**
    * network
    */
-  public static function update_network_fbsd(&$s)
+  public static function updateNetworkFBsd(&$s)
   {
       $found_if = array();
 
@@ -536,9 +536,9 @@ class OSFreeBSD extends OSType
       return $found_if;
   }
 
-    public static function update_network(&$s)
+    public static function updateNetwork(&$s)
     {
-        $ifs = OSFreeBSD::update_network_fbsd($s);
+        $ifs = OSFreeBSD::updateNetworkFBsd($s);
 
         $f = array(
         'ifname',
@@ -634,7 +634,7 @@ class OSFreeBSD extends OSType
   /**
    * uname -a
    */
-  public static function update_uname(&$s)
+  public static function updateUname(&$s)
   {
 
     /* get uname -a */
@@ -655,7 +655,7 @@ class OSFreeBSD extends OSType
   /**
    * disk
    */
-  public static function update_disk(&$s)
+  public static function updateDisk(&$s)
   {
       $ls = $s->findBin('ls');
       $cmd_ls = "$ls /dev/dsk/*s2";
@@ -779,7 +779,7 @@ class OSFreeBSD extends OSType
   /**
    * CDP
    */
-  public static function update_cdp(&$s)
+  public static function updateCdp(&$s)
   {
       $sudo = $s->findBin('sudo');
       $snoop = $s->findBin('snoop');
@@ -891,7 +891,7 @@ class OSFreeBSD extends OSType
   /**
    * swap
    */
-  public static function update_swap(&$s)
+  public static function updateSwap(&$s)
   {
       $swap = $s->findBin('swapinfo');
       $cmd_swap = "$swap";
@@ -926,7 +926,7 @@ class OSFreeBSD extends OSType
   /**
    * zfs
    */
-  public static function update_zfs(&$s)
+  public static function updateZfs(&$s)
   {
       $zpool = $s->findBin('zpool');
       if (empty($zpool)) {
@@ -1003,7 +1003,7 @@ class OSFreeBSD extends OSType
           $p->delete();
       }
 
-    /* Update zpool devices */
+    /* update zpool devices */
 
     $cmd_status = "$zpool status %s";
       $zfs = $s->findBin('zfs');

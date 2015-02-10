@@ -105,7 +105,7 @@ class MySqlCM
           self::delInstance();
           $c = __CLASS__;
           self::$_instance = new $c();
-          self::$_instance->_eprint('['.time().']['.self::$_instance->_pid.'] fork() detected'."\n");
+          self::$_instance->_ePrint('['.time().']['.self::$_instance->_pid.'] fork() detected'."\n");
       }
 
       return self::$_instance;
@@ -123,7 +123,7 @@ class MySqlCM
   /**
    * Enable error logging
    */
-  private function _errlog($fname)
+  private function _errLog($fname)
   {
       $this->_errlog = true;
       $this->_errfile = $fname;
@@ -142,7 +142,7 @@ class MySqlCM
   /**
    * Write entry to error log file
    */
-  private function _eprint($line, $args = null)
+  private function _ePrint($line, $args = null)
   {
       if ($this->_errlog && $this->_efd && !empty($line)) {
           if ($args) {
@@ -158,7 +158,7 @@ class MySqlCM
   /**
    * Enable debug mode
    */
-  private function _debug($fname)
+  private function _deBug($fname)
   {
       $this->_debug = true;
       $this->_dfile = $fname;
@@ -177,7 +177,7 @@ class MySqlCM
   /**
    * Write entry to debug log file
    */
-  private function _dprint($line, $args = null)
+  private function _dPrint($line, $args = null)
   {
       if ($this->_debug && $this->_dfd) {
           return vfprintf($this->_dfd, $line, $args);
@@ -189,7 +189,7 @@ class MySqlCM
   /**
    * Measure the time taken between two call of this function
    */
-  private function _time()
+  private function _Time()
   {
       if (!$this->_elapsed) {
           $this->_elapsed = time();
@@ -227,10 +227,10 @@ class MySqlCM
       $this->_pid = getmypid();
 
       if ($config['mysql']['DEBUG']) {
-          $this->_debug($config['mysql']['DEBUG']);
+          $this->_deBug($config['mysql']['DEBUG']);
       }
       if ($config['mysql']['ERRLOG']) {
-          $this->_errlog($config['mysql']['ERRLOG']);
+          $this->_errLog($config['mysql']['ERRLOG']);
       }
   }
 
@@ -287,14 +287,14 @@ class MySqlCM
                   $this->_error = null;
               }
               if ($this->_debug) {
-                  $this->_dprint("[".time()."][$attempts] Connection failed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+                  $this->_dPrint("[".time()."][$attempts] Connection failed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
               }
 
               return -1;
           }
       } while ($attempts++ < 3);
       if ($this->_debug) {
-          $this->_dprint("[".time()."] Connection succesfull to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+          $this->_dPrint("[".time()."] Connection succesfull to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
       }
 
       return 0;
@@ -308,7 +308,7 @@ class MySqlCM
   {
       global $config;
       if ($this->_debug) {
-          $this->_dprint("[".time()."] Connection closed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+          $this->_dPrint("[".time()."] Connection closed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
       }
 
       unset($this->_link);
@@ -333,7 +333,7 @@ class MySqlCM
           $query = "SELECT COUNT(*) FROM `".$table."` ".$where;
       }
 
-      if (!$this->_query($query, $args)) {
+      if (!$this->_Query($query, $args)) {
           try {
               $row = $this->_res->fetchAll(PDO::FETCH_ASSOC);
           } catch (PDOException $e) {
@@ -371,7 +371,7 @@ class MySqlCM
           $query = "SELECT ".$fields." FROM `".$table."` ".$where." ".$sort;
       }
 
-      if (!$this->_query($query, $args)) {
+      if (!$this->_Query($query, $args)) {
           $data = array();
 //      $this->_nres = @$this->_link->rowCount();
       try {
@@ -455,7 +455,7 @@ class MySqlCM
   {
       $query = "INSERT INTO ".$table."(".$fields.") VALUES(".$values.")";
 
-      if (!$this->_rquery($query)) {
+      if (!$this->_rQuery($query)) {
           $this->_nres = $this->_link->lastInsertId();
 
           return 0;
@@ -472,7 +472,7 @@ class MySqlCM
   {
       $query = "DELETE FROM ".$table." ".$cond;
 
-      if (!$this->_rquery($query)) {
+      if (!$this->_rQuery($query)) {
           return $this->_affect;
       } else {
           return -1;
@@ -487,7 +487,7 @@ class MySqlCM
   {
       $query = "UPDATE `".$table."` SET ".$set." ".$where;
 
-      if (!$this->_rquery($query)) {
+      if (!$this->_rQuery($query)) {
           return 0;
       } else {
           return -1;
@@ -510,7 +510,7 @@ class MySqlCM
           $query = "SELECT ".$index." FROM ".$table." ".$where;
       }
 
-      if (!$this->_query($query, $args)) {
+      if (!$this->_Query($query, $args)) {
           $data = array();
           try {
               $data = $this->_res->fetchAll(PDO::FETCH_ASSOC);
@@ -535,10 +535,10 @@ class MySqlCM
    * RAW Query database and handle errors
    * @return 0 if ok, non-zero if any error
    */
-  private function _rquery($query, $args = null)
+  private function _rQuery($query, $args = null)
   {
       if ($this->_debug) {
-          $this->_time();
+          $this->_Time();
       }
       if (!$this->_link) {
           return -1;
@@ -567,17 +567,17 @@ class MySqlCM
                   }
 
                   if ($this->_debug) {
-                      $this->_time();
+                      $this->_Time();
                   }
                   if ($this->_errlog) {
-                      $this->_eprint("[".time()."][".$this->_pid."] Failed _rquery (".$this->_affect."): $query\n");
-                      $this->_eprint("\tError: ".$this->_error."\n");
+                      $this->_ePrint("[".time()."][".$this->_pid."] Failed _rquery (".$this->_affect."): $query\n");
+                      $this->_ePrint("\tError: ".$this->_error."\n");
                   }
 
                   return -1;
               } else {
                   if ($this->_debug) {
-                      $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
+                      $this->_dPrint("[".time()."] (".$this->_Time().") ".$query."\n");
                   }
 
                   return 0;
@@ -591,13 +591,13 @@ class MySqlCM
                   continue;
               }
               if ($this->_debug) {
-                  $this->_time();
+                  $this->_Time();
               }
               if ($this->_errlog) {
-                  $this->_eprint("[".time()."][$attempts] Failed _query: $query\n");
-                  $this->_eprint("\tError: ".$e->getMessage()."\n");
+                  $this->_ePrint("[".time()."][$attempts] Failed _query: $query\n");
+                  $this->_ePrint("\tError: ".$e->getMessage()."\n");
                   $e = new Exception();
-                  $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
+                  $this->_ePrint("\tBT: ".$e->getTraceAsString()."\n");
               }
           }
       } while ($attempts++ < 3);
@@ -605,18 +605,18 @@ class MySqlCM
 
     public function rawQuery($q)
     {
-        return $this->_query($q);
+        return $this->_Query($q);
     }
 
   /**
    * Query database and handle errors
    * @return 0 if ok, non-zero if any error
    */
-  private function _query($query, $args = array())
+  private function _Query($query, $args = array())
   {
       $attempts = 0;
       if ($this->_debug) {
-          $this->_time();
+          $this->_Time();
       }
       if (!$this->_link) {
           return -1;
@@ -636,12 +636,12 @@ class MySqlCM
                       if (is_array($v)) {
                           $this->_res->bindParam($n, $v[0], $v[1]);
                           if ($this->_debug) {
-                              $this->_dprint("[".time()."] (".$this->_time().") Param ".$n." bound with ".$v[0]." \n");
+                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$n." bound with ".$v[0]." \n");
                           }
                       } else {
                           $this->_res->bindParam($n, $v);
                           if ($this->_debug) {
-                              $this->_dprint("[".time()."] (".$this->_time().") Param ".$n." bound with ".$v." \n");
+                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$n." bound with ".$v." \n");
                           }
                       }
                   }
@@ -649,7 +649,7 @@ class MySqlCM
 
               if (@$this->_res->execute($args)) {
                   if ($this->_debug) {
-                      $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
+                      $this->_dPrint("[".time()."] (".$this->_Time().") ".$query."\n");
                   }
                   $this->_nres = $this->_res->rowCount();
 
@@ -667,13 +667,13 @@ class MySqlCM
                       continue;
                   }
                   if ($this->_debug) {
-                      $this->_time();
+                      $this->_Time();
                   }
                   if ($this->_errlog) {
-                      $this->_eprint("[".time()."][".$this->_pid."] Failed _query: $query\n");
-                      $this->_eprint("\tError: ".$this->_error."\n");
+                      $this->_ePrint("[".time()."][".$this->_pid."] Failed _query: $query\n");
+                      $this->_ePrint("\tError: ".$this->_error."\n");
                       $e = new Exception();
-                      $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
+                      $this->_ePrint("\tBT: ".$e->getTraceAsString()."\n");
                   }
 
                   return -1;
@@ -687,12 +687,12 @@ class MySqlCM
                   continue;
               }
               if ($this->_debug) {
-                  $this->_time();
+                  $this->_Time();
               }
               if ($this->_errlog) {
-                  $this->_eprint("[".time()."][$attempts][".$this->_pid."] Failed _query: $query\n");
-                  $this->_eprint("\tError: ".$e->getMessage()."\n");
-                  $this->_eprint("\tBT: ".$e->getTraceAsString()."\n");
+                  $this->_ePrint("[".time()."][$attempts][".$this->_pid."] Failed _query: $query\n");
+                  $this->_ePrint("\tError: ".$e->getMessage()."\n");
+                  $this->_ePrint("\tBT: ".$e->getTraceAsString()."\n");
               }
           }
       } while ($attempts++ < 3);
@@ -708,7 +708,7 @@ class MySqlCM
   {
       $query = "LOCK TABLE $table $what";
 
-      if (!$this->_rquery($query)) {
+      if (!$this->_rQuery($query)) {
           return 0;
       } else {
           return -1;
@@ -723,7 +723,7 @@ class MySqlCM
   {
       $query = "UNLOCK TABLES";
 
-      if (!$this->_rquery($query)) {
+      if (!$this->_rQuery($query)) {
           return 0;
       } else {
           return -1;
@@ -734,9 +734,9 @@ class MySqlCM
     {
         $this->disconnect();
         if ($this->_errlog) {
-            $this->_eprint("[".time()."] Reconnection in progress...\n");
+            $this->_ePrint("[".time()."] Reconnection in progress...\n");
         }
-        $this->_eprint("\tError: ".$this->_error."\n");
+        $this->_ePrint("\tError: ".$this->_error."\n");
         $this->connect();
     }
 }

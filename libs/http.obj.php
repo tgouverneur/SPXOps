@@ -47,7 +47,7 @@ class HTTP
     public static function errWWW($e)
     {
         global $start_time;
-        $lm = loginCM::getInstance();
+        $lm = LoginCM::getInstance();
 
         $index = new Template("../tpl/index.tpl");
         $head = new Template("../tpl/head.tpl");
@@ -99,15 +99,6 @@ class HTTP
     $_GET = array_merge($_GET, $g);
 
         return;
-    }
-
-    public static function eval_img($cond)
-    {
-        if ($cond) {
-            return '<img src="/img/tick.png" alt="true"/>';
-        } else {
-            return '<img src="/img/cross.png" alt="false"/>';
-        }
     }
 
     public static function redirect($url)

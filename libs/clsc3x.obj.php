@@ -9,9 +9,9 @@ class CLsc3x extends CLType
   );
 
     protected static $_update = array(
-    "update_release",
-    "update_rgs",
-    "update_rs",
+    "updateRelease",
+    "updateRgs",
+    "updateRs",
   );
 
   /* Updates function for Sun Cluster 3.x  */
@@ -22,7 +22,7 @@ for i in `./scha_cluster_get -O ALL_RESOURCEGROUPS`; do nodelist=`./scha_resourc
   /**
    * Update RGs
    */
-  public static function update_rgs(&$c)
+  public static function updateRgs(&$c)
   {
       $clget = $c->findBin('scha_cluster_get');
       $rgget = $c->findBin('scha_resourcegroup_get');
@@ -169,7 +169,7 @@ for i in `./scha_cluster_get -O ALL_RESOURCEGROUPS`; do nodelist=`./scha_resourc
   /**
    * Update Resources
    */
-  public static function update_rs(&$c)
+  public static function updateRs(&$c)
   {
       $rgget = $c->findBin('scha_resourcegroup_get');
       $rsget = $c->findBin('scha_resource_get');
@@ -263,7 +263,7 @@ for i in `./scha_cluster_get -O ALL_RESOURCEGROUPS`; do nodelist=`./scha_resourc
   /**
    /etc/cluster/release
    */
-  public static function update_release(&$c)
+  public static function updateRelease(&$c)
   {
 
     /* get uname -a */

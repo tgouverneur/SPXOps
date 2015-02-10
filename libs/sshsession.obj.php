@@ -173,7 +173,7 @@ class SSHSession
         }
     }
 
-    public function notify_disconnect($reason, $message, $language)
+    public function notifyDisconnect($reason, $message, $language)
     {
         $this->_connected = 0;
         $this->_shell = null;

@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Disk extends mysqlObj
+class Disk extends MySqlObj
 {
   public $id = -1;
     public $dev = '';

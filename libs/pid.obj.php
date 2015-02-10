@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Pid extends mysqlObj
+class Pid extends MySqlObj
 {
   public $id = -1;
     public $agent = '';

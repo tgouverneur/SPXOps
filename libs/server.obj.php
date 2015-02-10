@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Server extends mysqlObj implements JsonSerializable
+class Server extends MySqlObj implements JsonSerializable
 {
   use logTrait;
     public static $RIGHT = 'SRV';

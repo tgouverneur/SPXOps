@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class UGroup extends mysqlObj
+class UGroup extends MySqlObj
 {
   public $id = -1;
     public $name = '';

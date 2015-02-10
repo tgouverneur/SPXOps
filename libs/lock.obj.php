@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Lock extends mysqlObj
+class Lock extends MySqlObj
 {
   public $id = -1;
     public $fk_server = -1;

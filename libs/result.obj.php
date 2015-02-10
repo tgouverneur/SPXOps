@@ -10,7 +10,7 @@
  * @subpackage backend
  * @filesource
  */
-class Result extends mysqlObj
+class Result extends MySqlObj
 {
   public $id = -1;
     public $rc = 0;
