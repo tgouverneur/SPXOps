@@ -257,6 +257,9 @@ class OSLinux extends OSType
         $s->a_nfsm[] = $no;
       }
       $remote_f = explode(':', $f[0]);
+      if (count($remote_f) < 2) {
+          continue;
+      }
       if (strcmp($no->share, $remote_f[1])) {
         $no->share = $remote_f[1];
         $s->log("Changed share of $no to be ".$no->share, LLOG_INFO);
@@ -521,9 +524,12 @@ class OSLinux extends OSType
         $f_eth = explode(' ', $line);
         $vnet = new Net();
         $vnet->ifname = $c_if->ifname;
-	$vnet->fk_server = $s->id;
-	$vnet->layer = 3; /* IP */
-	$ipaddr = explode('/', $m[1]);
+        $vnet->fk_server = $s->id;
+        $vnet->layer = 3; /* IP */
+        $ipaddr = explode('/', $m[1]);
+        if (count($ipaddr) < 2) {
+            continue;
+        }
         $vnet->address = $ipaddr[0];
         $vnet->netmask = $ipaddr[1];
 	if ($vnet->fetchFromFields(array('ifname', 'version', 'fk_server', 'layer', 'address', 'netmask'))) {
