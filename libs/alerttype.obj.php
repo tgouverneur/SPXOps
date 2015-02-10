@@ -48,8 +48,6 @@ class AlertType extends MySqlObj
 
     public function toArray($cfs = array())
     {
-        global $config;
-
         return array(
                  'name' => $this->name,
                  'desc' => $this->desc,

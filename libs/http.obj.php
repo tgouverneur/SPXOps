@@ -72,17 +72,15 @@ class HTTP
 
     public function parseUrl()
     {
-        /*if (count($_GET)) {
-    return;
-    }*/
-    if (!isset($_SERVER['PATH_INFO'])) {
-        return;
-    }
+        if (!isset($_SERVER['PATH_INFO'])) {
+            return;
+        }
         $url = explode('/', $_SERVER['PATH_INFO']);
         $g = array();
         $idx = "";
         $val = "";
-        for ($i = 1, $s = 0; $i<count($url); $i++) {
+        $c = count($url);
+        for ($i = 1, $s = 0; $i<$c; $i++) {
             if ($s == 0) {
                 $idx = $url[$i];
                 $g[$idx] = "";

@@ -22,7 +22,6 @@ class SUser extends MySqlObj
 
     public function valid($new = true)
     { /* validate form-based fields */
-    global $config;
         $ret = array();
 
         if (empty($this->username)) {

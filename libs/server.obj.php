@@ -157,7 +157,6 @@ class Server extends MySqlObj implements JsonSerializable
 
     public function valid($new = true)
     { /* validate form-based fields */
-    global $config;
         $ret = array();
 
         if (empty($this->hostname)) {
@@ -373,8 +372,6 @@ class Server extends MySqlObj implements JsonSerializable
 
     public function isFile($path)
     {
-        $found = false;
-
         if (!$this->_ssh) {
             throw new SPXException('SSH Not connected');
         }
@@ -399,8 +396,6 @@ class Server extends MySqlObj implements JsonSerializable
 
     public function findBin($bin, $paths = null)
     {
-        $found = '';
-
         if (!$this->_ssh) {
             throw new SPXException('SSH Not connected');
         }

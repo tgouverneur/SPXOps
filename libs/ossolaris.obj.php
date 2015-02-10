@@ -2078,8 +2078,8 @@ zfs:0:arcstats:l2_writes_sent   376002
    */
   public static function updateSds(&$s)
   {
-      $metastat = $s->findBin('metastat');
-      $cmd_metastat = "$metastat -p";
+ //     $metastat = $s->findBin('metastat');
+ //     $cmd_metastat = "$metastat -p";
  //   $out_metastat = $s->exec($cmd_metastat);
 /*
 d9 -m d29 1
@@ -2103,8 +2103,8 @@ d100 -m d101 1
 d101 1 1 /dev/dsk/emcpower58a
 */
 
-    $metaset = $s->findBin('metaset');
-      $cmd_metaset = "$metaset";
+  //  $metaset = $s->findBin('metaset');
+  //    $cmd_metaset = "$metaset";
   }
 
   /**
@@ -2116,7 +2116,6 @@ d101 1 1 /dev/dsk/emcpower58a
       $cmd_swap = "$swap -l";
       $out_swap = $s->exec($cmd_swap);
 
-      $found_s = array();
       $lines = explode(PHP_EOL, $out_swap);
 
       foreach ($lines as $line) {

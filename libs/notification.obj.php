@@ -17,7 +17,7 @@ class Notification
       $a_login = array();
 
       if ($cr->rc == 0 && !$oldcr) { // First check result and it's OK, don't send anything.
-      return;
+          return;
       }
 
       Logger::log('Notification request...'.$cr.' / '.$oldcr, LLOG_DEBUG);
@@ -47,7 +47,6 @@ class Notification
     }
 
       $mfrom = Setting::get('general', 'mailfrom')->value;
-      $mname = Setting::get('general', 'sitename')->value;
       $domain = explode('@', $mfrom);
       $domain = $domain[0];
       $subject = $s.'/'.$cr->o_check.': '.Result::colorRC($cr->rc);
@@ -94,7 +93,6 @@ class Notification
     }
 
         $mfrom = Setting::get('general', 'mailfrom')->value;
-        $mname = Setting::get('general', 'sitename')->value;
         $domain = explode('@', $mfrom);
         $domain = $domain[0];
         $subject = '['.$at.'] '.$short;

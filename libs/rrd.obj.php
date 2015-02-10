@@ -225,15 +225,8 @@ class RRD extends MySqlObj
         return $updator->update($a, $ts);
     }
 
-    public function create()
+    private function createMpStat()
     {
-        global $config;
-        if (!isset($config['server']['rrdpath']) || empty($config['server']['rrdpath'])) {
-            throw new SPXException('RRD Path not set!');
-        }
-
-        switch ($this->type) {
-      case 'mpstat':
         $creator = new RRDCreator($this->getPath(), "now -10d", 1);
         $creator->addDataSource('minf:GAUGE:1:0:U');
         $creator->addDataSource('mjf:GAUGE:1:0:U');
@@ -255,8 +248,10 @@ class RRD extends MySqlObj
         $creator->addArchive('AVERAGE:0.5:300:105120');
         $creator->save();
         Logger::log('RRD '.$this->path.' created with MPSTAT type', $this, LOG_DEBUG);
-      break;
-      case 'ziostat':
+    }
+
+    private function createZIOStat()
+    {
         $creator = new RRDCreator($this->getPath(), "now -10d", 1);
         $creator->addDataSource('rops:GAUGE:1:0:U');
         $creator->addDataSource('wops:GAUGE:1:0:U');
@@ -267,8 +262,10 @@ class RRD extends MySqlObj
         $creator->addArchive('AVERAGE:0.5:300:105120');
         $creator->save();
         Logger::log('RRD '.$this->path.' created with ZIOSTAT type', $this, LOG_DEBUG);
-      break;
-      case 'iostat':
+    }
+
+    private function createIOStat()
+    {
         $creator = new RRDCreator($this->getPath(), "now -10d", 1);
         $creator->addDataSource('riops:GAUGE:1:0:U');
         $creator->addDataSource('wiops:GAUGE:1:0:U');
@@ -285,10 +282,28 @@ class RRD extends MySqlObj
         $creator->addArchive('AVERAGE:0.5:300:105120');
         $creator->save();
         Logger::log('RRD '.$this->path.' created with IOSTAT type', $this, LOG_DEBUG);
-      break;
-      default:
-        throw new SPXException('RRD::create(): Unknown type');
-      break;
+    }
+
+    public function create()
+    {
+        global $config;
+        if (!isset($config['server']['rrdpath']) || empty($config['server']['rrdpath'])) {
+            throw new SPXException('RRD Path not set!');
+        }
+
+        switch ($this->type) {
+          case 'mpstat':
+             $this->createMpStat();
+             break;
+          case 'ziostat':
+             $this->createZIOStat();
+             break;
+          case 'iostat':
+             $this->createIOStat();
+             break;
+          default:
+             throw new SPXException('RRD::create(): Unknown type');
+          break;
     }
 
         return 0;
@@ -414,6 +429,7 @@ class RRD extends MySqlObj
         foreach ($a['values'] as $disk => $values) {
             try {
                 /* find RRD by path */
+        return 0;
         $path = $s->hostname.'-iostat-'.$disk.'.rrd';
                 $rrd = new RRD();
                 $rrd->path = $path;
@@ -452,22 +468,16 @@ class RRD extends MySqlObj
         }
         switch ($a['type']) {
       case 'mpstat':
-    Logger::log('entering parseMPstat()', $this, LLOG_DEBUG);
-
+        Logger::log('entering parseMPstat()', $this, LLOG_DEBUG);
         return RRD::parseMPstat($s, $a);
-    Logger::log('left parseMPstat()', $this, LLOG_DEBUG);
       break;
       case 'ziostat':
-    Logger::log('entering parseZIostat()', $this, LLOG_DEBUG);
-
+        Logger::log('entering parseZIostat()', $this, LLOG_DEBUG);
         return RRD::parseZIostat($s, $a);
-    Logger::log('left parseZIostat()', $this, LLOG_DEBUG);
       break;
       case 'iostat':
-    Logger::log('entering parseIostat()', $this, LLOG_DEBUG);
-
+        Logger::log('entering parseIostat()', $this, LLOG_DEBUG);
         return RRD::parseIostat($s, $a);
-    Logger::log('left parseIostat()', $this, LLOG_DEBUG);
       break;
       default:
         throw new SPXException('Unknown type');

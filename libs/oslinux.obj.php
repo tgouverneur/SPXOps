@@ -453,8 +453,6 @@ class OSLinux extends OSType
         }
 
         return 0;
-
-        return 0;
     }
 
   /**

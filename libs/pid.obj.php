@@ -57,7 +57,6 @@ class Pid extends MySqlObj
 
     public static function checkLocks(&$d)
     {
-        global $config;
         $locks = Lock::getAll(true, array());
         foreach ($locks as $lock) {
             $pid = new Pid();

@@ -452,7 +452,7 @@ class MySqlObj
           }
 
           $my = MySqlCM::getInstance();
-          if (($data = $my->select("`".$id."`", $this->_table, $where)) == false) {
+          if ($my->select("`".$id."`", $this->_table, $where) == false) {
               return 1;
           } else {
               if ($my->getNR()) {
@@ -717,8 +717,6 @@ class MySqlObj
 
         try {
             $rel = $this->_jt[$name];
-            $sc = get_called_class();
-
             $table = $rel->jt;
             $where = '';
             $w = 0;
@@ -786,7 +784,6 @@ class MySqlObj
 
         try {
             $rel = $this->_jt[$name];
-            $sc = get_called_class();
 
             $table = $rel->jt;
             $names = '';
@@ -834,8 +831,6 @@ class MySqlObj
             throw new SPXException("Rel association $name not found");
         }
 
-        $my = MySqlCM::getInstance();
-
         try {
             $rel = $this->_jt[$name];
 
@@ -873,8 +868,6 @@ class MySqlObj
         try {
             $rel = $this->_jt[$name];
             $this->{$rel->ar} = array();
-
-            $sc = get_called_class();
 
             $table = $rel->jt;
             $index = '';

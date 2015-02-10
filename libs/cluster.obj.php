@@ -151,7 +151,6 @@ class Cluster extends MySqlObj
 
     public function valid($new = true, &$old = null)
     { /* validate form-based fields */
-    global $config;
         $ret = array();
 
         if (empty($this->name)) {

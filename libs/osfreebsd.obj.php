@@ -57,16 +57,16 @@ class OSFreeBSD extends OSType
           $f[1] = trim($f[1]);
 
           switch ($f[0]) {
-        case 'Manufacturer':
-          $vendor = $f[1];
-        break;
-        case 'Product Name':
-          $pname = $f[1];
-        break;
-        case 'Serial Number':
-          $serial = $f[1];
-        break;
-      }
+            case 'Manufacturer':
+              $vendor = $f[1];
+            break;
+            case 'Product Name':
+              $pname = $f[1];
+            break;
+            case 'Serial Number':
+              $serial = $f[1];
+            break;
+          }
       }
 
       if (!empty($serial)) {
@@ -897,7 +897,6 @@ class OSFreeBSD extends OSType
       $cmd_swap = "$swap";
       $out_swap = $s->exec($cmd_swap);
 
-      $found_s = array();
       $lines = explode(PHP_EOL, $out_swap);
 
       foreach ($lines as $line) {
