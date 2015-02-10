@@ -610,8 +610,10 @@ class mysqlCM
             foreach($args as $n => $v) {
                 if (is_array($v)) {
                     $this->_res->bindParam($n, $v[0], $v[1]);
+                    if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") Param ".$n." bound with ".$v[0]." \n");
                 } else {
                     $this->_res->bindParam($n, $v);
+                    if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") Param ".$n." bound with ".$v." \n");
                 }
             }
         }
