@@ -719,7 +719,7 @@ class Server extends mysqlObj implements JsonSerializable
        to allow the fetch for all the server at once!
     */
     $a = array();
-        $m = mysqlCM::getInstance();
+        $m = MySqlCM::getInstance();
         $index = "`fk_server`,`fk_check`,`t_upd`,`rc`,`f_ack`";
         $table = "(select `fk_server`,`fk_check`,`t_upd`,`rc`,`f_ack` from `list_result` order by `t_upd` desc) a";
         if ($fk_os) {

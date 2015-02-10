@@ -153,7 +153,7 @@ class SPXNet
     public function run()
     {
         try {
-            $m = mysqlCM::getInstance();
+            $m = MySqlCM::getInstance();
             if ($m->connect()) {
                 $this->log(" Error with SQL db: ".$m->getError());
                 sleep($this->_interval);

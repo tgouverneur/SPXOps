@@ -47,15 +47,15 @@ class Daemon
 
         if (!$f) {
             $reco = false;
-            if (mysqlCM::getInstance()->isLink()) {
+            if (MySqlCM::getInstance()->isLink()) {
                 $reco = true;
             }
 
-            mysqlCM::delInstance();
+            MySqlCM::delInstance();
             gc_collect_cycles();
             $this->pid = pcntl_fork();
             if ($this->pid) {
-                $m = mysqlCM::getInstance();
+                $m = MySqlCM::getInstance();
                 if ($reco) {
                     $m->connect();
                 }
@@ -63,14 +63,14 @@ class Daemon
                 return;
             } else {
                 Logger::delInstance();
-                mysqlCM::delInstance();
+                MySqlCM::delInstance();
                 pcntl_signal(SIGTERM, array($obj, 'sigterm'));
                 pcntl_signal(SIGHUP, array($obj, 'sighup'));
                 pcntl_signal(SIGCHLD, array($obj, 'sigchld'));
                 pcntl_signal(SIGUSR1, array($obj, 'sigusr1'));
                 pcntl_signal(SIGUSR2, array($obj, 'sigusr2'));
                 gc_collect_cycles();
-                $m = mysqlCM::getInstance();
+                $m = MySqlCM::getInstance();
 
                 $this->pid = posix_getpid();
                 $obj->pid = $this->pid;

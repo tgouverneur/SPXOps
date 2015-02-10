@@ -28,7 +28,7 @@ if (!defined('SQL_NONE')) {
  * @subpackage config
  * @author Gouverneur Thomas <tgo@espix.net>
  */
-class mysqlCM
+class MySqlCM
 {
   /**
    * Holds the db link

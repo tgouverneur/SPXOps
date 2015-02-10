@@ -2,7 +2,7 @@
  require_once("../libs/autoload.lib.php");
  require_once("../libs/config.inc.php");
 
- $m = mysqlCM::getInstance();
+ $m = MySqlCM::getInstance();
  if ($m->connect()) {
    HTTP::getInstance()->errMysql();
  }

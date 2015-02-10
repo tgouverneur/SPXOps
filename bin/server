@@ -49,7 +49,7 @@
       $uname = $opts['u'];
   }
 
-  $m = mysqlCM::getInstance();
+  $m = MySqlCM::getInstance();
   if ($m->connect()) {
       die($argv[0]." Error with SQL db: ".$m->getError()."\n");
   }

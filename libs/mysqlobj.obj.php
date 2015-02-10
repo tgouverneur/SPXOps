@@ -94,7 +94,7 @@ class mysqlObj
           throw new SPXException('No Index found for this object');
       }
 
-      $my = mysqlCM::getInstance();
+      $my = MySqlCM::getInstance();
 
       $where = "";
       $w = 0;
@@ -136,7 +136,7 @@ class mysqlObj
           throw new SPXException('No Index found for this object');
       }
 
-      $my = mysqlCM::getInstance();
+      $my = MySqlCM::getInstance();
 
       if (isset($this->_datas[$name])) {
           if ($value === $this->_datas[$name]) {
@@ -206,7 +206,7 @@ class mysqlObj
           throw new SPXException('No Index in this object');
       }
 
-      $my = mysqlCM::getInstance();
+      $my = MySqlCM::getInstance();
 
       $where = "";
       $w = 0;
@@ -266,7 +266,7 @@ class mysqlObj
           }
       }
 
-      $my = mysqlCM::getInstance();
+      $my = MySqlCM::getInstance();
       if (($data = $my->select("`".$id."`", $this->_table, $where))) {
           if ($my->getNR() == 1) {
               $this->{$this->_myc[$id]} = $data[0][$id];
@@ -296,7 +296,7 @@ class mysqlObj
           $this->t_upd = time();
       }
 
-      $my = mysqlCM::getInstance();
+      $my = MySqlCM::getInstance();
       foreach ($this->_my as $k => $v) {
           if (($v & SQL_INDEX) && (empty($this->{$this->_myc[$k]}) || $this->{$this->_myc[$k]} == -1)) {
               continue; /* skip index */
@@ -339,7 +339,7 @@ class mysqlObj
           $this->t_upd = time();
       }
 
-      $my = mysqlCM::getInstance();
+      $my = MySqlCM::getInstance();
       foreach ($ids as $id) {
           if ($id === false) {
               continue;
@@ -377,7 +377,7 @@ class mysqlObj
   {
       $where = " WHERE ";
       $i = 0;
-      $my = mysqlCM::getInstance();
+      $my = MySqlCM::getInstance();
       foreach ($this->_my as $k => $v) {
           if ($v == SQL_INDEX) {
               continue;
@@ -451,7 +451,7 @@ class mysqlObj
               $where .= " AND `".$id."`='".$this->{$this->_myc[$id]}."'";
           }
 
-          $my = mysqlCM::getInstance();
+          $my = MySqlCM::getInstance();
           if (($data = $my->select("`".$id."`", $this->_table, $where)) == false) {
               return 1;
           } else {
@@ -481,7 +481,7 @@ class mysqlObj
           $i++;
       }
 
-      $my = mysqlCM::getInstance();
+      $my = MySqlCM::getInstance();
       $i = 0;
       foreach ($on_fields as $field) {
           if ($i) {
@@ -515,7 +515,7 @@ class mysqlObj
    */
   public function fetchFromField($field)
   {
-      $my = mysqlCM::getInstance();
+      $my = MySqlCM::getInstance();
       $i = 0;
       $fields = "";
       foreach ($this->_my as $k => $v) {
@@ -581,7 +581,7 @@ class mysqlObj
       }
 
     //$where = "WHERE `".$id."`='".$this->{$this->_myc[$id]}."'";
-    $my = mysqlCM::getInstance();
+    $my = MySqlCM::getInstance();
       if (($data = $my->select($fields, $this->_table, $where)) == false) {
           return -1;
       } else {
@@ -608,7 +608,7 @@ class mysqlObj
       $where = "";
       $w = 0;
 
-      $my = mysqlCM::getInstance();
+      $my = MySqlCM::getInstance();
     /* Build index list */
     $ids = array_keys($this->_my, SQL_INDEX);
       if (count($ids) == 0) {
@@ -713,7 +713,7 @@ class mysqlObj
             throw new SPXException("Rel association $name not found");
         }
 
-        $my = mysqlCM::getInstance();
+        $my = MySqlCM::getInstance();
 
         try {
             $rel = $this->_jt[$name];
@@ -782,7 +782,7 @@ class mysqlObj
             throw new SPXException("JT association $name not found");
         }
 
-        $my = mysqlCM::getInstance();
+        $my = MySqlCM::getInstance();
 
         try {
             $rel = $this->_jt[$name];
@@ -834,7 +834,7 @@ class mysqlObj
             throw new SPXException("Rel association $name not found");
         }
 
-        $my = mysqlCM::getInstance();
+        $my = MySqlCM::getInstance();
 
         try {
             $rel = $this->_jt[$name];
@@ -868,7 +868,7 @@ class mysqlObj
             throw new SPXException("JT association $name not found");
         }
 
-        $my = mysqlCM::getInstance();
+        $my = MySqlCM::getInstance();
 
         try {
             $rel = $this->_jt[$name];
@@ -932,7 +932,7 @@ class mysqlObj
             throw new SPXException("Rel association $name not found");
         }
 
-        $my = mysqlCM::getInstance();
+        $my = MySqlCM::getInstance();
 
         try {
             $rel = $this->_rel[$name];

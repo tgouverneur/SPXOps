@@ -44,7 +44,7 @@ class Job extends mysqlObj
         if (!$pid) {
             return;
         }
-        $m = mysqlCM::getInstance();
+        $m = MySqlCM::getInstance();
         $args = array('pid' => $pid->id,
         );
         $ret = array('id' => -1);
