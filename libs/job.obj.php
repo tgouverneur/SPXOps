@@ -77,7 +77,9 @@ class Job extends mysqlObj
     $table = "`list_job`";
     $index = "`id`";
     $cindex = "COUNT(`id`)";
-    $where = "WHERE `t_add` <= ".$t_old." AND (`state`=".S_FAIL." OR `state`=".S_DONE." OR `state`=".S_STALL.")";
+    $where['q'] = "WHERE `t_add` <= :t_add AND (`state`=".S_FAIL." OR `state`=".S_DONE." OR `state`=".S_STALL.")";
+    $where['a'] = array(':t_add' => array(0 => $t_old, 1 => PDO::PARAM_INT));
+
     $it = new mIterator('Job', $index, $table, $where, $cindex);
     $slog = new Server();
     $slog->_job = $job;
@@ -85,9 +87,9 @@ class Job extends mysqlObj
     while(($j = $it->next())) {
       $j->fetchFromId();
       try {
-      $j->fetchFK('fk_log');
+          $j->fetchFK('fk_log');
       } catch (Exception $e) {
-	$j->o_log = null; // don't care... clean anyway
+        $j->o_log = null; // don't care... clean anyway
       }
       Logger::log("Removing job $j and its log", $slog, LLOG_INFO);
       if ($j->o_log) $j->o_log->delete();

@@ -302,11 +302,18 @@ class mysqlCM
    */
   public function count($table, $where="")
   {
-    $query = "SELECT COUNT(*) FROM `".$table."` ".$where;
-    
     $this->_nres = null;
+    $args = array();
+
+    if (is_array($where)) {
+      $query = "SELECT COUNT(*) FROM `".$table."` ".$where['q'];
+      $args = $where['a'];
+    } else {
+      $query = "SELECT COUNT(*) FROM `".$table."` ".$where;
+    }
     
-    if (!$this->_query($query))
+    
+    if (!$this->_query($query, $args))
     {
       try {
         $row = $this->_res->fetchAll(PDO::FETCH_ASSOC);
@@ -315,7 +322,7 @@ class mysqlCM
       }
       if (count($row)) $row = $row[0];
       if (isset($row['COUNT(*)']))
-	$data = $row['COUNT(*)'];
+        $data = $row['COUNT(*)'];
 
       $this->_res->closeCursor();
       unset($this->_res);
@@ -332,11 +339,17 @@ class mysqlCM
    */
   public function select($fields, $table, $where="", $sort="")
   {
-    $query = "SELECT ".$fields." FROM `".$table."` ".$where." ".$sort;
-
     $this->_nres = null;
+    $args = array();
 
-    if (!$this->_query($query))
+    if (is_array($where)) {
+        $query = "SELECT ".$fields." FROM `".$table."` ".$where['q']." ".$sort;
+        $args = $where['a'];
+    } else {
+        $query = "SELECT ".$fields." FROM `".$table."` ".$where." ".$sort;
+    }
+
+    if (!$this->_query($query, $args))
     {
       $data = array();
 //      $this->_nres = @$this->_link->rowCount();
@@ -472,10 +485,17 @@ class mysqlCM
    */
   function fetchIndex($index, $table, $where)
   {
-    $query = "SELECT ".$index." FROM ".$table." ".$where;
-
     $this->_nres = null;
-    if (!$this->_query($query))
+    $args = array();
+
+    if (is_array($where)) {
+      $query = "SELECT ".$index." FROM ".$table." ".$where['q'];
+      $args = $where['a'];
+    } else {
+      $query = "SELECT ".$index." FROM ".$table." ".$where;
+    }
+
+    if (!$this->_query($query, $args))
     {
       $data = array();
       try {
@@ -585,12 +605,23 @@ class mysqlCM
         }
 
         $this->_res = $this->_link->prepare($query);
+
+        if (is_array($args)) {
+            foreach($args as $n => $v) {
+                if (is_array($v)) {
+                    $this->_res->bindParam($n, $v[0], $v[1]);
+                } else {
+                    $this->_res->bindParam($n, $v);
+                }
+            }
+        }
+
         if (@$this->_res->execute($args)) {
     
           if ($this->_debug) $this->_dprint("[".time()."] (".$this->_time().") ".$query."\n");
           $this->_nres = $this->_res->rowCount();
-    
           return 0;
+
         } else {
 
           $this->_error = $this->_res->errorInfo();
