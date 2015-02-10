@@ -18,55 +18,6 @@ if (!defined('PLUGIN_LOADED')) {
   define('PLUGIN_LOADED', true);
 }
 
-class PluginWME {
-  public $name = '';
-  public $desc = '';
-  public $cat = '';
-  public $fct = null;
-
-  public $is_std = true; /* is this category standard */
-
-  public $n_right = null;
-  public $n_level = 0;
-
-  public $o_plugin = null;
-
-  public function __construct($p = null, $n = '', $f = null) {
-    $this->o_plugin = $p;
-    $this->name = $n;
-    $this->fct = $f;
-  }
-
-  public function call($arg) {
-    return $this->o_plugin->{$this->fct}($arg);
-  }
-
-  public function getHref($a = null) {
-    return '/plugin/p/'.$this->o_plugin->name.'/w/'.$this->name.(($a)?'/r/'.$a:'');
-  }
-}
-
-class Hook
-{
-  private $_class = null;
-  private $_fct = null;
-  private $_hn = -1; // Hook Number
-
-  public function __construct($hn, $class, $fct) {
-    $this->_class = $class;
-    $this->_fct = $fct;
-    $this->_hn = $hn;
-  }
-
-  public function call($arg = null) {
-    if ($this->_class) {
-      return call_user_func_array(array($this->_class, $this->_fct), $arg);
-    } else {
-      return call_user_func_array($this->_fct, $arg);
-    }
-  }
-}
-
 class Plugin
 {
   /* Make sure to init this only once, this is our gatekeeper: */

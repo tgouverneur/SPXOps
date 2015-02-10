@@ -11,54 +11,6 @@
  * @filesource
  */
 
-class eAction {
-  public $href = '';
-  public $onclick = '';
-  public $text = '';
-  public $arg = '';
-  public $fct = '';
-
-  public $res = null;
-  public function __construct($t, $h, $o, $a, $f) {
-    $this->href = $h;
-    $this->onclick = $o;
-    $this->text = $t;
-    $this->arg = $a;
-    $this->fct = $f;
-  }
-
-  public function call(&$s) {
-    $this->res = null;
-    if ($s->o_os) {
-      if (method_exists($s->o_os->class, $this->fct)) {
-        $class = $s->o_os->class;
-        $fct = $this->fct;
-        $this->res = $class::$fct($s);
-        if (!$this->res) {
-	  return -1; 
-	}
-	return 0;
-      }
-    }
-    return -1;
-  }
-  public function onclick($obj) {
-    $ret = $this->onclick;
-    if (!empty($this->arg)) {
-      $ret = sprintf($this->onclick, $obj->{$this->arg});
-    }
-    return $ret;
-  }
-  public function href($obj) {
-    $ret = $this->href;
-    if (!empty($this->arg)) {
-      $ret = sprintf($this->href, $obj->{$this->arg});
-    }
-    return $ret;
-  }
-}
-
-
 class Server extends mysqlObj implements JsonSerializable
 {
   use logTrait;

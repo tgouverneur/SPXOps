@@ -11,18 +11,6 @@
  * @filesource
  */
 
-class VMdisk {
-  public $file = '';
-  public function __construct($f) { $this->file = $f; }
-}
-
-class VMnet {
-  public $mac = '';
-  public $net = '';
-  public $model = '';
-  public function __construct($m, $n, $mo) { $this->mac = $m; $this->net = $n; $this->model = $mo; }
-}
-
 class VM extends mysqlObj
 {
   use logTrait;
