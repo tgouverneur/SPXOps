@@ -41,7 +41,7 @@ define('MAX_MSG_SIZE', 65000);
 
      private function _unSerialize()
      {
-         $this->a_v = @unserialize($this->_bs);
+         $this->a_v = unserialize($this->_bs);
          Logger::log("[-] Unserialized: $this", $this, LOG_DEBUG);
 
          return 0;

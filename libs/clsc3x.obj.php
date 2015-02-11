@@ -1,6 +1,6 @@
 <?php
 
-@include_once Config::$rootpath.'/libs/functions.lib.php';
+include_once(Config::$rootpath.'/libs/functions.lib.php');
 
 class CLsc3x extends CLType
 {

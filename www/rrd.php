@@ -156,6 +156,6 @@
  }
 
 screen:
- echo @json_encode($ret);
+ echo json_encode($ret);
 
 ?>

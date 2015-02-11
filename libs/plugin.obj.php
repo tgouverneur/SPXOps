@@ -78,7 +78,7 @@ class Plugin
                 Logger::log("Plugins $name is enabled in config but not found", null, LLOG_ERR);
                 continue; // Skip this plugin and log an error
             }
-            @require_once Config::$plugins_path.'/'.$name.'/'.$name.'.php';
+            require_once(Config::$plugins_path.'/'.$name.'/'.$name.'.php');
       //Logger::log("Plugin $name is now active..", null, LLOG_DEBUG);
         }
         Plugin::$_done = true;

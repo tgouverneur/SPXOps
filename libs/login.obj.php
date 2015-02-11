@@ -32,7 +32,7 @@ class Login extends MySqlObj
 
     public function setListPref($list, $val)
     {
-        return $this->setData('list:'.$list, @serialize($val));
+        return $this->setData('list:'.$list, serialize($val));
     }
 
     public function getListPref($list)
@@ -45,7 +45,7 @@ class Login extends MySqlObj
             return;
         }
 
-        return @unserialize($val);
+        return unserialize($val);
     }
 
     public function getAddr()

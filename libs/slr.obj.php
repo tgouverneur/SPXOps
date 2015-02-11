@@ -22,12 +22,12 @@ class SLR extends MySqlObj
 
     public function getArray()
     {
-        $this->a_def = @unserialize($this->definition);
+        $this->a_def = unserialize($this->definition);
     }
 
     public function setDefinition($a)
     {
-        $this->definition = @serialize($a);
+        $this->definition = serialize($a);
     }
 
     public function __toString()

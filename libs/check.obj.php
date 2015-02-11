@@ -240,7 +240,7 @@ CODE;
 
     public function toArray($cfs = array())
     {
-        @include_once Config::$rootpath.'/libs/functions.lib.php';
+        include_once(Config::$rootpath.'/libs/functions.lib.php');
 
         return array(
                  'name' => $this->name,
@@ -253,7 +253,7 @@ CODE;
 
     public function htmlDump()
     {
-        @include_once Config::$rootpath.'/libs/functions.lib.php';
+        include_once(Config::$rootpath.'/libs/functions.lib.php');
         $ret = array(
         'Name' => $this->name,
         'Description' => $this->description,

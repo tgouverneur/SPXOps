@@ -33,12 +33,12 @@ class SSHSession
         }
         $authDone = false;
         if ($this->o_user->pubkey()) {
-            if (($rc = @ssh2_auth_pubkey_file($this->_con, $this->o_user->username, $this->o_user->pubkey.'.pub', $this->o_user->pubkey))) {
+            if (($rc = ssh2_auth_pubkey_file($this->_con, $this->o_user->username, $this->o_user->pubkey.'.pub', $this->o_user->pubkey))) {
                 $authDone = true;
             }
         }
         if (!$authDone && !empty($this->o_user->password)) { /* password auth */
-      if (($rc = @ssh2_auth_password($this->_con, $this->o_user->username, $this->o_user->password))) {
+      if (($rc = ssh2_auth_password($this->_con, $this->o_user->username, $this->o_user->password))) {
           $authDone = true;
       }
         }

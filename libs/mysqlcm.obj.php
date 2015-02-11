@@ -268,7 +268,7 @@ class MySqlCM
       $dbstring .= "; dbname=".Config::$mysql_db;
       do {
           try {
-              $this->_link = @new PDO($dbstring,
+              $this->_link = new PDO($dbstring,
                                Config::$mysql_user,
                                Config::$mysql_pass,
                    array(PDO::ATTR_PERSISTENT => true,
@@ -547,7 +547,7 @@ class MySqlCM
       do {
           try {
               unset($this->_res);
-              if (($this->_affect = @$this->_link->exec($query)) === false) {
+              if (($this->_affect = $this->_link->exec($query)) === false) {
                   $this->_error = $this->_link->errorInfo();
                   $this->_error = $this->_error[2];
 
@@ -641,7 +641,7 @@ class MySqlCM
                   }
               }
 
-              if (@$this->_res->execute($args)) {
+              if ($this->_res->execute($args)) {
                   if ($this->_debug) {
                       $this->_dPrint("[".time()."] (".$this->_Time().") ".$query."\n");
                   }
