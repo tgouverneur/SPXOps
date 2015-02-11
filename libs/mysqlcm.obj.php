@@ -639,6 +639,8 @@ class MySqlCM
                           }
                       }
                   }
+              } else {
+		$args = array();
               }
 
               if ($this->_res->execute($args)) {
