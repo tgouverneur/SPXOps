@@ -60,7 +60,7 @@ class Pid extends MySqlObj
             $pid = new Pid();
             $pid->id = $lock->fk_pid;
             if ($pid->fetchFromId()) {
-                Logger::log("Lock $lock has been detected as dead...", $d, LLOG_DEBUG);
+                Logger::log("Lock $lock has been detected as dead...", $pid, LLOG_DEBUG);
                 $lock->delete();
             }
         }
