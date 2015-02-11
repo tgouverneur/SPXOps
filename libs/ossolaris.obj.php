@@ -43,8 +43,6 @@ class OSSolaris extends OSType
   /* Extra actions functions */
   public static function actionZFSArc(&$s)
   {
-      include_once(Config::$rootpath.'/libs/utils.obj.php');
-
       $ret = array();
       $res = '<h3>ZFS Arc status</h3>'."\n";
 

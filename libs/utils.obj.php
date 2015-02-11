@@ -2,6 +2,22 @@
 
 class Utils
 {
+    public static function registerAutoload() 
+    {
+         spl_autoload_register('Utils::objAutoload');
+    }
+
+  public static function objAutoload($name)
+  {  
+      $name = strtolower($name);
+      $file = Config::$rootpath.'/libs/'.$name.'.obj.php';
+      if (file_exists($file)) {
+          require_once $file;
+      } else {
+          throw new Exception("Cannot load $file...\n");
+      }
+  }
+
     function __construct()
     {
         throw new SPXException('Cannot instanciate Utils object');
@@ -81,3 +97,6 @@ public static function parseBool($b)
 }
 
 }
+
+/* register autoload method */
+Utils::registerAutoload();

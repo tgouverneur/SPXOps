@@ -240,8 +240,6 @@ CODE;
 
     public function toArray($cfs = array())
     {
-        include_once(Config::$rootpath.'/libs/utils.obj.php');
-
         return array(
                  'name' => $this->name,
                  'description' => $this->description,
@@ -253,7 +251,6 @@ CODE;
 
     public function htmlDump()
     {
-        include_once(Config::$rootpath.'/libs/utils.obj.php');
         $ret = array(
         'Name' => $this->name,
         'Description' => $this->description,

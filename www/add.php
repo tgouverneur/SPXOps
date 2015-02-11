@@ -1,5 +1,5 @@
 <?php
- require_once("../libs/autoload.lib.php");
+ require_once("../libs/utils.obj.php");
  require_once("../libs/config.inc.php");
 
  $m = MySqlCM::getInstance();
@@ -113,7 +113,6 @@
        if (!$lm->o_login->cRight('RJOB', R_ADD)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
-       include_once(Config::$rootpath.'/libs/utils.obj.php');
        $what = 'Recurrent Job';
        $obj = new RJob();
        $content = new Template('../tpl/form_rjob.tpl');
@@ -197,7 +196,6 @@
        if (!$lm->o_login->cRight('CHK', R_ADD)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
-       include_once(Config::$rootpath.'/libs/utils.obj.php');
        $what = 'Check';
        $obj = new Check();
        $content = new Template('../tpl/form_check.tpl');

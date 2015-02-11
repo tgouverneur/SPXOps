@@ -571,8 +571,6 @@ class RRD extends MySqlObj
             $this->fetchFK('fk_disk');
         }
 
-        include_once(Config::$rootpath.'/libs/utils.obj.php');
-
         $ret = array(
     'Type' => $this->type,
     'Path' => $this->path,

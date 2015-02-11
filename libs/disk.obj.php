@@ -88,8 +88,6 @@ class Disk extends MySqlObj
 
     public function toArray($cfs = array())
     {
-        include_once(Config::$rootpath.'/libs/utils.obj.php');
-
         return array(
                  'dev' => $this->dev,
                  'serial' => $this->serial,

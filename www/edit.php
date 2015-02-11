@@ -1,5 +1,5 @@
 <?php
- require_once("../libs/autoload.lib.php");
+ require_once("../libs/utils.obj.php");
  require_once("../libs/config.inc.php");
 
  $m = MySqlCM::getInstance();
@@ -220,7 +220,6 @@
        if (!$lm->o_login->cRight('CHK', R_EDIT)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
-       include_once(Config::$rootpath.'/libs/utils.obj.php');
        $what = 'Check';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $suid = $_GET['i'];

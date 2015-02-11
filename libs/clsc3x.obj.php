@@ -1,7 +1,5 @@
 <?php
 
-include_once(Config::$rootpath.'/libs/utils.obj.php');
-
 class CLsc3x extends CLType
 {
   public static $binPaths = array(

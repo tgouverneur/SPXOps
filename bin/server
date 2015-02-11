@@ -11,7 +11,7 @@
    * @subpackage list
    * @filesource
    */
-  require_once dirname(__FILE__).'/../libs/autoload.lib.php';
+  require_once dirname(__FILE__).'/../libs/utils.obj.php';
   require_once dirname(__FILE__).'/../libs/config.inc.php';
 
   $shortopts = "F::u::s::Uhadv";

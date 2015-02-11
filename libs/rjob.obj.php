@@ -109,8 +109,6 @@ class RJob extends MySqlObj
 
     public function toArray($cfs = array())
     {
-        include_once(Config::$rootpath.'/libs/utils.obj.php');
-
         return array(
                  'class' => $this->class,
                  'fct' => $this->fct,
@@ -123,8 +121,6 @@ class RJob extends MySqlObj
 
     public function htmlDump()
     {
-        include_once(Config::$rootpath.'/libs/utils.obj.php');
-
         return array(
         'Class' => $this->class,
         'Function' => $this->fct,

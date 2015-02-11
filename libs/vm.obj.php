@@ -145,8 +145,6 @@ class VM extends MySqlObj
             $this->fetchFK('fk_server');
         }
 
-        include_once(Config::$rootpath.'/libs/utils.obj.php');
-
         $ret = array(
     'Name' => $this->name,
     'Status' => $this->status,
