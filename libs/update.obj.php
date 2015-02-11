@@ -181,6 +181,6 @@ class Update
 
     public function __construct()
     {
-        die("Cannot instanciate Update class!");
+        throw new SPXException("Cannot instanciate Update class!");
     }
 }

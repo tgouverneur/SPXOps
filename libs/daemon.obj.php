@@ -78,7 +78,7 @@ class Daemon
                 while (1) {
                     try {
                         if ($obj->run()) {
-                            exit(0);
+                            return;
                         }
                     } catch (Exception $e) {
                         Logger::log("Exception catched in run(): $e", $onull, LLOG_ERR);
@@ -95,7 +95,7 @@ class Daemon
             while (1) {
                 try {
                     if ($obj->run()) {
-                        exit(0);
+                        return;
                     }
                 } catch (Exception $e) {
                     Logger::log("Exception catched in run(): $e", $onull, LLOG_ERR);

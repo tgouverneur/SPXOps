@@ -182,7 +182,7 @@ class SSHSession
     public function __construct($h = "")
     {
         if (!function_exists("ssh2_connect")) {
-            die("SSHSession::__construct: ssh2_connect doesn't exist. please check your ssh2 php installation.");
+            throw new SPXException("SSHSession::__construct: ssh2_connect doesn't exist. please check your ssh2 php installation.");
         }
 
         $this->hostname = $h;
