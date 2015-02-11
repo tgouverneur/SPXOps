@@ -88,14 +88,14 @@ class Disk extends MySqlObj
 
     public function toArray($cfs = array())
     {
-        include_once(Config::$rootpath.'/libs/functions.lib.php');
+        include_once(Config::$rootpath.'/libs/utils.obj.php');
 
         return array(
                  'dev' => $this->dev,
                  'serial' => $this->serial,
                  'vendor' => $this->vendor,
                  'product' => $this->product,
-                 'size' => formatBytes($this->size),
+                 'size' => Pool::formatBytes($this->size),
                  'lunid' => $this->lunid,
                  'san' => ($this->f_san) ? '<span class="glyphicon glyphicon-ok-sign"></span>' : '<span class="glyphicon glyphicon-remove-circle"></span>',
                  'details' => '<a href="/view/w/disk/i/'.$this->id.'">View</a>',

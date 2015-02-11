@@ -109,12 +109,12 @@ class RJob extends MySqlObj
 
     public function toArray($cfs = array())
     {
-        include_once(Config::$rootpath.'/libs/functions.lib.php');
+        include_once(Config::$rootpath.'/libs/utils.obj.php');
 
         return array(
                  'class' => $this->class,
                  'fct' => $this->fct,
-                 'frequency' => parseFrequency($this->frequency),
+                 'frequency' => Utils::parseFrenquency($this->frequency),
                  't_last' => date('d-m-Y H:m:s', $this->t_last),
                  't_next' => date('d-m-Y H:m:s', $this->t_last + $this->frequency),
                  't_upd' => date('d-m-Y H:m:s', $this->t_upd),
@@ -123,13 +123,13 @@ class RJob extends MySqlObj
 
     public function htmlDump()
     {
-        include_once(Config::$rootpath.'/libs/functions.lib.php');
+        include_once(Config::$rootpath.'/libs/utils.obj.php');
 
         return array(
         'Class' => $this->class,
         'Function' => $this->fct,
         'Argument' => $this->arg,
-        'frequency' => parseFrequency($this->frequency),
+        'frequency' => Utils::parseFrenquency($this->frequency),
         'Added by' => ($this->o_login) ? $this->o_login : 'Unknown',
         'Last run at' => date('d-m-Y H:m:s', $this->t_last),
         'Added on' => date('d-m-Y H:m:s', $this->t_add),

@@ -1,15 +1,21 @@
 <?php
 
-function getVal($ar, $name)
+class Utils
+{
+    function __construct()
+    {
+        throw new SPXException('Cannot instanciate Utils object');
+    }
+
+public static function getVal($ar, $name)
 {
     if (isset($ar[$name])) {
         return $ar[$name];
     }
-
     return;
 }
 
-function parseFrequency($f)
+public static function parseFrequency($f)
 {
     if ($f >= 2678400) {
         $months = round($f/2678400);
@@ -40,7 +46,7 @@ function parseFrequency($f)
     return $f.'s';
 }
 
-function parseVars($c)
+public static function parseVars($c)
 {
     $lines = explode(PHP_EOL, $c);
     $rc = array();
@@ -61,7 +67,7 @@ function parseVars($c)
     return $rc;
 }
 
-function parseBool($b)
+public static function parseBool($b)
 {
     switch (strtoupper($b)) {
     case "TRUE":
@@ -74,47 +80,4 @@ function parseBool($b)
   }
 }
 
-function formatBytes($k)
-{
-    $k /= 1024;
-    if ($k < 1024) {
-        return round($k, 2)." KB";
-    }
-    $k = $k / 1024;
-    if ($k < 1024) {
-        return round($k, 2)." MB";
-    }
-    $k = $k / 1024;
-    if ($k < 1024) {
-        return round($k, 2)." GB";
-    }
-    $k = $k / 1024;
-    if ($k < 1024) {
-        return round($k, 2)." TB";
-    }
-    $k = $k / 1024;
-
-    return round($k, 2)." PB";
-}
-
-function formatBlocks($k)
-{
-    if ($k < 1024) {
-        return round($k)." KB";
-    }
-    $k = $k / 1024;
-    if ($k < 1024) {
-        return round($k, 2)." MB";
-    }
-    $k = $k / 1024;
-    if ($k < 1024) {
-        return round($k, 2)." GB";
-    }
-    $k = $k / 1024;
-    if ($k < 1024) {
-        return round($k, 2)." TB";
-    }
-    $k = $k / 1024;
-
-    return round($k)." PB";
 }

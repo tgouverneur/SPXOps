@@ -22,7 +22,6 @@ class LoginCM
 
     public function startSession()
     {
-        global $_SERVER;
         session_start();
         $this->checkLogin();
         if ($this->o_login) {
@@ -33,10 +32,6 @@ class LoginCM
 
     public function login($username, $password, $keep = 0)
     {
-        global $_COOKIE;
-        global $_SESSION;
-        global $_SERVER;
-
         $l = new Login();
         $l->username = $username;
         if ($l->fetchFromField("username")) {
@@ -70,9 +65,6 @@ class LoginCM
 
     public function logout()
     {
-        global $_SESSION;
-        global $_COOKIE;
-        global $_SERVER;
         if ($this->isLogged) {
             if ($this->o_login) {
                 $this->o_login->getAddr();
@@ -94,8 +86,6 @@ class LoginCM
 
     public function checkLogin()
     {
-        global $_SESSION;
-        global $_COOKIE;
         if (isset($_SESSION['username']) || isset($_COOKIE[Config::$sitename])) {
             if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
                 $this->username = $_SESSION['username'];

@@ -60,7 +60,7 @@ if (!isset($pservers)) $pservers = array();
 		<option value="-1">Upon request</option>
 <?php $f = array(3600, 7200, 14400, 21600, 28800, 43200, 57600, 86400, 172800, 604800, 2678400);
       foreach($f as $freq) { ?>
-		<option value="<?php echo $freq; ?>" <?php if ($freq == $obj->frequency) echo "selected"; ?>><?php echo parseFrequency($freq); ?></option>
+		<option value="<?php echo $freq; ?>" <?php if ($freq == $obj->frequency) echo "selected"; ?>><?php echo Utils::parseFrenquency($freq); ?></option>
 <?php } ?>
 	      </select>
 	    </div>

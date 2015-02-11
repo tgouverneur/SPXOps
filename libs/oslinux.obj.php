@@ -692,7 +692,7 @@ class OSLinux extends OSType
    */
   public static function updateRelease(&$s)
   {
-      include_once(Config::$rootpath.'/libs/functions.lib.php');
+      include_once(Config::$rootpath.'/libs/utils.obj.php');
 
     /* get cat */
     $cat = $s->findBin('cat');
@@ -728,13 +728,13 @@ class OSLinux extends OSType
       if ($s->isFile('/etc/os-release')) {
           $cmd = "$cat /etc/os-release";
           $os_file = $s->exec($cmd);
-          $a_os = parseVars($os_file);
+          $a_os = Utils::parseVars($os_file);
       }
 
       if ($s->isFile('/etc/lsb-release')) {
           $cmd = "$cat /etc/lsb-release";
           $lsb_file = $s->exec($cmd);
-          $a_lsb = parseVars($lsb_file);
+          $a_lsb = Utils::parseVars($lsb_file);
       }
 
       switch ($distrib) {
@@ -778,7 +778,7 @@ class OSLinux extends OSType
         $o_cmd = $s->exec($cmd);
         if (!empty($o_cmd)) {
             $v = '';
-            $vars = parseVars($o_cmd);
+            $vars = Utils::parseVars($o_cmd);
             if (isset($vars['VERSION'])) {
                 $v = $vars['VERSION'];
             }

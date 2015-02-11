@@ -80,21 +80,21 @@ class Pid extends MySqlObj
         foreach ($pids as $pid) {
             if (!posix_kill($pid->pid, 0)) {
                 /* Get every lock for this pid.. */
-        $locks = Lock::getAll(true, array('fk_pid' => 'CST:'.$pid->id));
+                $locks = Lock::getAll(true, array('fk_pid' => 'CST:'.$pid->id));
                 foreach ($locks as $lock) {
-                    Logger::log("Removed dead lock $lock for pid $pid", $d, LLOG_DEBUG);
+                    Logger::log("Removed dead lock $lock for pid $pid", $pid, LLOG_DEBUG);
                     $lock->delete();
                 }
                 $jobs = Job::getAll(true, array('fk_pid' => 'CST:'.$pid->id, 'state' => S_RUN));
                 foreach ($jobs as $job) {
-                    Logger::log("Set as STALLED stalled job $job for pid $pid", $d, LLOG_DEBUG);
+                    Logger::log("Set as STALLED stalled job $job for pid $pid", $pid, LLOG_DEBUG);
                     $job->state = S_STALL;
                     $job->fk_pid = -1;
                     $job->update();
                 }
                 $pid->delete();
                 $cnt--;
-                Logger::log("Pid $pid has been detected as stopped...", $d, LLOG_DEBUG);
+                Logger::log("Pid $pid has been detected as stopped...", $pid, LLOG_DEBUG);
             }
         }
         $d->curProcess = $cnt;

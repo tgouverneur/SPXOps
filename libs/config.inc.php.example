@@ -37,7 +37,7 @@ class Config
 
 
     /* Network daemon */
-    public static server_enabled = false;
+    public static $server_enabled = false;
     public static $server_rrdpath = false;
     public static $server_ipaddr = '0.0.0.0';
     public static $server_port = 2142;

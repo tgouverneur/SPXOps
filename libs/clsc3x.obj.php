@@ -1,6 +1,6 @@
 <?php
 
-include_once(Config::$rootpath.'/libs/functions.lib.php');
+include_once(Config::$rootpath.'/libs/utils.obj.php');
 
 class CLsc3x extends CLType
 {
@@ -56,7 +56,7 @@ for i in `./scha_cluster_get -O ALL_RESOURCEGROUPS`; do nodelist=`./scha_resourc
           }
 
           $cmd = sprintf($cmd_rg_suspend, $name);
-          $f_suspend = parseBool($c->exec($cmd));
+          $f_suspend = Utils::parseBool($c->exec($cmd));
           if ($rg->f_suspend != $f_suspend) {
               $rg->f_suspend = $f_suspend;
               $c->log("$rg::f_suspend => $f_suspend", LLOG_DEBUG);

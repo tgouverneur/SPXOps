@@ -43,7 +43,7 @@ class OSSolaris extends OSType
   /* Extra actions functions */
   public static function actionZFSArc(&$s)
   {
-      include_once(Config::$rootpath.'/libs/functions.lib.php');
+      include_once(Config::$rootpath.'/libs/utils.obj.php');
 
       $ret = array();
       $res = '<h3>ZFS Arc status</h3>'."\n";
@@ -91,28 +91,28 @@ zfs:0:arcstats:l2_writes_sent   376002
               $vk[$name] = $value;
           }
 
-          $phys_pages = getVal($vk, 'unix:0:system_pages:physmem');
-          $free_pages = getVal($vk, 'unix:0:system_pages:freemem');
-          $lotsfree_pages = getVal($vk, 'unix:0:system_pages:lotsfree');
-          $mru_size = getVal($vk, 'zfs:0:arcstats:p');
-          $target_size = getVal($vk, 'zfs:0:arcstats:c');
-          $arc_min_size = getVal($vk, 'zfs:0:arcstats:c_min');
-          $arc_max_size = getVal($vk, 'zfs:0:arcstats:c_max');
-          $arc_size = getVal($vk, 'zfs:0:arcstats:size');
-          $arc_hits = getVal($vk, 'zfs:0:arcstats:hits');
-          $arc_misses = getVal($vk, 'zfs:0:arcstats:misses');
-          $mfu_hits = getVal($vk, 'zfs:0:arcstats:mfu_hits');
-          $mru_hits = getVal($vk, 'zfs:0:arcstats:mru_hits');
-          $mfu_ghost_hits = getVal($vk, 'zfs:0:arcstats:mfu_ghost_hits');
-          $mru_ghost_hits = getVal($vk, 'zfs:0:arcstats:mru_ghost_hits');
-          $demand_data_hits = getVal($vk, 'zfs:0:arcstats:demand_data_hits');
-          $demand_metadata_hits = getVal($vk, 'zfs:0:arcstats:demand_metadata_hits');
-          $prefetch_data_hits = getVal($vk, 'zfs:0:arcstats:prefetch_data_hits');
-          $prefetch_metadata_hits = getVal($vk, 'zfs:0:arcstats:prefetch_metadata_hits');
-          $demand_data_misses = getVal($vk, 'zfs:0:arcstats:demand_data_misses');
-          $demand_metadata_misses = getVal($vk, 'zfs:0:arcstats:demand_metadata_misses');
-          $prefetch_data_misses = getVal($vk, 'zfs:0:arcstats:prefetch_data_misses');
-          $prefetch_metadata_misses = getVal($vk, 'zfs:0:arcstats:prefetch_metadata_misses');
+          $phys_pages = Utils::getVal($vk, 'unix:0:system_pages:physmem');
+          $free_pages = Utils::getVal($vk, 'unix:0:system_pages:freemem');
+          $lotsfree_pages = Utils::getVal($vk, 'unix:0:system_pages:lotsfree');
+          $mru_size = Utils::getVal($vk, 'zfs:0:arcstats:p');
+          $target_size = Utils::getVal($vk, 'zfs:0:arcstats:c');
+          $arc_min_size = Utils::getVal($vk, 'zfs:0:arcstats:c_min');
+          $arc_max_size = Utils::getVal($vk, 'zfs:0:arcstats:c_max');
+          $arc_size = Utils::getVal($vk, 'zfs:0:arcstats:size');
+          $arc_hits = Utils::getVal($vk, 'zfs:0:arcstats:hits');
+          $arc_misses = Utils::getVal($vk, 'zfs:0:arcstats:misses');
+          $mfu_hits = Utils::getVal($vk, 'zfs:0:arcstats:mfu_hits');
+          $mru_hits = Utils::getVal($vk, 'zfs:0:arcstats:mru_hits');
+          $mfu_ghost_hits = Utils::getVal($vk, 'zfs:0:arcstats:mfu_ghost_hits');
+          $mru_ghost_hits = Utils::getVal($vk, 'zfs:0:arcstats:mru_ghost_hits');
+          $demand_data_hits = Utils::getVal($vk, 'zfs:0:arcstats:demand_data_hits');
+          $demand_metadata_hits = Utils::getVal($vk, 'zfs:0:arcstats:demand_metadata_hits');
+          $prefetch_data_hits = Utils::getVal($vk, 'zfs:0:arcstats:prefetch_data_hits');
+          $prefetch_metadata_hits = Utils::getVal($vk, 'zfs:0:arcstats:prefetch_metadata_hits');
+          $demand_data_misses = Utils::getVal($vk, 'zfs:0:arcstats:demand_data_misses');
+          $demand_metadata_misses = Utils::getVal($vk, 'zfs:0:arcstats:demand_metadata_misses');
+          $prefetch_data_misses = Utils::getVal($vk, 'zfs:0:arcstats:prefetch_data_misses');
+          $prefetch_metadata_misses = Utils::getVal($vk, 'zfs:0:arcstats:prefetch_metadata_misses');
 
       /* calculations */
       $phys_memory = ($phys_pages * $pagesize);

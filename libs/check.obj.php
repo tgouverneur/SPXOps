@@ -240,12 +240,12 @@ CODE;
 
     public function toArray($cfs = array())
     {
-        include_once(Config::$rootpath.'/libs/functions.lib.php');
+        include_once(Config::$rootpath.'/libs/utils.obj.php');
 
         return array(
                  'name' => $this->name,
                  'description' => $this->description,
-                 'frequency' => parseFrequency($this->frequency),
+                 'frequency' => Utils::parseFrenquency($this->frequency),
                  'f_root' => $this->f_root,
                  'f_noalerts' => $this->f_noalerts,
                 );
@@ -253,13 +253,13 @@ CODE;
 
     public function htmlDump()
     {
-        include_once(Config::$rootpath.'/libs/functions.lib.php');
+        include_once(Config::$rootpath.'/libs/utils.obj.php');
         $ret = array(
         'Name' => $this->name,
         'Description' => $this->description,
         'Error Message' => $this->m_error,
         'Warning Message' => $this->m_warn,
-        'Frequency' => parseFrequency($this->frequency),
+        'Frequency' => Utils::parseFrenquency($this->frequency),
         'No Alerts?' => ($this->f_root) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Need root?' => ($this->f_root) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Updated on' => date('d-m-Y', $this->t_upd),

@@ -123,41 +123,6 @@ class HTTP
       trigger_error("Cannot clone a singlton object, use ::instance()", E_USER_ERROR);
   }
 
-  /**
-   * Get the http post/get variable
-   * @arg Name of the variable to get
-   * @return the variable, with POST->GET priority
-   */
-  public function getHTTPVar($name)
-  {
-      global $_GET, $_POST;
-
-    /* first check POST, then fallback on GET */
-    if (isset($_POST[$name])) {
-        return $_POST[$name];
-    }
-      if (isset($_GET[$name])) {
-          return $_GET[$name];
-      }
-
-      return;
-  }
-
-  /**
-   * Sanitize an array by escaping the strings inside.
-   * @arg Name of the variable to sanitize
-   */
-  public function sanitizeArray(&$var)
-  {
-      foreach ($var as $name => $value) {
-          if (is_array($value)) {
-              $this->sanitizeArray($value);
-              continue;
-          }
-
-          $var[$name] = mysql_escape_string($value);
-      }
-  }
 
     public static function checkEmail($email)
     {

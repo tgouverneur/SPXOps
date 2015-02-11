@@ -220,7 +220,7 @@
        if (!$lm->o_login->cRight('CHK', R_EDIT)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
-       include_once(Config::$rootpath.'/libs/functions.lib.php');
+       include_once(Config::$rootpath.'/libs/utils.obj.php');
        $what = 'Check';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $suid = $_GET['i'];
