@@ -50,7 +50,6 @@ class Login extends MySqlObj
 
     public function getAddr()
     {
-        global $_SERVER;
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $this->i_raddr = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } else {
