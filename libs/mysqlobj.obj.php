@@ -267,7 +267,7 @@ class MySqlObj
       }
 
       $my = MySqlCM::getInstance();
-      if (($data = $my->select("`".$id."`", $this->_table, $where))) {
+      if (($data = $my->select("`".$id."`", $this->_table, $where)) !== false) {
           if ($my->getNR() == 1) {
               $this->{$this->_myc[$id]} = $data[0][$id];
           } else {
@@ -400,7 +400,7 @@ class MySqlObj
       $id = $id[0];
       }
 
-      if (($data = $my->select("`".$id."`", $this->_table, $where)) == false) {
+      if (($data = $my->select("`".$id."`", $this->_table, $where)) === false) {
           return 0;
       } else {
           if ($my->getNR()) {
@@ -452,7 +452,7 @@ class MySqlObj
           }
 
           $my = MySqlCM::getInstance();
-          if ($my->select("`".$id."`", $this->_table, $where) == false) {
+          if ($my->select("`".$id."`", $this->_table, $where) === false) {
               return 1;
           } else {
               if ($my->getNR()) {
@@ -494,7 +494,7 @@ class MySqlObj
           $i++;
       }
 
-      if (($data = $my->select($fields, $this->_table, $where)) == false) {
+      if (($data = $my->select($fields, $this->_table, $where)) === false) {
           return -1;
       } else {
           if ($my->getNR() != 0) {
@@ -534,7 +534,7 @@ class MySqlObj
       $args[':'.$field] = $this->{$this->_myc[$field]};
       $where['a'] = $args;
 
-      if (($data = $my->select($fields, $this->_table, $where)) == false) {
+      if (($data = $my->select($fields, $this->_table, $where)) === false) {
           return -1;
       } else {
           if ($my->getNR() != 0) {
@@ -589,7 +589,7 @@ class MySqlObj
     $where = array('q' => $where, 'a' => $args);
 
     $my = MySqlCM::getInstance();
-      if (($data = $my->select($fields, $this->_table, $where)) == false) {
+      if (($data = $my->select($fields, $this->_table, $where)) === false) {
           return -1;
       } else {
           if ($my->getNR() != 0) {

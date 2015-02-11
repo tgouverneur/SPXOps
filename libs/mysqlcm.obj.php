@@ -367,23 +367,18 @@ class MySqlCM
 
       if (!$this->_Query($query, $args)) {
           $data = array();
-//      $this->_nres = @$this->_link->rowCount();
       try {
           $data = $this->_res->fetchAll(PDO::FETCH_ASSOC);
       } catch (PDOException $e) {
-          return -1;
+          return false;
       }
           $this->_nres = count($data);
-//      if ($this->_nres) {
-//        for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
-//          $data[$i] = $r;
-//      }
-      $this->_res->closeCursor();
+          $this->_res->closeCursor();
           unset($this->_res);
-
           return $data;
+
       } else {
-          return -1;
+          return false;
       }
   }
 
