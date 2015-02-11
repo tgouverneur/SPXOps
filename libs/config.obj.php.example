@@ -74,8 +74,4 @@ Logger::logLevel(LLOG_INFO);
 /* enable some plugins */
 // Config::$plugins['test'] = true; /* Enable plugin test */
 
-/* bootstrap plugin system (might move elsewhere later on...) */
-new Plugin();
-Plugin::registerPlugins();
-
 ?>
