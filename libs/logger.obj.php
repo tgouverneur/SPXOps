@@ -66,25 +66,23 @@ class Logger
 
     public static function openLog()
     {
-        global $config;
         $cn = get_called_class();
         $obj = null;
 
-        if (!($cn::$_logfd = fopen($config['spxopsd']['log'], 'w'))) {
-            $cn::log("Cannot open ".$config['spxopsd']['log']." for logging!");
+        if (!($cn::$_logfd = fopen(Config::$spxopsd_log, 'w'))) {
+            $cn::log("Cannot open ".Config::$spxopsd_log." for logging!");
 
             return;
         }
-        $cn::log("Opened ".$config['spxopsd']['log']." for logging!", $obj, LLOG_INFO);
+        $cn::log("Opened ".Config::$spxopsd_log." for logging!", $obj, LLOG_INFO);
     }
 
     public static function closeLog()
     {
-        global $config;
         $cn = get_called_class();
         $obj = null;
         if ($cn::$_logfd) {
-            $cn::log("Closing ".$config['spxopsd']['log']."!", $obj, LLOG_INFO);
+            $cn::log("Closing ".Config::$spxopsd_log."!", $obj, LLOG_INFO);
             fclose($cn::$_logfd);
             $cn::$_logfd = 0;
         }

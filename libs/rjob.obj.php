@@ -44,7 +44,6 @@ class RJob extends MySqlObj
 
     public function valid($new = true)
     { /* validate form-based fields */
-    global $config;
         $ret = array();
 
         if (empty($this->class)) {
@@ -110,8 +109,7 @@ class RJob extends MySqlObj
 
     public function toArray($cfs = array())
     {
-        global $config;
-        @include_once $config['rootpath'].'/libs/functions.lib.php';
+        @include_once Config::$rootpath.'/libs/functions.lib.php';
 
         return array(
                  'class' => $this->class,
@@ -125,8 +123,7 @@ class RJob extends MySqlObj
 
     public function htmlDump()
     {
-        global $config;
-        @include_once $config['rootpath'].'/libs/functions.lib.php';
+        @include_once Config::$rootpath.'/libs/functions.lib.php';
 
         return array(
         'Class' => $this->class,

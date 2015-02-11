@@ -70,16 +70,15 @@ class Plugin
 
     public static function registerPlugins()
     {
-        global $config;
         if (Plugin::$_done) {
             return false;
         }
-        foreach ($config['plugins'] as $name => $options) {
-            if (!file_exists($config['pluginspath'].'/'.$name.'/'.$name.'.php')) {
+        foreach (Config::$plugins as $name => $options) {
+            if (!file_exists(Config::$plugins_path.'/'.$name.'/'.$name.'.php')) {
                 Logger::log("Plugins $name is enabled in config but not found", null, LLOG_ERR);
                 continue; // Skip this plugin and log an error
             }
-            @require_once $config['pluginspath'].'/'.$name.'/'.$name.'.php';
+            @require_once Config::$plugins_path.'/'.$name.'/'.$name.'.php';
       //Logger::log("Plugin $name is now active..", null, LLOG_DEBUG);
         }
         Plugin::$_done = true;

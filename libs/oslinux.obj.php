@@ -692,8 +692,7 @@ class OSLinux extends OSType
    */
   public static function updateRelease(&$s)
   {
-      global $config;
-      @include_once $config['rootpath'].'/libs/functions.lib.php';
+      @include_once Config::$rootpath.'/libs/functions.lib.php';
 
     /* get cat */
     $cat = $s->findBin('cat');

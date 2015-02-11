@@ -208,11 +208,9 @@ class MySqlCM
    */
   public function __destruct()
   {
-      global $config;
-
     //if ($this->_link) $this->disconnect();
 
-    if ($config['mysql']['DEBUG'] && $this->_dfd) {
+    if (Config::$mysql_debug && $this->_dfd) {
         fclose($this->_dfd);
     }
   }
@@ -222,15 +220,13 @@ class MySqlCM
    */
   public function __construct()
   {
-      global $config;
-
       $this->_pid = getmypid();
 
-      if ($config['mysql']['DEBUG']) {
-          $this->_deBug($config['mysql']['DEBUG']);
+      if (Config::$mysql_debug) {
+          $this->_deBug(Config::$mysql_debug);
       }
-      if ($config['mysql']['ERRLOG']) {
-          $this->_errLog($config['mysql']['ERRLOG']);
+      if (Config::$mysql_errlog]) {
+          $this->_errLog(Config::$mysql_errlog);
       }
   }
 
@@ -265,17 +261,16 @@ class MySqlCM
    */
   public function connect()
   {
-      global $config;
       $attempts = 0;
 
-      $dbstring = "mysql:host=".$config['mysql']['host'];
-      $dbstring .= "; port=".$config['mysql']['port'];
-      $dbstring .= "; dbname=".$config['mysql']['db'];
+      $dbstring = "mysql:host=".Config::$mysql_host;
+      $dbstring .= "; port=".Config::$mysql_port;
+      $dbstring .= "; dbname=".Config::$mysql_db;
       do {
           try {
               $this->_link = @new PDO($dbstring,
-                               $config['mysql']['user'],
-                               $config['mysql']['pass'],
+                               Config::$mysql_user,
+                               Config::$mysql_pass,
                    array(PDO::ATTR_PERSISTENT => true,
                      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, ));
               $this->_link->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
@@ -287,14 +282,14 @@ class MySqlCM
                   $this->_error = null;
               }
               if ($this->_debug) {
-                  $this->_dPrint("[".time()."][$attempts] Connection failed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+                  $this->_dPrint("[".time()."][$attempts] Connection failed to database ".Config::$mysql_db."@".Config::$mysql_host.":".Config::$mysql_port."\n");
               }
 
               return -1;
           }
       } while ($attempts++ < 3);
       if ($this->_debug) {
-          $this->_dPrint("[".time()."] Connection succesfull to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+          $this->_dPrint("[".time()."] Connection succesfull to database ".Config::$mysql_db."@".Config::$mysql_host.":".Config::$mysql_port."\n");
       }
 
       return 0;
@@ -306,9 +301,8 @@ class MySqlCM
    */
   public function disconnect()
   {
-      global $config;
       if ($this->_debug) {
-          $this->_dPrint("[".time()."] Connection closed to database ".$config['mysql']['db']."@".$config['mysql']['host'].":".$config['mysql']['port']."\n");
+          $this->_dPrint("[".time()."] Connection closed to database ".Config::$mysql_db."@".Config::$mysql_host.":".Config::$mysql_port."\n");
       }
 
       unset($this->_link);

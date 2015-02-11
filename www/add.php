@@ -113,7 +113,7 @@
        if (!$lm->o_login->cRight('RJOB', R_ADD)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
-       @include_once($config['rootpath'].'/libs/functions.lib.php');
+       @include_once(Config::$rootpath.'/libs/functions.lib.php');
        $what = 'Recurrent Job';
        $obj = new RJob();
        $content = new Template('../tpl/form_rjob.tpl');
@@ -197,7 +197,7 @@
        if (!$lm->o_login->cRight('CHK', R_ADD)) {
          HTTP::errWWW('Access Denied, please check your access rights!');
        }
-       @include_once($config['rootpath'].'/libs/functions.lib.php');
+       @include_once(Config::$rootpath.'/libs/functions.lib.php');
        $what = 'Check';
        $obj = new Check();
        $content = new Template('../tpl/form_check.tpl');

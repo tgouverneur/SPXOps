@@ -36,7 +36,6 @@ class LoginCM
         global $_COOKIE;
         global $_SESSION;
         global $_SERVER;
-        global $config;
 
         $l = new Login();
         $l->username = $username;
@@ -56,9 +55,9 @@ class LoginCM
         }
         if ($keep) { // keep you logged in
       // @TODO: Change MD5 to Blowfish
-      $vstr = md5($l->username.$config['sitename'].$l->password);
+      $vstr = md5($l->username.Config::$sitename.$l->password);
             $vstr = 'username='.$l->username.'&vstr='.$vstr;
-            setcookie($config['sitename'], $vstr, time() + (24*3600*31)); // logged in for 1 month
+            setcookie(Config::$sitename, $vstr, time() + (24*3600*31)); // logged in for 1 month
         }
         $this->o_login->getAddr();
         Act::add("Logged in from ".$this->o_login->i_raddr, $this->o_login);
@@ -71,7 +70,6 @@ class LoginCM
 
     public function logout()
     {
-        global $config;
         global $_SESSION;
         global $_COOKIE;
         global $_SERVER;
@@ -84,10 +82,10 @@ class LoginCM
             if (isset($_SESSION['username'])) {
                 unset($_SESSION['username']);
             }
-            if (isset($_COOKIE[$config['sitename']])) {
-                unset($_COOKIE[$config['sitename']]);
+            if (isset($_COOKIE[Config::$sitename])) {
+                unset($_COOKIE[Config::$sitename]);
     // destroy cookie
-    setcookie($config['sitename'], "", time() - 3600);
+    setcookie(Config::$sitename, "", time() - 3600);
             }
             $this->o_login = null;
             $this->username = "";
@@ -98,8 +96,7 @@ class LoginCM
     {
         global $_SESSION;
         global $_COOKIE;
-        global $config;
-        if (isset($_SESSION['username']) || isset($_COOKIE[$config['sitename']])) {
+        if (isset($_SESSION['username']) || isset($_COOKIE[Config::$sitename])) {
             if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
                 $this->username = $_SESSION['username'];
                 $l = new Login();
@@ -113,9 +110,9 @@ class LoginCM
                     $this->o_login = $l;
                     $this->isLogged = 1;
                 }
-            } elseif (isset($_COOKIE[$config['sitename']])) {
+            } elseif (isset($_COOKIE[Config::$sitename])) {
                 $v = array();
-                parse_str($_COOKIE[$config['sitename']], $v);
+                parse_str($_COOKIE[Config::$sitename], $v);
                 $l = new Login();
                 $l->username = $v['username'];
                 if ($l->fetchFromField("username")) {
@@ -124,7 +121,7 @@ class LoginCM
                     $_SESSION['username'] = "";
                     $this->o_login = null;
                 } else {
-                    $vstr = $l->username.$config['sitename'].$l->password;
+                    $vstr = $l->username.Config::$sitename.$l->password;
           // @TODO: Change MD5 to Blowfish
           $vstr = md5($vstr);
                     if (!strcmp($v['vstr'], $vstr)) {

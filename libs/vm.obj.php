@@ -140,13 +140,12 @@ class VM extends MySqlObj
 
     public function htmlDump()
     {
-        global $config;
 
         if (!$this->o_server && $this->fk_server > 0) {
             $this->fetchFK('fk_server');
         }
 
-        @include_once $config['rootpath'].'/libs/functions.lib.php';
+        @include_once Config::$rootpath.'/libs/functions.lib.php';
 
         $ret = array(
     'Name' => $this->name,

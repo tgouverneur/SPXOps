@@ -79,7 +79,6 @@ class Login extends MySqlObj
 
     public function valid($new = true)
     { /* validate form-based fields */
-    global $config;
         $ret = array();
 
         if (empty($this->username)) {
@@ -121,8 +120,15 @@ class Login extends MySqlObj
             $this->password = $this->password_c = '';
         }
 
-        if (strlen($this->password) < $config['minpassword'] && !empty($this->password_c)) {
-            $ret[] = 'Password is too short, should be '.$config['minpassword'].' length minimum';
+        $minpassword = Setting::get('user', 'minpassword');
+        if ($minpassword) {
+            $minpassword = $minpassword->value;
+        } else {
+            $minpassword = 5;
+        }
+
+        if (strlen($this->password) < $minpassword && !empty($this->password_c)) {
+            $ret[] = 'Password is too short, should be '.$minpassword.' length minimum';
             $this->password = $this->password_c = '';
         }
 

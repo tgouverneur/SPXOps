@@ -9,56 +9,64 @@
  * @category config
  */
 
-$config['rootpath'] = '/srv/spxops';
-$config['sitename'] = 'SPXOps';
-$config['agentname'] = 'hostname';
+class Config
+{
+    /* general */
+    public static $rootpath = '/srv/spxops';
+    public static $sitename = 'SPXOps';
+    public static $agentname = 'hostname';
 
-/* Database */
-$config['mysql']['host'] = 'localhost';
-$config['mysql']['user'] = 'spxops';
-$config['mysql']['pass'] = '';
-$config['mysql']['port'] = 3306;
-$config['mysql']['db'] = 'spxops';
+    /* database */
+    public static $mysql_host = 'localhost';
+    public static $mysql_user = 'spxops';
+    public static $mysql_pass = '';
+    public static $mysql_port = 3306;
+    public static $mysql_db = 'spxops';
 
-/* MySQL Debug mode, comment to disable. */
-//$config['mysql']['DEBUG'] = $config['rootpath'].'/logs/mysql-debug.log';
-$config['mysql']['DEBUG'] = FALSE;
-$config['mysql']['ERRLOG'] = $config['rootpath'].'/logs/mysql-error.log';
-$config['mysql']['LOGNULL'] = FALSE;
+    /* MySQL Debug mode, comment to disable. */
+    //public static $mysql_debug = Config::$rootpath.'/logs/mysql-debug.log';
+    public static $mysql_debug = FALSE;
+    public static $mysql_errlog = Config::$rootpath.'/logs/mysql-error.log';
+    public static $mysql_lognull = FALSE;
 
-$config['curl']['timeout'] = 10;
-$config['curl']['proxy'] = '';
+    public static $webgui_time = true;
 
-$config['webgui']['time'] = true;
+    /* Logging */
+    public static $spxopsd_log = Config::$rootpath.'/logs/spxopsd.log';
 
-/* Users */
-$config['minpassword'] = 5;
+    public static $start_time = -1;
 
-/* Logging */
-$config['spxopsd']['log'] = $config['rootpath'].'/logs/spxopsd.log';
-@require_once($config['rootpath'].'/libs/logger.obj.php');
+
+    /* Network daemon */
+    public static server_enabled = false;
+    public static $server_rrdpath = Config::$rootpath..'/rrd'; 
+    public static $server_ipaddr = '0.0.0.0';
+    public static $server_port = 2142;
+    /* @TODO: fix key generation */
+    public static $server_key = '157d7c000573526a30991bff2ad6b8ee157d7c000573526a30991bff2ad6b8ee';
+
+    /* Plugins */
+    public static $plugins_path = Config::$rootpath.'/plugins';
+    public static $plugins = array();
+
+
+}
+
+if (Config::$webgui_time) {
+    $start_time = microtime();
+    $start_time = explode(' ',$start_time);
+    $start_time = $start_time[1] + $start_time[0];
+    Config::$start_time = $start_time;
+}
+
+@require_once(Config::$rootpath.'/libs/logger.obj.php');
 Logger::logLevel(LLOG_ERR);
 Logger::logLevel(LLOG_WARN);
 Logger::logLevel(LLOG_INFO);
 
-if ($config['webgui']['time']) {
- $start_time = microtime();
- $start_time = explode(' ',$start_time);
- $start_time = $start_time[1] + $start_time[0];
-}
 
-/* Network daemon */
-$config['server']['enabled'] = false;
-$config['server']['rrdpath'] = $config['rootpath'].'/rrd'; 
-$config['server']['ipaddr'] = '0.0.0.0';
-$config['server']['port'] = 2142;
-/* @TODO: fix key generation */
-$config['server']['key'] = '157d7c000573526a30991bff2ad6b8ee157d7c000573526a30991bff2ad6b8ee';
-
-/* Plugins */
-$config['pluginspath']  = $config['rootpath'].'/plugins';
-$config['plugins'] = array();
-//$config['plugins']['test'] = true; /* Enable plugin test */
+/* enable some plugins */
+// Config::$plugins['test'] = true; /* Enable plugin test */
 
 /* bootstrap plugin system (might move elsewhere later on...) */
 new Plugin();

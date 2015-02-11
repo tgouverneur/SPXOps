@@ -29,8 +29,7 @@ define('MAX_MSG_SIZE', 65000);
 
      public function __construct($net = null)
      {
-         global $config;
-         $this->_key = pack('H*', $config['server']['key']);
+         $this->_key = pack('H*', Config::$server_key);
          if ($net) {
              $this->_network = $net;
              $this->_ivsize = $this->_network->ivsize;
@@ -91,8 +90,7 @@ define('MAX_MSG_SIZE', 65000);
 
      public function send($sock, $to, $port)
      {
-         global $config;
-         $this->a_v['hostname'] = $config['agentname'];
+         $this->a_v['hostname'] = Config::$agentname;
          $this->_serialize();
          $this->_enCrypt();
          $len = socket_sendto($sock, $this->_ebs, strlen($this->_ebs), 0, $to, $port);

@@ -110,9 +110,7 @@ class RRD extends MySqlObj
 
     public function getPath()
     {
-        global $config;
-
-        return $config['server']['rrdpath'].'/'.$this->path;
+        return Config::$server_rrdpath.'/'.$this->path;
     }
 
     public function getWhat($what)
@@ -286,8 +284,7 @@ class RRD extends MySqlObj
 
     public function create()
     {
-        global $config;
-        if (!isset($config['server']['rrdpath']) || empty($config['server']['rrdpath'])) {
+        if (!isset(Config::$server_rrdpath) || empty(Config::$server_rrdpath)) {
             throw new SPXException('RRD Path not set!');
         }
 
@@ -563,8 +560,6 @@ class RRD extends MySqlObj
 
     public function htmlDump()
     {
-        global $config;
-
         if (!$this->o_server && $this->fk_server > 0) {
             $this->fetchFK('fk_server');
         }
@@ -577,7 +572,7 @@ class RRD extends MySqlObj
             $this->fetchFK('fk_disk');
         }
 
-        @include_once $config['rootpath'].'/libs/functions.lib.php';
+        @include_once Config::$rootpath.'/libs/functions.lib.php';
 
         $ret = array(
     'Type' => $this->type,

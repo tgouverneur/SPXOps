@@ -200,9 +200,8 @@
 
      public function start()
      {
-         global $config;
          if (!$this->f_master && $this->ppid) {
-             $config['spxopsd']['log'] = $config['spxopsd']['log'].'-'.$this->pid;
+             Config::$spxopsd_log = Config::$spxopsd_log.'-'.$this->pid;
          }
          if (!$this->_foreground) {
              Logger::openLog();
@@ -291,13 +290,12 @@
 
      private function spawnNetwork()
      {
-         global $config;
-         $this->network = new SPXNet($config['server']['ipaddr'], $config['server']['port'], $this, 1);
+         $this->network = new SPXNet(Config::$server_ipaddr, Config::$server_port, $this, 1);
          $daemon = new Daemon($this->network, false);
          $m = MysqlCM::getInstance();
          $m->connect();
          $pid = new Pid();
-         $pid->agent = $config['agentname'];
+         $pid->agent = Config::$agentname;
          $pid->pid = $daemon->getPid();
          $pid->ppid = $this->pid;
          $pid->f_master = 0;
@@ -307,13 +305,12 @@
 
      private function spawnProcess()
      {
-         global $config;
          $newD = new SPXOpsd($this);
          $daemon = new Daemon($newD, false);
          $m = MysqlCM::getInstance();
          $m->connect();
          $pid = new Pid();
-         $pid->agent = $config['agentname'];
+         $pid->agent = Config::$agentname;
          $pid->pid = $daemon->getPid();
          $pid->ppid = $this->pid;
          $pid->f_master = 0;
@@ -359,7 +356,7 @@
  $spxopsd->setInterval($interval->value);
  $spxopsd->setNrProcess($nrProcess->value);
  $spxopsd->f_master = 1;
- if ($config['server']['enabled']) {
+ if (Config::$server_enabled) {
      $spxopsd->f_network = 1;
  }
 

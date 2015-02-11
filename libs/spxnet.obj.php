@@ -100,13 +100,12 @@ class SPXNet
 
     public function spawnProcess()
     {
-        global $config;
         $this->network = new SPXNet(null, null, $this, 0);
         $daemon = new Daemon($this->network, false);
         $m = MysqlCM::getInstance();
         $m->connect();
         $pid = new Pid();
-        $pid->agent = $config['agentname'];
+        $pid->agent = Config::$agentname;
         $pid->pid = $daemon->getPid();
         $pid->ppid = $this->pid;
         $pid->f_master = 0;
@@ -116,12 +115,11 @@ class SPXNet
 
     public function start()
     {
-        global $config;
 
         if ($this->f_master) {
-            $config['spxopsd']['log'] .= '-net_'.$this->pid;
+            Config::$spxopsd_log .= '-net_'.$this->pid;
         } else {
-            $config['spxopsd']['log'] .= '-'.$this->pid; // slave network log
+            Config::$spxopsd_log .= '-'.$this->pid; // slave network log
         }
         if (!$this->_foreground) {
             Logger::openLog();

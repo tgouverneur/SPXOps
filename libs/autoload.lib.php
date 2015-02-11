@@ -11,10 +11,8 @@
    */
   function __autoload($name)
   {
-      global $config;
-
       $name = strtolower($name);
-      $file = $config['rootpath'].'/libs/'.$name.'.obj.php';
+      $file = Config::$rootpath.'/libs/'.$name.'.obj.php';
       if (file_exists($file)) {
           require_once $file;
       } else {

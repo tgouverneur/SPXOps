@@ -25,9 +25,8 @@ class Pid extends MySqlObj
 
     public static function ping(&$d)
     {
-        global $config;
         $pid = new Pid();
-        $pid->agent = $config['agentname'];
+        $pid->agent = Config::$agentname;
         $pid->pid = $d->pid;
         $pid->ppid = $d->ppid;
         $pid->f_master = $d->f_master;
@@ -42,9 +41,8 @@ class Pid extends MySqlObj
 
     public static function stop(&$d)
     {
-        global $config;
         $pid = new Pid();
-        $pid->agent = $config['agentname'];
+        $pid->agent = Config::$agentname;
         $pid->pid = $d->pid;
         $pid->f_master = $d->f_master;
         if ($pid->fetchFromFields(array('pid', 'agent'))) {
@@ -77,8 +75,7 @@ class Pid extends MySqlObj
 
     public static function check(&$d)
     {
-        global $config;
-        $pids = Pid::getAll(true, array('agent' => 'CST:'.$config['agentname']));
+        $pids = Pid::getAll(true, array('agent' => 'CST:'.Config::$agentname));
         $cnt = count($pids);
         foreach ($pids as $pid) {
             if (!posix_kill($pid->pid, 0)) {
@@ -156,9 +153,8 @@ class Pid extends MySqlObj
 
     public static function getMyPid()
     {
-        global $config;
         $pid = new Pid();
-        $pid->agent = $config['agentname'];
+        $pid->agent = Config::$agentname;
         $pid->pid = posix_getpid();
         if ($pid->fetchFromFields(array('pid', 'agent'))) {
             return;
