@@ -30,11 +30,9 @@ class HTTP
 
     public static function errMysql()
     {
-        global $start_time;
         $index = new Template("../tpl/index.tpl");
         $head = new Template("../tpl/head.tpl");
         $foot = new Template("../tpl/foot.tpl");
-        $foot->set("start_time", $start_time);
         $content = new Template("../tpl/error.tpl");
         $content->set('error', "An error has occurred with the SQL Server and we were unable to process your request...");
         $index->set("head", $head);
@@ -46,13 +44,11 @@ class HTTP
 
     public static function errWWW($e)
     {
-        global $start_time;
         $lm = LoginCM::getInstance();
 
         $index = new Template("../tpl/index.tpl");
         $head = new Template("../tpl/head.tpl");
         $foot = new Template("../tpl/foot.tpl");
-        $foot->set("start_time", $start_time);
         $content = new Template("../tpl/error.tpl");
         $content->set("error", $e);
 

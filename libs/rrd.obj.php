@@ -426,8 +426,7 @@ class RRD extends MySqlObj
         foreach ($a['values'] as $disk => $values) {
             try {
                 /* find RRD by path */
-        return 0;
-        $path = $s->hostname.'-iostat-'.$disk.'.rrd';
+                $path = $s->hostname.'-iostat-'.$disk.'.rrd';
                 $rrd = new RRD();
                 $rrd->path = $path;
                 if ($rrd->fetchFromField('path')) {
