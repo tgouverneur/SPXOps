@@ -28,7 +28,7 @@ class eAction
         $this->fct = $f;
     }
 
-    public function call(&$s)
+    public function call(Server &$s)
     {
         $this->res = null;
         if ($s->o_os) {
@@ -46,7 +46,7 @@ class eAction
 
         return -1;
     }
-    public function onclick($obj)
+    public function onclick(MySqlObj $obj)
     {
         $ret = $this->onclick;
         if (!empty($this->arg)) {
@@ -55,7 +55,7 @@ class eAction
 
         return $ret;
     }
-    public function href($obj)
+    public function href(MySqlObj $obj)
     {
         $ret = $this->href;
         if (!empty($this->arg)) {

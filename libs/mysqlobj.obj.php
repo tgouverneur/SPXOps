@@ -714,7 +714,7 @@ class MySqlObj
         return $rc;
     }
 
-    public function delFromJT($name, $fobj)
+    public function delFromJT($name, MySqlObj $fobj)
     {
         if (!isset($this->_jt[$name])) {
             throw new SPXException("Rel association $name not found");
@@ -781,7 +781,7 @@ class MySqlObj
         }
     }
 
-    public function addToJT($name, $fobj)
+    public function addToJT($name, MySqlObj $fobj)
     {
         if (!isset($this->_jt[$name])) {
             throw new SPXException("JT association $name not found");
@@ -832,7 +832,7 @@ class MySqlObj
         }
     }
 
-    public function isInJT($name, $obj, $attrs = array())
+    public function isInJT($name, MySqlObj $obj, $attrs = array())
     {
         if (!isset($this->_jt[$name])) {
             throw new SPXException("Rel association $name not found");

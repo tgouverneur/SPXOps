@@ -221,7 +221,7 @@ class SPXNet
         $m->disconnect();
     }
 
-    public function useMSG($msg)
+    public function useMSG(SPXMsg $msg)
     {
         if ($msg->a_v === false) {
             Logger::log("$msg: invalid", $this, LLOG_DEBUG);
@@ -260,7 +260,7 @@ class SPXNet
         }
     }
 
-    public function __construct($host, $port, $parent = null, $master = 0)
+    public function __construct($host, $port, SPXOpsd $parent = null, $master = 0)
     {
         if ($parent) {
             $this->_ppid = $parent->pid;

@@ -45,7 +45,7 @@ class Logger
         return;
     }
 
-    public static function log($str, $obj = null, $level = LLOG_ERR)
+    public static function log($str, MySqlObj $obj = null, $level = LLOG_ERR)
     {
         $cn = get_called_class();
 

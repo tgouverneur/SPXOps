@@ -3,7 +3,7 @@
 class CLType
 {
 
-  public static function update($c, $f = null)
+  public static function update(Cluster $c, $f = null)
   {
       $oclass = get_called_class();
       if ($f) {

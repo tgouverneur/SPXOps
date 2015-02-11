@@ -3,7 +3,7 @@
 class OSType
 {
 
-  public static function update($s, $f = null)
+  public static function update(Server$s, $f = null)
   {
       $oclass = get_called_class();
       if ($f) {

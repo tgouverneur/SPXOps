@@ -116,7 +116,7 @@ class Update
         return -1;
     }
 
-    public static function cleanVMs(&$job)
+    public static function cleanVMs(Job &$job)
     {
         $table = "`list_vm`";
         $index = "`id`";

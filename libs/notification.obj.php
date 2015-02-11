@@ -12,7 +12,7 @@
  */
 class Notification
 {
-  public static function sendResult(&$s, $cr, $oldcr = null)
+  public static function sendResult(Server &$s, Result $cr, Result $oldcr = null)
   {
       $a_login = array();
 
@@ -73,7 +73,7 @@ class Notification
       }
   }
 
-    public static function sendAlert($at, $short, $msg)
+    public static function sendAlert(AlertType $at, $short, $msg)
     {
         $a_login = array();
 
