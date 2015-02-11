@@ -10,7 +10,7 @@ class Utils
   public static function objAutoload($name)
   {  
       $name = strtolower($name);
-      $file = Config::$rootpath.'/libs/'.$name.'.obj.php';
+      $file = dirname(__FILE__).'/'.$name.'.obj.php';
       if (file_exists($file)) {
           require_once $file;
       } else {
@@ -100,3 +100,12 @@ public static function parseBool($b)
 
 /* register autoload method */
 Utils::registerAutoload();
+
+/* Make sure we have some Mysql definitions */
+MySqlCM::getInstance();
+
+/* bootstrap plugin system */
+new Plugin();
+Plugin::registerPlugins();
+
+

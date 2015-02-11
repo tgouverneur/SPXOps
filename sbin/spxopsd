@@ -1,13 +1,12 @@
 #!/usr/bin/php
 <?php
  require_once dirname(__FILE__)."/../libs/utils.obj.php";
- require_once dirname(__FILE__)."/../libs/config.inc.php";
- require_once dirname(__FILE__)."/../libs/daemon.obj.php";
+
 
  class SPXOpsd implements Daemonizable
  {
 
-  private $_lrun = 0;
+     private $_lrun = 0;
      private $_crun = 0;
      private $_jexec = 0;
      private $_interval = 1;

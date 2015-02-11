@@ -1,6 +1,6 @@
 <?php
  require_once("../libs/utils.obj.php");
- require_once("../libs/config.inc.php");
+
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {

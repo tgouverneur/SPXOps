@@ -9,19 +9,6 @@
  * @category classes
  * @filesource
  */
-interface Daemonizable
-{
-
-  public function run();
-    public function start();
-    public function cleanup();
-    public function sigterm();
-    public function sighup();
-    public function sigchld();
-    public function sigkill();
-    public function sigusr1();
-    public function sigusr2();
-}
 
 class Daemon
 {
