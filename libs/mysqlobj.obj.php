@@ -527,7 +527,12 @@ class MySqlObj
           $i++;
       }
 
-      $where = "WHERE `".$field."`=".$my->quote($this->{$this->_myc[$field]});
+      $args = array();
+      $where = array();
+
+      $where['q'] = "WHERE `".$field."`= :".$field;
+      $args[':'.$field] = $this->{$this->_myc[$field]};
+      $where['a'] = $args;
 
       if (($data = $my->select($fields, $this->_table, $where)) == false) {
           return -1;
@@ -567,20 +572,22 @@ class MySqlObj
           return -1;
       }
       $w = 0;
+      $args = array();
       foreach ($ids as $id) {
           if ($id === false) {
               continue;
           } /* no index in obj */
 
-      if (!$w) {
-          $where = "WHERE `".$id."`='".$this->{$this->_myc[$id]}."'";
-          $w++;
-      } else {
-          $where .= " AND `".$id."`='".$this->{$this->_myc[$id]}."'";
-      }
-      }
+          if (!$w) {
+              $where = "WHERE `".$id."`= :".$id;
+              $w++;
+          } else {
+              $where .= " AND `".$id."`= :".$id;
+          }
+          $args[':'.$id] = $this->{$this->_myc[$id]};
+      } 
+    $where = array('q' => $where, 'a' => $args);
 
-    //$where = "WHERE `".$id."`='".$this->{$this->_myc[$id]}."'";
     $my = MySqlCM::getInstance();
       if (($data = $my->select($fields, $this->_table, $where)) == false) {
           return -1;
