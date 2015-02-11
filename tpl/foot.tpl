@@ -14,7 +14,7 @@
    $stop_time = microtime();
    $stop_time = explode(' ',$stop_time);
    $stop_time = $stop_time[1] + $stop_time[0];
-   $dur_time = ' - '.(round($stop_time - Config::start_time, 2)).' seconds to load';
+   $dur_time = ' - '.(round($stop_time - Config::$start_time, 2)).' seconds to load';
  } else {
    $dur_time ='';
  }

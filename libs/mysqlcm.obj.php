@@ -225,7 +225,7 @@ class MySqlCM
       if (Config::$mysql_debug) {
           $this->_deBug(Config::$mysql_debug);
       }
-      if (Config::$mysql_errlog]) {
+      if (Config::$mysql_errlog) {
           $this->_errLog(Config::$mysql_errlog);
       }
   }
