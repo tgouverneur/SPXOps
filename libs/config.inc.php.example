@@ -24,29 +24,28 @@ class Config
     public static $mysql_db = 'spxops';
 
     /* MySQL Debug mode, comment to disable. */
-    //public static $mysql_debug = Config::$rootpath.'/logs/mysql-debug.log';
     public static $mysql_debug = FALSE;
-    public static $mysql_errlog = Config::$rootpath.'/logs/mysql-error.log';
+    public static $mysql_errlog = FALSE;
     public static $mysql_lognull = FALSE;
 
     public static $webgui_time = true;
 
     /* Logging */
-    public static $spxopsd_log = Config::$rootpath.'/logs/spxopsd.log';
+    public static $spxopsd_log = FALSE;
 
     public static $start_time = -1;
 
 
     /* Network daemon */
     public static server_enabled = false;
-    public static $server_rrdpath = Config::$rootpath..'/rrd'; 
+    public static $server_rrdpath = false;
     public static $server_ipaddr = '0.0.0.0';
     public static $server_port = 2142;
     /* @TODO: fix key generation */
     public static $server_key = '157d7c000573526a30991bff2ad6b8ee157d7c000573526a30991bff2ad6b8ee';
 
     /* Plugins */
-    public static $plugins_path = Config::$rootpath.'/plugins';
+    public static $plugins_path = false;
     public static $plugins = array();
 
 
@@ -58,6 +57,13 @@ if (Config::$webgui_time) {
     $start_time = $start_time[1] + $start_time[0];
     Config::$start_time = $start_time;
 }
+
+Config::$mysql_errlog = Config::$rootpath.'/logs/mysqlerr.log';
+//Config::$mysql_debug = Config::$rootpath.'/logs/mysql-debug.log';
+    
+Config::$plugins_path = Config::$rootpath.'/plugins';
+Config::$server_rrdpath = Config::$rootpath.'/rrd';
+Config::$spxopsd_log = Config::$rootpath.'/logs/spxopsd.log';
 
 @require_once(Config::$rootpath.'/libs/logger.obj.php');
 Logger::logLevel(LLOG_ERR);
