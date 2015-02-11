@@ -37,7 +37,7 @@ class LoginCM
         if ($l->fetchFromField("username")) {
             return -1;
         }
-        if ($l->auth($password) == false) {
+        if ($l->auth($password) === false) {
             return -1;
         }
         $this->isLogged = 1;

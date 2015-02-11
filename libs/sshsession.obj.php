@@ -28,7 +28,7 @@ class SSHSession
             throw new SPXException('Connection user not specified');
         }
 
-        if (!($this->_con = @ssh2_connect($this->hostname, $this->port))) {
+        if (!($this->_con = ssh2_connect($this->hostname, $this->port))) {
             throw new SPXException('Cannot connect');
         }
         $authDone = false;
