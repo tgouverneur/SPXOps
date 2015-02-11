@@ -447,9 +447,14 @@ class MySqlCM
    */
   public function insert($fields, $values, $table)
   {
+      $args = array();
+      if (is_array($values)) {
+         $args = $values['a'];
+         $values = $values['v'];
+      }
       $query = "INSERT INTO ".$table."(".$fields.") VALUES(".$values.")";
 
-      if (!$this->_rQuery($query)) {
+      if (!$this->_rQuery($query, $args)) {
           $this->_nres = $this->_link->lastInsertId();
 
           return 0;
@@ -464,9 +469,15 @@ class MySqlCM
    */
   public function delete($table, $cond)
   {
+      $args = array();
+      if (is_array($cond)) {
+         $args = $cond['a'];
+         $cond = $cond['q'];
+      }
+   
       $query = "DELETE FROM ".$table." ".$cond;
 
-      if (!$this->_rQuery($query)) {
+      if (!$this->_rQuery($query, $args)) {
           return $this->_affect;
       } else {
           return -1;
@@ -479,6 +490,16 @@ class MySqlCM
    */
   public function update($table, $set, $where)
   {
+      $args = array();
+      if (is_array($set)) {
+         $args = $set['a'];
+         $set = $set['v'];
+      }
+      if (is_array($where)) {
+         $args = array_merge($args, $where['a']);
+         $where = $where['v'];
+      }
+
       $query = "UPDATE `".$table."` SET ".$set." ".$where;
 
       if (!$this->_rQuery($query)) {
@@ -512,10 +533,6 @@ class MySqlCM
               throw($e);
           }
 
-//      if ($this->_nres) {
-//        for ($i=0; $r = $this->_res->fetch(PDO::FETCH_ASSOC); $i++)
-//          $data[$i] = $r;
-//      }
       $this->_res->closeCursor();
           unset($this->_res);
 
@@ -529,7 +546,7 @@ class MySqlCM
    * RAW Query database and handle errors
    * @return 0 if ok, non-zero if any error
    */
-  private function _rQuery($query, $args = null)
+  private function _rQuery($query, $args = array())
   {
       if ($this->_debug) {
           $this->_Time();
@@ -546,8 +563,30 @@ class MySqlCM
 
       do {
           try {
+
               unset($this->_res);
-              if (($this->_affect = $this->_link->exec($query)) === false) {
+              $this->_res = $this->_link->prepare($query);
+
+              if (is_array($args)) {
+                  foreach ($args as $n => $v) {
+                      if (is_array($v)) {
+                          $this->_res->bindParam($n, $v[0], $v[1]);
+                          if ($this->_debug) {
+                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$n." bound with ".$v[0]." \n");
+                          }
+                      } else {
+                          $this->_res->bindParam($n, $v);
+                          if ($this->_debug) {
+                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$n." bound with ".$v." \n");
+                          }
+                      }
+                  }
+              } else {
+		$args = array();
+              }
+
+              if ($this->_res->execute($args) === false) {
+
                   $this->_error = $this->_link->errorInfo();
                   $this->_error = $this->_error[2];
 
@@ -570,6 +609,7 @@ class MySqlCM
 
                   return -1;
               } else {
+		  $this->_affect = $this->_res->rowCount();
                   if ($this->_debug) {
                       $this->_dPrint("[".time()."] (".$this->_Time().") ".$query."\n");
                   }

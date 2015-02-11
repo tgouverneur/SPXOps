@@ -97,6 +97,7 @@ class MySqlObj
       $my = MySqlCM::getInstance();
 
       $where = "";
+      $args = array();
       $w = 0;
       foreach ($ids as $id) {
           if ($id === false) {
@@ -108,7 +109,8 @@ class MySqlObj
       } else {
           $where .= "WHERE ";
       }
-          $where .= "`".$id."`='".$this->{$this->_myc[$id]}."'";
+          $where .= "`".$id."`= :".$id;
+	  $args[':'.$id] = $this->{$this->_myc[$id]};
           $w++;
       }
       if ($w) {
@@ -116,9 +118,9 @@ class MySqlObj
       } else {
           $where .= "WHERE ";
       }
-      $where .= "`name`='$name'";
-
-      return $my->delete($this->_nfotable, $where);
+      $where .= "`name`= :name";
+      $args[':name'] = $name;
+      return $my->delete($this->_nfotable, array('q' => $where, 'a' => $args));
   }
 
   /**
@@ -613,6 +615,7 @@ class MySqlObj
   public function delete()
   {
       $where = "";
+      $args = array();
       $w = 0;
 
       $my = MySqlCM::getInstance();
@@ -632,12 +635,13 @@ class MySqlObj
       } else {
           $where .= "WHERE ";
       }
-          $where .= "`".$id."`=".$my->quote($this->{$this->_myc[$id]});
+          $where .= "`".$id."`= :".$id;
+          $args[':'.$id] = $this->{$this->_myc[$id]};
           $w++;
       }
       $this->delAllData();
 
-      return $my->delete($this->_table, $where);
+      return $my->delete($this->_table, array('q' => $where, 'a' => $args));
   }
 
     protected function _delAllJT()
@@ -726,6 +730,7 @@ class MySqlObj
             $rel = $this->_jt[$name];
             $table = $rel->jt;
             $where = '';
+	    $args = array();
             $w = 0;
 
             foreach ($rel->dst as $obj => $sql) {
@@ -734,7 +739,8 @@ class MySqlObj
                 } else {
                     $where .= 'WHERE ';
                 }
-                $where .= '`'.$sql.'`=\''.$fobj->{$obj}.'\'';
+                $where .= '`'.$sql.'`=:'.$sql;
+                $args[':'.$sql] = $fobj->{$obj};
             }
 
             foreach ($rel->src as $obj => $sql) {
@@ -743,7 +749,8 @@ class MySqlObj
                 } else {
                     $where .= 'WHERE ';
                 }
-                $where .= '`'.$sql.'`=\''.$this->{$obj}.'\'';
+                $where .= '`'.$sql.'`=:'.$sql;
+                $args[':'.$sql] = $this->{$obj};
             }
 
             foreach ($rel->attrs as $r) {
@@ -753,11 +760,12 @@ class MySqlObj
                     } else {
                         $where .= 'WHERE ';
                     }
-                    $where .= '`'.$r.'`=\''.$fobj->{$r}[''.$this].'\'';
+                    $where .= '`'.$r.'`=:'.$r;
+                    $args[':'.$r] = $fobj->{$r}[''.$this];
                 }
             }
 
-            $my->delete($table, $where);
+            $my->delete($table, array('q' => $where, 'a' => $args));
             $ak = array_keys($this->{$rel->ar});
             foreach ($ak as $i) {
                 if ($this->{$rel->ar}[$i]->equals($fobj)) {
