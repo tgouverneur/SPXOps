@@ -344,17 +344,21 @@ class MySqlObj
       }
 
       $my = MySqlCM::getInstance();
+      $w_args = array();
+      $s_args = array();
       foreach ($ids as $id) {
           if ($id === false) {
               continue;
           } /* no index in obj */
 
-      if (!$w) {
-          $where = "WHERE `".$id."`=".$my->quote($this->{$this->_myc[$id]});
-          $w++;
-      } else {
-          $where .= " AND `".$id."`=".$my->quote($this->{$this->_myc[$id]});
-      }
+          if (!$w) {
+              $where = sprintf('WHERE `%s`= :%s', $id, $id);
+              $w++;
+          } else {
+              $where .= sprintf(' AND `%s`= :%s', $id, $id);
+              $where .= " AND `".$id."`=".$my->quote($this->{$this->_myc[$id]});
+          }
+          $w_args[':'.$id] = $this->{$this->_myc[$id]};
       }
       $set = "";
       $i = 0;
@@ -363,14 +367,15 @@ class MySqlObj
               continue;
           } /* skip index */
 
-      if ($i && $i < count($this->_my)) {
-          $set .= ",";
-      }
-          $set .= "`".$k."`=".$my->quote($this->{$this->_myc[$k]});
+          if ($i && $i < count($this->_my)) {
+              $set .= ',';
+          }
+          $set .= sprintf('`%s`= :%s', $k, $k);
+          $s_args[':'.$k] = $this->{$this->_myc[$k]};
           $i++;
       }
 
-      return $my->update($this->_table, $set, $where);
+      return $my->update($this->_table, array('v' => $set, 'a' => $s_args), array('v' => $where, 'a' => $w_args));
   }
 
   /**
