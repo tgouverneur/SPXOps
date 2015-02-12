@@ -580,7 +580,7 @@ class MySqlCM
 		$args = array();
               }
 
-              if ($this->_res->execute($args) === false) {
+              if ($this->_res->execute() === false) {
 
                   $this->_error = $this->_link->errorInfo();
                   $this->_error = $this->_error[2];
@@ -675,10 +675,10 @@ class MySqlCM
                       }
                   }
               } else {
-		$args = array();
+                $args = array();
               }
 
-              if ($this->_res->execute($args)) {
+              if ($this->_res->execute()) {
                   if ($this->_debug) {
                       $this->_dPrint("[".time()."] (".$this->_Time().") ".$query."\n");
                   }

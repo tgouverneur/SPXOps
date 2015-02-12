@@ -319,7 +319,7 @@ CODE;
         $index = "`id`";
         $cindex = "COUNT(`id`)";
         $where = "WHERE `f_upd`='1'";
-        $it = new mIterator('Server', $index, $table, $where, $cindex);
+        $it = new mIterator('Server', $index, $table, array('q' => $where, 'a' => array()), $cindex);
         $slog = new Server();
         $slog->_job = $job;
 
