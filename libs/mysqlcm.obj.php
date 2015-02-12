@@ -271,10 +271,10 @@ class MySqlCM
               $this->_link = new PDO($dbstring,
                                Config::$mysql_user,
                                Config::$mysql_pass,
-                   array(PDO::ATTR_PERSISTENT => true,
+                   array(PDO::ATTR_PERSISTENT => false,
                      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, ));
               $this->_link->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-        //$this->_link->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
+              //$this->_link->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
           } catch (PDOException $e) {
               $this->_error = $e->getMessage();
               if (strpos($this->_error, '2006 MySQL') !== false && $this->_reconnect) {
