@@ -534,7 +534,7 @@ class MySqlObj
       $args = array();
       $where = array();
 
-      $where['q'] = "WHERE `".$field."`= :".$field;
+      $where['q'] = sprintf('WHERE `%s`= %s', $field, $field);
       $args[':'.$field] = $this->{$this->_myc[$field]};
       $where['a'] = $args;
 
@@ -583,10 +583,10 @@ class MySqlObj
           } /* no index in obj */
 
           if (!$w) {
-              $where = "WHERE `".$id."`= :".$id;
+              $where = sprintf('WHERE `%s`= :%s', $id, $id);
               $w++;
           } else {
-              $where .= " AND `".$id."`= :".$id;
+              $where .= sprintf(' AND `%s`= :%s', $id, $id);
           }
           $args[':'.$id] = $this->{$this->_myc[$id]};
       } 
