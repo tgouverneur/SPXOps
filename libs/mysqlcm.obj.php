@@ -358,11 +358,12 @@ class MySqlCM
       $this->_nres = null;
       $args = array();
 
+      $qf = 'SELECT %s FROM `%s` %s %s';
       if (is_array($where)) {
-          $query = "SELECT ".$fields." FROM `".$table."` ".$where['q']." ".$sort;
+          $query = sprintf($qf, $fields, $table, $where['q'], $sort);
           $args = $where['a'];
       } else {
-          $query = "SELECT ".$fields." FROM `".$table."` ".$where." ".$sort;
+          $query = sprintf($qf, $fields, $table, $where, $sort);
       }
 
       if (!$this->_Query($query, $args)) {
@@ -495,9 +496,10 @@ class MySqlCM
          $where = $where['v'];
       }
 
-      $query = "UPDATE `".$table."` SET ".$set." ".$where;
+      $qf = 'UPDATE `%s` SET %s %s';
+      $query = sprintf($qf, $table, $set, $where);
 
-      if (!$this->_rQuery($query)) {
+      if (!$this->_rQuery($query, $args)) {
           return 0;
       } else {
           return -1;
@@ -513,10 +515,12 @@ class MySqlCM
       $this->_nres = null;
       $args = array();
 
+      $qf = 'SELECT %s FROM `%s` %s';
       if (is_array($where)) {
-          $query = "SELECT ".$index." FROM ".$table." ".$where['q'];
+          $query = sprintf($qf, $index, $table, $where['q']);
           $args = $where['a'];
       } else {
+          $query = sprintf($qf, $index, $table, $where);
           $query = "SELECT ".$index." FROM ".$table." ".$where;
       }
 
@@ -577,7 +581,7 @@ class MySqlCM
                       }
                   }
               } else {
-		$args = array();
+                    $args = array();
               }
 
               if ($this->_res->execute() === false) {
@@ -737,7 +741,7 @@ class MySqlCM
    */
   public function lockTable($table, $what = "WRITE")
   {
-      $query = "LOCK TABLE $table $what";
+      $query = "LOCK TABLE `$table` $what";
 
       if (!$this->_rQuery($query)) {
           return 0;

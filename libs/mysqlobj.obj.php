@@ -148,6 +148,8 @@ class MySqlObj
       /* Update */
 
       $where = "";
+          $w_args = array();
+          $s_args = array();
           $w = 0;
           foreach ($ids as $id) {
               if ($id === false) {

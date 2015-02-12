@@ -42,7 +42,7 @@ class mIterator
             $this->_pos = 0;
         }
 
-        if ($idx = $m->fetchIndex($this->_index, $this->_table, $this->_where.' LIMIT '.$this->_pos.','.$this->_step)) {
+        if ($idx = $m->fetchIndex($this->_index, $this->_table, array('q' => $this->_where['q'].' LIMIT '.$this->_pos.','.$this->_step, 'a' => $this->_where['a']))) {
             $this->_arr = array();
             foreach ($idx as $v) {
                 $o = new $this->_cc();
