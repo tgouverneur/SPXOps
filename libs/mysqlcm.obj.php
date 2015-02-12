@@ -521,7 +521,6 @@ class MySqlCM
           $args = $where['a'];
       } else {
           $query = sprintf($qf, $index, $table, $where);
-          $query = "SELECT ".$index." FROM ".$table." ".$where;
       }
 
       if (!$this->_Query($query, $args)) {
