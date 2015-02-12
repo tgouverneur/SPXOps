@@ -607,7 +607,7 @@ class MySqlCM
 
                   return -1;
               } else {
-		  $this->_affect = $this->_res->rowCount();
+                  $this->_affect = $this->_res->rowCount();
                   if ($this->_debug) {
                       $this->_dPrint("[".time()."] (".$this->_Time().") ".$query."\n");
                   }

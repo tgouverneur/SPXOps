@@ -356,7 +356,6 @@ class MySqlObj
               $w++;
           } else {
               $where .= sprintf(' AND `%s`= :%s', $id, $id);
-              $where .= " AND `".$id."`=".$my->quote($this->{$this->_myc[$id]});
           }
           $w_args[':'.$id] = $this->{$this->_myc[$id]};
       }
