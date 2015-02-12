@@ -717,8 +717,9 @@ class Server extends MySqlObj implements JsonSerializable
         $m = MySqlCM::getInstance();
         $index = "`fk_server`,`fk_check`,`t_upd`,`rc`,`f_ack`";
         $table = "(select `fk_server`,`fk_check`,`t_upd`,`rc`,`f_ack` from `list_result` order by `t_upd` desc) a";
+        /* @TODO implement OS filtering */
         if ($fk_os) {
-            $where = " WHERE `fk_server` ".$f_in;
+            //$where = " WHERE `fk_server` ".$f_in;
             $where .= " group by `fk_server`,`fk_check` order by `t_upd` desc";
         } else {
             $where = "group by `fk_server`,`fk_check` order by `t_upd` desc";
