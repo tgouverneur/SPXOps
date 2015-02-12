@@ -274,7 +274,6 @@ class MySqlCM
                    array(PDO::ATTR_PERSISTENT => false,
                      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, ));
               $this->_link->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-              //$this->_link->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
           } catch (PDOException $e) {
               $this->_error = $e->getMessage();
               if (strpos($this->_error, '2006 MySQL') !== false && $this->_reconnect) {
@@ -320,11 +319,12 @@ class MySqlCM
       $this->_nres = null;
       $args = array();
 
+      $qf = 'SELECT COUNT(*) FROM `%s` %s';
       if (is_array($where)) {
-          $query = "SELECT COUNT(*) FROM `".$table."` ".$where['q'];
+          $query = sprintf($qf, $table, $where['q']);
           $args = $where['a'];
       } else {
-          $query = "SELECT COUNT(*) FROM `".$table."` ".$where;
+          $query = sprintf($qf, $table, $where);
       }
 
       if (!$this->_Query($query, $args)) {
