@@ -538,7 +538,7 @@ class MySqlObj
       $args = array();
       $where = array();
 
-      $where['q'] = sprintf('WHERE `%s`= %s', $field, $field);
+      $where['q'] = sprintf('WHERE `%s`= :%s', $field, $field);
       $args[':'.$field] = $this->{$this->_myc[$field]};
       $where['a'] = $args;
 

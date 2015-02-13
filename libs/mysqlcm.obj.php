@@ -406,8 +406,10 @@ class MySqlCM
       }
       $cq .= ')';
       $this->_res = $this->_link->prepare($cq);
-      foreach ($args as $name => $value) {
-          $this->_res->bindParam($name, $value);
+      $keys = array_keys($args);
+      $c_keys = count($keys);
+      for ($i=0;$i < $c_keys; $i++) {
+          $this->_res->bindParam($keys[$i], $args[$keys[$i]]);
       }
       if (!$this->_res->execute()) {
           $this->_res->closeCursor();
@@ -492,7 +494,9 @@ class MySqlCM
          $set = $set['v'];
       }
       if (is_array($where)) {
-         $args = array_merge($args, $where['a']);
+	 foreach($where['a'] as $k => $v) {
+           $args[$k] = $v;
+	 }
          $where = $where['v'];
       }
 
@@ -565,22 +569,23 @@ class MySqlCM
               unset($this->_res);
               $this->_res = $this->_link->prepare($query);
 
+	      $a_args = array();
               if (is_array($args)) {
-                  foreach ($args as $n => $v) {
-                      if (is_array($v)) {
-                          $this->_res->bindParam($n, $v[0], $v[1]);
+		  $keys = array_keys($args);
+		  $c_keys = count($keys);
+		  for ($i=0;$i < $c_keys; $i++) {
+ 		      if (is_array($args[$keys[$i]])) {
+			  $this->_res->bindParam($keys[$i], $args[$keys[$i]][0], $args[$keys[$i]][1]);
                           if ($this->_debug) {
-                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$n." bound with ".$v[0]." \n");
+                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$keys[$i]." bound with ".$args[$keys[$i]][0]." \n");
                           }
-                      } else {
-                          $this->_res->bindParam($n, $v);
+		      } else {
+		          $this->_res->bindParam($keys[$i], $args[$keys[$i]]);
                           if ($this->_debug) {
-                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$n." bound with ".$v." \n");
+                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$keys[$i]." bound with ".$args[$keys[$i]]." \n");
                           }
-                      }
-                  }
-              } else {
-                    $args = array();
+		      }
+		  }
               }
 
               if ($this->_res->execute() === false) {
@@ -664,21 +669,21 @@ class MySqlCM
               $this->_res = $this->_link->prepare($query);
 
               if (is_array($args)) {
-                  foreach ($args as $n => $v) {
-                      if (is_array($v)) {
-                          $this->_res->bindParam($n, $v[0], $v[1]);
+                  $keys = array_keys($args);
+                  $c_keys = count($keys);
+                  for ($i=0;$i < $c_keys; $i++) {
+                      if (is_array($args[$keys[$i]])) {
+                          $this->_res->bindParam($keys[$i], $args[$keys[$i]][0], $args[$keys[$i]][1]);
                           if ($this->_debug) {
-                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$n." bound with ".$v[0]." \n");
-                          }
+                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$keys[$i]." bound with ".$args[$keys[$i]][0]." \n");
+                          }  
                       } else {
-                          $this->_res->bindParam($n, $v);
+                          $this->_res->bindParam($keys[$i], $args[$keys[$i]]);
                           if ($this->_debug) {
-                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$n." bound with ".$v." \n");
+                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$keys[$i]." bound with ".$args[$keys[$i]]." \n");
                           }
                       }
                   }
-              } else {
-                $args = array();
               }
 
               if ($this->_res->execute()) {
