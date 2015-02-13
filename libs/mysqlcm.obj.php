@@ -473,7 +473,9 @@ class MySqlCM
          $cond = $cond['q'];
       }
    
-      $query = "DELETE FROM ".$table." ".$cond;
+      $qf = 'DELETE FROM `%s` %s';
+      $query = sprintf($qf, $table, $cond);
+
 
       if (!$this->_rQuery($query, $args)) {
           return $this->_affect;
