@@ -720,7 +720,7 @@ class Server extends MySqlObj implements JsonSerializable
         /* @TODO implement OS filtering */
         if ($fk_os) {
             //$where = " WHERE `fk_server` ".$f_in;
-            $where .= " group by `fk_server`,`fk_check` order by `t_upd` desc";
+            $where = " group by `fk_server`,`fk_check` order by `t_upd` desc";
         } else {
             $where = "group by `fk_server`,`fk_check` order by `t_upd` desc";
         }

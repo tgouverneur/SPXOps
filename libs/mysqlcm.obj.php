@@ -519,7 +519,7 @@ class MySqlCM
       $this->_nres = null;
       $args = array();
 
-      $qf = 'SELECT %s FROM `%s` %s';
+      $qf = 'SELECT %s FROM %s %s';
       if (is_array($where)) {
           $query = sprintf($qf, $index, $table, $where['q']);
           $args = $where['a'];
