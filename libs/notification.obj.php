@@ -20,7 +20,7 @@ class Notification
           return;
       }
 
-      Logger::log('Notification request...'.$cr.' / '.$oldcr, LLOG_DEBUG);
+      Logger::log('Notification request...'.$cr.' / '.$oldcr, null, LLOG_DEBUG);
 
       if (!$cr->o_server && $cr->fk_server > 0) {
           $cr->fetchFK('fk_server');
@@ -68,7 +68,7 @@ class Notification
       }
 
       foreach ($a_login as $l) {
-          Logger::log('Going to send notification for check '.$cr->o_check.' to '.$l, LLOG_DEBUG);
+          Logger::log('Going to send notification for check '.$cr->o_check.' to '.$l, null, LLOG_DEBUG);
           mail($l->email, $subject, $msg, $headers);
       }
   }
