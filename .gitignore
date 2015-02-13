@@ -4,7 +4,7 @@ tests/
 keys/
 old/
 tmp/
-libs/config.inc.php
+libs/config.obj.php
 *.swp
 plugins/*
 !plugins/test
