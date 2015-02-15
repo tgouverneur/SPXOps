@@ -449,23 +449,5 @@ class OSAix extends OSType
     public static function dump($s)
     {
 
-/*
-    $distro = $s->data('linux:name');
-    $version = $s->data('linux:version');
-    $ver_name = $s->data('linux:ver_name');
-    $ker_ver = $s->data('os:kernel');
-    if (empty($distro)) $distro = null;
-    if (empty($version)) $version = null;
-    if (empty($ver_name)) $ver_name = null;
-    if (empty($ker_ver)) $ker_ver = null;
-    $txt = '';
-    $txt .= $s->o_os->name.' ';
-    $txt .= ($ker_ver)?('- '.$ker_ver.' '):'';
-    $txt .= ($distro)?('/ '.$distro.' '):'';
-    $txt .= ($version)?('/ '.$version.' '):'';
-    $txt .= ($ver_name)?('( '.$ver_name.') '):'';
-
-    $s->log(sprintf("%15s: %s", 'OS', $txt), LLOG_INFO);
-*/
     }
 }

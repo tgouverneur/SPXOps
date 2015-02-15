@@ -45,7 +45,7 @@ class Act extends MySqlObj
 
     public function dump($s)
     {
-        //    $s->log(sprintf("\t%15s - %s", '[layer3]', ''.$this), LLOG_INFO);
+            $s->log(sprintf("\t%15s - %s", 'ACT', ''.$this), LLOG_INFO);
     }
 
     public static function add($msg, $obj = null)

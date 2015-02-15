@@ -332,8 +332,7 @@ class MySqlObj
    */
   public function update()
   {
-      //$id = array_search(SQL_INDEX, $this->_my);
-    $ids = array_keys($this->_my, SQL_INDEX);
+      $ids = array_keys($this->_my, SQL_INDEX);
       if (count($ids) == 0) {
           throw new SPXException('No Index in this object');
       }
@@ -979,11 +978,11 @@ class MySqlObj
                 foreach ($idx as $t) {
                     $d = new $rel->oc();
                     foreach ($a_idx as $idx) {
-                        /* TODO: we assume here that id obj == id sql, this is not necessarly true,
-           but it's sunday, it's hot and I'm way too lazy to do it better now even
-           if some copy paste would have taken more time than this silly comment
-        */
-       $d->{$idx} = $t[$idx];
+                        /* we assume here that id obj == id sql, this is not necessarly true,
+                           but it's sunday, it's hot and I'm way too lazy to do it better now even
+                           if some copy paste would have taken more time than this silly comment
+                        */
+                       $d->{$idx} = $t[$idx];
                     }
                     if ($f_fetch) {
                         $d->fetchFromId();
@@ -1085,11 +1084,11 @@ class MySqlObj
                 foreach ($idx as $t) {
                     $d = new $oc();
                     foreach ($a_idx as $idx) {
-                        /* @TODO: we assume here that id obj == id sql, this is not necessarly true,
-                but it's sunday, it's hot and I'm way too lazy to do it better now even
-                if some copy paste would have taken more time than this silly comment
-             */
-            $d->{$idx} = $t[$idx];
+                        /* we assume here that id obj == id sql, this is not necessarly true,
+                            but it's sunday, it's hot and I'm way too lazy to do it better now even
+                            if some copy paste would have taken more time than this silly comment
+                         */
+                        $d->{$idx} = $t[$idx];
                     }
                     if ($f_fetch) {
                         $d->fetchFromId();

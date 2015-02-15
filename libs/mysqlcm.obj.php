@@ -208,7 +208,7 @@ class MySqlCM
    */
   public function __destruct()
   {
-    //if ($this->_link) $this->disconnect();
+    if ($this->_link) $this->disconnect();
 
     if (Config::$mysql_debug && $this->_dfd) {
         fclose($this->_dfd);

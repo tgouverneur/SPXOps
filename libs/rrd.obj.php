@@ -591,7 +591,6 @@ class RRD extends MySqlObj
   {
       $this->id = $id;
       $this->_table = 'list_rrd';
-    //$this->_nfotable = 'nfo_rrd';
     $this->_my = array(
                         'id' => SQL_INDEX,
                         'path' => SQL_PROPE|SQL_EXIST,

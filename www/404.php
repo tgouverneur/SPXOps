@@ -21,7 +21,6 @@
  $head->set('page', $page);
 
  $foot = new Template("../tpl/foot.tpl");
- $foot->set("start_time", $start_time);
  $content = new Template("../tpl/error.tpl");
  $content->set('error', "The page you requested has not been found...");
 

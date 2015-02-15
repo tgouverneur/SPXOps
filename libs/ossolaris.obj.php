@@ -2075,10 +2075,10 @@ zfs:0:arcstats:l2_writes_sent   376002
    */
   public static function updateSds(&$s)
   {
- //     $metastat = $s->findBin('metastat');
- //     $cmd_metastat = "$metastat -p";
- //   $out_metastat = $s->exec($cmd_metastat);
 /*
+     $metastat = $s->findBin('metastat');
+      $cmd_metastat = "$metastat -p";
+    $out_metastat = $s->exec($cmd_metastat);
 d9 -m d29 1
 d29 1 1 /dev/dsk/emcpower59a
 d8 -m d28 1
@@ -2098,10 +2098,10 @@ d110 -m d112 1
 d112 1 1 /dev/dsk/emcpower18a
 d100 -m d101 1
 d101 1 1 /dev/dsk/emcpower58a
-*/
 
-  //  $metaset = $s->findBin('metaset');
-  //    $cmd_metaset = "$metaset";
+  $metaset = $s->findBin('metaset');
+  $cmd_metaset = "$metaset";
+*/
   }
 
   /**

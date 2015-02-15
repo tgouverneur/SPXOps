@@ -26,7 +26,6 @@ class Daemon
             trigger_error('PHP is compiled without --enable-pcntl directive', E_USER_ERROR);
         }
         pcntl_signal(SIGTERM, array($obj, 'sigterm'));
-    //    pcntl_signal(SIGINT,array($obj,'sigterm'));
         pcntl_signal(SIGCHLD, array($obj, 'sigchld'));
         pcntl_signal(SIGHUP, array($obj, 'sighup'));
         pcntl_signal(SIGUSR1, array($obj, 'sigusr1'));

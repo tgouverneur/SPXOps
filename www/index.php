@@ -44,7 +44,6 @@
  $head->set('page', $page);
 
  $foot = new Template("../tpl/foot.tpl");
- $foot->set("start_time", $start_time);
  $content = new Template("../tpl/home.tpl");
  $content->set('stats', $stats);
  $content->set('a_job', $a_job);

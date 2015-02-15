@@ -207,11 +207,7 @@ CODE;
     public function fetchAll($all = 1)
     {
         try {
-            /*      if (!$this->o_server && $this->fk_server > 0) {
-        $this->fetchFK('fk_server');
-      }
-*/
-      echo "";
+            $s->fetchJT('a_sgroup');
         } catch (Exception $e) {
             throw($e);
         }
@@ -370,10 +366,7 @@ CODE;
                         't_upd' => 't_upd',
                  );
 
-//    $this->_addFK("fk_server", "o_server", "Server");
-
     $this->_log = Logger::getInstance();
-
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
     $this->_addJT('a_sgroup', 'SGroup', 'jt_check_sgroup', array('id' => 'fk_check'), array('id' => 'fk_sgroup'), array('f_except'));
   }

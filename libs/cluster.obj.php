@@ -258,16 +258,9 @@ class Cluster extends MySqlObj
     {
 
     /* echo basic infos first */
-/*
-    $this->log(sprintf("%15s: %s", 'Cluster', $this->hostname.' ('.$this->id.')' ), LLOG_INFO);
+    $this->log(sprintf("%15s: %s", 'Cluster', $this->host.' ('.$this->id.')' ), LLOG_INFO);
     $this->log(sprintf("%15s: %s", 'Description', $this->description), LLOG_INFO);
-    $this->log(sprintf("%15s: %s", 'RCE', ($this->f_rce)?"enabled":"disabled"), LLOG_INFO);
 
-
-    if ($this->o_os) {
-      $this->o_os->dump($this);
-    }
-*/
     }
 
     public static function printCols($cfs = array())

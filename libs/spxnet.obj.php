@@ -155,7 +155,6 @@ class SPXNet
             if ($m->connect()) {
                 $this->log(" Error with SQL db: ".$m->getError());
                 sleep($this->_interval);
-
                 return -1;
             }
         } catch (Exception $e) {
@@ -243,8 +242,7 @@ class SPXNet
     }
 
         $s = new Server();
-    /* @TODO: Sanitize input from packet, even if encrypted... */
-    $s->hostname = $msg->a_v['hostname'];
+        $s->hostname = $msg->a_v['hostname'];
         if ($s->fetchFromField('hostname')) {
             Logger::log("$msg: Hostname specified not found in database", $this, LLOG_DEBUG);
 

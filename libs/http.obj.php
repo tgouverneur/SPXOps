@@ -68,10 +68,11 @@ class HTTP
 
     public function parseUrl()
     {
-        if (!isset($_SERVER['PATH_INFO'])) {
+        $url = filter_input(INPUT_SERVER, 'PATH_INFO');
+        if (!$url) {
             return;
         }
-        $url = explode('/', $_SERVER['PATH_INFO']);
+        $url = explode('/', $url);
         $g = array();
         $idx = "";
         $val = "";
@@ -89,8 +90,7 @@ class HTTP
                 $s = 0;
             }
         }
-    //$_GET = $g;
-    $_GET = array_merge($_GET, $g);
+        $_GET = array_merge($_GET, $g);
 
         return;
     }

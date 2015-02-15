@@ -56,7 +56,6 @@ class Log extends MySqlObj
 
     public function dump($s)
     {
-        //    $s->log(sprintf("\t%15s - %s", '[layer3]', ''.$this), LLOG_INFO);
     }
 
     public static function printCols($cfs = array())

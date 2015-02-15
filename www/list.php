@@ -15,7 +15,6 @@
  $index = new Template("../tpl/index.tpl");
  $head = new Template("../tpl/head.tpl");
  $foot = new Template("../tpl/foot.tpl");
- //$foot->set("start_time", $start_time);
  $page = array();
  $page['title'] = 'List of ';
  if ($lm->o_login) {

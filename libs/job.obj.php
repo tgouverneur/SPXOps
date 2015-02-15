@@ -136,10 +136,16 @@ class Job extends MySqlObj
         $this->o_log->insert();
         $this->fk_log = $this->o_log->id;
         $this->t_start = time();
-//    $this->state = S_RUN;
-//    $this->o_pid = Pid::getMyPid();
-//    $this->fk_pid = $this->o_pid->id;
-    $this->update();
+        if ($this->state != S_RUN) {
+            $this->state = S_RUN;
+        }
+        if ($this->o_pid) {
+            $this->o_pid = Pid::getMyPid();
+        }
+        if ($this->fk_pid <= 0) {
+            $this->fk_pid = $this->o_pid->id;
+        }
+        $this->update();
 
         if (!class_exists($this->class) || !method_exists($this->class, $this->fct)) {
             $this->state = S_FAIL;

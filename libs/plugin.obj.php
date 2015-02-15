@@ -79,7 +79,6 @@ class Plugin
                 continue; // Skip this plugin and log an error
             }
             require_once(Config::$plugins_path.'/'.$name.'/'.$name.'.php');
-      //Logger::log("Plugin $name is now active..", null, LLOG_DEBUG);
         }
         Plugin::$_done = true;
     }
