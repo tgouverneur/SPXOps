@@ -418,7 +418,6 @@ class OSFreeBSD extends OSType
   {
       $found_if = array();
 
-      $sudo = $s->findBin('sudo');
       $ifconfig = $s->findBin('ifconfig');
       $cmd_ifconfig = "$ifconfig -a";
       $out_ifconfig = $s->exec($cmd_ifconfig);
@@ -1118,11 +1117,7 @@ slc8.mgmt/test/test2-clone  95.7G  75.6M         0   75.6M              0       
                   $quota = Pool::formatSize($quota);
               }
               $used = Pool::formatSize($f[2]);
-              $usedsnap = Pool::formatSize($f[3]);
               $usedds = Pool::formatSize($f[4]);
-              $usedrefres = Pool::formatSize($f[5]);
-              $usedchild = Pool::formatSize($f[6]);
-              $available = Pool::formatSize($f[1]);
               switch ($type) {
           case 'snapshot':
         break;

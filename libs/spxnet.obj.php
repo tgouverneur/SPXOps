@@ -21,7 +21,6 @@ class SPXNet
     private $_port = null;
     private $_host = null;
     private $lrun = 0;
-    private $crun = 0;
     private $_foreground = false;
 
     public $ivsize = -1;

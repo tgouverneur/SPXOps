@@ -55,12 +55,6 @@ class LoginCM
         }
         $this->o_login->getAddr();
         Act::add("Logged in from ".$this->o_login->i_raddr, $this->o_login);
-        /*
-        $at = new AlertType();
-        $at->short = 'LOGIN';
-        $at->fetchFromField('short');
-        Notification::sendAlert($at, 'User Login', $this->o_login.' Logged in from '.$this->o_login->i_raddr);
-        */
     return 0;
     }
 

@@ -364,7 +364,6 @@ class OSAix extends OSType
         $out_oslevel = $s->exec($cmd_oslevel);
 
         $una_fields = explode('.', $out_oslevel);
-        $os_name = 'AIX';
         $os_version = $una_fields[0];
         $os_release = $out_oslevel;
 

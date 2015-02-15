@@ -22,7 +22,6 @@ class RJob extends MySqlObj
     public $t_upd = -1;
 
     public $o_login = null;
-    private $_icmid = null;
 
     public function __toString()
     {
@@ -138,7 +137,6 @@ class RJob extends MySqlObj
   {
       $this->id = $id;
       $this->_table = 'list_rjob';
-      $this->_icmid = $daemon;
       $this->_my = array(
             'id' => SQL_INDEX,
                 'class' => SQL_PROPE,

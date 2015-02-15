@@ -60,7 +60,6 @@ class Server extends MySqlObj implements JsonSerializable
     private $_paths = array();
 
   /* Logging */
-  private $_log = null;
     public $_job = null;
 
   /* VM Stats */
@@ -719,7 +718,6 @@ class Server extends MySqlObj implements JsonSerializable
         $table = "(select `fk_server`,`fk_check`,`t_upd`,`rc`,`f_ack` from `list_result` order by `t_upd` desc) a";
         /* @TODO implement OS filtering */
         if ($fk_os) {
-            //$where = " WHERE `fk_server` ".$f_in;
             $where = " group by `fk_server`,`fk_check` order by `t_upd` desc";
         } else {
             $where = "group by `fk_server`,`fk_check` order by `t_upd` desc";
@@ -815,6 +813,5 @@ class Server extends MySqlObj implements JsonSerializable
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
     $this->_addJT('a_sgroup', 'SGroup', 'jt_server_sgroup', array('id' => 'fk_server'), array('id' => 'fk_sgroup'), array());
 
-      $this->_log = Logger::getInstance();
   }
 }

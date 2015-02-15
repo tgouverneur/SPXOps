@@ -29,8 +29,6 @@ class RRD extends MySqlObj
     public $o_pool = null;
     public $o_disk = null;
 
-    private $_log = null;
-
     public function checklock()
     {
         $lf = $this->getPath().'.lock';
@@ -619,7 +617,5 @@ class RRD extends MySqlObj
       $this->_addFK("fk_server", "o_server", "Server");
       $this->_addFK("fk_pool", "o_pool", "Pool");
       $this->_addFK("fk_disk", "o_disk", "Disk");
-
-      $this->_log = Logger::getInstance();
   }
 }

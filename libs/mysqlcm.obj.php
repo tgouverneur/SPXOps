@@ -571,7 +571,6 @@ class MySqlCM
               unset($this->_res);
               $this->_res = $this->_link->prepare($query);
 
-	      $a_args = array();
               if (is_array($args)) {
 		  $keys = array_keys($args);
 		  $c_keys = count($keys);

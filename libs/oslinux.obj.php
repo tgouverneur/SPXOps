@@ -946,10 +946,6 @@ class OSLinux extends OSType
       $out_uname = $s->exec($cmd_uname);
       $platform = $out_uname;
 
-      $cmd_uname = "$uname -m";
-      $out_uname = $s->exec($cmd_uname);
-      $cputype = $out_uname;
-
       if ($s->data('os:kernel') != $kr_version) {
           $s->setData('os:kernel', $kr_version);
           $s->log('os:kernel => '.$kr_version, LLOG_INFO);

@@ -20,9 +20,6 @@ class Patch extends MySqlObj
 
     public $o_server = null;
 
-  /* Logging */
-  private $_log = null;
-
     public function log($str)
     {
         Logger::log($str, $this);
@@ -94,7 +91,5 @@ class Patch extends MySqlObj
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
-
-      $this->_log = Logger::getInstance();
   }
 }

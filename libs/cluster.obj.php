@@ -35,7 +35,6 @@ class Cluster extends MySqlObj
     public $o_os = null;
 
   /* Logging */
-  private $_log = null;
     public $_job = null;
 
     public function getRGRepartition()

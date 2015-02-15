@@ -31,9 +31,6 @@ class Pool extends MySqlObj
   public $slice = array();
     public $role = array();
 
-  /* Logging */
-  private $_log = null;
-
     public function log($str)
     {
         Logger::log($str, $this);
@@ -266,7 +263,5 @@ class Pool extends MySqlObj
 
             /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
     $this->_addJT('a_disk', 'Disk', 'jt_disk_pool', array('id' => 'fk_pool'), array('id' => 'fk_disk'), array('slice', 'role'));
-
-      $this->_log = Logger::getInstance();
   }
 }

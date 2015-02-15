@@ -36,7 +36,6 @@ class Job extends MySqlObj
     public $o_login = null;
     public $o_pid = null;
     public $o_log = null;
-    private $_icmid = null;
 
     public static function fetchFirst(&$daemon)
     {
@@ -176,7 +175,7 @@ class Job extends MySqlObj
         }
 
     /* Update job log */
-    $r = $this->o_log->update();
+        $this->o_log->update();
         $this->update();
     }
 
@@ -261,7 +260,6 @@ class Job extends MySqlObj
   {
       $this->id = $id;
       $this->_table = 'list_job';
-      $this->_icmid = $daemon;
       $this->_my = array(
             'id' => SQL_INDEX,
                 'class' => SQL_PROPE,

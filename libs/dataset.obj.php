@@ -23,9 +23,6 @@ class Dataset extends MySqlObj
 
     public $o_pool = null;
 
-  /* Logging */
-  private $_log = null;
-
     public function getFullName()
     {
         $ret = '';
@@ -100,6 +97,5 @@ class Dataset extends MySqlObj
 
       $this->_addFK("fk_pool", "o_pool", "Pool");
 
-      $this->_log = Logger::getInstance();
   }
 }

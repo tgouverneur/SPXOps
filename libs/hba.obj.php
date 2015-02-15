@@ -30,9 +30,6 @@ class Hba extends MySqlObj
 
     public $o_server = null;
 
-  /* Logging */
-  private $_log = null;
-
     public function log($str)
     {
         Logger::log($str, $this);

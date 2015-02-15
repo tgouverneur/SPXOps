@@ -26,8 +26,6 @@ class Zone extends MySqlObj
 
     public $o_server = null;
 
-  /* Logging */
-  private $_log = null;
 
     public function log($str)
     {
@@ -107,7 +105,5 @@ class Zone extends MySqlObj
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
-
-      $this->_log = Logger::getInstance();
   }
 }

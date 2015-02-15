@@ -29,8 +29,6 @@ class VM extends MySqlObj
     public $a_net = array();
     public $a_disk = array();
 
-  /* Logging */
-  private $_log = null;
 
     public function log($str)
     {
@@ -186,7 +184,5 @@ class VM extends MySqlObj
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
-
-      $this->_log = Logger::getInstance();
   }
 }

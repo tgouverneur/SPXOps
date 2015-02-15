@@ -20,7 +20,7 @@ class SSHSession
     private $_progress = false;
     private $_stream = null;
 
-    private $_con, $_connected, $_shell;
+    private $_con, $_connected;
 
     public function connect()
     {
@@ -38,7 +38,7 @@ class SSHSession
             }
         }
         if (!$authDone && !empty($this->o_user->password)) { /* password auth */
-      if (($rc = ssh2_auth_password($this->_con, $this->o_user->username, $this->o_user->password))) {
+      if (ssh2_auth_password($this->_con, $this->o_user->username, $this->o_user->password)) {
           $authDone = true;
       }
         }
@@ -176,7 +176,6 @@ class SSHSession
     public function notifyDisconnect($reason, $message, $language)
     {
         $this->_connected = 0;
-        $this->_shell = null;
     }
 
     public function __construct($h = "")
@@ -190,6 +189,5 @@ class SSHSession
 
         $this->_connected = 0;
         $this->_con = null;
-        $this->_shell = null;
     }
 }

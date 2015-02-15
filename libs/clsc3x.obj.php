@@ -29,8 +29,6 @@ for i in `./scha_cluster_get -O ALL_RESOURCEGROUPS`; do nodelist=`./scha_resourc
       $cmd_rg_suspend = "$rgget -O SUSPEND_AUTOMATIC_RECOVERY -G %s";
       $cmd_rg_nodes = "$rgget -O NODELIST -G %s";
       $cmd_rg_state_node = "$rgget -O RG_STATE_NODE -G %s %s";
-      $cmd_rg_affinities = "$rgget -O RG_AFFINITIES -G %s";
-      $cmd_rg_dependencies = "$rgget -O RG_DEPENDENCIES -G %s";
       $cmd_rg_description = "$rgget -O RG_DESCRIPTION -G %s";
 
       $out_clget = $c->exec($cmd_clget);
@@ -175,7 +173,6 @@ for i in `./scha_cluster_get -O ALL_RESOURCEGROUPS`; do nodelist=`./scha_resourc
 
       $cmd_rs_state_node = "$rsget -O RESOURCE_STATE_NODE -G %s -R %s %s";
       $cmd_rs_description = "$rsget -O R_DESCRIPTION -G %s -R %s";
-      $cmd_rs_project = "$rsget -O RESOURCE_PROJECT_NAME -G %s -R %s";
       $cmd_rs_type = "$rsget -O TYPE -G %s -R %s";
       $cmd_rs_type_version = "$rsget -O TYPE_VERSION -G %s -R %s";
 

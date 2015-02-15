@@ -4,6 +4,7 @@ Urgent:
 ========
 
  - Implement regression testing
+ - Finish SQL Parameters binding in mysqlobj.obj.php
 
 Medium:
 ========
@@ -13,6 +14,7 @@ Medium:
  - Replace mail() call with something like Pear::Mail_Queue
  - Send notification from frontend action (without slowing the whole thing down...)
  - Add a logfile for exception cought in the code...
+ - Added a is_connected check to sshsession
 
 Cosmetics:
 ========

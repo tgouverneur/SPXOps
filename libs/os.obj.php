@@ -66,7 +66,6 @@ class OS extends MySqlObj
     public function htmlDump($s)
     {
         $oclass = $this->class;
-        $hostid = $s->data('os:hostid');
         $spec = $oclass::htmlDump($s);
 
         $myar = array(

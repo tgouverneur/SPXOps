@@ -64,7 +64,6 @@ class CLVer extends MySqlObj
 
     public function dump($s)
     {
-        $oclass = $this->class;
     }
 
     public function htmlDump($s)

@@ -24,9 +24,6 @@ class NSwitch extends MySqlObj
 
     public $a_net = array();
 
-  /* Logging */
-  private $_log = null;
-
     public function log($str, $level)
     {
         Logger::log($str, $this, $level);
@@ -103,7 +100,5 @@ class NSwitch extends MySqlObj
                  );
 
       $this->_addRL("a_net", "Net", array('id' => 'fk_switch'));
-
-      $this->_log = Logger::getInstance();
   }
 }
