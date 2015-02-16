@@ -99,7 +99,7 @@ CODE;
       return array('rc' => $rc, 'msg' => $msg);
   }
 
-  private updateResult(&$r, $ret) {
+  private function updateResult(&$r, $ret) {
       // update message accordingly
       switch ($r->rc) {
         case 0:
