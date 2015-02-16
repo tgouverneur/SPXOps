@@ -669,7 +669,6 @@ class OSLinux extends OSType
               }
           }
       }
-
       $mo = new Model();
       $mo->name = $pname;
       $mo->vendor = $vendor;
@@ -683,7 +682,6 @@ class OSLinux extends OSType
               $s->o_pserver->update();
           }
       }
-
       return 0;
   }
 

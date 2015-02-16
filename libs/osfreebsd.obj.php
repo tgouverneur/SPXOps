@@ -78,7 +78,6 @@ class OSFreeBSD extends OSType
               }
           }
       }
-
       $mo = new Model();
       $mo->name = $pname;
       $mo->vendor = $vendor;
@@ -92,7 +91,6 @@ class OSFreeBSD extends OSType
               $s->o_pserver->update();
           }
       }
-
       return 0;
   }
   /**

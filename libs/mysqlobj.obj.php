@@ -888,7 +888,6 @@ class MySqlObj
         try {
             $rel = $this->_jt[$name];
             $this->{$rel->ar} = array();
-
             $table = $rel->jt;
             $index = '';
             $where = '';
@@ -901,14 +900,12 @@ class MySqlObj
                 }
                 $index .= "`$sql`";
             }
-
             foreach ($rel->attrs as $r) {
                 if ($i++) {
                     $index .= ',';
                 }
                 $index .= '`'.$r.'`';
             }
-
             foreach ($rel->src as $obj => $sql) {
                 if ($w) {
                     $where .= " AND ";

@@ -1282,14 +1282,11 @@ zfs:0:arcstats:l2_writes_sent   376002
     $platform = $s->data('hw:platform');
       $paths = array('/usr/sbin', '/usr/platform/'.$platform.'/sbin');
       $prtdiag = $s->findBin('prtdiag', $paths);
-
       $cmd_prtdiag = "$prtdiag";
       $out_prtdiag = $s->exec($cmd_prtdiag);
-
       $str_model = '';
       $str_vendor = '';
       $memsize = 0;
-
       $prtdiag_lines = explode(PHP_EOL, $out_prtdiag);
       foreach ($prtdiag_lines as $line) {
           $line = trim($line);
@@ -1322,12 +1319,10 @@ zfs:0:arcstats:l2_writes_sent   376002
               continue;
           }
       }
-
       if ($s->data('hw:cpu') == 'sparc' && $s->data('hw:memory') != $memsize && $memsize) {
           $s->setData('hw:memory', $memsize);
           $s->log('Updating Memory size: '.$memsize, LLOG_INFO);
       }
-
       $mo = new Model();
       $mo->name = $str_model;
       $mo->vendor = $str_vendor;
@@ -1341,7 +1336,6 @@ zfs:0:arcstats:l2_writes_sent   376002
               $s->o_pserver->update();
           }
       }
-
       return 0;
   }
 
