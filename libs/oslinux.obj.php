@@ -209,13 +209,7 @@ class OSLinux extends OSType
           $found_n[''.$no] = $no;
       }
 
-      foreach ($s->a_nfss as $ns) {
-          if (isset($found_n[''.$ns])) {
-              continue;
-          }
-          $s->log("Removing NFS $ns", LLOG_INFO);
-          $ns->delete();
-      }
+      OSType::cleanRemoved($s, 'a_nfss', null, $found_n);
 
       return 0;
   }
@@ -296,13 +290,7 @@ class OSLinux extends OSType
           $found_n[''.$no] = $no;
       }
 
-      foreach ($s->a_nfsm as $ns) {
-          if (isset($found_n[''.$ns])) {
-              continue;
-          }
-          $s->log("Removing NFS $ns", LLOG_INFO);
-          $ns->delete();
-      }
+      OSType::cleanRemoved($s, 'a_nfsm', null, $found_n);
 
       return 0;
   }
@@ -444,13 +432,7 @@ class OSLinux extends OSType
             $po->update();
         }
 
-        foreach ($s->a_pkg as $po) {
-            if (isset($found_p[$po->name])) {
-                continue;
-            }
-            $s->log("Removing package $po", LLOG_INFO);
-            $po->delete();
-        }
+        OSType::cleanRemoved($s, 'a_pkg', 'name', $found_p);
 
         return 0;
     }
@@ -578,13 +560,7 @@ class OSLinux extends OSType
           $found_if[''.$vnet] = $vnet;
       }
 
-      foreach ($s->a_net as $n) {
-          if (isset($found_if[''.$n])) {
-              continue;
-          }
-          $s->log("Removing net $n", LLOG_INFO);
-          $n->delete();
-      }
+      OSType::cleanRemoved($s, 'a_net', null, $found_if);
 
     /* default router */
 
@@ -1012,13 +988,7 @@ class OSLinux extends OSType
           $found_v[$vg->name] = $vg;
       }
 
-      foreach ($s->a_pool as $p) {
-          if (isset($found_v[$p->name])) {
-              continue;
-          }
-          $s->log("Removing pool $p", LLOG_INFO);
-          $p->delete();
-      }
+      OSType::cleanRemoved($s, 'a_pool', 'name', $found_v);
 
       $lvs = $s->findBin('lvs');
       $cmd_lvs = "$sudo $lvs --noheadings --separator ';' %s";
@@ -1061,13 +1031,7 @@ class OSLinux extends OSType
               }
               $found_v[$do->name] = $do;
           }
-          foreach ($p->a_dataset as $d) {
-              if (isset($found_v[$d->name])) {
-                  continue;
-              }
-              $s->log("Removing dataset $d from pool $p", LLOG_INFO);
-              $d->delete();
-          }
+          OSType::cleanRemoved($p, 'a_dataset', 'name', $found_v);
       }
 
       return 0;

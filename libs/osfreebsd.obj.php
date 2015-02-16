@@ -238,13 +238,7 @@ class OSFreeBSD extends OSType
           $found_n[''.$no] = $no;
       }
 
-      foreach ($s->a_nfss as $ns) {
-          if (isset($found_n[''.$ns])) {
-              continue;
-          }
-          $s->log("Removing NFS $ns", LLOG_INFO);
-          $ns->delete();
-      }
+      OSType::cleanRemoved($s, 'a_nfss', null, $found_n);
 
       return 0;
   }
@@ -332,13 +326,7 @@ class OSFreeBSD extends OSType
           $found_n[''.$no] = $no;
       }
 
-      foreach ($s->a_nfsm as $ns) {
-          if (isset($found_n[''.$ns])) {
-              continue;
-          }
-          $s->log("Removing NFS $ns", LLOG_INFO);
-          $ns->delete();
-      }
+      OSType::cleanRemoved($s, 'a_nfsm', null, $found_n);
 
       return 0;
   }
@@ -398,13 +386,7 @@ class OSFreeBSD extends OSType
           }
           $po->update();
       }
-      foreach ($s->a_pkg as $po) {
-          if (isset($found_p[$po->name])) {
-              continue;
-          }
-          $s->log("Removing package $po", LLOG_INFO);
-          $po->delete();
-      }
+      OSType::cleanRemoved($s, 'a_pkg', 'name', $found_p);
 
       return 0;
   }
@@ -587,14 +569,7 @@ class OSFreeBSD extends OSType
             }
         }
 
-        foreach ($s->a_net as $n) {
-            $n->fetchAll();
-            if (isset($found_if[''.$n])) {
-                continue;
-            }
-            $s->log("Removing net $n", LLOG_INFO);
-            $n->delete();
-        }
+        OSType::cleanRemoved($s, 'a_net', null, $found_if);
 
     /* default router */
 
@@ -762,13 +737,7 @@ class OSFreeBSD extends OSType
           }
       }
 
-      foreach ($s->a_disk as $p) {
-          if (isset($found_d[$p->dev])) {
-              continue;
-          }
-          $s->log("Removing disk $p", LLOG_INFO);
-          $p->delete();
-      }
+      OSType::cleanRemoved($s, 'a_disk', 'dev', $found_d);
 
       return 0;
   }
@@ -991,13 +960,7 @@ class OSFreeBSD extends OSType
           }
           $found_z[$p->name] = $p;
       }
-      foreach ($s->a_pool as $p) {
-          if (isset($found_z[$p->name])) {
-              continue;
-          }
-          $s->log("Removing pool $p", LLOG_INFO);
-          $p->delete();
-      }
+      OSType::cleanRemoved($s, 'a_pool', 'name', $found_p);
 
     /* update zpool devices */
 
@@ -1145,13 +1108,7 @@ slc8.mgmt/test/test2-clone  95.7G  75.6M         0   75.6M              0       
               }
               $found_d[$do->name] = $do;
           }
-          foreach ($p->a_dataset as $d) {
-              if (isset($found_d[$d->name])) {
-                  continue;
-              }
-              $s->log("Removing dataset $d from pool $p", LLOG_INFO);
-              $d->delete();
-          }
+          OSType::cleanRemoved($s, 'a_dataset', 'name', $found_d);
       }
   }
 
