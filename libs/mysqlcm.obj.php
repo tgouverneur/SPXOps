@@ -571,35 +571,14 @@ class MySqlCM
               unset($this->_res);
               $this->_res = $this->_link->prepare($query);
 
-              if (is_array($args)) {
-		  $keys = array_keys($args);
-		  $c_keys = count($keys);
-		  for ($i=0;$i < $c_keys; $i++) {
- 		      if (is_array($args[$keys[$i]])) {
-			  $this->_res->bindParam($keys[$i], $args[$keys[$i]][0], $args[$keys[$i]][1]);
-                          if ($this->_debug) {
-                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$keys[$i]." bound with ".$args[$keys[$i]][0]." \n");
-                          }
-		      } else {
-		          $this->_res->bindParam($keys[$i], $args[$keys[$i]]);
-                          if ($this->_debug) {
-                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$keys[$i]." bound with ".$args[$keys[$i]]." \n");
-                          }
-		      }
-		  }
-              }
+              $this->bindQueryParams($args);
 
               if ($this->_res->execute() === false) {
 
                   $this->_error = $this->_link->errorInfo();
                   $this->_error = $this->_error[2];
 
-                  if (strpos($this->_error, 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
-                      $this->reconnect();
-                      continue;
-                  }
-                  if (strpos($this->_error, 'has gone away') !== false && $this->_reconnect) {
-                      $this->reconnect();
+                  if ($this->recoCheck()) {
                       continue;
                   }
 
@@ -621,11 +600,8 @@ class MySqlCM
                   return 0;
               }
           } catch (PDOException $e) {
-              if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
-                  $this->reconnect();
-              }
-              if (strpos($e->getMessage(), 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
-                  $this->reconnect();
+
+              if ($this->recoCheck($e)) {
                   continue;
               }
               if ($this->_debug) {
