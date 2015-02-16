@@ -3,6 +3,25 @@
 class OSType
 {
 
+  private static function cleanRemoved(&$s, $a, $p, &$a_found) {
+      foreach ($s->{$a} as $item) {
+          if ($p) {
+              if (isset($a_found[$item->{$p}])) {
+                  unset($a_found[$item->{$p}]); // if found multiple time, remove duplicates (BUGFIX)
+                  continue;
+              }
+          } else {
+              if (isset($a_found[''.$item])) {
+                  unset($a_found[''.$item]); // if found multiple time, remove duplicates (BUGFIX)
+                  continue;
+              }
+          }
+          $s->log("Removing $item from $s", LLOG_INFO);
+          $item->delete();
+      }  
+  }
+
+
   public static function update(Server$s, $f = null)
   {
       $oclass = get_called_class();

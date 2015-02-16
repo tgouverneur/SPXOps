@@ -328,15 +328,7 @@ zfs:0:arcstats:l2_writes_sent   376002
           $found_n[''.$no] = $no;
       }
 
-      foreach ($s->a_nfss as $ns) {
-          if (isset($found_n[''.$ns])) {
-              unset($found_n[''.$ns]); /* avoid duplicates */
-        continue;
-          }
-          $s->log("Removing NFS $ns", LLOG_INFO);
-          $ns->delete();
-      }
-
+      OSType::cleanRemoved($s, 'a_nfss', null, $found_n);
       return 0;
   }
 
@@ -423,15 +415,7 @@ zfs:0:arcstats:l2_writes_sent   376002
           $found_n[''.$no] = $no;
       }
 
-      foreach ($s->a_nfsm as $ns) {
-          if (isset($found_n[''.$ns])) {
-              unset($found_n[''.$ns]); /* avoid duplicates */
-        continue;
-          }
-          $s->log("Removing NFS $ns", LLOG_INFO);
-          $ns->delete();
-      }
-
+      OSType::cleanRemoved($s, 'a_nfsm', null, $found_n);
       return 0;
   }
 
@@ -563,14 +547,7 @@ zfs:0:arcstats:l2_writes_sent   376002
           $po->update();
       }
 
-      foreach ($s->a_pkg as $po) {
-          if (isset($found_p[$po->name])) {
-              unset($found_p[$po->name]);
-              continue;
-          }
-          $s->log("Removing package $po", LLOG_INFO);
-          $po->delete();
-      }
+      OSType::cleanRemoved($s, 'a_pkg', 'name', $found_p);
 
       return 0;
   }
@@ -612,14 +589,7 @@ zfs:0:arcstats:l2_writes_sent   376002
           }
       }
 
-      foreach ($s->a_patch as $po) {
-          if (isset($found_p[$po->patch])) {
-              unset($found_p[$po->patch]);
-              continue;
-          }
-          $s->log("Removing patch $po", LLOG_INFO);
-          $po->delete();
-      }
+      OSType::cleanRemoved($s, 'a_patch', 'patch', $found_p);
 
       return 0;
   }
@@ -685,14 +655,7 @@ zfs:0:arcstats:l2_writes_sent   376002
           $found_z[$z->name] = $z;
       }
 
-      foreach ($s->a_zone as $sz) {
-          if (isset($found_z[$sz->name])) {
-              unset($found_z[$sz->name]);
-              continue;
-          }
-          $s->log("Removing zone $sz", LLOG_INFO);
-          $sz->delete();
-      }
+      OSType::cleanRemoved($s, 'a_zone', 'name', $found_z);
 
       return 0;
   }
@@ -1117,15 +1080,7 @@ zfs:0:arcstats:l2_writes_sent   376002
             }
         }
 
-        foreach ($s->a_net as $n) {
-            $n->fetchAll();
-            if (isset($found_if[''.$n])) {
-                unset($found_if[''.$n]);
-                continue;
-            }
-            $s->log("Removing net $n", LLOG_INFO);
-            $n->delete();
-        }
+        OSType::cleanRemoved($s, 'a_net', null, $found_if);
 
     /* default router */
 
@@ -1428,14 +1383,7 @@ zfs:0:arcstats:l2_writes_sent   376002
           $s->a_prj[] = $po;
       }
 
-      foreach ($s->a_prj as $p) {
-          if (isset($found_p[$p->prjid])) {
-              unset($found_p[$p->prjid]);
-              continue;
-          }
-          $s->log("Removing prj $p", LLOG_INFO);
-          $p->delete();
-      }
+      OSType::cleanRemoved($s, 'a_prj', 'prjid', $found_p);
   }
 
   /**
@@ -1578,14 +1526,7 @@ zfs:0:arcstats:l2_writes_sent   376002
           $cur_hba->update();
       }
 
-      foreach ($s->a_hba as $p) {
-          if (isset($found_hba[$p->wwn])) {
-              unset($found_hba[$p->wwn]);
-              continue;
-          }
-          $s->log("Removing hba $p", LLOG_INFO);
-          $p->delete();
-      }
+      OSType::cleanRemoved($s, 'a_hba', 'wwn', $found_hba);
 
     /* update luns */
     $found_lun = array();
@@ -1940,14 +1881,7 @@ zfs:0:arcstats:l2_writes_sent   376002
           }
       }
 
-      foreach ($s->a_disk as $p) {
-          if (isset($found_d[$p->dev])) {
-              unset($found_d[$p->dev]);
-              continue;
-          }
-          $s->log("Removing disk $p", LLOG_INFO);
-          $p->delete();
-      }
+      OSType::cleanRemoved($s, 'a_disk', 'dev', $found_d);
 
       return 0;
   }
@@ -2207,14 +2141,7 @@ d101 1 1 /dev/dsk/emcpower58a
           }
           $found_z[$p->name] = $p;
       }
-      foreach ($s->a_pool as $p) {
-          if (isset($found_z[$p->name])) {
-              unset($found_z[$p->name]); // if found multiple time, remove duplicates (BUGFIX)
-        continue;
-          }
-          $s->log("Removing pool $p", LLOG_INFO);
-          $p->delete();
-      }
+      OSType::cleanRemoved($s, 'a_pool', 'name', $found_z);
 
     /* update zpool devices */
 
@@ -2372,13 +2299,7 @@ slc8.mgmt/test/test2-clone  95.7G  75.6M         0   75.6M              0       
               }
               $found_d[$do->name] = $do;
           }
-          foreach ($p->a_dataset as $d) {
-              if (isset($found_d[$d->name])) {
-                  continue;
-              }
-              $s->log("Removing dataset $d from pool $p", LLOG_INFO);
-              $d->delete();
-          }
+          OSType::cleanRemoved($p, 'a_dataset', 'name', $found_d);
       }
   }
 
