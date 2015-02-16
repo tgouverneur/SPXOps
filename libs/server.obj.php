@@ -481,111 +481,68 @@ class Server extends MySqlObj implements JsonSerializable
     public function dump()
     {
 
-    /* echo basic infos first */
-    $this->log(sprintf("%15s: %s", 'Server', $this->hostname.' ('.$this->id.')'), LLOG_INFO);
+        /* echo basic infos first */
+        $this->log(sprintf("%15s: %s", 'Server', $this->hostname.' ('.$this->id.')'), LLOG_INFO);
         $this->log(sprintf("%15s: %s", 'Description', $this->description), LLOG_INFO);
         $this->log(sprintf("%15s: %s", 'RCE', ($this->f_rce) ? "enabled" : "disabled"), LLOG_INFO);
 
         if ($this->o_os) {
             $this->o_os->dump($this);
         }
-    /* dump FKs */
-    if ($this->o_pserver) {
-        $this->o_pserver->dump($this);
-    }
+
+        /* dump FKs */
+        if ($this->o_pserver) {
+            $this->o_pserver->dump($this);
+        }
+
         if ($this->o_suser) {
             $this->o_suser->dump($this);
         }
 
-    /* Dump Relations */
+        foreach(array(
+                        'a_zone' => 'Zones',
+                        'a_rrd' => 'RRDs',
+                        'a_vm' => 'VMs',
+                     ) as $v => $n) {
 
-    /* Zones */
-    if (count($this->a_zone)) {
-        $this->log('', LLOG_INFO);
-        $this->log(sprintf("%15s:", 'Zones'), LLOG_INFO);
-        foreach ($this->a_zone as $z) {
-            $z->dump($this);
+            if (count($this->{$v})) {
+                $this->log('', LLOG_INFO);
+                $this->log(sprintf("%15s:", $n), LLOG_INFO);
+                foreach ($this->{$v} as $z) {
+                    $z->dump($this);
+                }
+            }
         }
-    }
 
-    /* RRDs */
-    if (count($this->a_rrd)) {
-        $this->log('', LLOG_INFO);
-        $this->log(sprintf("%15s:", 'RRDs'), LLOG_INFO);
-        foreach ($this->a_rrd as $z) {
-            $z->dump($this);
-        }
-    }
-
-    /* VMs */
-    if (count($this->a_vm)) {
-        $this->log('', LLOG_INFO);
-        $this->log(sprintf("%15s:", 'VMs'), LLOG_INFO);
-        foreach ($this->a_vm as $z) {
-            $z->dump($this);
-        }
-    }
-
-    /* Network */
-    $defrouter = $this->data('net:defrouter');
+        /* Network */
+        $defrouter = $this->data('net:defrouter');
         if (!$defrouter || empty($defrouter)) {
             $defrouter = null;
         }
         $this->log('', LLOG_INFO);
         $this->log(sprintf("%15s: %s", "Network", ($defrouter) ? ' (GW='.$defrouter.')' : ''), LLOG_INFO);
-        if (count($this->a_net)) {
-            foreach ($this->a_net as $n) {
-                $n->fetchAll(1);
-                $n->dump($this);
+
+        foreach(array(
+                        'a_net' => 'Net Ifs',
+                        'a_hba' => 'HBAs',
+                        'a_disk' => 'Disks',
+                        'a_nfsm' => 'NFS Mounts',
+                        'a_nfss' => 'NFS Shares',
+                     ) as $v => $n) {
+
+            if (count($this->{$v})) {
+                $this->log('', LLOG_INFO);
+                $this->log(sprintf("%15s:", $n), LLOG_INFO);
+                foreach ($this->{$v} as $z) {
+                    $z->dump($this);
+                }
             }
         }
 
-    /* SAN */
-    $this->log('', LLOG_INFO);
-        $this->log(sprintf("%15s:", "SAN"), LLOG_INFO);
-        if (count($this->a_hba)) {
-            foreach ($this->a_hba as $n) {
-                $n->dump($this);
-            }
-        }
-
-    /* Disks */
-    $this->log('', LLOG_INFO);
+        $this->log('', LLOG_INFO);
         $this->log(sprintf("%15s: Total internal capacity: %d GBytes", "Disks", round($this->countDiskSpace(true) / 1024 / 1024 / 1024, 1)), LLOG_INFO);
-        if (count($this->a_disk)) {
-            foreach ($this->a_disk as $n) {
-                if ($n->f_local) {
-                    $n->dump($this);
-                }
-            }
-        }
-        $this->log('', LLOG_INFO);
         $this->log(sprintf("%15s: Total SAN provisionned: %d GBytes", "Disks", round($this->countDiskSpace(false, true) / 1024 / 1024 / 1024, 1)), LLOG_INFO);
-        if (count($this->a_disk)) {
-            foreach ($this->a_disk as $n) {
-                if ($n->f_san) {
-                    $n->dump($this);
-                }
-            }
-        }
 
-    /* NFS Mounts */
-    if (count($this->a_nfsm)) {
-        $this->log('', LLOG_INFO);
-        $this->log(sprintf("%15s:", 'NFS Mounts'), LLOG_INFO);
-        foreach ($this->a_nfsm as $n) {
-            $n->dump($this);
-        }
-    }
-
-    /* NFS Share */
-    if (count($this->a_nfss)) {
-        $this->log('', LLOG_INFO);
-        $this->log(sprintf("%15s:", 'NFS Shares'), LLOG_INFO);
-        foreach ($this->a_nfss as $n) {
-            $n->dump($this);
-        }
-    }
     }
 
     public static function printCols($cfs = array())
