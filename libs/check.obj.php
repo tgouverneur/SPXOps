@@ -66,23 +66,15 @@ CODE;
     }
     }
 
-  /* Call the proper method */
-  public function doCheck(&$s)
-  {
-      if ($this->isLocked($s)) {
-          return -1;
-      }
-
-      if ($this->lockCheck($s)) {
-          return -1;
-      }
+  private function getLuaObject(&$s) {
       $lua = new Lua();
       $lua->registerCallback('exec', array(&$s, 'exec'));
       $lua->registerCallback('findBin', array(&$s, 'findBin'));
       $lua->registerCallback('isFile', array(&$s, 'isFile'));
-      try {
-          $lua->eval($this->lua);
-          $ret = $lua->call("check");
+      return $lua;
+  }
+
+  private function getStatusFromRet($ret) {
 
           $rc = -1;
           $msg = 'Check failed';
@@ -104,35 +96,60 @@ CODE;
               $rc = 0;
               $msg = '';
           }
+      return array('rc' => $rc, 'msg' => $msg);
+  }
+
+  private updateResult(&$r, $ret) {
+      // update message accordingly
+      switch ($r->rc) {
+        case 0:
+          $r->f_ack = 1;
+          $r->message = '';
+          $r->details = $ret['msg'];
+        break;
+        case -1: // WARNING
+          $r->f_ack = 0;
+          $r->message = $this->m_warn;
+          $r->details = $ret['msg'];
+        break;
+        case -2: // ERROR
+          $r->f_ack = 0;
+          $r->message = $this->m_error;
+          $r->details = $ret['msg'];
+        break;
+        default:
+          $r->f_ack = 0;
+          $r->message = 'Unexpected return code, please check deeper...';
+          $r->details = $ret['msg'];
+        break;
+      }
+      return;
+  }
+
+  /* Call the proper method */
+  public function doCheck(&$s)
+  {
+      if ($this->isLocked($s)) {
+          return -1;
+      }
+
+      if ($this->lockCheck($s)) {
+          return -1;
+      }
+      $lua = $this->getLuaObject($s);
+      try {
+          $lua->eval($this->lua);
+          $ret = $lua->call("check");
+          $ret = $this->getStatusFromRet($ret);
+          $rc = $ret['rc'];
+          $msg = $ret['msg'];
           $s->log("$this check on $s returned value: $rc ($msg)", LLOG_DEBUG);
 
           $r = new Result();
           $r->fk_check = $this->id;
           $r->fk_server = $s->id;
           $r->rc = $rc;
-      // update message accordingly
-      switch ($r->rc) {
-        case 0:
-      $r->f_ack = 1;
-      $r->message = '';
-      $r->details = $msg;
-    break;
-    case -1: // WARNING
-      $r->f_ack = 0;
-      $r->message = $this->m_warn;
-      $r->details = $msg;
-    break;
-    case -2: // ERROR
-      $r->f_ack = 0;
-      $r->message = $this->m_error;
-      $r->details = $msg;
-    break;
-    default:
-      $r->f_ack = 0;
-      $r->message = 'Unexpected return code, please check deeper...';
-      $r->details = $msg;
-    break;
-      }
+          $this->updateResult($r, $ret);
           $done = false;
           if (isset($s->a_lr[$this->id]) &&
       $s->a_lr[$this->id]) {
