@@ -3,8 +3,8 @@
  * MySQL Connection Manager
  *
  * @author Gouverneur Thomas <tgo@espix.net>
- * @copyright Copyright (c) 2007-2012, Gouverneur Thomas
- * @version 1.0
+ * @copyright Copyright (c) 2007-2015, Gouverneur Thomas
+ * @version 1.1
  * @package objects
  * @category classes
  * @subpackage backend
@@ -646,6 +646,52 @@ class MySqlCM
         return $this->_Query($q);
     }
 
+  private function bindQueryParams($a) {
+
+      if (is_array($a)) {
+          $keys = array_keys($a);
+          $c_keys = count($keys);
+          for ($i=0;$i < $c_keys; $i++) {
+              if (is_array($a[$keys[$i]])) {
+                  $this->_res->bindParam($keys[$i], $a[$keys[$i]][0], $a[$keys[$i]][1]);
+                  if ($this->_debug) {
+                      $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$keys[$i]." bound with ".$a[$keys[$i]][0]." \n");
+                  }  
+              } else {
+                  $this->_res->bindParam($keys[$i], $a[$keys[$i]]);
+                  if ($this->_debug) {
+                      $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$keys[$i]." bound with ".$a[$keys[$i]]." \n");
+                  }
+              }
+          }
+      }
+      return;
+  }
+
+  /* returns true if continue; needed */
+  private function recoCheck($e = null) {
+
+      if ($e) {
+        $this->_error = $e->getMessage();
+      }
+
+      $c = false;
+
+      if (strpos($this->_error, 'has gone away') !== false && $this->_reconnect) {
+          $this->reconnect();
+          $c = true;
+      }
+      if (strpos($this->_error, 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
+          $this->reconnect();
+          $c = true;
+      }
+      if ($e) {
+          return false;
+      } else {
+          return $c;
+      }
+  }
+
   /**
    * Query database and handle errors
    * @return 0 if ok, non-zero if any error
@@ -668,24 +714,7 @@ class MySqlCM
               }
 
               $this->_res = $this->_link->prepare($query);
-
-              if (is_array($args)) {
-                  $keys = array_keys($args);
-                  $c_keys = count($keys);
-                  for ($i=0;$i < $c_keys; $i++) {
-                      if (is_array($args[$keys[$i]])) {
-                          $this->_res->bindParam($keys[$i], $args[$keys[$i]][0], $args[$keys[$i]][1]);
-                          if ($this->_debug) {
-                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$keys[$i]." bound with ".$args[$keys[$i]][0]." \n");
-                          }  
-                      } else {
-                          $this->_res->bindParam($keys[$i], $args[$keys[$i]]);
-                          if ($this->_debug) {
-                              $this->_dPrint("[".time()."] (".$this->_Time().") Param ".$keys[$i]." bound with ".$args[$keys[$i]]." \n");
-                          }
-                      }
-                  }
-              }
+              $this->bindQueryParams($args);
 
               if ($this->_res->execute()) {
                   if ($this->_debug) {
@@ -698,14 +727,10 @@ class MySqlCM
                   $this->_error = $this->_res->errorInfo();
                   $this->_error = $this->_error[2];
 
-                  if (strpos($this->_error, 'has gone away') !== false && $this->_reconnect) {
-                      $this->reconnect();
+                  if ($this->recoCheck()) {
                       continue;
                   }
-                  if (strpos($this->_error, 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
-                      $this->reconnect();
-                      continue;
-                  }
+
                   if ($this->_debug) {
                       $this->_Time();
                   }
@@ -719,13 +744,11 @@ class MySqlCM
                   return -1;
               }
           } catch (PDOException $e) {
-              if (strpos($e->getMessage(), '2006 MySQL') !== false && $this->_reconnect) {
-                  $this->reconnect();
+
+              if ($this->recoCheck($e)) {
+                continue;
               }
-              if (strpos($e->getMessage(), 'Cannot execute queries while other unbuffered queries are active') !== false && $this->_reconnect) {
-                  $this->reconnect();
-                  continue;
-              }
+
               if ($this->_debug) {
                   $this->_Time();
               }
