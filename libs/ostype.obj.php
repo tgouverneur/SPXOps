@@ -3,7 +3,7 @@
 class OSType
 {
 
-  private static function cleanRemoved(&$s, $a, $p, &$a_found) {
+  protected static function cleanRemoved(&$s, $a, $p, &$a_found) {
       foreach ($s->{$a} as $item) {
           if ($p) {
               if (isset($a_found[$item->{$p}])) {

@@ -2069,13 +2069,8 @@ d101 1 1 /dev/dsk/emcpower58a
   /**
    * zfs
    */
-  public static function updateZfs(&$s)
-  {
-      $major = $s->data('os:major');
-    /* if $major is empty or not a number, it could just be an illumos based machine */
-    if (!empty($major) && is_numeric($major) && $major < 10) {
-        return 0;
-    }
+
+  private static function getZpoolList(&$s) {
 
       $zpool = $s->findBin('zpool');
 
@@ -2086,13 +2081,13 @@ d101 1 1 /dev/dsk/emcpower58a
       $out_zpool = $s->exec($cmd_zpool);
 
       if (!strcmp(trim($out_zpool), "no pools available")) { /* no pools */
-      return 0;
+          return 0;
       }
 
       if (empty($out_zpool)) {
           $out_zpool = $s->exec($cmd_ozpool);
           if (!strcmp(trim($out_zpool), "no pools available")) { /* no pools */
-        return 0;
+            return 0;
           }
       }
 
@@ -2141,83 +2136,171 @@ d101 1 1 /dev/dsk/emcpower58a
           }
           $found_z[$p->name] = $p;
       }
-      OSType::cleanRemoved($s, 'a_pool', 'name', $found_z);
+      return $found_z;
+  }
 
-    /* update zpool devices */
-
-    $cmd_status = "$zpool status %s";
-      $zfs = $s->findBin('zfs');
-      $cmd_dset = "$zfs list -H -r -o space,type,quota %s";
+  private static function getZpoolDisks(&$s, &$p) {
+      $zpool = $s->findBin('zpool');
+      $cmd_status = "$zpool status %s";
       $role = '';
 
-      foreach ($s->a_pool as $p) {
-          $p->fetchJT('a_disk');
-          $p->fetchRL('a_dataset');
-          $cmd_s = sprintf($cmd_status, $p->name);
-          $cmd_d = sprintf($cmd_dset, $p->name);
-          $out_s = $s->exec($cmd_s);
+      $p->fetchJT('a_disk');
+      $p->fetchRL('a_dataset');
+      $cmd_s = sprintf($cmd_status, $p->name);
+      $out_s = $s->exec($cmd_s);
 
-          $lines = explode(PHP_EOL, $out_s);
+      $lines = explode(PHP_EOL, $out_s);
 
-          $vdev_list = false;
-          $found_v = array();
+      $vdev_list = false;
+      $found_v = array();
 
-          foreach ($lines as $line) {
-              $line = trim($line);
-              if (empty($line)) {
-                  continue;
-              }
-
-              if (!$vdev_list && preg_match('/^NAME/', $line)) {
-                  $vdev_list = true;
-                  continue;
-              }
-
-              if ($vdev_list && preg_match('/^errors:/', $line)) {
-                  $vdev_list = false;
-                  continue;
-              }
-
-              if ($vdev_list && preg_match('/^mirror|^raid|^log|^spare|^cache/', $line)) {
-                  $f = preg_split("/\s+/", $line);
-                  if (!strcmp($role, 'logs') && preg_match('/^mirror/', $f[0])) {
-                      continue;
-                  } // skip this case
-          $role = $f[0];
-              } elseif ($vdev_list && !preg_match('/^mirror|^raid|^log|^spare|^cache/', $line)) {
-
-      /* we should have a dev here... */
-          $f = preg_split("/\s+/", $line);
-                  $dev = $f[0];
-                  if (!strcmp($dev, $p->name)) {
-                      continue;
-                  }
-
-                  $dev = preg_replace('/^\/dev\/rdsk\//', '', $dev);
-                  $dev = preg_replace('/^\/dev\/dsk\//', '', $dev);
-                  $slice = 2;
-                  if (preg_match('/s([0-9])$/', $dev, $m)) {
-                      $slice = $m[1];
-                      $dev = preg_replace('/s[0-9]$/', '', $dev);
-                  }
-                  $do = new Disk();
-                  $do->fk_server = $s->id;
-                  $do->dev = $dev;
-                  $do->slice[''.$p] = $slice;
-                  $do->role[''.$p] = $role;
-                  if ($do->fetchFromFields(array('fk_server', 'dev'))) {
-                      $s->log("Disk $do was not found on $s for pool $p", LLOG_ERR);
-                      continue;
-                  }
-
-                  if (!$p->isInJT('a_disk', $do, array('slice', 'role'))) {
-                      $s->log("add $do slice $slice/$role to $p", LLOG_INFO);
-                      $p->addToJT('a_disk', $do);
-                  }
-                  $found_v[$do->dev] = $do;
-                  continue;
-              }
+      foreach ($lines as $line) {
+          $line = trim($line);
+          if (empty($line)) {
+              continue;
           }
+
+          if (!$vdev_list && preg_match('/^NAME/', $line)) {
+              $vdev_list = true;
+              continue;
+          }
+
+          if ($vdev_list && preg_match('/^errors:/', $line)) {
+              $vdev_list = false;
+              continue;
+          }
+
+          if ($vdev_list && preg_match('/^mirror|^raid|^log|^spare|^cache/', $line)) {
+              $f = preg_split("/\s+/", $line);
+              if (!strcmp($role, 'logs') && preg_match('/^mirror/', $f[0])) {
+                  continue;
+              } // skip this case
+              $role = $f[0];
+          } elseif ($vdev_list && !preg_match('/^mirror|^raid|^log|^spare|^cache/', $line)) {
+
+              /* we should have a dev here... */
+              $f = preg_split("/\s+/", $line);
+              $dev = $f[0];
+              if (!strcmp($dev, $p->name)) {
+                  continue;
+              }
+
+              $dev = preg_replace('/^\/dev\/rdsk\//', '', $dev);
+              $dev = preg_replace('/^\/dev\/dsk\//', '', $dev);
+              $slice = 2;
+              if (preg_match('/s([0-9])$/', $dev, $m)) {
+                  $slice = $m[1];
+                  $dev = preg_replace('/s[0-9]$/', '', $dev);
+              }
+              $do = new Disk();
+              $do->fk_server = $s->id;
+              $do->dev = $dev;
+              $do->slice[''.$p] = $slice;
+              $do->role[''.$p] = $role;
+              if ($do->fetchFromFields(array('fk_server', 'dev'))) {
+                  $s->log("Disk $do was not found on $s for pool $p", LLOG_ERR);
+                  continue;
+              }
+
+              if (!$p->isInJT('a_disk', $do, array('slice', 'role'))) {
+                  $s->log("add $do slice $slice/$role to $p", LLOG_INFO);
+                  $p->addToJT('a_disk', $do);
+              }
+              $found_v[$do->dev] = $do;
+              continue;
+          }
+      }
+      return $found_v;
+  }
+
+  private static function getZpoolDatasets(&$s, &$p) {
+      $zfs = $s->findBin('zfs');
+      $cmd_dset = "$zfs list -H -r -o space,type,quota %s";
+      $cmd_d = sprintf($cmd_dset, $p->name);
+
+      $found_d = array();
+
+      $out_d = $s->exec($cmd_d);
+      $lines = explode(PHP_EOL, $out_d);
+
+      foreach ($lines as $line) {
+          $line = trim($line);
+          if (empty($line)) {
+              continue;
+          }
+
+          $f = preg_split("/\s+/", $line);
+          $name = $f[0];
+          $name = preg_replace("/^".$p->name."\//", '', $name);
+          $do = new Dataset();
+          $do->name = $name;
+          $do->fk_pool = $p->id;
+          $upd = false;
+          if ($do->fetchFromFields(array('fk_pool', 'name'))) {
+              $s->log("Added dataset $do to $p", LLOG_INFO);
+              $do->insert();
+          }
+          $quota = $f[8];
+          $type = $f[7];
+          if (!strcmp($quota, "none")) {
+              $quota = 0;
+          } else {
+              $quota = Pool::formatSize($quota);
+          }
+          $used = Pool::formatSize($f[2]);
+          $usedsnap = Pool::formatSize($f[3]);
+          $usedds = Pool::formatSize($f[4]);
+          $usedrefres = Pool::formatSize($f[5]);
+          $usedchild = Pool::formatSize($f[6]);
+          $available = Pool::formatSize($f[1]);
+          switch ($type) {
+              case 'snapshot':
+                break;
+              case 'filesystem':
+              case 'volume':
+              default:
+                $used = $usedds;
+                break;
+          }
+          if ($type && $do->type != $type) {
+              $upd = true;
+              $s->log("updated $do type => $type", LLOG_DEBUG);
+              $do->type = $type;
+          }
+          if ($quota && $do->size != $quota) {
+              $upd = true;
+              $s->log("updated $do size => $quota", LLOG_DEBUG);
+              $do->size = $quota;
+          }
+          if ($used && $do->used != $used) {
+              $upd = true;
+              $s->log("updated $do used => $used", LLOG_DEBUG);
+              $do->used = $used;
+          }
+          if ($upd) {
+              $do->update();
+          }
+          $found_d[$do->name] = $do;
+      }
+
+      return $found_d;
+  }
+
+  public static function updateZfs(&$s)
+  {
+      $major = $s->data('os:major');
+      /* if $major is empty or not a number, it could just be an illumos based machine */
+      if (!empty($major) && is_numeric($major) && $major < 10)   {
+          return 0;
+      }
+
+      $found_z = OSSolaris::getZpoolList($s);
+      OSType::cleanRemoved($s, 'a_pool', 'name', $found_z);
+
+      foreach ($s->a_pool as $p) {
+
+          /* update zpool devices */
+          $found_v = OSSOlaris::getZpoolDisks($s, $p);
           foreach ($p->a_disk as $d) {
               if (isset($found_v[$d->dev])) {
                   continue;
@@ -2226,79 +2309,8 @@ d101 1 1 /dev/dsk/emcpower58a
               $p->delFromJT('a_disk', $d);
           }
 
-      /* dataset indexation */
-      $found_d = array();
-          $out_d = $s->exec($cmd_d);
-          $lines = explode(PHP_EOL, $out_d);
-          foreach ($lines as $line) {
-              $line = trim($line);
-              if (empty($line)) {
-                  continue;
-              }
-
-              $f = preg_split("/\s+/", $line);
-              $name = $f[0];
-              $name = preg_replace("/^".$p->name."\//", '', $name);
-              $do = new Dataset();
-              $do->name = $name;
-              $do->fk_pool = $p->id;
-              $upd = false;
-              if ($do->fetchFromFields(array('fk_pool', 'name'))) {
-                  $s->log("Added dataset $do to $p", LLOG_INFO);
-                  $do->insert();
-              }
-/*
-# zfs list -r -o space,type,quota slc8.mgmt/test
-NAME                        AVAIL   USED  USEDSNAP  USEDDS  USEDREFRESERV  USEDCHILD  TYPE        QUOTA
-slc8.mgmt/test              95.7G   316M         0   63.9K              0       316M  filesystem   none
-slc8.mgmt/test/test1        95.8G  18.6M         0   18.6M              0          0  filesystem   none
-slc8.mgmt/test/test1@bck        -      0         -       -              -          -  snapshot        -
-slc8.mgmt/test/test2        95.7G   141M     38.0K    141M              0          0  filesystem   none
-slc8.mgmt/test/test2@bck        -  38.0K         -       -              -          -  snapshot        -
-slc8.mgmt/test/test2-clone  95.7G  75.6M         0   75.6M              0          0  filesystem   none
-*/
-    $quota = $f[8];
-              $type = $f[7];
-              if (!strcmp($quota, "none")) {
-                  $quota = 0;
-              } else {
-                  $quota = Pool::formatSize($quota);
-              }
-              $used = Pool::formatSize($f[2]);
-              $usedsnap = Pool::formatSize($f[3]);
-              $usedds = Pool::formatSize($f[4]);
-              $usedrefres = Pool::formatSize($f[5]);
-              $usedchild = Pool::formatSize($f[6]);
-              $available = Pool::formatSize($f[1]);
-              switch ($type) {
-          case 'snapshot':
-        break;
-          case 'filesystem':
-      case 'volume':
-          default:
-        $used = $usedds;
-        break;
-        }
-              if ($type && $do->type != $type) {
-                  $upd = true;
-                  $s->log("updated $do type => $type", LLOG_DEBUG);
-                  $do->type = $type;
-              }
-              if ($quota && $do->size != $quota) {
-                  $upd = true;
-                  $s->log("updated $do size => $quota", LLOG_DEBUG);
-                  $do->size = $quota;
-              }
-              if ($used && $do->used != $used) {
-                  $upd = true;
-                  $s->log("updated $do used => $used", LLOG_DEBUG);
-                  $do->used = $used;
-              }
-              if ($upd) {
-                  $do->update();
-              }
-              $found_d[$do->name] = $do;
-          }
+          /* dataset indexation */
+          $found_d = OSSolaris::getZpoolDatasets($s, $p);
           OSType::cleanRemoved($p, 'a_dataset', 'name', $found_d);
       }
   }
