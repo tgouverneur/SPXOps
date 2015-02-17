@@ -2203,6 +2203,10 @@ d101 1 1 /dev/dsk/emcpower58a
               }
 
               if (!$p->isInJT('a_disk', $do, array('slice', 'role'))) {
+                  if ($p->isInJT('a_disk', $do)) {
+                      $s->log("changed $do slice $slice/$role to $p, deleting first", LLOG_INFO);
+                      $p->delFromJT('a_disk', $do);
+                  }
                   $s->log("add $do slice $slice/$role to $p", LLOG_INFO);
                   $p->addToJT('a_disk', $do);
               }

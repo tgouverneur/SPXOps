@@ -758,6 +758,7 @@ class MySqlObj
                 $args[':'.$sql] = $this->{$obj};
             }
 
+            /*
             foreach ($rel->attrs as $r) {
                 if (isset($fobj->{$r}[''.$this])) {
                     if ($w++) {
@@ -769,6 +770,7 @@ class MySqlObj
                     $args[':'.$r] = $fobj->{$r}[''.$this];
                 }
             }
+            */
 
             $my->delete($table, array('q' => $where, 'a' => $args));
             $ak = array_keys($this->{$rel->ar});
@@ -859,10 +861,10 @@ class MySqlObj
                     $good = true;
                     foreach ($attrs as $name) {
                         if (isset($o->{$name}[''.$this]) &&
-            isset($obj->{$name}[''.$this]) &&
-            strcmp($o->{$name}[''.$this], $obj->{$name}[''.$this])) {
-                            $good = false;
-                            break;
+                            isset($obj->{$name}[''.$this]) &&
+                            strcmp($o->{$name}[''.$this], $obj->{$name}[''.$this])) {
+                                $good = false;
+                                break;
                         }
                     }
                     if ($good) {
