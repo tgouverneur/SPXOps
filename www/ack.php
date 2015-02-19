@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -13,37 +14,15 @@
  $h->parseUrl();
 
  if (!$h->isAjax()) {
-   /* Page setup */
-   $page = array();
-   $page['title'] = 'Error';
-   if ($lm->o_login) $page['login'] = &$lm->o_login;
-
-   $index = new Template("../tpl/index.tpl");
-   $head = new Template("../tpl/head.tpl");
-   $head->set('page', $page);
-   $foot = new Template("../tpl/foot.tpl");
-
-   $content = new Template("../tpl/error.tpl");
-   $content->set('error', "The page you requested cannot be called as-is...");
-
-   $index->set('head', $head);
-   $index->set('content', $content);
-   $index->set('foot', $foot);
-   echo $index->fetch();
-   exit(0);
+   throw new ExitException('The page you requested cannot be called as-is...', 1);
  }
 
-
  if (!$lm->o_login) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You must be logged-in';
-   goto screen;
+   throw new ExitException('You must be logged-in', 2);
  }
  $lm->o_login->fetchRights();
  if (!$lm->o_login->cRight('CHKBOARD', R_DEL)) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You don\'t have the rights to ack check';
-   goto screen;
+   throw new ExitException('You don\'t have the rights to ack check', 2);
  }
 
  $i = $n = null;
@@ -59,26 +38,18 @@
  $ret = array();
 
  if (!$i) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You must provide proper arguments';
-   goto screen;
+   throw new ExitException('You must provide proper arguments', 2);
  }
 
  $r = new Result($i);
  if ($r->fetchFromId()) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'Result specified not found in database';
-   goto screen;
+   throw new ExitException('Result specified not found in database', 2);
  }
  if ($r->f_ack && !$n) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'This result is already acknowledged';
-   goto screen;
+   throw new ExitException('This result is already acknowledged', 2);
  }
  if (!$r->f_ack && $n) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'This result is not acknowledged';
-   goto screen;
+   throw new ExitException('This result is not acknowledged', 2);
  }
  if (!$n) {
    $r->f_ack = 1;
@@ -91,16 +62,28 @@
  } else {
    $r->f_ack = 0;
    $r->fk_login = -1;
-   $k->o_login = null;
+   $r->o_login = null;
    $a = Act::add("Un-Acknowledged $r", $lm->o_login);
    $ret['msg'] = "$r successfully unacknowledged";
  }
  $ret['rc'] = 0;
  $ret['id'] = $r->id;
  $r->update();
- goto screen;
-
-screen:
  echo json_encode($ret);
+
+} catch (ExitException $e) {
+
+    if ($e->type == 2) {
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }
+
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
 
 ?>

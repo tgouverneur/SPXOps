@@ -1,7 +1,6 @@
 <?php
  require_once("../libs/utils.obj.php");
 
-
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
    HTTP::getInstance()->errMysql();

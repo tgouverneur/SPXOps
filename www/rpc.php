@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -13,48 +14,31 @@
  $h->parseUrl();
 
  if (!$h->isAjax()) {
-   /* Page setup */
-   $page = array();
-   $page['title'] = 'Error';
-   if ($lm->o_login) $page['login'] = &$lm->o_login;
-
-   $index = new Template("../tpl/index.tpl");
-   $head = new Template("../tpl/head.tpl");
-   $head->set('page', $page);
-   $foot = new Template("../tpl/foot.tpl");
-
-   $content = new Template("../tpl/error.tpl");
-   $content->set('error', "The page you requested cannot be called as-is...");
-
-   $index->set('head', $head);
-   $index->set('content', $content);
-   $index->set('foot', $foot);
-   echo $index->fetch();
-   exit(0);
+     throw new ExitException('The page you requested cannot be called as-is...', 1);
  }
 
  if ($lm->o_login) {
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   die('You must be logged-in to access this page');
+     throw new ExitException('You must be logged-in', 2);
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
      case 'saveslr':
         if (!isset($_POST['name']) || empty($_POST['name'])) {
-         die('Missing argument');
+            throw new ExitException('Missing argument');
        }
         if (!isset($_POST['mets']) || empty($_POST['mets'])) { 
-         die('Missing argument');
+            throw new ExitException('Missing argument');
        }
        $name = $_POST['name'];
        $mets = $_POST['mets'];
        $slr = new SLR();
        $slr->name = $name;
        if (!$slr->fetchFromField('name')) { 
-         die('Name already taken');
+            throw new ExitException('Name already taken');
        }
        $slr->definition = serialize($mets);
        $slr->insert();
@@ -89,12 +73,12 @@
      break;
      case 'lmet':
        if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
-         die('Missing argument');
+            throw new ExitException('Missing argument');
        }
        $id = $_GET['i'];
        $rrd = new RRD($id);
        if ($rrd->fetchFromId()) {
-         die('Wrong argument');
+            throw new ExitException('Wrong argument');
        }
        $val = $rrd->getWhat('all');
        $ret = array();
@@ -102,14 +86,14 @@
        foreach($val as $k => $v) {
          $ret[$i]['name'] = $k;
          $ret[$i]['value'] = $v;
-	 $i++;
+         $i++;
        }
        header('Content-Type: application/json');
        echo json_encode($ret);
      break;
      case 'lrrd':
        if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
-         die('Missing argument');
+            throw new ExitException('Missing argument');
        }
        $id = $_GET['i'];
        $a_rrd = RRD::getAll(true, array('fk_server' => 'CST:'.$id), array('type'));
@@ -118,12 +102,12 @@
      break;
      case 'slr':
        if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
-         die('Missing argument');
+            throw new ExitException('Missing argument');
        }
        $id = $_GET['i'];
        $slr = new SLR($id);
        if ($slr->fetchFromId()) {
-         die('SLR not found in DB');
+            throw new ExitException('SLR Not found in DB');
        }
        $slr->getArray();
        header('Content-Type: application/json');
@@ -131,10 +115,10 @@
      break;
      case 'server':
        if (!isset($_GET['s']) || empty($_GET['s'])) {
-	  die('Missing argument');
+            throw new ExitException('Missing argument');
        }
        if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
-         die('Missing argument');
+            throw new ExitException('Missing argument');
        }
        $id = $_GET['i'];
        $a_server = Server::getAll(true, array('fk_os' => 'CST:'.$id), array('hostname'));
@@ -143,15 +127,15 @@
      break;
      case 'cr':
        if (!$lm->o_login->cRight('CHK', R_VIEW)) {
-	 die('Not Authorized');
+            throw new ExitException('Not authorized');
        }
        if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
-         die('Missing argument');
+            throw new ExitException('Missing argument');
        }
        $id = $_GET['i'];
        $cr = new Result($id);
        if ($cr->fetchFromId()) {
-         die('Cannot fetch Result');
+            throw new ExitException('Cannot fetch result');
        }
        $ret = array();
        $ret['id'] = $cr->id;
@@ -161,15 +145,15 @@
      break;
      case 'job':
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {
-	 die('Not Authorized');
+            throw new ExitException('Not authorized');
        }
        if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
-         die('Missing argument');
+            throw new ExitException('Missing argument');
        }
        $id = $_GET['i'];
        $job = new Job($id);
        if ($job->fetchFromId()) {
-         die('Cannot fetch Job');
+            throw new ExitException('Cannot fetch Job');
        }
        try {
          $job->fetchAll(1);
@@ -194,9 +178,25 @@
        echo json_encode($ret);
      break;
      default:
-       die('Unknown option or not implemented');
+       throw new ExitException('Unknown option or not implemented', 2);
      break;
    }
  }
+
+} catch (ExitException $e) {
+
+    if ($e->type == 2) {
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }
+
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
+
 
 ?>

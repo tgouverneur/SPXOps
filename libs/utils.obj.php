@@ -2,6 +2,30 @@
 
 class Utils
 {
+    public static function getHTTPError($msg) {
+        $page = array();
+        $page['title'] = 'Error';
+        $lm = LoginCM::getInstance();
+        if ($lm->o_login) $page['login'] = &$lm->o_login;
+
+        $index = new Template("../tpl/index.tpl");
+        $head = new Template("../tpl/head.tpl");
+        $head->set('page', $page);
+        $foot = new Template("../tpl/foot.tpl");
+                 
+        $content = new Template("../tpl/error.tpl");
+        $content->set('error', $msg);
+                     
+        $index->set('head', $head);
+        $index->set('content', $content);
+        $index->set('foot', $foot);
+        return $index;
+    }
+
+    public static function getJSONError($msg) {
+        return json_encode(array('rc' => 1, 'msg' => $msg));
+    }
+
     public static function registerAutoload() 
     {
          spl_autoload_register('Utils::objAutoload');

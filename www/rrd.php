@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -13,30 +14,11 @@
  $h->parseUrl();
 
  if (!$h->isAjax()) {
-   /* Page setup */
-   $page = array();
-   $page['title'] = 'Error';
-   if ($lm->o_login) $page['login'] = &$lm->o_login;
-
-   $index = new Template("../tpl/index.tpl");
-   $head = new Template("../tpl/head.tpl");
-   $head->set('page', $page);
-   $foot = new Template("../tpl/foot.tpl");
-
-   $content = new Template("../tpl/error.tpl");
-   $content->set('error', "The page you requested cannot be called as-is...");
-
-   $index->set('head', $head);
-   $index->set('content', $content);
-   $index->set('foot', $foot);
-   echo $index->fetch();
-   exit(0);
+     throw new ExitException('The page you requested cannot be called as-is...', 1);
  }
 
  if (!$lm->o_login) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You must be logged-in';
-   goto screen;
+     throw new ExitException('You must be logged-in', 2);
  }
  $lm->o_login->fetchRights();
 
@@ -50,17 +32,13 @@
  $ret = array();
 
  if (!$i) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You must provide proper arguments';
-   goto screen;
+     throw new ExitException('You must provide proper arguments', 2);
  }
 
  if (!isset($_POST['start']) ||
      !isset($_POST['what']) ||
      !isset($_POST['n'])) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You must provide proper arguments';
-   goto screen;
+         throw new ExitException('You must provide proper arguments', 2);
  }
 
  $start = $_POST['start'];
@@ -74,21 +52,16 @@
  $ret['cid'] = $cid;
 
  if (!is_numeric($n)) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'Error in the provided arguments';
-   goto screen;
+     throw new ExitException('Error in the provided arguments');
  }
 
  if (!$lm->o_login->cRight('SRV', R_VIEW)) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You don\'t have the rights to run this action';
-   goto screen;
+     throw new ExitException('You don\'t have the rights to run this action');
  }
 
  if (!strcmp($i, 'group')) {
    if (!isset($mets) || !count($mets)) {
-     $ret['rc'] = 1;
-     $ret['msg'] = 'There are no metric given, no data to graph';
+     throw new ExitException('There are no metric given, no data to graph');
    }
    /* simplify met list by aggregating per rrd */
    $a_m = array();
@@ -107,9 +80,7 @@
    foreach ($a_m as $rid => $what) {
      $obj = new RRD($rid);
      if ($obj->fetchFromId()) {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'Cannot find RRD provided inside the database';
-       goto screen;
+       throw new ExitException('Cannot find RRD provided inside the database');
      }
      try {
 
@@ -124,10 +95,7 @@
        }
 
      } catch (SPXException $e) {
-
-       $ret['rc'] = 1;
-       $ret['res'] = $e.toString();
-       goto screen;
+       throw new ExitException($e.toString());
      }
    }
    $ret['res'] = $res;
@@ -137,23 +105,34 @@
 
   $obj = new RRD($i);
   if ($obj->fetchFromId()) {
-    $ret['rc'] = 1;
-    $ret['msg'] = 'Cannot find RRD provided inside the database';
-    goto screen;
+    throw new ExitException('Cannot find RRD Provided inside the database');
   }
 
   try {
     $ret['res'] = $obj->getData($start, $what, $n);
     $ret['rc'] = 0;
   } catch (SPXException $e) {
-
-    $ret['rc'] = 1;
-    $ret['res'] = $e.toString();
-    goto screen;
+    throw new ExitException($e.toString());
   }
  }
 
-screen:
  echo json_encode($ret);
+
+} catch (ExitException $e) {
+
+    if ($e->type == 2) {
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }
+
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
+
+
 
 ?>

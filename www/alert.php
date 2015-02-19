@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -13,41 +14,20 @@
  $h->parseUrl();
 
  if (!$h->isAjax()) {
-   /* Page setup */
-   $page = array();
-   $page['title'] = 'Error';
-   if ($lm->o_login) $page['login'] = &$lm->o_login;
-
-   $index = new Template("../tpl/index.tpl");
-   $head = new Template("../tpl/head.tpl");
-   $head->set('page', $page);
-   $foot = new Template("../tpl/foot.tpl");
-
-   $content = new Template("../tpl/error.tpl");
-   $content->set('error', "The page you requested cannot be called as-is...");
-
-   $index->set('head', $head);
-   $index->set('content', $content);
-   $index->set('foot', $foot);
-   echo $index->fetch();
-   exit(0);
+     throw new ExitException('The page you requested cannot be called as-is...', 1);
  }
 
  header('Content-Type: application/json'); 
  $ret = array();
 
  if (!$lm->o_login) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You must be logged-in';
-   goto screen;
+     throw new ExitException('You must be logged-in', 2);
  }
 
  $lm->o_login->fetchRights();
 
  if (!$lm->o_login->cRight('UGRP', R_EDIT)) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You don\'t have rights to modify group';
-   goto screen;
+     throw new ExitException('You don\'t have rights to modify group', 2);
  }
 
  $u = $a = $e = $g = 0;
@@ -66,31 +46,23 @@
  }
 
  if ((!$g && !$a) || !$u) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You must provide proper arguments';
-   goto screen;
+     throw new ExitException('You must provide proper arguments', 2);
  }
 
  $ugroup = new UGroup();
  $ugroup->id = $u;
  if ($ugroup->fetchFromId()) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'UGroup specified not found in database';
-   goto screen;
+     throw new ExitException('UGroup specified not found in database', 2);
  }
 
  if ($a) {
    $at = new AlertType($a);
    if ($at->fetchFromId()) {
-     $ret['rc'] = 1;
-     $ret['msg'] = 'AlertType specified not found in database';
-     goto screen;
+     throw new ExitException('AlertType specified not found in database', 2);
    }
 
    if (!is_numeric($e) && $e) {
-     $ret['rc'] = 1;
-     $ret['msg'] = 'Incorrect level specification';
-     goto screen;
+     throw new ExitException('Incorrect level specification', 2);
    }
 
    $at->fetchJT('a_ugroup');
@@ -104,19 +76,14 @@
    Act::add("Changed the alert $at for group $ugroup ($e)", $lm->o_login);
    $ret['rc'] = 0;
    $ret['msg'] = "The alert $at for $ugroup has been set to $e.";
-   goto screen;
  } else if ($g) {
    $sg = new SGroup($g);
    if ($sg->fetchFromId()) {
-     $ret['rc'] = 1;
-     $ret['msg'] = 'SGroup specified not found in database';
-     goto screen;
+     throw new ExitException('SGroup specified not found in database', 2);
    }
 
    if (!is_numeric($e) && $e) {
-     $ret['rc'] = 1;
-     $ret['msg'] = 'Incorrect level specification';
-     goto screen;
+     throw new ExitException('Incorrect level specification', 2);
    }
 
    $sg->fetchJT('a_ugroup');
@@ -130,10 +97,25 @@
    Act::add("Changed the alert on server group $sg for group $ugroup ($e)", $lm->o_login);
    $ret['rc'] = 0;
    $ret['msg'] = "The alert on server group $sg for $ugroup has been set to $e.";
-   goto screen;
  }
 
-screen:
  echo json_encode($ret);
+ 
+} catch (ExitException $e) {
+
+    if ($e->type == 2) {
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }
+
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
+
+
 
 ?>

@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -13,31 +14,11 @@
  $h->parseUrl();
 
  if (!$h->isAjax()) {
-   /* Page setup */
-   $page = array();
-   $page['title'] = 'Error';
-   if ($lm->o_login) $page['login'] = &$lm->o_login;
-
-   $index = new Template("../tpl/index.tpl");
-   $head = new Template("../tpl/head.tpl");
-   $head->set('page', $page);
-   $foot = new Template("../tpl/foot.tpl");
-
-   $content = new Template("../tpl/error.tpl");
-   $content->set('error', "The page you requested cannot be called as-is...");
-
-   $index->set('head', $head);
-   $index->set('content', $content);
-   $index->set('foot', $foot);
-   echo $index->fetch();
-   exit(0);
+     throw new ExitException('The page you requested cannot be called as-is...', 1);
  }
 
-
  if (!$lm->o_login) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You must be logged-in';
-   goto screen;
+     throw new ExitException('You must be logged-in', 2);
  }
  $lm->o_login->fetchRights();
 
@@ -63,31 +44,23 @@
  $ret = array();
 
  if (!$w || !$i || !$o || !$t) {
-   $ret['rc'] = 1;
-   $ret['msg'] = 'You must provide proper arguments';
-   goto screen;
+    throw new ExitException('You must provide proper arguments', 2);
  }
 
  switch ($w) {
    case 'login':
      if (!$lm->o_login->cRight('USR', R_EDIT)) {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'You don\'t have the rights to edit user';
-       goto screen;
+         throw new ExitException('You don\'t have the rights to edit users');
      }
      $obj = new Login($i);
      if ($obj->fetchFromId()) {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'Cannot find User provided inside the database';
-       goto screen;
+         throw new ExitException('Cannot find User provided inside the database');
      }
      if (!strcmp($o, 'ugroup')) {
        $obj->fetchJT('a_ugroup');
        $tobj = new UGroup($t);
        if ($tobj->fetchFromId()) {
-         $ret['rc'] = 1;
-         $ret['msg'] = 'Cannot find User Group provided inside the database';
-         goto screen;
+         throw new ExitException('Cannot find User Group provided inside the database');
         }
         if ($obj->isInJT('a_ugroup', $tobj)) {
           $obj->delFromJT('a_ugroup', $tobj);
@@ -96,38 +69,27 @@
           $ret['id'] = $tobj->id;
           $ret['llist'] = 'ugroup';
           $ret['msg'] = "Removed group $tobj from user $obj";
-          goto screen;
 
         } else {
-          $ret['rc'] = 1;
-          $ret['msg'] = 'Specified group is not in this user';
-          goto screen;
+          throw new ExitException('Specified group is not in this user');
         }
      } else {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'Unrecognized target class';
-       goto screen;
+       throw new ExitException('Unrecognized target class');
      }
    break;
    case 'check':
      if (!$lm->o_login->cRight('CHK', R_EDIT)) {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'You don\'t have the rights to edit check';
-       goto screen;
+       throw new ExitException('You don\'t have the rights to edit check');
      }
      $obj = new Check($i);
      if ($obj->fetchFromId()) {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'Cannot find Check provided inside the database';
-       goto screen;
+       throw new ExitException('Cannot find Check provided inside the databse');
      }
      if (!strcmp($o, 'sgroup') || !strcmp($o, 'esgroup')) {
        $obj->fetchJT('a_sgroup');
        $tobj = new SGroup($t);
        if ($tobj->fetchFromId()) {
-         $ret['rc'] = 1;
-         $ret['msg'] = 'Cannot find Server Group provided inside the database';
-         goto screen;
+         throw new ExitException('Cannot find Server Group provided inside the databse');
         }
         if ($obj->isInJT('a_sgroup', $tobj)) {
           $obj->delFromJT('a_sgroup', $tobj);
@@ -136,78 +98,56 @@
           $ret['id'] = $tobj->id;
           $ret['llist'] = $o;
           $ret['msg'] = "Removed group $tobj from check $obj";
-          goto screen;
 
         } else {
-          $ret['rc'] = 1;
-          $ret['msg'] = 'Specified group is not in this check';
-          goto screen;
+          throw new ExitException('Specified group is not in this check');
         }
      } else {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'Unrecognized target class';
-       goto screen;
+       throw new ExitException('Unrecognized target class');
      }
    break;
    case 'ugroup':
      if (!$lm->o_login->cRight('UGRP', R_EDIT)) {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'You don\'t have the rights to edit user group';
-       goto screen;
+       throw new ExitException('You don\'t have the rights to edit user group');
      }
      $obj = new UGroup($i);
      if ($obj->fetchFromId()) {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'Cannot find User Group provided inside the database';
-       goto screen;
+       throw new ExitException('Cannot find User Group provided inside the database');
      }
      if (!strcmp($o)) {
        $obj->fetchJT('a_login');
        $tobj = new Login($t);
        if ($tobj->fetchFromId()) {
-         $ret['rc'] = 1;
-         $ret['msg'] = 'Cannot find Login provided inside the database';
-         goto screen;
+         throw new ExitException('Cannot find Login provided inside the database');
 	}
         if ($obj->isInJT('a_login', $tobj)) {
           $obj->delFromJT('a_login', $tobj);
-	  Act::add("Removed login $tobj from $obj group", $lm->o_login);
+          Act::add("Removed login $tobj from $obj group", $lm->o_login);
           $ret['rc'] = 0;
           $ret['id'] = $tobj->id;
           $ret['llist'] = 'login';
           $ret['msg'] = "Removed login $tobj from $obj group";
-          goto screen;
 
         } else {
-	  $ret['rc'] = 1;
-          $ret['msg'] = 'Specified login is not in this group';
-          goto screen;
-	}
+          throw new ExitException('Specified login is not in this group');
+        }
      } else {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'Unrecognized target class';
-       goto screen;
+       throw new ExitException('Unrecognized target class');
      }
    break;
    case 'sgroup':
      if (!$lm->o_login->cRight('SRVGRP', R_EDIT)) {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'You don\'t have the rights to edit server group';
-       goto screen;
+       throw new ExitException('You don\'t have the rights to edit server group');
      }
      $obj = new SGroup($i);
      if ($obj->fetchFromId()) {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'Cannot find Server Group provided inside the database';
-       goto screen;
+       throw new ExitException('Cannot find Server Group provided inside the database');
      }
      if (!strcmp($o, 'server')) {
        $obj->fetchJT('a_server');
        $tobj = new Server($t);
        if ($tobj->fetchFromId()) {
-         $ret['rc'] = 1;
-         $ret['msg'] = 'Cannot find Server provided inside the database';
-         goto screen;
+         throw new ExitException('Cannot find Server provided inside the database');
         }
         if ($obj->isInJT('a_server', $tobj)) {
           $obj->delFromJT('a_server', $tobj);
@@ -216,27 +156,34 @@
           $ret['id'] = $tobj->id;
           $ret['llist'] = 'server';
           $ret['msg'] = "Removed server $tobj from $obj group";
-          goto screen;
 
         } else {
-          $ret['rc'] = 1;
-          $ret['msg'] = 'Specified server is not in this group';
-          goto screen;
+          throw new ExitException('Specified server is not in this group');
         }
      } else {
-       $ret['rc'] = 1;
-       $ret['msg'] = 'Unrecognized target class';
-       goto screen;
+       throw new ExitException('Unrecognized target class');
      }
    break;
    default:
-     $ret['rc'] = 1;
-     $ret['msg'] = 'Unkown class provided';
-     goto screen;
+       throw new ExitException('Unknown class provided');
    break;
  }
 
-screen:
  echo json_encode($ret);
+
+} catch (ExitException $e) {
+
+    if ($e->type == 2) {
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }
+
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
 
 ?>
