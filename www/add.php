@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -22,14 +23,14 @@
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   HTTP::errWWW('You must be logged-in to access this page');
+   throw new ExitException('You must be logged-in to access this page');
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
      case 'suser':
        if (!$lm->o_login->cRight('CUSER', R_ADD)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'SSH User';
        $obj = new SUser();
@@ -70,7 +71,7 @@
      break;
      case 'sgroup':
        if (!$lm->o_login->cRight('SRVGRP', R_ADD)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'Server Group';
        $obj = new SGroup();
@@ -111,7 +112,7 @@
      break;
      case 'rjob':
        if (!$lm->o_login->cRight('RJOB', R_ADD)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'Recurrent Job';
        $obj = new RJob();
@@ -153,7 +154,7 @@
      break;
      case 'ugroup':
        if (!$lm->o_login->cRight('UGRP', R_ADD)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'User Group';
        $obj = new UGroup();
@@ -194,7 +195,7 @@
      break;
      case 'check':
        if (!$lm->o_login->cRight('CHK', R_ADD)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'Check';
        $obj = new Check();
@@ -235,7 +236,7 @@
      break;
      case 'pserver':
        if (!$lm->o_login->cRight('PHY', R_ADD)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'Physical Server';
        $obj = new PServer();
@@ -276,7 +277,7 @@
      break;
      case 'cluster':
        if (!$lm->o_login->cRight('CLUSTER', R_ADD)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'Cluster';
        $obj = new Cluster();
@@ -330,7 +331,7 @@
      break;
      case 'server':
        if (!$lm->o_login->cRight('SRV', R_ADD)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'Server';
        $obj = new Server();
@@ -381,7 +382,7 @@
      break;
      case 'login':
        if (!$lm->o_login->cRight('USR', R_ADD)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'User';
        $obj = new Login();
@@ -440,5 +441,18 @@ screen:
  $index->set('foot', $foot);
 
  echo $index->fetch();
+
+} catch (ExitException $e) {
+
+    $h = Utils::getHTTPError($e->getMessage());
+    echo $h->fetch();
+
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
+
+
 
 ?>

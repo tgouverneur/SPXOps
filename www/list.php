@@ -1,6 +1,8 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
+
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
    HTTP::getInstance()->errMysql();
@@ -20,7 +22,7 @@
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   HTTP::errWWW('You must be logged-in to access this page');
+   throw new ExitException('You must be logged-in to access this page');
  }
 
  $js = array();
@@ -37,7 +39,7 @@
    switch($_GET['w']) {
      case 'rjob':
        if (!$lm->o_login->cRight('RJOB', R_VIEW)) {
-	 HTTP::errWWW('Access Denied, please check your access rights!');
+	 throw new ExitException('Access Denied, please check your access rights!');
        }
        $a_list = RJob::getAll(true, array(), array('ASC:class', 'ASC:fct'));
        $content = new Template('../tpl/list.tpl');
@@ -57,7 +59,7 @@
      break;
      case 'sgroup':
        if (!$lm->o_login->cRight('SRVGRP', R_VIEW)) {
-	 HTTP::errWWW('Access Denied, please check your access rights!');
+	 throw new ExitException('Access Denied, please check your access rights!');
        }
        $a_list = SGroup::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
@@ -78,7 +80,7 @@
      break;
      case 'ugroup':
        if (!$lm->o_login->cRight('UGRP', R_VIEW)) {
-	 HTTP::errWWW('Access Denied, please check your access rights!');
+	 throw new ExitException('Access Denied, please check your access rights!');
        }
        $a_list = UGroup::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
@@ -98,7 +100,7 @@
      break;
      case 'pid':
        if (!$lm->o_login->cRight('PID', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        } 
        $a_list = Pid::getAll(true, array(), array('ASC:agent', 'ASC:pid'));
        $content = new Template('../tpl/list.tpl');
@@ -109,7 +111,7 @@
      break;
      case 'results':
        if (!$lm->o_login->cRight('CHKBOARD', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        } 
        $a_list = Result::getAll(true, array(), array('DESC:t_upd', 'DESC:t_add'));
        $content = new Template('../tpl/list.tpl');
@@ -121,7 +123,7 @@
      break;
      case 'check':
        if (!$lm->o_login->cRight('CHK', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $a_list = Check::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
@@ -141,7 +143,7 @@
      break;
      case 'pserver':
        if (!$lm->o_login->cRight('PHY', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $npp = Setting::get('display', 'pserverPerPage')->value;
        $a_list = PServer::getAll(true, array(), array('ASC:name'));
@@ -161,7 +163,7 @@
      break;
      case 'vm':
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $npp = Setting::get('display', 'vmPerPage')->value;
        $a_list = VM::getAll(true, array(), array('ASC:name'));
@@ -174,7 +176,7 @@
      break;
      case 'server':
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        /* get custom fields for user */
        $cfs = $lm->o_login->getListPref('server');
@@ -199,7 +201,7 @@
      break;
      case 'cluster':
        if (!$lm->o_login->cRight('CLUSTER', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $npp = Setting::get('display', 'clusterPerPage')->value;
        $a_list = Cluster::getAll(true, array(), array('ASC:name'));
@@ -220,7 +222,7 @@
      break;
      case 'act':
        if (!$lm->o_login->cRight('ACT', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $a_list = Act::getAll(true, array(), array('DESC:t_add'));
        $content = new Template('../tpl/list.tpl');
@@ -231,7 +233,7 @@
      break;
      case 'jobs':
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        } 
        $npp = Setting::get('display', 'jobPerPage')->value;
        $a_list = Job::getAll(true, array(), array('DESC:t_upd'));
@@ -245,7 +247,7 @@
      break;
      case 'login':
        if (!$lm->o_login->cRight('USR', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        } 
        $npp = Setting::get('display', 'loginPerPage')->value;
        $a_list = Login::getAll(true, array(), array('ASC:username'));
@@ -266,7 +268,7 @@
      break;
      case 'susers':
        if (!$lm->o_login->cRight('CUSER', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $a_list = SUser::getAll(true, array(), array('ASC:username'));
        $content = new Template('../tpl/list.tpl');
@@ -308,4 +310,18 @@ screen:
 
  echo $index->fetch();
 
+} catch (ExitException $e) {
+     
+    if ($e->type == 2) { 
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }    
+     
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
 ?>

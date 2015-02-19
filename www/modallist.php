@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -19,7 +20,7 @@
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   HTTP::errWWW('You must be logged-in to access this page');
+   throw new ExitException('You must be logged-in to access this page');
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
@@ -55,7 +56,7 @@
      break;
      case 'rs':
        if (!$lm->o_login->cRight('CLUSTER', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
@@ -75,7 +76,7 @@
      break;
      case 'patches':
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
@@ -95,7 +96,7 @@
      break;
      case 'results':
        if (!$lm->o_login->cRight('CHKBOARD', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
@@ -109,7 +110,7 @@
      break;
      case 'sresults':
        if (!$lm->o_login->cRight('CHKBOARD', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
@@ -124,7 +125,7 @@
      break;
      case 'projects':
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
@@ -144,7 +145,7 @@
      break;
      case 'packages':
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
@@ -164,7 +165,7 @@
      break;
      case 'disks':
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
@@ -196,4 +197,18 @@
 screen:
  echo $content->fetch();
 
+} catch (ExitException $e) {
+     
+    if ($e->type == 2) { 
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }    
+     
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
 ?>

@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -21,7 +22,7 @@
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   HTTP::errWWW('You must be logged-in to access this page');
+   throw new ExitException('You must be logged-in to access this page');
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
@@ -105,4 +106,18 @@ screen:
 
  echo $index->fetch();
 
+} catch (ExitException $e) {
+     
+    if ($e->type == 2) { 
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }    
+     
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
 ?>

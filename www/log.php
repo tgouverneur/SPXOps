@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -22,7 +23,7 @@
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   HTTP::errWWW('You must be logged-in to access this page');
+   throw new ExitException('You must be logged-in to access this page');
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
@@ -30,18 +31,18 @@
    $o_name = $_GET['w'];
    if (!class_exists($o_name) ||
        !method_exists($o_name, 'addLog')) {
-     HTTP::errWWW('This kind of object doesn\'t support Logs');
+     throw new ExitException('This kind of object doesn\'t support Logs');
    }
 
    if (!$lm->o_login->cRight($o_name::$RIGHT, R_EDIT)) {
-     HTTP::errWWW('Access Denied, please check your access rights!');
+     throw new ExitException('Access Denied, please check your access rights!');
    }
    if (!isset($_GET['i']) || empty($_GET['i'])) {
-     HTTP::errWWW("No $o_name ID provided");
+     throw new ExitException("No $o_name ID provided");
    }
    $obj = new $o_name($_GET['i']);
    if ($obj->fetchFromId()) {
-     HTTP::errWWW("Object not found inside database");
+     throw new ExitException("Object not found inside database");
    }
    $content = new Template('../tpl/form_log.tpl');
    $content->set('obj', $obj);
@@ -77,5 +78,20 @@ screen:
  $index->set('foot', $foot);
 
  echo $index->fetch();
+
+} catch (ExitException $e) {
+     
+    if ($e->type == 2) { 
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }    
+     
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
 
 ?>

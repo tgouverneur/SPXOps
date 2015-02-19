@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -18,10 +19,10 @@
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
    if (!$lm->o_login->cRight('CHKBOARD', R_VIEW)) {
-     HTTP::errWWW('Access Denied, please check your access rights!');
+     throw new ExitException('Access Denied, please check your access rights!');
    }
  } else {
-   HTTP::errWWW('You must be logged-in to access this page');
+   throw new ExitException('You must be logged-in to access this page');
  }
 
  $index = new Template("../tpl/index.tpl");
@@ -37,9 +38,7 @@
  if ($i) {
    $obj = new Server($i);
    if ($obj->fetchFromId()) {
-     $content = new Template('../tpl/error.tpl');
-     $content->set('error', "Provided server ID not found in the database..");
-     goto screen;
+       throw new ExitException('Provided server ID not found in the database..');
    }
    $obj->fetchJT('a_sgroup');
    $obj->buildCheckList(true);
@@ -68,5 +67,20 @@ screen:
  $index->set('foot', $foot);
 
  echo $index->fetch();
+
+} catch (ExitException $e) {
+     
+    if ($e->type == 2) { 
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }    
+     
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
 
 ?>

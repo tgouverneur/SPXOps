@@ -42,30 +42,6 @@ class HTTP
         exit(0);
     }
 
-    public static function errWWW($e)
-    {
-        $lm = LoginCM::getInstance();
-
-        $index = new Template("../tpl/index.tpl");
-        $head = new Template("../tpl/head.tpl");
-        $foot = new Template("../tpl/foot.tpl");
-        $content = new Template("../tpl/error.tpl");
-        $content->set("error", $e);
-
-        $page = array();
-        $page['title'] = 'That\'s some bad hat harry';
-        if ($lm->o_login) {
-            $page['login'] = &$lm->o_login;
-        }
-
-        $head->set('page', $page);
-        $index->set("head", $head);
-        $index->set("content", $content);
-        $index->set("foot", $foot);
-        echo $index->fetch();
-        exit(0);
-    }
-
     public function parseUrl()
     {
         $url = filter_input(INPUT_SERVER, 'PATH_INFO');

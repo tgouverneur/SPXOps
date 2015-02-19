@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -22,7 +23,7 @@
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   HTTP::errWWW('You must be logged-in to access this page');
+   throw new ExitException('You must be logged-in to access this page');
  }
 
  $js = array();
@@ -37,19 +38,19 @@
 
        $wa = Plugin::getWebAction($p, $w);
        if (!$wa) {
-	 HTTP::errWWW('The Plugin or Action you requested is not registered');
+	 throw new ExitException('The Plugin or Action you requested is not registered');
        }
        
        if ($wa->n_right) { /* Preliminary right check */
          if (!$lm->o_login->cRight($wa->n_right, $wa->n_level)) {
-	   HTTP::errWWW('Access Denied, please check your access rights!');
+	   throw new ExitException('Access Denied, please check your access rights!');
          }
        }
        $content = null;
        $wa->call($wa); /* supposed to fill $content */
 
        if (!$content) {
-	 HTTP::errWWW('Something wrong happened in plugin '.$wa->o_plugin->name);
+	 throw new ExitException('Something wrong happened in plugin '.$wa->o_plugin->name);
        }
 
        $page['title'] .= $wa->desc;
@@ -71,4 +72,18 @@ screen:
 
  echo $index->fetch();
 
+} catch (ExitException $e) {
+     
+    if ($e->type == 2) { 
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }    
+     
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
 ?>

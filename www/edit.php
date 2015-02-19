@@ -1,6 +1,7 @@
 <?php
  require_once("../libs/utils.obj.php");
 
+try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
@@ -22,14 +23,14 @@
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   HTTP::errWWW('You must be logged-in to access this page');
+   throw new ExitException('You must be logged-in to access this page');
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
      case 'suser':
        if (!$lm->o_login->cRight('CUSER', R_EDIT)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $suid = $_GET['i'];
@@ -79,7 +80,7 @@
      break;
      case 'cluster':
        if (!$lm->o_login->cRight('CLUSTER', R_EDIT)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'Cluster';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -157,7 +158,7 @@
      break;
      case 'server':
        if (!$lm->o_login->cRight('SRV', R_EDIT)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'Server';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -218,7 +219,7 @@
      break;
      case 'check':
        if (!$lm->o_login->cRight('CHK', R_EDIT)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'Check';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -269,7 +270,7 @@
      break;
      case 'sgroup':
        if (!$lm->o_login->cRight('SRVGRP', R_EDIT)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'Server Group';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -320,7 +321,7 @@
      break;
      case 'ugroup':
        if (!$lm->o_login->cRight('UGRP', R_EDIT)) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        $what = 'User Group';
        if (isset($_GET['i']) && !empty($_GET['i'])) {
@@ -376,7 +377,7 @@
          $self = true;
        }
        if (!$lm->o_login->cRight('USR', R_EDIT) && !$self) {
-         HTTP::errWWW('Access Denied, please check your access rights!');
+         throw new ExitException('Access Denied, please check your access rights!');
        }
        if (isset($_GET['i']) && !empty($_GET['i'])) {
          $suid = $_GET['i'];
@@ -446,4 +447,18 @@ screen:
 
  echo $index->fetch();
 
+} catch (ExitException $e) {
+     
+    if ($e->type == 2) { 
+        echo Utils::getJSONError($e->getMessage());
+    } else {
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }    
+     
+} catch (Exception $e) {
+    /* @TODO: LOG EXCEPTION */
+    $h = Utils::getHTTPError('Unexpected Exception');
+    echo $h->fetch();
+}
 ?>
