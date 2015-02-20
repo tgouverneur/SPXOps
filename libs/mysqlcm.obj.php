@@ -645,7 +645,7 @@ class MySqlCM
   }
 
   /* returns true if continue; needed */
-  private function recoCheck($e = null) {
+  private function recoCheck(Exception $e = null) {
 
       if ($e) {
         $this->_error = $e->getMessage();
