@@ -58,7 +58,7 @@ class SPXNet
     public function sigterm()
     {
         $this->cleanup();
-        die();
+        throw new SPXException('SIGTERM received, cleanup done, exiting...');
     }
 
     public function sighup()
@@ -86,7 +86,7 @@ class SPXNet
     public function sigkill()
     {
         $this->cleanup();
-        die();
+        throw new SPXException('SIGKILL received, cleanup done, exiting...');
     }
 
     public function sigusr1()
