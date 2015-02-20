@@ -28,20 +28,6 @@ class HTTP
         return false;
     }
 
-    public static function errMysql()
-    {
-        $index = new Template("../tpl/index.tpl");
-        $head = new Template("../tpl/head.tpl");
-        $foot = new Template("../tpl/foot.tpl");
-        $content = new Template("../tpl/error.tpl");
-        $content->set('error', "An error has occurred with the SQL Server and we were unable to process your request...");
-        $index->set("head", $head);
-        $index->set("content", $content);
-        $index->set("foot", $foot);
-        echo $index->fetch();
-        exit(0);
-    }
-
     public function parseUrl()
     {
         $url = filter_input(INPUT_SERVER, 'PATH_INFO');

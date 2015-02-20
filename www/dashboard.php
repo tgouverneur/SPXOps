@@ -5,7 +5,7 @@ try {
 
  $m = MySqlCM::getInstance();
  if ($m->connect()) {
-   HTTP::getInstance()->errMysql();
+   throw new ExitException('An error has occurred with the SQL Server and we were unable to process your request...');
  }
  $lm = LoginCM::getInstance();
  $lm->startSession();
