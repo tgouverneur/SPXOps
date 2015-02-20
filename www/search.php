@@ -71,7 +71,7 @@ try {
        }
        if (count($a_list) == 1) {
 	 $obj = $a_list[0];
-         HTTP::redirect('/view/w/vm/i/'.$obj->id);
+         throw new ExitException('none', 3, '/view/w/vm/i/'.$obj->id);
        }
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
@@ -98,7 +98,7 @@ try {
        }
        if (count($a_list) == 1) {
 	 $obj = $a_list[0];
-         HTTP::redirect('/view/w/server/i/'.$obj->id);
+         throw new ExitException('none', 3, '/view/w/server/i/'.$obj->id);
        }
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
@@ -125,7 +125,7 @@ try {
        }
        if (count($a_list) == 1) {
 	 $obj = $a_list[0];
-         HTTP::redirect('/view/w/cluster/i/'.$obj->id);
+         throw new ExitException('none', 3, '/view/w/cluster/i/'.$obj->id);
        }
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
@@ -157,10 +157,12 @@ screen:
      
     if ($e->type == 2) { 
         echo Utils::getJSONError($e->getMessage());
-    } else {
+    } else if ($e->type == 1) {
         $h = Utils::getHTTPError($e->getMessage());
         echo $h->fetch();
-    }    
+    } else if ($e->type == 3) {
+        HTTP::redirect($e->dest);
+    }
      
 } catch (Exception $e) {
     /* @TODO: LOG EXCEPTION */
