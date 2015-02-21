@@ -31,16 +31,14 @@ class Utils
          spl_autoload_register('Utils::objAutoload');
     }
 
-  public static function objAutoload($name)
-  {  
-      $name = strtolower($name);
-      $file = dirname(__FILE__).'/'.$name.'.obj.php';
-      if (file_exists($file)) {
-          require_once $file;
-      } else {
-          throw new Exception("Cannot load $file...\n");
-      }
-  }
+    public static function objAutoload($name)
+    {  
+        $name = strtolower($name);
+        $file = dirname(__FILE__).'/'.$name.'.obj.php';
+        if (file_exists($file)) {
+            require_once $file;
+        }
+    }
 
     function __construct()
     {
