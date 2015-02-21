@@ -9,6 +9,7 @@
  * @category classes
  * @subpackage backend
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 class Pool extends MySqlObj
 {

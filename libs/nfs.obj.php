@@ -9,6 +9,7 @@
  * @category classes
  * @subpackage backend
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 
 /* @TODO: Add description of nfs share */

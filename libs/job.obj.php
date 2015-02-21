@@ -8,6 +8,7 @@
  * @subpackage job
  * @category classes
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 if (!defined('S_NONE')) {
     define('S_NONE',   0);

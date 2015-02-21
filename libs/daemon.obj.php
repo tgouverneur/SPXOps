@@ -8,6 +8,7 @@
  * @subpackage device
  * @category classes
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 
 class Daemon

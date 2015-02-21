@@ -4,11 +4,12 @@
    * cluster management
    *
    * @author Gouverneur Thomas <tgo@espix.net>
-   * @copyright Copyright (c) 2012, Gouverneur Thomas
+   * @copyright Copyright (c) 2012-2015, Gouverneur Thomas
    * @version 1.0
    * @package CLI
    * @category utils
    * @subpackage list
+   * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
    * @filesource
    */
   require_once dirname(__FILE__).'/../libs/utils.obj.php';

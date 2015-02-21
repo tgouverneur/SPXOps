@@ -9,6 +9,7 @@
  * @subpackage various
  * @category libs
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 class HTTP
 {

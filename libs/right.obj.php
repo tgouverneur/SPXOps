@@ -9,6 +9,7 @@
  * @category classes
  * @subpackage backend
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 if (!defined('R_NONE')) {
     define('R_NONE',   0);

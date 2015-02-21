@@ -8,6 +8,7 @@
  * @subpackage rjob
  * @category classes
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 class RJob extends MySqlObj
 {
@@ -111,7 +112,7 @@ class RJob extends MySqlObj
         return array(
                  'class' => $this->class,
                  'fct' => $this->fct,
-                 'frequency' => Utils::parseFrenquency($this->frequency),
+                 'frequency' => Utils::parseFrequency($this->frequency),
                  't_last' => date('d-m-Y H:m:s', $this->t_last),
                  't_next' => date('d-m-Y H:m:s', $this->t_last + $this->frequency),
                  't_upd' => date('d-m-Y H:m:s', $this->t_upd),
@@ -124,7 +125,7 @@ class RJob extends MySqlObj
         'Class' => $this->class,
         'Function' => $this->fct,
         'Argument' => $this->arg,
-        'frequency' => Utils::parseFrenquency($this->frequency),
+        'frequency' => Utils::parseFrequency($this->frequency),
         'Added by' => ($this->o_login) ? $this->o_login : 'Unknown',
         'Last run at' => date('d-m-Y H:m:s', $this->t_last),
         'Added on' => date('d-m-Y H:m:s', $this->t_add),

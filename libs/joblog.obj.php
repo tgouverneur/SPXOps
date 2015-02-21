@@ -8,6 +8,7 @@
  * @subpackage job
  * @category classes
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 class JobLog extends MySqlObj
 {

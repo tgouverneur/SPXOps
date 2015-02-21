@@ -9,6 +9,7 @@
  * @category classes
  * @subpackage backend
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 class Check extends MySqlObj
 {
@@ -256,7 +257,7 @@ CODE;
         return array(
                  'name' => $this->name,
                  'description' => $this->description,
-                 'frequency' => Utils::parseFrenquency($this->frequency),
+                 'frequency' => Utils::parseFrequency($this->frequency),
                  'f_root' => $this->f_root,
                  'f_noalerts' => $this->f_noalerts,
                 );
@@ -269,7 +270,7 @@ CODE;
         'Description' => $this->description,
         'Error Message' => $this->m_error,
         'Warning Message' => $this->m_warn,
-        'Frequency' => Utils::parseFrenquency($this->frequency),
+        'Frequency' => Utils::parseFrequency($this->frequency),
         'No Alerts?' => ($this->f_root) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Need root?' => ($this->f_root) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Updated on' => date('d-m-Y', $this->t_upd),

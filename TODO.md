@@ -3,6 +3,7 @@
 Urgent:
 ========
 
+ - Move tools.php:statistics to proprietary module
  - Implement regression testing
  - Finish SQL Parameters binding in mysqlobj.obj.php
 

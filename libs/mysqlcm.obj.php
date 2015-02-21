@@ -9,6 +9,7 @@
  * @category classes
  * @subpackage backend
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 if (!defined('SQL_NONE')) {
     define('SQL_NONE',   0);  /* not used */

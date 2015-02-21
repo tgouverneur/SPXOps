@@ -9,6 +9,7 @@
  * @subpackage various
  * @category libs
  * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 if (!defined('PLUGIN_LOADED')) {
 

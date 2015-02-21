@@ -1,4 +1,16 @@
 <?php
+/**
+ * Modal List
+ *
+ * @author Gouverneur Thomas <tgo@espix.net>
+ * @copyright Copyright (c) 2012-2015, Gouverneur Thomas
+ * @version 1.0
+ * @package frontend
+ * @category www
+ * @subpackage management
+ * @filesource
+ * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
+ */
  require_once("../libs/utils.obj.php");
 
 try {
