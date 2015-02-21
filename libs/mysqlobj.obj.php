@@ -111,7 +111,7 @@ class MySqlObj
           $where .= "WHERE ";
       }
           $where .= "`".$id."`= :".$id;
-	  $args[':'.$id] = $this->{$this->_myc[$id]};
+          $args[':'.$id] = $this->{$this->_myc[$id]};
           $w++;
       }
       if ($w) {
@@ -148,42 +148,46 @@ class MySqlObj
 
       /* Update */
 
-      $where = "";
+          $where = "";
           $w_args = array();
           $s_args = array();
           $w = 0;
           foreach ($ids as $id) {
-              if ($id === false) {
-                  continue;
-              } /* no index in obj */
+            if ($id === false) {
+                continue;
+            } /* no index in obj */
 
-        if ($w) {
-            $where .= " AND ";
-        } else {
-            $where .= "WHERE ";
-            $w++;
-        }
-              $where .= "`".$id."`='".$this->{$this->_myc[$id]}."'";
+            if ($w) {
+                $where .= " AND ";
+            } else {
+                $where .= "WHERE ";
+                $w++;
+            }
+            $where .= '`'.$id.'`=:'.$id;
+            $w_args[':'.$id] = $this->{$this->_myc[$id]};
           }
-          $where .= " AND `name`='".$name."'";
-          $set = "`value`=".$my->quote($value).", `u`='".time()."'";
-          if ($my->update($this->_nfotable, $set, $where)) {
+          $where .= ' AND `name`=:name';
+          $w_args[':name'] = $name;
+          $set = '`value`=:value, `u`=:u';
+          $s_args[':value'] = $value;
+          $s_args[':u'] = time();
+          if ($my->update($this->_nfotable, array('v' => $set, 'a' => $s_args), array('v' => $where, 'a' => $w_args))) {
               throw new SPXException('Unable to update NFO entry');
           }
       } else {
           /* Insert */
-      $w = 3;
-          $fields = "`name`, `value`, `u`";
-          $values = "'$name',".$my->quote($value).",".time();
+          $w = 3;
+          $fields = '`name`, `value`, `u`';
+          $values = "'$name',".$my->quote($value).','.time();
           foreach ($ids as $id) {
               if ($id === false) {
                   continue;
               } /* no index in obj */
 
-        if ($w) {
-            $fields .= " , ";
-            $values .= " , ";
-        }
+            if ($w) {
+                $fields .= " , ";
+                $values .= " , ";
+            }
               $fields .= "`".$id."`";
               $values .= $my->quote($this->{$this->_myc[$id]});
           }
@@ -214,21 +218,24 @@ class MySqlObj
       $my = MySqlCM::getInstance();
 
       $where = "";
+      $args = array();
       $w = 0;
       foreach ($ids as $id) {
           if ($id === false) {
               continue;
           } /* no index in obj */
 
-      if ($w) {
-          $where .= " AND ";
-      } else {
-          $where .= "WHERE ";
-          $w++;
-      }
-          $where .= "`".$id."`='".$this->{$this->_myc[$id]}."'";
+          if ($w) {
+              $where .= " AND ";
+          } else {
+              $where .= "WHERE ";
+              $w++;
+          }
+          $where .= '`'.$id.'`=:'.$id;
+          $args[':'.$id] = $this->{$this->_myc[$id]};
       }
       $fields = "`name`,`value`";
+      $where = array('q' => $where, 'a' => $args);
 
       if (($data = $my->select($fields, $this->_nfotable, $where)) === false) {
           throw new SPXException('Select failed');
@@ -259,6 +266,7 @@ class MySqlObj
       }
 
       $where = "WHERE ";
+      $args = array();
       $i = 0;
       foreach ($this->_my as $k => $v) {
           if ($v & SQL_WHERE) {
@@ -266,10 +274,12 @@ class MySqlObj
                   $where .= " AND ";
               }
 
-              $where .= "`".$k."`='".$this->{$this->_myc[$k]}."'";
+              $where .= '`'.$k.'`=:'.$k;
+              $args[':'.$k] = $this->{$this->_myc[$k]};
               $i++;
           }
       }
+      $where = array('q' => $where, 'a' => $args);
 
       $my = MySqlCM::getInstance();
       if (($data = $my->select("`".$id."`", $this->_table, $where)) !== false) {
