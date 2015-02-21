@@ -21,10 +21,14 @@ class SSHSession
     private $_progress = false;
     private $_stream = null;
 
-    private $_con, $_connected;
+    private $_con, $_connected = false;
 
     public function connect()
     {
+        if ($this->_connected) {
+            throw new SPXException('Already connected to this server');
+        }
+
         if (!$this->o_user) {
             throw new SPXException('Connection user not specified');
         }
@@ -39,12 +43,12 @@ class SSHSession
             }
         }
         if (!$authDone && !empty($this->o_user->password)) { /* password auth */
-      if (ssh2_auth_password($this->_con, $this->o_user->username, $this->o_user->password)) {
-          $authDone = true;
-      }
+          if (ssh2_auth_password($this->_con, $this->o_user->username, $this->o_user->password)) {
+              $authDone = true;
+          }
         }
         if ($authDone) {
-            $this->_connected = 1;
+            $this->_connected = true;
         } else {
             throw new SPXException('Authentication failed');
         }
@@ -54,12 +58,19 @@ class SSHSession
 
     public function sendFile($source, $dest, $rights = 0644)
     {
+        if (!$this->_connected) {
+            throw new SPXException('Cannot sendFile(): not connected');
+        }
         return ssh2_scp_send($this->_con, $source, $dest, $rights);
     }
 
     public function execNB($c)
-    { /* exec non blocking */
-    $c = $c.";echo \"__COMMAND_FINISHED__\"";
+    { 
+        /* exec non blocking */
+        if (!$this->_connected) {
+            throw new SPXException('Cannot execNB(): not connected');
+        }
+        $c = $c.";echo \"__COMMAND_FINISHED__\"";
         if ($this->_progress) {
             throw new SPXException('Another command is already in progress.');
         }
@@ -85,6 +96,9 @@ class SSHSession
 
     public function readFromStream()
     {
+        if (!$this->_connected) {
+            throw new SPXException('Cannot readFromStrem(): not connected');
+        }
         if (!$this->_progress) {
             throw new SPXException('No command running ATM.');
         }
@@ -113,6 +127,9 @@ class SSHSession
 
     public function forceClose()
     {
+        if (!$this->_connected) {
+            throw new SPXException('Cannot forceClose(): not connected');
+        }
         if (!$this->_progress) {
             throw new SPXException('No command running ATM.');
         }
@@ -124,6 +141,9 @@ class SSHSession
 
     public function execSecure($c, $timeout = 30)
     {
+        if (!$this->_connected) {
+            throw new SPXException('Cannot execSecure(): not connected');
+        }
         $c = $c.";echo \"__COMMAND_FINISHED__\"";
         $time_start = time();
         $buf = "";
@@ -160,6 +180,9 @@ class SSHSession
 
     public function exec($c)
     {
+        if (!$this->_connected) {
+            throw new SPXException('Cannot exec(): not connected');
+        }
         if (!($stream = ssh2_exec($this->_con, $c))) {
             return -1;
         } else {
@@ -176,7 +199,7 @@ class SSHSession
 
     public function notifyDisconnect($reason, $message, $language)
     {
-        $this->_connected = 0;
+        $this->_connected = false;
     }
 
     public function __construct($h = "")
@@ -188,7 +211,7 @@ class SSHSession
         $this->hostname = $h;
         $this->port = 22;
 
-        $this->_connected = 0;
+        $this->_connected = false;
         $this->_con = null;
     }
 }
