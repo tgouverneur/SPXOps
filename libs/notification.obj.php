@@ -13,6 +13,9 @@
  */
 class Notification
 {
+  public static function jobSendNotification(&$job, $s_arg) {
+  }
+
   public static function sendResult(Server &$s, Result $cr, Result $oldcr = null)
   {
       $a_login = array();
@@ -54,6 +57,7 @@ class Notification
       $headers = 'From: '.$mfrom."\r\n";
       $headers .= 'X-Mailer: SPXOps'."\r\n";
       $headers .= 'Reply-To: no-reply@'.$domain."\r\n";
+      $headers .= 'References: <'.Result::getHash($cr, $oldcr).'>'."\r\n";
       $msg = 'Device: '.$s."\r\n";
       $msg .= 'Check: '.$cr->o_check."\r\n";
       if ($oldcr && $cr->rc != $oldcr->rc) {

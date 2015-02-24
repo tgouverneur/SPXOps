@@ -28,6 +28,16 @@ class Result extends MySqlObj
     public $o_server = null;
     public $o_login = null;
 
+    public static function getHash($c, $o) {
+        $hs = '';
+        if ($c->rc < 0) {
+            $hs .= $c->id.$c->fk_check.$c->fk_server;
+        } else {
+            $hs .= $o->id.$o->fk_check.$o->fk_server;
+        }
+        return md5($hs);
+    }
+
     public function equals($r)
     {
         if ($r->rc == $this->rc &&
