@@ -50,19 +50,19 @@ try {
 
        $wa = Plugin::getWebAction($p, $w);
        if (!$wa) {
-	 throw new ExitException('The Plugin or Action you requested is not registered');
+         throw new ExitException('The Plugin or Action you requested is not registered');
        }
        
        if ($wa->n_right) { /* Preliminary right check */
          if (!$lm->o_login->cRight($wa->n_right, $wa->n_level)) {
-	   throw new ExitException('Access Denied, please check your access rights!');
+           throw new ExitException('Access Denied, please check your access rights!');
          }
        }
        $content = null;
        $wa->call($wa); /* supposed to fill $content */
 
        if (!$content) {
-	 throw new ExitException('Something wrong happened in plugin '.$wa->o_plugin->name);
+         throw new ExitException('Something wrong happened in plugin '.$wa->o_plugin->name, $wa->otype + 1);
        }
 
        $page['title'] .= $wa->desc;
@@ -72,17 +72,23 @@ try {
    $content->set('error', "I don't know what you're talking about...");
  }
 
-screen:
+ if (isset($wa) && $wa->otype == 1 && !($content instanceof Template)) {
 
- $head->set("js", $js);
- $head->set("css", $css);
- $head->set('page', $page);
- if (isset($a_link)) $foot->set('a_link', $a_link);
- $index->set('head', $head);
- $index->set('content', $content);
- $index->set('foot', $foot);
+     header('Content-Type: application/json');
+     echo json_encode($content);
 
- echo $index->fetch();
+ } else {
+     
+     $head->set("js", $js);
+     $head->set("css", $css);
+     $head->set('page', $page);
+     if (isset($a_link)) $foot->set('a_link', $a_link);
+     $index->set('head', $head);
+     $index->set('content', $content);
+     $index->set('foot', $foot);
+
+     echo $index->fetch();
+ }
 
 } catch (ExitException $e) {
      

@@ -13,14 +13,15 @@
  */
 class PluginWME
 {
-  public $name = '';
+    public $name = '';
     public $desc = '';
     public $cat = '';
     public $fct = null;
+    public $otype = 0; // Output type, 0==web, 1==json
 
     public $is_std = true; /* is this category standard */
 
-  public $n_right = null;
+    public $n_right = null;
     public $n_level = 0;
 
     public $o_plugin = null;
