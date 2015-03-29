@@ -64,7 +64,7 @@ if (!isset($edit)) $edit = false;
               </div>
               <div class="checkbox">
 	       <label>
-                <input name="f_ldap" type="checkbox" <?php if ($obj->f_ldap) { echo "checked"; } ?>> in LDAP
+                <input name="f_api" type="checkbox" <?php if ($obj->f_api) { echo "checked"; } ?>> API usage
                </label>
               </div>
               <div class="checkbox">

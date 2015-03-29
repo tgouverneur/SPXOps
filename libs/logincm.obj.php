@@ -25,6 +25,7 @@ class LoginCM
     {
         session_start();
         $this->checkLogin();
+        $this->checkAPIKey();
         if ($this->o_login) {
             $this->o_login->getAddr();
             $this->o_login->fetchData();
@@ -50,7 +51,7 @@ class LoginCM
             $_SESSION['username'] = $l->username;
         }
         if ($keep) { // keep you logged in
-          $vstr = md5($l->username.Config::$sitename.$l->password);
+            $vstr = md5($l->username.Config::$sitename.$l->password);
             $vstr = 'username='.$l->username.'&vstr='.$vstr;
             setcookie(Config::$sitename, $vstr, time() + (24*3600*31)); // logged in for 1 month
         }
@@ -72,12 +73,38 @@ class LoginCM
             }
             if (isset($_COOKIE[Config::$sitename])) {
                 unset($_COOKIE[Config::$sitename]);
-    // destroy cookie
-    setcookie(Config::$sitename, "", time() - 3600);
+                // destroy cookie
+                setcookie(Config::$sitename, "", time() - 3600);
             }
             $this->o_login = null;
             $this->username = "";
         }
+    }
+
+    public function checkAPIKey() 
+    {
+        if (isset($_POST['username']) && isset($_POST['apikey']) &&
+            !empty($_POST['username']) && !empty($_POST['apikey'])) {
+
+            $username = $_POST['username'];
+            $apikey = $_POST['apikey'];
+            $l = new Login();
+            $l->username = $username;
+            if ($l->fetchFromField('username')) {
+                $this->isLogged = 0;
+                $this->username = '';
+                $_SESSION['username'] = '';
+                $this->o_login = null;
+                return false;
+            }
+            if ($l->f_api && !strcmp($apikey, $l->getAPIKey())) {
+
+                $this->o_login = $l;
+                $this->isLogged = 1;
+                return true;
+            }
+        }
+        return false;
     }
 
     public function checkLogin()
@@ -108,7 +135,7 @@ class LoginCM
                     $this->o_login = null;
                 } else {
                     $vstr = $l->username.Config::$sitename.$l->password;
-          $vstr = md5($vstr);
+                    $vstr = md5($vstr);
                     if (!strcmp($v['vstr'], $vstr)) {
                         $this->o_login = $l;
                         $this->isLogged = 1;

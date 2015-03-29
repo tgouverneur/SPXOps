@@ -13,15 +13,15 @@
  */
 class Login extends MySqlObj
 {
-  public $id = -1;
+    public $id = -1;
     public $username = '';
     public $password = '';
     public $password_c = ''; /* only for form-based validation */
-  public $fullname = '';
+    public $fullname = '';
     public $email = '';
     public $f_noalerts = 0;
     public $f_admin = 0;
-    public $f_ldap = 0;
+    public $f_api = 0;
     public $t_last = -1;
     public $t_add = -1;
     public $t_upd = -1;
@@ -85,7 +85,7 @@ class Login extends MySqlObj
             $ret[] = 'Missing Username';
         } else {
             if ($new) { /* check for already-exist */
-        $check = new Login();
+                $check = new Login();
                 $check->username = $this->username;
                 if (!$check->fetchFromField('username')) {
                     $this->username = '';
@@ -190,6 +190,7 @@ class Login extends MySqlObj
         $this->password = crypt($input, sprintf('$2y$%02d$', $rounds).$salt);
     }
 
+
     public function auth($pwd)
     {
         if (crypt($pwd, $this->password) == $this->password) {
@@ -199,6 +200,13 @@ class Login extends MySqlObj
         }
     }
 
+    public function getAPIKey() {
+        $apikey = $this->username;
+        $apikey .= $this->password;
+        $apikey .= md5(file_get_contents(dirname(__FILE__).'/config.obj.php'));
+        return base64_encode(md5($apikey));
+    }
+
     public static function printCols($cfs = array())
     {
         return array('Username' => 'username',
@@ -206,7 +214,7 @@ class Login extends MySqlObj
                  'E-Mail' => 'email',
                  'No Alerting' => 'f_noalerts',
                  'Admin' => 'f_admin',
-                 'LDAP' => 'f_ldap',
+                 'API' => 'f_api',
                  'Added' => 't_add',
                 );
     }
@@ -219,7 +227,7 @@ class Login extends MySqlObj
                  'email' => $this->email,
                  'f_noalerts' => $this->f_noalerts,
                  'f_admin' => $this->f_admin,
-                 'f_ldap' => $this->f_ldap,
+                 'f_api' => $this->f_api,
                  't_add' => date('d-m-Y', $this->t_add),
                 );
     }
@@ -232,7 +240,7 @@ class Login extends MySqlObj
         'E-Mail' => $this->email,
         'No Alerts?' => ($this->f_noalerts) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Admin?' => ($this->f_admin) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
-        'LDAP?' => ($this->f_ldap) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
+        'api?' => ($this->f_api) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Last seen' => date('d-m-Y', $this->t_last),
         'Updated on' => date('d-m-Y', $this->t_upd),
         'Added on' => date('d-m-Y', $this->t_add),
@@ -261,7 +269,7 @@ class Login extends MySqlObj
                         'email' => SQL_PROPE,
                         'f_noalerts' => SQL_PROPE,
                         'f_admin' => SQL_PROPE,
-                        'f_ldap' => SQL_PROPE,
+                        'f_api' => SQL_PROPE,
                         't_last' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE,
@@ -275,7 +283,7 @@ class Login extends MySqlObj
                         'email' => 'email',
                         'f_noalerts' => 'f_noalerts',
                         'f_admin' => 'f_admin',
-                        'f_ldap' => 'f_ldap',
+                        'f_api' => 'f_api',
                         't_last' => 't_last',
                         't_add' => 't_add',
                         't_upd' => 't_upd',

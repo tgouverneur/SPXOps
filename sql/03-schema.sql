@@ -328,10 +328,11 @@ CREATE TABLE `list_login` (
   `password` varchar(255) NOT NULL,
   `fullname` varchar(255) NOT NULL,
   `email` varchar(200) NOT NULL,
+  `apikey` varchar(255) NOT NULL,
   `f_noalerts` int(1) NOT NULL DEFAULT '0',
   `f_admin` int(1) NOT NULL DEFAULT '0',
-  `f_ldap` int(1) NOT NULL DEFAULT '0',
-  `t_last` int(11) NOT NULL,
+  `f_api` int(1) NOT NULL DEFAULT '0',
+  `t_last` int(11) NOT NULL DEFAULT '0',
   `t_add` int(11) NOT NULL DEFAULT '-1',
   `t_upd` int(11) NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`)

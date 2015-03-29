@@ -28,7 +28,9 @@
 	     </tbody>
 	   </table>
 	  </div>
-          <div class="col-md-4">
+       <div class="col-md-8">
+        <div class="row">
+          <div class="col-md-6">
            <h3>Groups</h3>
            <table id="LListugroupTable" class="table table-condensed">
              <tbody>
@@ -41,7 +43,7 @@
              </tbody>
            </table>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
            <h3>Actions</h3>
 	    <ul class="nav nav-pills nav-stacked">
 	      <li class="dropdown active">
@@ -52,8 +54,24 @@
 	        </ul>
 	      </li>
             </ul>
-	  </div>
-	</div>
+          </div>
+        </div>
+        <div class="row">
+        <?php if ($obj->f_api) { ?>
+            <div class="col-md-8">
+                 <h3>API Key</h3>
+                    <table class="table table-condensed">
+                      <tbody>
+                        <tr>
+                         <td><?php echo $obj->getAPIKey(); ?></td>
+                       </tr>
+                      </tbody>
+                  </table>
+            </div>
+            <?php } ?>
+        </div>
+        </div>
+    </div>
         <div class="row">
           <div class="col-md-4">
            <h3>Add Group</h3>

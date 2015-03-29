@@ -401,7 +401,7 @@ try {
        $content = new Template('../tpl/form_user.tpl');
        $page['title'] .= $what;
        if (isset($_POST['submit'])) { /* clicked on the Add button */
-         $fields = array('fullname', 'email', 'username', 'password', 'password_c', 'f_noalerts', 'f_admin', 'f_ldap');
+         $fields = array('fullname', 'email', 'username', 'password', 'password_c', 'f_noalerts', 'f_admin', 'f_api');
 	 foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
 	     if (isset($_POST[$field])) {
