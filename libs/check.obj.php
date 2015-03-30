@@ -131,10 +131,12 @@ CODE;
   public function doCheck(&$s)
   {
       if ($this->isLocked($s)) {
+          $s->log("$this is already locked for $s ", LLOG_ERR);
           return -1;
       }
 
-      if ($this->lockCheck($s)) {
+      if (($rc = $this->lockCheck($s))) {
+          $s->log("$this Cannot acquire lock for $s ($rc)", LLOG_ERR);
           return -1;
       }
       $lua = $this->getLuaObject($s);
@@ -153,10 +155,10 @@ CODE;
           $this->updateResult($r, $ret);
           $done = false;
           if (isset($s->a_lr[$this->id]) &&
-      $s->a_lr[$this->id]) {
+              $s->a_lr[$this->id]) {
               $s->log("Last result found for $this / $s", LLOG_DEBUG);
               if ($r->equals($s->a_lr[$this->id])) { /* same result, only update t_upd */
-      $s->a_lr[$this->id]->update();
+                  $s->a_lr[$this->id]->update();
                   $done = true;
                   $s->log("We only updated check result for $this / $s", LLOG_DEBUG);
               }
@@ -164,7 +166,7 @@ CODE;
               $s->log("Check result not found for $this / $s", LLOG_DEBUG);
           }
           if (!$done) { // new check result
-        $oldcr = null;
+              $oldcr = null;
               if (isset($s->a_lr[$this->id])) {
                   $oldcr = $s->a_lr[$this->id];
               }
@@ -187,6 +189,24 @@ CODE;
   /* Check locking */
   public function lockCheck(&$obj)
   {
+      $m = MySqlCM::getInstance();
+      $pid = Pid::getMyPid();
+      if (!$pid) {
+          return -1;
+      }
+      $args = array('idPid' => $pid->id,
+                    'idServer' => $obj->id,
+                    'idCheck' => $this->id);
+      $ret = array('rc' => -1);
+      if ($m->call('lockCheck', $args, $ret)) {
+          return -1;
+      }
+      if ($ret['rc']) {
+          return $ret['rc'];
+      }
+      return 0;
+
+      /*
       $cl = new Lock();
       $cl->fk_check = $this->id;
       $cl->fk_server = $obj->id;
@@ -196,18 +216,36 @@ CODE;
       }
 
       return $cl->insert();
+      */
   }
 
     public function unlockCheck(&$obj)
     {
+      $m = MySqlCM::getInstance();
+      $args = array('idServer' => $obj->id,
+                    'idCheck' => $this->id);
+      $ret = array();
+      if ($m->call('unlockCheck', $args, $ret)) {
+          return -1;
+      }
+      return 0;
+/*
         $cl = new Lock();
         $cl->fk_check = $this->id;
         $cl->fk_server = $obj->id;
         if (!$cl->fetchFromFields(array('fk_check', 'fk_server'))) {
-            return $cl->delete();
+            $pid = Pid::getMyPid();
+            if ($pid) {
+                if ($cl->fk_pid == $pid->id) {
+                    $cl->delete();
+                }
+            } else {
+                return $cl->delete();
+            }
         }
 
         return -1;
+ */
     }
 
     public function isLocked(&$obj)

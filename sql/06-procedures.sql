@@ -22,3 +22,47 @@ COMMIT;
 END //
 DELIMITER ;
 
+--
+-- Lock Check
+--
+DELIMITER //
+CREATE PROCEDURE lockCheck
+(idPid INT, idServer INT, idCheck INT, OUT rc INT)
+BEGIN
+  DECLARE vLID INT DEFAULT 0;
+  DECLARE record_not_found INT DEFAULT 0;
+  DECLARE c1 CURSOR FOR SELECT id FROM list_lock WHERE fk_server = idServer AND fk_check = idCheck;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET record_not_found = 1;
+  DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
+  SET rc = 1;
+  START TRANSACTION;
+  OPEN c1;
+  FETCH c1 INTO vLID;
+  CLOSE c1;
+  IF record_not_found THEN
+    INSERT INTO list_lock(fk_pid, fk_server, fk_check, fct, t_add) VALUES(idPid, idServer, idCheck, '', UNIX_TIMESTAMP());
+    SET rc = 0;
+  ELSE
+    SET rc = 2;
+  END IF;
+  COMMIT;
+END //
+DELIMITER ;
+
+--
+-- Unlock Check
+--
+DELIMITER //
+CREATE PROCEDURE unlockCheck
+(idServer INT, idCheck INT)
+BEGIN
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
+  DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
+  START TRANSACTION;
+    DELETE FROM list_lock where fk_server = idServer AND fk_check = idCheck;
+  COMMIT;
+END //
+DELIMITER ;
+
+

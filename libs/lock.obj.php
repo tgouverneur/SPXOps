@@ -43,8 +43,8 @@ class Lock extends MySqlObj
         $locked = false;
         $pid = Pid::getMyPid();
 
-    /* Lock the table */
-    $rc = $m->lockTable('list_lock');
+        /* Lock the table */
+        $rc = $m->lockTable('list_lock');
         if ($rc) {
             return $locked;
         }
@@ -52,7 +52,7 @@ class Lock extends MySqlObj
             $rc = self::lockFct($fct, $pid);
             if ($rc) {
                 /* Something bad happened, try anyway to delete lock... */
-        self::unlockFct($fct, $pid);
+                self::unlockFct($fct, $pid);
             } else {
                 $locked = true;
             }

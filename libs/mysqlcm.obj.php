@@ -419,24 +419,26 @@ class MySqlCM
           return -1;
       }
       $this->_res->closeCursor();
+      if (count($ret)) {
 
-    /* fetch params */
-    $pq = 'SELECT ';
-      $first = 1;
-      foreach ($ret as $name => $value) {
-          if (!$first--) {
-              $pq .= '.';
+        /* fetch params */
+        $pq = 'SELECT ';
+          $first = 1;
+          foreach ($ret as $name => $value) {
+              if (!$first--) {
+                  $pq .= '.';
+              }
+              $pq .= '@'.$name.' AS '.$name;
           }
-          $pq .= '@'.$name.' AS '.$name;
-      }
-      $pq .= ';';
-      $r = $this->_link->query($pq)->fetch(PDO::FETCH_ASSOC);
-      foreach ($ret as $name => $value) {
-          if (isset($r[$name])) {
-              $ret[$name] = $r[$name];
+          $pq .= ';';
+          $r = $this->_link->query($pq)->fetch(PDO::FETCH_ASSOC);
+          foreach ($ret as $name => $value) {
+              if (isset($r[$name])) {
+                  $ret[$name] = $r[$name];
+              }
           }
-      }
 
+      }
       return 0;
   }
 

@@ -158,7 +158,7 @@ class Pid extends MySqlObj
         $pid->agent = Config::$agentname;
         $pid->pid = posix_getpid();
         if ($pid->fetchFromFields(array('pid', 'agent'))) {
-            return;
+            return null;
         }
 
         return $pid;
