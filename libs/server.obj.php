@@ -354,6 +354,7 @@ class Server extends MySqlObj implements JsonSerializable
 
     public function exec($cmd, $args = null, $timeout = 30)
     {
+        //Logger::log('CMD_RUN: '.$cmd, $this, LLOG_INFO);
         $v_cmd = '';
 
         if ($args) {
