@@ -205,18 +205,6 @@ CODE;
           return $ret['rc'];
       }
       return 0;
-
-      /*
-      $cl = new Lock();
-      $cl->fk_check = $this->id;
-      $cl->fk_server = $obj->id;
-      $pid = Pid::getMyPid();
-      if ($pid) {
-          $cl->fk_pid = $pid->id;
-      }
-
-      return $cl->insert();
-      */
   }
 
     public function unlockCheck(&$obj)
@@ -229,23 +217,6 @@ CODE;
           return -1;
       }
       return 0;
-/*
-        $cl = new Lock();
-        $cl->fk_check = $this->id;
-        $cl->fk_server = $obj->id;
-        if (!$cl->fetchFromFields(array('fk_check', 'fk_server'))) {
-            $pid = Pid::getMyPid();
-            if ($pid) {
-                if ($cl->fk_pid == $pid->id) {
-                    $cl->delete();
-                }
-            } else {
-                return $cl->delete();
-            }
-        }
-
-        return -1;
- */
     }
 
     public function isLocked(&$obj)

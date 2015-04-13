@@ -104,7 +104,6 @@
 	     </table>
           </div>
        </div>
-      </div>
       <!-- Logs Modal -->
       <div class="modal large hide fade in" id="logsModal" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
         <div class="modal-header">

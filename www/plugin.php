@@ -29,7 +29,7 @@ try {
  $head = new Template("../tpl/head.tpl");
  $foot = new Template("../tpl/foot.tpl");
  $page = array();
- $page['title'] = 'List of ';
+ $page['title'] = 'Plugins';
 
  if ($lm->o_login) {
    $page['login'] = &$lm->o_login;
@@ -41,6 +41,7 @@ try {
  $js = array();
  $css = array();
  $a_link = null;
+ $head_code = null;
 
  if (isset($_GET['p']) && !empty($_GET['p']) &&
      isset($_GET['w']) && !empty($_GET['w'])) {
@@ -82,6 +83,7 @@ try {
      $head->set("js", $js);
      $head->set("css", $css);
      $head->set('page', $page);
+     $head->set('head_code', $head_code);
      if (isset($a_link)) $foot->set('a_link', $a_link);
      $index->set('head', $head);
      $index->set('content', $content);
