@@ -75,10 +75,10 @@ class Job extends MySqlObj
     public static function cleanJobs(&$job)
     {
         $t_old = time() - (3600*12); // 12h
-    $table = "`list_job`";
+        $table = "`list_job`";
         $index = "`id`";
         $cindex = "COUNT(`id`)";
-        $where['q'] = "WHERE `t_add` <= :t_add AND (`state`=".S_FAIL." OR `state`=".S_DONE." OR `state`=".S_STALL.")";
+        $where['q'] = "WHERE `fk_login`=-1 AND `t_add` <= :t_add AND (`state`=".S_FAIL." OR `state`=".S_DONE." OR `state`=".S_STALL.")";
         $where['a'] = array(':t_add' => array(0 => $t_old, 1 => PDO::PARAM_INT));
 
         $it = new mIterator('Job', $index, $table, $where, $cindex);
