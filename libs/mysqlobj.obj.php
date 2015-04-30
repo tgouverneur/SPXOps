@@ -697,9 +697,9 @@ class MySqlObj
         return;
     }
 
-    public function fetchRL($ar, $f_fetch = true, $where = '')
+    public function fetchRL($ar, $f_fetch = true, $where = '', $order = '')
     {
-        $this->_fetchRL($ar, $f_fetch, $where);
+        $this->_fetchRL($ar, $f_fetch, $where, $order);
     }
 
     public function getTable()
@@ -949,7 +949,7 @@ class MySqlObj
         }
     }
 
-    protected function _fetchRL($name, $f_fetch = true, $where = '')
+    protected function _fetchRL($name, $f_fetch = true, $where = '', $order = '')
     {
         if (!isset($this->_rel[$name])) {
             throw new SPXException("Rel association $name not found");
@@ -984,6 +984,7 @@ class MySqlObj
                 }
                 $w++;
             }
+            $where .= ' '.$order;
             if (($idx = $my->fetchIndex($index, $table, $where))) {
                 foreach ($idx as $t) {
                     $d = new $rel->oc();
