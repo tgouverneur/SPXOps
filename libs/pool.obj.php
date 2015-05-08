@@ -155,6 +155,21 @@ class Pool extends MySqlObj
         );
     }
 
+    public static function formatGBytes($k)
+    {
+        if ($k < 1024) {
+            return round($k, 2)." GB";
+        }
+        $k = $k / 1024;
+        if ($k < 1024) {
+            return round($k, 2)." TB";
+        }
+        $k = $k / 1024;
+
+        return round($k, 2)." PB";
+    }
+
+
     public static function formatBytes($k)
     {
         $k /= 1024;
@@ -189,25 +204,25 @@ class Pool extends MySqlObj
         }
         $size[strlen($size) - 1] = ' ';
         switch ($unit) {
-      case "K":
-        return round($size * 1024);
-      break;
-      case "M":
-        return round($size * 1024 * 1024);
-      break;
-      case "G":
-        return round($size * 1024 * 1024 * 1024);
-      break;
-      case "T":
-        return round($size * 1024 * 1024 * 1024 * 1024);
-      break;
-      case "P":
-        return round($size * 1024 * 1024 * 1024 * 1024 * 1024);
-      break;
-      default:
-        return -1;
-      break;
-    }
+          case "K":
+            return round($size * 1024);
+          break;
+          case "M":
+            return round($size * 1024 * 1024);
+          break;
+          case "G":
+            return round($size * 1024 * 1024 * 1024);
+          break;
+          case "T":
+            return round($size * 1024 * 1024 * 1024 * 1024);
+          break;
+          case "P":
+            return round($size * 1024 * 1024 * 1024 * 1024 * 1024);
+          break;
+          default:
+            return -1;
+          break;
+        }
     }
 
     public function delete()
