@@ -157,11 +157,11 @@ class Pool extends MySqlObj
 
     public static function formatGBytes($k)
     {
-        if ($k < 1024) {
+        if (abs($k) < 1024) {
             return round($k, 2)." GB";
         }
         $k = $k / 1024;
-        if ($k < 1024) {
+        if (abs($k) < 1024) {
             return round($k, 2)." TB";
         }
         $k = $k / 1024;
