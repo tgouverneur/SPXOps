@@ -193,7 +193,7 @@ class Login extends MySqlObj
 
     public function auth($pwd)
     {
-        if (crypt($pwd, $this->password) == $this->password) {
+        if (crypt($pwd, $this->password) === $this->password) {
             return true;
         } else {
             return false;
