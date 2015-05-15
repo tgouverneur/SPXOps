@@ -249,8 +249,8 @@ class Job extends MySqlObj
         'State' => $this->stateStr(),
         'PID' => $this->o_pid,
         'Added by' => ($this->o_login) ? $this->o_login : 'Unknown',
-        'Started at' => date('d-m-Y H:m:s', $this->t_start),
-        'Stopped at' => date('d-m-Y H:m:s', $this->t_stop),
+        'Started at' => ($this->t_start == -1)?"-":date('d-m-Y H:m:s', $this->t_start),
+        'Stopped at' => ($this->t_stop == -1)?"-":date('d-m-Y H:m:s', $this->t_stop),
         'Added on' => date('d-m-Y H:m:s', $this->t_add),
         'Updated on' => date('d-m-Y H:m:s', $this->t_upd),
     );
