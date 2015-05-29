@@ -26,7 +26,6 @@ try {
  $h->parseUrl();
 
  if ($lm->o_login) {
-   $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
      throw new ExitException('You must be logged-in', 2);
@@ -35,10 +34,12 @@ try {
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
      case 'lsVM':
-       if (isset($_GET['o']) && !empty($_GET['o'])) {
-         $o = $_GET['o'];
-       } 
-       $a_vms = VM::getAll(true, array('name' => 'LIKE:'.$o), array('ASC:hostname'));
+       if (isset($_POST['o']) && !empty($_POST['o'])) {
+         $o = $_POST['o'];
+       }  else {
+         throw new ExitException('No filter provided', 2);
+       }
+       $a_vms = VM::getAll(true, array('name' => 'LIKE:'.$o), array('ASC:name'));
        $ret = array();
        $ret['count'] = count($a_vms);
        $ret['vms'] = array();
@@ -46,33 +47,33 @@ try {
            $ret['vms'][$vm->name] = $vm->jsonSerialize();
        }
        header('Content-Type: application/json');
-       echo json_encode($a_s);
+       echo json_encode($ret, JSON_PRETTY_PRINT);
      break;
      case 'server':
        $o = null;
        $i = null;
-       if (isset($_GET['i']) && !empty($_GET['i'])) {
-         $i = $_GET['i'];
+       if (isset($_POST['ri']) && !empty($_POST['i'])) {
+         $i = $_POST['i'];
        } 
-       if (isset($_GET['o']) && !empty($_GET['o'])) {
-         $o = $_GET['o'];
+       if (isset($_POST['o']) && !empty($_POST['o'])) {
+         $o = $_POST['o'];
        } 
        $abj = new Server();
        if ($i) {
            $obj->id = $i;
            if ($obj->fetchFromId()) {
-               throw new ExitException('No server found with that ID')
+               throw new ExitException('No server found with that ID', 2);
            }
        } else if ($o) {
            $obj->hostname = $o;
            if ($obj->fetchFromField('hostname')) {
-               throw new ExitException('No server found with that hostname')
+               throw new ExitException('No server found with that hostname', 2);
            }
        } else {
-           throw new ExitException('No server hostname/id provided')
+           throw new ExitException('No server hostname/id provided', 2);
        }
        header('Content-Type: application/json');
-       echo json_encode($obj->jsonSerialize());
+       echo json_encode($obj->jsonSerialize(), JSON_PRETTY_PRINT);
      break;
      default:
        throw new ExitException('Unknown option or not implemented', 2);

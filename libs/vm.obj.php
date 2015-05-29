@@ -33,6 +33,7 @@ class VM extends MySqlObj
 
     public function jsonSerialize() {
         $this->fetchAll();
+        $this->getDisks();
         $ret = array(
                 'name' => $this->name,
                 'status' => $this->status,
@@ -40,6 +41,10 @@ class VM extends MySqlObj
         );
         if ($this->o_server) {
             $ret['o_server'] = $this->o_server->jsonSerialize();
+        }
+        $ret['disks'] = array();
+        foreach($this->a_disk as $disk) {
+            $ret['disks'][] = $disk->file;
         }
         return $ret;
     }
