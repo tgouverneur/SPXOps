@@ -638,13 +638,13 @@ class Server extends MySqlObj implements JsonSerializable
             $this->vmStats();
         }
         $ret = array(
-    'Hostname' => $this->hostname,
-    'Description' => $this->description,
-    'Update?' => ($this->f_upd) ? '<span class="glyphicon glyphicon-ok-sign"></span>' : '<span class="glyphicon glyphicon-remove-circle"></span>',
-    'RCE' => ($this->f_rce) ? '<span class="glyphicon glyphicon-ok-sign"></span>' : '<span class="glyphicon glyphicon-remove-circle"></span>',
-    'Updated on' => date('d-m-Y', $this->t_upd),
-    'Added on' => date('d-m-Y', $this->t_add),
-    );
+            'Hostname' => $this->hostname,
+            'Description' => $this->description,
+            'Update?' => ($this->f_upd) ? '<span class="glyphicon glyphicon-ok-sign"></span>' : '<span class="glyphicon glyphicon-remove-circle"></span>',
+            'RCE' => ($this->f_rce) ? '<span class="glyphicon glyphicon-ok-sign"></span>' : '<span class="glyphicon glyphicon-remove-circle"></span>',
+            'Updated on' => date('d-m-Y', $this->t_upd),
+            'Added on' => date('d-m-Y', $this->t_add),
+        );
         if ($this->vm_nb) {
             $ret['# VM'] = $this->vm_nb;
             $ret['# VM Cores'] = $this->vm_core;

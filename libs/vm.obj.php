@@ -31,6 +31,19 @@ class VM extends MySqlObj
     public $a_disk = array();
 
 
+    public function jsonSerialize() {
+        $this->fetchAll();
+        $ret = array(
+                'name' => $this->name,
+                'status' => $this->status,
+                'fk_server' => $this->fk_server,
+        );
+        if ($this->o_server) {
+            $ret['o_server'] = $this->o_server->jsonSerialize();
+        }
+        return $ret;
+    }
+
     public function log($str)
     {
         Logger::log($str, $this);
