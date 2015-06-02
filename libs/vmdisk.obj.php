@@ -13,9 +13,11 @@
  */
 class VMdisk
 {
-  public $file = '';
-    public function __construct($f)
+    public $file = '';
+    public $type = '';
+    public function __construct($f, $t='')
     {
         $this->file = $f;
+        $this->type = $t;
     }
 }

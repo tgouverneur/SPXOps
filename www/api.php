@@ -47,7 +47,7 @@ try {
            $ret['vms'][$vm->name] = $vm->jsonSerialize();
        }
        header('Content-Type: application/json');
-       echo json_encode($ret, JSON_PRETTY_PRINT);
+       echo json_encode($ret);
      break;
      case 'server':
        $o = null;
