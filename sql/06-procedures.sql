@@ -4,24 +4,25 @@ CREATE PROCEDURE deleteServer
 BEGIN
     START TRANSACTION;
     DELETE FROM nfo_server WHERE id=idServer;
-    DELETE FROM nfo_zone WHERE id IN (SELECT id FROM a_zone WHERE fk_server=idServer);
-    DELETE FROM a_zone WHERE fk_server=idServer;
-    DELETE FROM nfo_vm WHERE id IN (SELECT id FROM a_vm WHERE fk_server=idServer);
-    DELETE FROM a_vm WHERE fk_server=idServer;
-    DELETE FROM a_patch WHERE fk_server=idServer;
-    DELETE FROM a_pkg WHERE fk_server=idServer;
-    DELETE FROM a_net WHERE fk_server=idServer;
-    DELETE FROM a_prj WHERE fk_server=idServer;
-    DELETE FROM a_hba WHERE fk_server=idServer;
-    DELETE FROM a_disk WHERE fk_server=idServer;
-    DELETE FROM nfo_dataset WHERE id IN (SELECT id FROM a_dataset WHERE fk_pool IN (SELECT id FROM a_pool WHERE fk_server=idServer));
-    DELETE FROM a_dataset WHERE id IN (SELECT id FROM a_pool WHERE fk_server=idServer);
-    DELETE FROM a_pool WHERE fk_server=idServer;
-    DELETE FROM a_rrd WHERE fk_server=idServer;
-    DELETE FROM a_result WHERE fk_server=idServer;
-    DELETE FROM a_nfss WHERE fk_server=idServer;
-    DELETE FROM a_nfsm WHERE fk_server=idServer;
+    DELETE FROM nfo_zone WHERE id IN (SELECT id FROM list_zone WHERE fk_server=idServer);
+    DELETE FROM list_zone WHERE fk_server=idServer;
+    DELETE FROM nfo_vm WHERE id IN (SELECT id FROM list_vm WHERE fk_server=idServer);
+    DELETE FROM list_vm WHERE fk_server=idServer;
+    DELETE FROM list_patch WHERE fk_server=idServer;
+    DELETE FROM list_pkg WHERE fk_server=idServer;
+    DELETE FROM list_net WHERE fk_server=idServer;
+    DELETE FROM list_prj WHERE fk_server=idServer;
+    DELETE FROM list_hba WHERE fk_server=idServer;
+    DELETE FROM list_disk WHERE fk_server=idServer;
+    DELETE FROM nfo_dataset WHERE id IN (SELECT id FROM list_dataset WHERE fk_pool IN (SELECT id FROM list_pool WHERE fk_server=idServer));
+    DELETE FROM list_dataset WHERE id IN (SELECT id FROM list_pool WHERE fk_server=idServer);
+    DELETE FROM list_pool WHERE fk_server=idServer;
+    DELETE FROM list_rrd WHERE fk_server=idServer;
+    DELETE FROM list_result WHERE fk_server=idServer;
+    DELETE FROM list_nfs WHERE fk_server=idServer;
     DELETE FROM jt_server_sgroup WHERE fk_server=idServer;
+    DELETE FROM list_server where id=idServer;
+    COMMIT;
 END //
 DELIMITER ;
 

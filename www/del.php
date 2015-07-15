@@ -270,9 +270,6 @@ try {
        goto screen;
      break;
      case 'server':
-       /**
-	* @TODO; Check dependancies before delete()ing
-	*/
        if (!$lm->o_login->cRight('SRV', R_DEL)) {
          throw new ExitException('Access Denied, please check your access rights!');
        }
@@ -293,7 +290,20 @@ try {
        $page['title'] .= $what;
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "Server $obj has been removed from database");
-       $obj->delete();
+       //$obj->delete();
+       //Call stored proc deleteServer
+       $m = mysqlCM::getInstance();
+       $args = array('idServer' => $obj->id);
+       $ret = array();
+       try {
+       if ($m->call('deleteServer', $args, $ret)) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Something happened while calling stored procedure");
+         goto screen;
+       }
+       } catch (Exception $e){
+           var_dump($e);
+       }
        Act::add('Deleted the Server: '.$obj->hostname, $lm->o_login);
        $a_link = array(
               array('href' => '/list/w/server',
