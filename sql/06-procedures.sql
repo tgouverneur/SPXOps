@@ -1,3 +1,30 @@
+DELIMITER //
+CREATE PROCEDURE deleteServer
+(idServer INT)
+BEGIN
+    START TRANSACTION;
+    DELETE FROM nfo_server WHERE id=idServer;
+    DELETE FROM nfo_zone WHERE id IN (SELECT id FROM a_zone WHERE fk_server=idServer);
+    DELETE FROM a_zone WHERE fk_server=idServer;
+    DELETE FROM nfo_vm WHERE id IN (SELECT id FROM a_vm WHERE fk_server=idServer);
+    DELETE FROM a_vm WHERE fk_server=idServer;
+    DELETE FROM a_patch WHERE fk_server=idServer;
+    DELETE FROM a_pkg WHERE fk_server=idServer;
+    DELETE FROM a_net WHERE fk_server=idServer;
+    DELETE FROM a_prj WHERE fk_server=idServer;
+    DELETE FROM a_hba WHERE fk_server=idServer;
+    DELETE FROM a_disk WHERE fk_server=idServer;
+    DELETE FROM nfo_dataset WHERE id IN (SELECT id FROM a_dataset WHERE fk_pool IN (SELECT id FROM a_pool WHERE fk_server=idServer));
+    DELETE FROM a_dataset WHERE id IN (SELECT id FROM a_pool WHERE fk_server=idServer);
+    DELETE FROM a_pool WHERE fk_server=idServer;
+    DELETE FROM a_rrd WHERE fk_server=idServer;
+    DELETE FROM a_result WHERE fk_server=idServer;
+    DELETE FROM a_nfss WHERE fk_server=idServer;
+    DELETE FROM a_nfsm WHERE fk_server=idServer;
+    DELETE FROM jt_server_sgroup WHERE fk_server=idServer;
+END //
+DELIMITER ;
+
 --
 -- Fetch first job
 --
