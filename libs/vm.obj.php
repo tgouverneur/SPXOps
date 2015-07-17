@@ -37,6 +37,8 @@ class VM extends MySqlObj
         $ret = array(
                 'name' => $this->name,
                 'status' => $this->status,
+                'updated' => $this->t_upd,
+                'added' => $this->t_add,
                 'fk_server' => $this->fk_server,
         );
         if ($this->o_server) {
