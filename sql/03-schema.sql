@@ -186,6 +186,7 @@ CREATE TABLE `list_dataset` (
   `name` varchar(200) NOT NULL,
   `size` bigint(22) NOT NULL,
   `used` bigint(22) NOT NULL,
+  `uchild` bigint(22) NOT NULL,
   `type` varchar(20) DEFAULT NULL,
   `fk_pool` int(11) NOT NULL,
   `t_add` int(11) NOT NULL,

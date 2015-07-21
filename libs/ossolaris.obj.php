@@ -2276,6 +2276,11 @@ d101 1 1 /dev/dsk/emcpower58a
               $s->log("updated $do size => $quota", LLOG_DEBUG);
               $do->size = $quota;
           }
+          if ($usedchild && $do->uchild != $usedchild) {
+              $upd = true;
+              $s->log("updated $do uchild => $usedchild", LLOG_DEBUG);
+              $do->uchild = $usedchild;
+          }
           if ($used && $do->used != $used) {
               $upd = true;
               $s->log("updated $do used => $used", LLOG_DEBUG);

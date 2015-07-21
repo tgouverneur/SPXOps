@@ -17,6 +17,7 @@ class Dataset extends MySqlObj
     public $name = '';
     public $size = -1;
     public $used = -1;
+    public $uchild = -1;
     public $type = '';
     public $fk_pool = -1;
     public $t_add = -1;
@@ -80,6 +81,7 @@ class Dataset extends MySqlObj
                         'name' => SQL_PROPE|SQL_EXIST,
                         'size' => SQL_PROPE,
                         'used' => SQL_PROPE,
+                        'uchild' => SQL_PROPE,
                         'type' => SQL_PROPE,
                         'fk_pool' => SQL_PROPE,
                         't_add' => SQL_PROPE,
@@ -90,6 +92,7 @@ class Dataset extends MySqlObj
                         'name' => 'name',
                         'size' => 'size',
                         'used' => 'used',
+                        'uchild' => 'uchild',
                         'type' => 'type',
                         'fk_pool' => 'fk_pool',
                         't_add' => 't_add',
