@@ -30,11 +30,21 @@ try {
  $foot = new Template("../tpl/foot.tpl");
  $page = array();
  $page['title'] = 'List of ';
+ if ($lm->o_login) {
+   $page['login'] = &$lm->o_login;
+   $lm->o_login->fetchRights();
+ } else {
+   throw new ExitException('You must be logged-in to access this page');
+ }
+
  if ($lm->o_login) $page['login'] = &$lm->o_login;
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
      case 'pserver':
+       if (!$lm->o_login->cRight('PHY', R_VIEW)) {
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
        if (!isset($_POST['q']) || empty($_POST['q'])) {
          $content = new Template('../tpl/error.tpl');
          $content->set('error', 'Unknown option or not yet implemented');
@@ -66,10 +76,13 @@ try {
        $page['title'] .= 'Physical Servers';
      break;
      case 'vm':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
        if (!isset($_POST['q']) || empty($_POST['q'])) {
          $content = new Template('../tpl/error.tpl');
          $content->set('error', 'Unknown option or not yet implemented');
-	 goto screen;
+         goto screen;
        }
        $q = '%'.$_POST['q'].'%';
        $f = array();
@@ -93,6 +106,9 @@ try {
        $page['title'] .= 'VMs';
      break;
      case 'server':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
        if (!isset($_POST['q']) || empty($_POST['q'])) {
          $content = new Template('../tpl/error.tpl');
          $content->set('error', 'Unknown option or not yet implemented');
@@ -120,6 +136,9 @@ try {
        $page['title'] .= 'Servers';
      break;
      case 'cluster':
+       if (!$lm->o_login->cRight('CLUSTER', R_VIEW)) {
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
        if (!isset($_POST['q']) || empty($_POST['q'])) {
          $content = new Template('../tpl/error.tpl');
          $content->set('error', 'Unknown option or not yet implemented');
