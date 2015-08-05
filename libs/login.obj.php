@@ -203,7 +203,7 @@ class Login extends MySqlObj
     public function getAPIKey() {
         $apikey = $this->username;
         $apikey .= $this->password;
-        $apikey .= md5(file_get_contents(dirname(__FILE__).'/config.obj.php'));
+        $apikey .= md5(Config::$api_salt);
         return base64_encode(md5($apikey));
     }
 
