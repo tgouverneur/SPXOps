@@ -36,10 +36,12 @@ try {
      case 'lsVM':
        if (isset($_POST['o']) && !empty($_POST['o'])) {
          $o = $_POST['o'];
+         $f = array('name' => 'LIKE:'.$o);
        }  else {
-         throw new ExitException('No filter provided', 2);
+         $o = null;
+         $f = array();
        }
-       $a_vms = VM::getAll(true, array('name' => 'LIKE:'.$o), array('ASC:name'));
+       $a_vms = VM::getAll(true, $f, array('ASC:name'));
        $ret = array();
        $ret['count'] = count($a_vms);
        $ret['vms'] = array();
