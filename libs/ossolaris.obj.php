@@ -2271,6 +2271,11 @@ d101 1 1 /dev/dsk/emcpower58a
               $s->log("updated $do type => $type", LLOG_DEBUG);
               $do->type = $type;
           }
+          if ($available && $do->available != $available) {
+              $upd = true;
+              $s->log("updated $do available => $available", LLOG_DEBUG);
+              $do->available = $available;
+          }
           if ($quota && $do->size != $quota) {
               $upd = true;
               $s->log("updated $do size => $quota", LLOG_DEBUG);

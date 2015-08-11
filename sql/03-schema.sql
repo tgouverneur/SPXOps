@@ -185,6 +185,7 @@ CREATE TABLE `list_dataset` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   `size` bigint(22) NOT NULL,
+  `available` bigint(22) NOT NULL,
   `used` bigint(22) NOT NULL,
   `uchild` bigint(22) NOT NULL,
   `type` varchar(20) DEFAULT NULL,
