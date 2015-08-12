@@ -2219,7 +2219,7 @@ d101 1 1 /dev/dsk/emcpower58a
 
   private static function getZpoolDatasets(&$s, &$p) {
       $zfs = $s->findBin('zfs');
-      $cmd_dset = "$zfs list -H -r -o space,type,quota %s";
+      $cmd_dset = "$zfs list -H -r -o space,type,quota,reservation %s";
       $cmd_d = sprintf($cmd_dset, $p->name);
 
       $found_d = array();
@@ -2245,7 +2245,13 @@ d101 1 1 /dev/dsk/emcpower58a
               $do->insert();
           }
           $quota = $f[8];
+          $reserved = $f[9];
           $type = $f[7];
+          if (!strcmp($reserved, "none")) {
+              $reserved = 0;
+          } else {
+              $reserved = Pool::formatSize($reserved);
+          }
           if (!strcmp($quota, "none")) {
               $quota = 0;
           } else {
