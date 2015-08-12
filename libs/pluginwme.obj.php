@@ -38,6 +38,11 @@ class PluginWME
         return $this->o_plugin->{$this->fct}($arg);
     }
 
+    public function getRootHref($a = null)
+    {
+        return '/plugin/p/'.$this->o_plugin->name;
+    }
+
     public function getHref($a = null)
     {
         return '/plugin/p/'.$this->o_plugin->name.'/w/'.$this->name.(($a) ? '/r/'.$a : '');
