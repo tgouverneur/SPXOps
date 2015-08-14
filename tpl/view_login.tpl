@@ -43,15 +43,12 @@
              </tbody>
            </table>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
            <h3>Actions</h3>
 	    <ul class="nav nav-pills nav-stacked">
 	      <li class="dropdown active">
-		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
-	        <ul class="dropdown-menu">
-                  <li><a href="/del/w/login/i/<?php echo $obj->id; ?>">Delete</a></li>
-                  <li><a href="/edit/w/login/i/<?php echo $obj->id; ?>">Edit</a></li>
-	        </ul>
+                  <a href="/del/w/login/i/<?php echo $obj->id; ?>">Delete</a>
+                  <a href="/edit/w/login/i/<?php echo $obj->id; ?>">Edit</a>
 	      </li>
             </ul>
           </div>
