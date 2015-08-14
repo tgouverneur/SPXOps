@@ -58,6 +58,7 @@ try {
 
  $foot = new Template("../tpl/foot.tpl");
  $content = new Template("../tpl/home.tpl");
+ $content->set('page', $page);
  $content->set('stats', $stats);
  $content->set('a_job', $a_job);
  $content->set('a_act', $a_act);
