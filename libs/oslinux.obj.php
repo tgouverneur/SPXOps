@@ -38,10 +38,10 @@ class OSLinux extends OSType
   {
       $virsh = $s->findBin('virsh');
 
-    //$cmd_vlist = "$virsh -r -c qemu:///system list --name --all"; NOT SUPPORTED ON OLDER VIRSH
-    $cmd_vlist = "$virsh -r -c qemu:///system list --all";
+      $cmd_vlist = "$virsh -r -c qemu:///system list --all";
       $cmd_vstate = "$virsh -r -c qemu:///system domstate";
       $cmd_vdump = "$virsh -r -c qemu:///system dumpxml";
+      $cmd_vncdisplay = "$virsh -r -c qemu:///system vncdisplay";
 
       $out_vlist = $s->exec($cmd_vlist);
 
@@ -76,8 +76,8 @@ class OSLinux extends OSType
               $s->log("VM $vm reassigned to $s", LLOG_INFO);
               $u++;
           }
-      /* get the XML dump */
-      $out_vdump = $s->exec($cmd_vdump.' '.$vm->name);
+          /* get the XML dump */
+          $out_vdump = $s->exec($cmd_vdump.' '.$vm->name);
           $xmldump = trim($out_vdump);
           if (strcmp($vm->xml, $xmldump)) {
               $vm->xml = $xmldump;
@@ -91,7 +91,7 @@ class OSLinux extends OSType
                   if (!strcmp($disk->Attributes()['device'], 'cdrom')) {
                       continue;
                   } // skip cdrom devices
-      $vm_disks .= $disk->source->Attributes()[0].';';
+                  $vm_disks .= $disk->source->Attributes()[0].';';
               }
               if ($vm->data('hw:disks') != $vm_disks) {
                   $vm->setData('hw:disks', $vm_disks);
@@ -118,8 +118,23 @@ class OSLinux extends OSType
                   $u++;
               }
           }
-      /* get the state */
-      $out_vstate = $s->exec($cmd_vstate.' '.$vm->name);
+          /* get the VNC display */
+          $out_vncport = trim($s->exec($cmd_vncdisplay.' '.$vm->name));
+          if (preg_match('/^:[0-9]+/', $out_vncport)) {
+              if ($vm->data('vnc:port') != $out_vncport) {
+                  $vm->setData('vnc:port', $out_vncport);
+                  $s->log("$vm vnc:port => $out_vncport", LLOG_INFO);
+                  $u++;
+              }
+          } else {
+              if (!empty($vm->data('vnc:port'))) {
+                  $vm->setData('vnc:port', '');
+                  $s->log("$vm vnc:port => ''", LLOG_INFO);
+                  $u++;
+              }
+          }
+          /* get the state */
+          $out_vstate = $s->exec($cmd_vstate.' '.$vm->name);
           $state = trim($out_vstate);
           if (strcmp($vm->status, $state)) {
               $vm->status = $state;
