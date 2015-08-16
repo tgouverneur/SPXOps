@@ -120,10 +120,11 @@ class OSLinux extends OSType
           }
           /* get the VNC display */
           $out_vncport = trim($s->exec($cmd_vncdisplay.' '.$vm->name));
-          if (preg_match('/^:[0-9]+/', $out_vncport)) {
-              if ($vm->data('vnc:port') != $out_vncport) {
-                  $vm->setData('vnc:port', $out_vncport);
-                  $s->log("$vm vnc:port => $out_vncport", LLOG_INFO);
+          if (preg_match('/^:([0-9]+)/', $out_vncport, $m)) {
+              $vncport = 5900 + $m[1];
+              if ($vm->data('vnc:port') != $vncport) {
+                  $vm->setData('vnc:port', $vncport);
+                  $s->log("$vm vnc:port => $vncport", LLOG_INFO);
                   $u++;
               }
           } else {
