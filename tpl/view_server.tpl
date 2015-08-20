@@ -68,6 +68,9 @@
   foreach($ea as $a) { ?>
                   <li><a href="<?php echo $a->href($obj); ?>" <?php if (!empty($a->onclick)) { echo "onClick=\"".$a->onclick($obj)."\""; } ?>><?php echo $a->text; ?></a></li>
 <?php } ?>
+             <?php foreach (Plugin::getActionLinks('SRVACTION') as $l) { ?>
+                <li><a href="<?php echo $l->getHref($obj->id); ?>"><?php echo $l->desc; ?></a></li>
+             <?php } ?>
                 </ul>
               </li>
               <li class="dropdown active">
