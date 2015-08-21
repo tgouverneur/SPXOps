@@ -78,6 +78,20 @@ class Notification
       }
   }
 
+    public static function sendMail($to, $short, $msg)
+    {
+        Logger::log('Mail message to: '.$to, null, LLOG_DEBUG);
+
+        $mfrom = Setting::get('general', 'mailfrom')->value;
+        $domain = explode('@', $mfrom);
+        $domain = $domain[0];
+        $subject = '[SPXOps] '.$short;
+        $headers = 'From: '.$mfrom."\r\n";
+        $headers .= 'X-Mailer: SPXOps'."\r\n";
+        $headers .= 'Reply-To: no-reply@'.$domain."\r\n";
+        mail($to, $subject, $msg, $headers);
+    }
+
     public static function sendAlert(AlertType $at, $short, $msg)
     {
         $a_login = array();
