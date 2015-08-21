@@ -1,0 +1,19 @@
+/*
+* File: dataTables.CSV.css
+* Description: Styles for client side CSV exporter
+* Author: Danil Galeev (www.profitbricks.com)
+* Language: Javascript
+* License: MIT
+* Project: DataTables
+*
+* Copyright 2013-2015 Danil Galeev, all rights reserved.
+* Modified for SPXOps/Bootstrap by Thomas Gouverneur
+*/
+
+
+a.datatable-get-csv {
+    position: relative;
+    float: right;
+    margin-right: 3px;
+    padding: 5px 8px !important;
+}
