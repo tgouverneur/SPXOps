@@ -341,6 +341,13 @@ class Server extends MySqlObj implements JsonSerializable
         }
     }
 
+    public function isConnected() {
+        if ($this->_ssh) {
+            return true;
+        }
+        return false;
+    }
+
     public function forceCloseExec()
     {
         try {
