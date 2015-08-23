@@ -35,7 +35,7 @@
 <?php } ?>
              </tbody>
            </table>
-          </div>
+         </div>
           <div class="col-md-4">
            <h3>Actions</h3>
 	    <ul class="nav nav-pills nav-stacked">
@@ -73,6 +73,29 @@
 <?php } ?>  
              </tbody>
            </table>
+           <h3>Plugin data</h3>
+           <table class="table table-condensed">
+             <tbody>
+  	       <tr><th>Name</th><th>Value</th></tr>
+<?php foreach($obj->dataKeys() as $k) { 
+        if (preg_match('/^plugin:([^:]+):([^:]+)$/', $k, $m)) {
+            $plugin = $m[1];
+            if (preg_match('/^f_(.*)/', $m[2], $n)) {
+              $name = ucfirst($n[1]);
+              $value = Plugin::formatFlag($obj->data($k));
+            } else {
+              $name = ucfirst($m[2]);
+              $value = $obj->data($k);
+            }
+        } else {
+            continue;
+        }
+    ?>
+  	       <tr><td><?php echo $plugin.'/'.$name; ?></td><td><?php echo $value; ?></td></tr>
+<?php } ?>
+             </tbody>
+           </table>
+ 
           </div>
        </div>
       </div>

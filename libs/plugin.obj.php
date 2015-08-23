@@ -131,6 +131,10 @@ class Plugin
         }
     }
 
+    public static function formatFlag($v) {
+        return ($v) ? '<span class="glyphicon glyphicon-ok-sign"></span>' : '<span class="glyphicon glyphicon-remove-circle"></span>';
+    }
+
   /**
    * Below is the actual object instance plugin code
    */

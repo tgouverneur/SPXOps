@@ -96,10 +96,12 @@ try {
      
     if ($e->type == 2) { 
         echo Utils::getJSONError($e->getMessage());
-    } else {
+    } else if ($e->type == 1) {
         $h = Utils::getHTTPError($e->getMessage());
         echo $h->fetch();
-    }    
+    } else if ($e->type == 3) {
+        HTTP::redirect($e->dest);
+    }
      
 } catch (Exception $e) {
     /* @TODO: LOG EXCEPTION */
