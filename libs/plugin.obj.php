@@ -132,7 +132,7 @@ class Plugin
     }
 
     public static function formatFlag($v) {
-        return ($v) ? '<span class="glyphicon glyphicon-ok-sign"></span>' : '<span class="glyphicon glyphicon-remove-circle"></span>';
+        return ($v) ? '<span class="glyphicon glyphicon-ok-sign">&nbsp;</span>' : '<span class="glyphicon glyphicon-remove-circle"></span>';
     }
 
   /**
