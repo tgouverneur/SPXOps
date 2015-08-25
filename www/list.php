@@ -44,8 +44,11 @@ try {
  array_push($css, 'dataTables.bootstrap.css');
  array_push($js, 'jquery.dataTables.min.js');
  array_push($js, 'dataTables.bootstrap.js');
+ array_push($css, 'dataTables.CSV.css');
+ array_push($js, 'dataTables.CSV.js');
  $head->set("js", $js);
  $head->set("css", $css);
+ $skipColumn = array();
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
@@ -313,7 +316,20 @@ screen:
  if (isset($a_link)) $foot->set('a_link', $a_link);
  $head_code = '<script type="text/javascript" charset="utf-8">'."\n";
  $head_code .= '		$(document).ready(function() {'."\n";
- $head_code .= "		$('#datatable').dataTable( { \"ordering\": false, \"pageLength\": $npp } );"."\n";
+ $t = '';
+ if (count($skipColumn)) {
+     $t = '"columnDefs": [ { "targets": [ ';
+     $first = true;
+     foreach($skipColumn as $c) {
+         if (!$first) {
+             $t .= ',';
+             $first = false;
+         }
+         $t .= ' '.$c;
+     }
+     $t .= '], "bSortable": false } ],'."\n";
+ }
+ $head_code .= "		$('#datatable').dataTable( { \"dom\": \"Vlfrtip\", \"ordering\": false, \"pageLength\": $npp $t } );"."\n";
  $head_code .= '		} ); </script>'."\n";
  $head->set("head_code", $head_code);
  $index->set('head', $head);
