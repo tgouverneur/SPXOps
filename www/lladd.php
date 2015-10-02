@@ -197,16 +197,44 @@ try {
 				'value' => $tobj->link(),
 			        )),
 			  ));
-	    $ret['llist'] = 'login';
-	    $ret['src'] = 'ugroup';
-	    $ret['srcid'] = $obj->id;
+            $ret['llist'] = 'login';
+            $ret['src'] = 'ugroup';
+            $ret['srcid'] = $obj->id;
             $ret['msg'] = "Added login $tobj to $obj group";
 
           } else {
               throw new ExitException('Specified login is already in this group');
-	  }
+          }
        } else {
-           throw new ExitException('Not yet implemented');
+         $q = '%'.$t.'%';
+         $f = array();
+         $s = array('ASC:username');
+         $f['username'] = 'LIKE:'.$q;
+         $a_list = Login::getAll(true, $f, $s);
+         if (!count($a_list)) {
+           $ret['rc'] = 1;
+           $ret['msg'] = 'No Login(s) found';
+         } else {
+             $res = array();
+             $nradd = 0;
+             foreach($a_list as $tobj) {
+               if (!$obj->isInJT('a_login', $tobj)) {
+                 $obj->addToJT('a_login', $tobj);
+                 Act::add("Added Login $tobj to $obj group", $lm->o_login);
+                 $nradd++;
+                 array_push($res, json_encode(array(
+                                            'id' => $tobj->id,
+                                            'value' => $tobj->link(),
+                                    )));
+               }
+             }
+             $ret['llist'] = 'login';
+             $ret['src'] = 'ugroup';
+             $ret['srcid'] = $obj->id;
+             $ret['rc'] = 0;
+             $ret['res'] = json_encode($res);
+             $ret['msg'] = $nradd." Have been added to $obj group.";
+           }
        }
      } else {
          throw new ExitException('Unrecognized target class');
@@ -237,9 +265,9 @@ try {
 					'value' => $tobj->link(),
 				)),
 			  ));
-	    $ret['llist'] = 'server';
-	    $ret['src'] = 'sgroup';
-	    $ret['srcid'] = $obj->id;
+            $ret['llist'] = 'server';
+            $ret['src'] = 'sgroup';
+            $ret['srcid'] = $obj->id;
             $ret['msg'] = "Added Server $tobj to $obj group";
 
           } else {
