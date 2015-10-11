@@ -160,7 +160,7 @@ class UGroup extends MySqlObj
                  );
 
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
-    $this->_addJT('a_login', 'Login', 'jt_login_ugroup', array('id' => 'fk_ugroup'), array('id' => 'fk_login'), array());
+      $this->_addJT('a_login', 'Login', 'jt_login_ugroup', array('id' => 'fk_ugroup'), array('id' => 'fk_login'), array());
       $this->_addJT('a_right', 'Right', 'jt_right_ugroup', array('id' => 'fk_ugroup'), array('id' => 'fk_right'), array('level'));
       $this->_addJT('a_alerttype', 'AlertType', 'jt_alerttype_ugroup', array('id' => 'fk_ugroup'), array('id' => 'fk_alerttype'));
       $this->_addJT('a_sgroup', 'SGroup', 'jt_sgroup_ugroup', array('id' => 'fk_ugroup'), array('id' => 'fk_sgroup'));
