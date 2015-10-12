@@ -78,6 +78,21 @@ class Notification
       }
   }
 
+  /* Notify site-admin that a new user has requested a login */
+  public static function notifyNewUser($obj) {
+      $a_admin = Login::getAll(true, array('f_admin' => 'CST:1'));
+      $short = $obj.' Requested a login';
+      $msg = "Dear SPXOps Admin,\n\n";
+      $msg .= "There is a new user that requested an access, please review and activate it at your earliest convenience:\n\n";
+      $msg .= "Username: ".$obj->username;
+      $msg .= "\nEmail: ".$obj->email;
+      $msg .= "\nFull Name: ".$obj->fullname;
+      $msg .= "\n\nThanks!\n";
+      foreach ($a_admin as $admin) {
+        Notification::sendMail($admin->email, $short, $msg);
+      }
+  }
+
     public static function sendMail($to, $short, $msg)
     {
         Logger::log('Mail message to: '.$to, null, LLOG_DEBUG);

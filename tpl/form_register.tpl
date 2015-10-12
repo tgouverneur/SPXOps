@@ -4,7 +4,7 @@ if (!isset($action) || !$action) {
   if (isset($page['action'])) {
     $action = $page['action'];
   } else {
-    $action = 'Add'; 
+    $action = 'Register'; 
   }
 }
 if (!isset($edit)) $edit = false;
@@ -55,30 +55,6 @@ if (!isset($edit)) $edit = false;
             </div>
           </div>
           <div class="form-group">
-	    <label class="col-sm-2 col-sm-offset-3 control-label" for="inputOptions">Options</label>
-            <div class="col-sm-3">
-              <div class="checkbox">
-               <label>
-                <input name="f_admin" type="checkbox" <?php if ($obj->f_admin) { echo "checked"; } ?>> Administrator
-               </label>
-              </div>
-              <div class="checkbox">
-               <label>
-                <input name="f_api" type="checkbox" <?php if ($obj->f_api) { echo "checked"; } ?>> API usage
-               </label>
-              </div>
-              <div class="checkbox">
-               <label>
-                <input name="f_noalerts" type="checkbox" <?php if ($obj->f_noalerts) { echo "checked"; } ?>> Disable Alerts 
-               </label>
-              </div>
-              <div class="checkbox">
-               <label>
-                <input name="f_active" type="checkbox" <?php if ($obj->f_active) { echo "checked"; } ?>> Account Active 
-               </label>
-              </div>
-            </div>
-          </div>
 	  <div class="form-group">
 	    <div class="col-sm-offset-5 col-sm-3">
 	      <button type="submit" name="submit" value="1" class="btn btn-primary"><?php echo $action; ?></button>

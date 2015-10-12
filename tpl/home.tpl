@@ -3,7 +3,7 @@
             <p>You can manage different flavours of UNIX operating systems using this portal, simply browse through the menu or check the documentation to see how to get more benefit of this portal.</p>
   	    <p>
   	      <a class="btn btn-primary btn-large" href="https://github.com/tgouverneur/SPXOps/wiki">Documentation</a>
-  	      <?php if (!isset($page['login'])) { ?><a class="btn btn-primary btn-large" href="/login">Login</a><?php } ?>
+  	      <?php if (!isset($page['login'])) { ?><a class="btn btn-primary btn-large" href="/login">Login</a> <a class="btn btn-primary btn-large" href="/register">Register</a><?php } ?>
 	    </p>
           </div>
           <?php if (!isset($page['login'])) { ?>

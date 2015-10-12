@@ -39,6 +39,9 @@ class LoginCM
         if ($l->fetchFromField("username")) {
             return -1;
         }
+        if (!$l->f_active) {
+            return -1;
+        }
         if ($l->auth($password) === false) {
             return -1;
         }
@@ -57,7 +60,7 @@ class LoginCM
         }
         $this->o_login->getAddr();
         Act::add("Logged in from ".$this->o_login->i_raddr, $this->o_login);
-    return 0;
+        return 0;
     }
 
     public function logout()

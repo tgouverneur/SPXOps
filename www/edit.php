@@ -411,9 +411,9 @@ try {
        $content->set('edit', true);
        $content->set('page', $page);
        $page['title'] .= $what;
-       if (isset($_POST['submit'])) { /* clicked on the Edit button */
+     if (isset($_POST['submit'])) { /* clicked on the Edit button */
          $fields = array('fullname', 'email', 'password', 'password_c', 'f_noalerts', 'f_admin', 'f_api');
-	 foreach($fields as $field) {
+         foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
 	     if (isset($_POST[$field])) {
 	       $obj->{$field} = 1;
@@ -426,19 +426,31 @@ try {
 	     }
 	   }
 	 }
+
 	 $errors = $obj->valid(false);
 	 if ($errors) {
 	   $content->set('error', $errors);
 	   $content->set('obj', $obj);
 	   goto screen;
 	 }
+
+     $lm = LoginCM::getInstance();
+     if (!$obj->f_active && isset($_POST['f_active']) && !$lm->o_login->f_admin) {
+         $content->set('error', 'You cannot set account as active as you aren\'t administrator yourself.');
+	     $content->set('obj', $obj);
+         $obj->f_active = 0;
+         goto screen;
+     } else if (!$obj->f_active && isset($_POST['f_active']) && $lm->o_login->f_admin) {
+         $obj->f_active = 1;
+     }
+
 	 /* Must crypt the password */
 	 if (!empty($obj->password) && !empty($obj->password_c)) $obj->bcrypt($obj->password); // If password_c is empty then password has not been modified
-         $obj->update();
-         $content = new Template('../tpl/message.tpl');
-	 $content->set('msg', "User $obj has been updated to database");
-	 goto screen;
-       }
+     $obj->update();
+     $content = new Template('../tpl/message.tpl');
+     $content->set('msg', "User $obj has been updated to database");
+     goto screen;
+     }
      break;
      default:
        $content = new Template('../tpl/error.tpl');

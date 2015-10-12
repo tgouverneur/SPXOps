@@ -20,6 +20,7 @@ class Login extends MySqlObj
     public $fullname = '';
     public $email = '';
     public $f_noalerts = 0;
+    public $f_active = 1;
     public $f_admin = 0;
     public $f_api = 0;
     public $t_last = -1;
@@ -213,6 +214,7 @@ class Login extends MySqlObj
                  'Fullname' => 'fullname',
                  'E-Mail' => 'email',
                  'No Alerting' => 'f_noalerts',
+                 'Active' => 'f_active',
                  'Admin' => 'f_admin',
                  'API' => 'f_api',
                  'Added' => 't_add',
@@ -226,6 +228,7 @@ class Login extends MySqlObj
                  'fullname' => $this->fullname,
                  'email' => $this->email,
                  'f_noalerts' => $this->f_noalerts,
+                 'f_active' => $this->f_active,
                  'f_admin' => $this->f_admin,
                  'f_api' => $this->f_api,
                  't_add' => date('d-m-Y', $this->t_add),
@@ -239,6 +242,7 @@ class Login extends MySqlObj
         'Full Name' => $this->fullname,
         'E-Mail' => $this->email,
         'No Alerts?' => ($this->f_noalerts) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
+        'Active?' => ($this->f_active) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Admin?' => ($this->f_admin) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'api?' => ($this->f_api) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Last seen' => date('d-m-Y', $this->t_last),
@@ -267,6 +271,7 @@ class Login extends MySqlObj
                         'password' => SQL_PROPE,
                         'fullname' => SQL_PROPE,
                         'email' => SQL_PROPE,
+                        'f_active' => SQL_PROPE,
                         'f_noalerts' => SQL_PROPE,
                         'f_admin' => SQL_PROPE,
                         'f_api' => SQL_PROPE,
@@ -282,6 +287,7 @@ class Login extends MySqlObj
                         'fullname' => 'fullname',
                         'email' => 'email',
                         'f_noalerts' => 'f_noalerts',
+                        'f_active' => 'f_active',
                         'f_admin' => 'f_admin',
                         'f_api' => 'f_api',
                         't_last' => 't_last',
