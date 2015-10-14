@@ -101,6 +101,12 @@ try {
         echo $h->fetch();
     } else if ($e->type == 3) {
         HTTP::redirect($e->dest);
+    } else if ($e->type == 4){
+        foreach($e->options as $o) {
+            header($o);
+        }
+        header('Content-Type: '.$e->dest);
+        echo $e->getMessage();
     }
      
 } catch (Exception $e) {
