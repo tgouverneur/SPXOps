@@ -161,7 +161,7 @@ CODE;
                   $s->a_lr[$this->id]->t_upd = time();
                   $s->a_lr[$this->id]->update();
                   $done = true;
-                  $s->log("We only updated check result for $this / $s", LLOG_DEBUG);
+                  $s->log("We only updated check timestamp for $this / $s", LLOG_DEBUG);
               }
           } else {
               $s->log("Check result not found for $this / $s", LLOG_DEBUG);
