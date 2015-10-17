@@ -158,6 +158,7 @@ CODE;
               $s->a_lr[$this->id]) {
               $s->log("Last result found for $this / $s", LLOG_DEBUG);
               if ($r->equals($s->a_lr[$this->id])) { /* same result, only update t_upd */
+                  $s->a_lr[$this->id]->t_upd = time();
                   $s->a_lr[$this->id]->update();
                   $done = true;
                   $s->log("We only updated check result for $this / $s", LLOG_DEBUG);
@@ -316,7 +317,11 @@ CODE;
         }
         $s->_job = $job;
         $s->fetchJT('a_sgroup');
-        $s->buildCheckList();
+        if ($job && $job->fk_login > 0) {
+            $s->buildCheckList(true);
+        } else {
+            $s->buildCheckList();
+        }
 
         if (!count($s->a_check)) {
             $s->log("No checks to be done on $s, skipping...", LLOG_INFO);

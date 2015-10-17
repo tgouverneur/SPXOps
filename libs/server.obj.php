@@ -110,10 +110,10 @@ class Server extends MySqlObj implements JsonSerializable
 
         foreach ($checks as $check) {
 
-      /* Check Groups */
-      $check->fetchJT('a_sgroup');
-            $f_group = 0;
-            $f_egroup = 0;
+          /* Check Groups */
+          $check->fetchJT('a_sgroup');
+          $f_group = 0;
+          $f_egroup = 0;
 
             foreach ($check->a_sgroup as $grp) {
                 if ($this->isInJT('a_sgroup', $grp)) {
@@ -137,7 +137,7 @@ class Server extends MySqlObj implements JsonSerializable
             $this->a_lr[$check->id]->o_check = $check;
 
             if ($force) { /* don't take timestamp into account */
-        array_push($this->a_check, $check);
+                array_push($this->a_check, $check);
                 continue;
             }
             if (($now - $this->a_lr[$check->id]->t_upd) >= $check->frequency) {
