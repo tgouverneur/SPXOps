@@ -195,17 +195,85 @@ class VM extends MySqlObj
         }
 
         $ret = array(
-    'Name' => $this->name,
-    'Status' => $this->status,
-    'Server' => ($this->o_server) ? $this->o_server->link() : 'Unknown',
-    '# CPU' => $this->data('hw:nrcpu'),
-    'Memory' => Pool::formatBytes($this->data('hw:memory') * 1024),
-    'Updated on' => date('d-m-Y', $this->t_upd),
-    'Added on' => date('d-m-Y', $this->t_add),
-    );
+            'Name' => $this->name,
+            'Status' => $this->status,
+            'Server' => ($this->o_server) ? $this->o_server->link() : 'Unknown',
+            '# CPU' => $this->data('hw:nrcpu'),
+            'Memory' => Pool::formatBytes($this->data('hw:memory') * 1024),
+            'Updated on' => date('d-m-Y', $this->t_upd),
+            'Added on' => date('d-m-Y', $this->t_add),
+        );
 
         return $ret;
     }
+
+     public static function detectHostnames(&$job)
+     {
+         $s_vm = Setting::get('vm', 'enable');
+         $s_tries = Setting::get('vm', 'detect_tries');
+         $s_dns_search = Setting::get('vm', 'dns_search');
+
+         $slog = new VM();
+         $slog->_job = $job;
+
+         if (!$s_vm || $s_vm->value != 1) {
+            Logger::log("VM Support is not enabled", $slog, LLOG_ERROR);
+            return -1;
+         }
+
+         if (!$s_tries) {
+             $s_tries = 3;
+         }
+
+         if ($s_dns_search) {
+             $dns_domains = preg_split('/,/', $s_dns_search->value);
+         } else {
+            Logger::log("No DNS Search specified, please check the settings", $slog, LLOG_ERROR);
+            return -1;
+         }
+
+         $table = "`list_vm`";
+         $index = "`id`";
+         $cindex = "COUNT(`id`)";
+         $where = "WHERE `fk_server` != -1 AND `hostname`=''";
+         $it = new mIterator('VM', $index, $table, array('q' => $where, 'a' => array()), $cindex);
+ 
+         while (($s = $it->next())) {
+             $s->fetchFromId();
+             $s->fetchData();
+             $c = $s->data('dns:try');
+             if (!$c) {
+                 $c = 1;
+             } else {
+                 if ($c >= $s_tries) {
+                     Logger::log("[!] Max DNS tries for $s reached, skipping...", $slog, LLOG_INFO);
+                     continue;
+                 }
+                 $c++;
+             }
+             $s->setData('dns:try', $c);
+             $found = false;
+             /* Try to detect domain name */
+             foreach($dns_domains as $domain) {
+                 $fqdn = $s->name.'.'.$domain;
+                 $ret = dns_get_record($fqdn, DNS_A +  DNS_CNAME);
+                 if (!$ret || !count($ret)) {
+                     continue;
+                 }
+                 /* found */
+                 $found = true;
+                 $s->hostname = $fqdn;
+                 $s->update();
+                 Logger::log("[-] Hostname found for $s: $fqdn.", $slog, LLOG_INFO);
+                 break;
+             }
+             if (!$found) {
+                 Logger::log("[!] Hostname not found for $s", $slog, LLOG_INFO);
+             }
+         }
+         return 0;
+     }
+
 
   /**
    * ctor
@@ -254,3 +322,4 @@ class VM extends MySqlObj
       $this->_addJT('a_sgroup', 'SGroup', 'jt_vm_sgroup', array('id' => 'fk_vm'), array('id' => 'fk_sgroup'), array());
   }
 }
+

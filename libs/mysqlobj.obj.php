@@ -58,13 +58,13 @@ class MySqlObj
   public function data($name)
   {
       if (!$this->_nfotable) {
-          return;
+          return null;
       }
 
       if (isset($this->_datas[$name])) {
           return $this->_datas[$name];
       } else {
-          return;
+          return null;
       }
   }
 
