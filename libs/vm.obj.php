@@ -18,9 +18,13 @@ class VM extends MySqlObj
 
     public $id = -1;
     public $name = '';
+    public $hostname = '';
     public $status = '';
     public $xml = '';
     public $fk_server = -1;
+    public $fk_os = -1;
+    public $fk_suser = -1;
+    public $f_upd = 0;
     public $t_add = -1;
     public $t_upd = -1;
 
@@ -30,6 +34,15 @@ class VM extends MySqlObj
     public $a_net = array();
     public $a_disk = array();
 
+    public $a_hostnet = array();
+    public $a_hostdisk = array();
+    public $a_pkg = array();
+    public $a_lock = array();
+    public $a_nfss = array();
+    public $a_nfsm = array();
+    public $a_result = array();
+
+    public $a_sgroup = array();
 
     public function jsonSerialize() {
         $this->fetchAll();
@@ -70,6 +83,23 @@ class VM extends MySqlObj
         try {
             if (!$this->o_server && $this->fk_server > 0) {
                 $this->fetchFK('fk_server');
+            }
+
+            if ($all) {
+
+                $this->fetchRL('a_pkg');
+                $this->fetchRL('a_hostdisk');
+                $this->fetchRL('a_hostnet');
+                $this->fetchRL('a_nfss');
+                $this->fetchRL('a_nfsm');
+
+                if (!$this->o_suser && $this->fk_suser > 0) {
+                    $this->fetchFK('fk_suser');
+                }
+
+                if (!$this->o_os && $this->fk_os > 0) {
+                    $this->fetchFK('fk_os');
+                }
             }
 
             $this->fetchData();
@@ -188,22 +218,39 @@ class VM extends MySqlObj
       $this->_my = array(
                         'id' => SQL_INDEX,
                         'name' => SQL_PROPE|SQL_EXIST,
+                        'hostname' => SQL_PROPE,
                         'status' => SQL_PROPE,
                         'xml' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fk_suser' => SQL_PROPE,
+                        'fk_os' => SQL_PROPE,
+                        'f_upd' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE,
                  );
       $this->_myc = array( /* mysql => class */
                         'id' => 'id',
                         'name' => 'name',
+                        'hostname' => 'hostname',
                         'status' => 'status',
                         'xml' => 'xml',
                         'fk_server' => 'fk_server',
+                        'fk_suser' => 'fk_suser',
+                        'fk_os' => 'fk_os',
+                        'f_upd' => 'f_upd',
                         't_add' => 't_add',
                         't_upd' => 't_upd',
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
+
+      $this->_addRL("a_pkg", "Pkg", array('id' => 'fk_vm'));
+      $this->_addRL("a_hostdisk", "Disk", array('id' => 'fk_vm'));
+      $this->_addRL("a_hostnet", "Net", array('id' => 'fk_vm'));
+      $this->_addRL("a_nfss", "NFS", array('id' => 'fk_vm', 'CST:share' => 'type'));
+      $this->_addRL("a_nfsm", "NFS", array('id' => 'fk_vm', 'CST:mount' => 'type'));
+
+                    /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
+      $this->_addJT('a_sgroup', 'SGroup', 'jt_vm_sgroup', array('id' => 'fk_vm'), array('id' => 'fk_sgroup'), array());
   }
 }

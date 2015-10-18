@@ -13,10 +13,10 @@
  */
 class Disk extends MySqlObj
 {
-  public $id = -1;
+    public $id = -1;
     public $dev = '';
     public $vdev = ''; /* Powerpath dev or other path-aggregated dev */
-  public $drv = '';
+    public $drv = '';
     public $serial = '';
     public $vendor = '';
     public $product = '';
@@ -26,10 +26,12 @@ class Disk extends MySqlObj
     public $f_local = 1;
     public $f_san = 0;
     public $fk_server = -1;
+    public $fk_vm = -1;
     public $t_add = -1;
     public $t_upd = -1;
 
     public $o_server = null;
+    public $o_vm = null;
 
   /* JT Attrs */
   public $slice = array();
@@ -127,6 +129,7 @@ class Disk extends MySqlObj
                         'f_local' => SQL_PROPE,
                         'f_san' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fk_vm' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE,
                  );
@@ -144,11 +147,13 @@ class Disk extends MySqlObj
                         'f_local' => 'f_local',
                         'f_san' => 'f_san',
                         'fk_server' => 'fk_server',
+                        'fk_vm' => 'fk_vm',
                         't_add' => 't_add',
                         't_upd' => 't_upd',
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
+      $this->_addFK("fk_vm", "o_vm", "VM");
 
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
     $this->_addJT('a_pool', 'Pool', 'jt_disk_pool', array('id' => 'fk_disk'), array('id' => 'fk_pool'), array('slice', 'role'));

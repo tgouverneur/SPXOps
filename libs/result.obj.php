@@ -13,19 +13,21 @@
  */
 class Result extends MySqlObj
 {
-  public $id = -1;
+    public $id = -1;
     public $rc = 0;
     public $message = '';
     public $details = '';
     public $f_ack = 0;
     public $fk_check = -1;
     public $fk_server = -1;
+    public $fk_vm = -1;
     public $fk_login = -1;
     public $t_add = -1;
     public $t_upd = -1;
 
     public $o_check = null;
     public $o_server = null;
+    public $o_vm = null;
     public $o_login = null;
 
     public static function getHash($c, $o) {
@@ -199,6 +201,7 @@ class Result extends MySqlObj
                         'f_ack' => SQL_PROPE,
                         'fk_check' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fk_vm' => SQL_PROPE,
                         'fk_login' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE,
@@ -211,12 +214,14 @@ class Result extends MySqlObj
                         'f_ack' => 'f_ack',
                         'fk_check' => 'fk_check',
                         'fk_server' => 'fk_server',
+                        'fk_vm' => 'fk_vm',
                         'fk_login' => 'fk_login',
                         't_add' => 't_add',
                         't_upd' => 't_upd',
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
+      $this->_addFK("fk_vm", "o_vm", "VM");
       $this->_addFK("fk_check", "o_check", "Check");
       $this->_addFK("fk_login", "o_login", "Login");
   }

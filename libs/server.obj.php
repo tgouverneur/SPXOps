@@ -34,7 +34,7 @@ class Server extends MySqlObj implements JsonSerializable
     public $o_cluster = null;
     public $fk_zone = array(); // JT attribute for cluster's rg
 
-  public $a_sgroup = array();
+    public $a_sgroup = array();
     public $a_zone = array();
     public $a_vm = array();
     public $a_patch = array();
@@ -48,23 +48,23 @@ class Server extends MySqlObj implements JsonSerializable
     public $a_rrd = array();
 
     public $a_nfss = array(); /* nfs shares */
-  public $a_nfsm = array(); /* nfs mount */
+    public $a_nfsm = array(); /* nfs mount */
 
-  /* Check system */
-  public $a_check = array();
+    /* Check system */
+    public $a_check = array();
     public $a_lr = array();
     public $rc = 0;
     public $ack = false;
 
-  /* SSH */
-  private $_ssh = null;
+    /* SSH */
+    private $_ssh = null;
     private $_paths = array();
 
-  /* Logging */
+    /* Logging */
     public $_job = null;
 
-  /* VM Stats */
-  public $vm_nb = 0;
+    /* VM Stats */
+    public $vm_nb = 0;
     public $vm_cores = 0;
     public $vm_mem = 0;
 

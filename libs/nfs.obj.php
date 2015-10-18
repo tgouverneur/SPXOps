@@ -16,7 +16,7 @@
 
 class NFS extends MySqlObj
 {
-  public $id = -1;
+    public $id = -1;
     public $type = '';
     public $path = '';
     public $dest = '';
@@ -25,10 +25,12 @@ class NFS extends MySqlObj
     public $size = -1;
     public $used = -1;
     public $fk_server = -1;
+    public $fk_vm = -1;
     public $t_add = -1;
     public $t_upd = -1;
 
     public $o_server = null;
+    public $o_vm = null;
 
     public function equals($z)
     {
@@ -118,6 +120,7 @@ class NFS extends MySqlObj
                         'size' => SQL_PROPE,
                         'used' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fk_vm' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE,
                  );
@@ -131,11 +134,13 @@ class NFS extends MySqlObj
                         'size' => 'size',
                         'used' => 'used',
                         'fk_server' => 'fk_server',
+                        'fk_vm' => 'fk_vm',
                         't_add' => 't_add',
                         't_upd' => 't_upd',
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
+      $this->_addFK("fk_vm", "o_vm", "VM");
 
       $this->_log = Logger::getInstance();
   }

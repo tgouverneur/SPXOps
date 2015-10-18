@@ -13,17 +13,18 @@
  */
 class Net extends MySqlObj
 {
-  public $id = -1;
+    public $id = -1;
     public $ifname = '';
     public $alias = '';
     public $layer = 3; /* 3 == ip, 2 == ether */
-  public $version = 4;
+    public $version = 4;
     public $address = '';
     public $netmask = '';
     public $group = '';
     public $flags = '';
     public $f_ipmp = 0;
     public $fk_server = -1;
+    public $fk_vm = -1;
     public $fk_zone = -1;
     public $fk_net = -1;
     public $fk_switch = -1;
@@ -31,12 +32,13 @@ class Net extends MySqlObj
     public $t_upd = -1;
 
     public $o_server = null;
+    public $o_vm = null;
     public $o_zone = null;
     public $o_net = null;
     public $o_switch = null;
 
-  /* temp for display */
-  public $a_addr = array();
+    /* temp for display */
+    public $a_addr = array();
 
     public function getSwitch()
     {
@@ -144,6 +146,7 @@ class Net extends MySqlObj
                         'flags' => SQL_PROPE,
                         'f_ipmp' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fk_vm' => SQL_PROPE,
                         'fk_zone' => SQL_PROPE,
                         'fk_switch' => SQL_PROPE,
                         'fk_net' => SQL_PROPE,
@@ -162,6 +165,7 @@ class Net extends MySqlObj
                         'flags' => 'flags',
                         'f_ipmp' => 'f_ipmp',
                         'fk_server' => 'fk_server',
+                        'fk_vm' => 'fk_vm',
                         'fk_zone' => 'fk_zone',
                         'fk_switch' => 'fk_switch',
                         'fk_net' => 'fk_net',
@@ -170,6 +174,7 @@ class Net extends MySqlObj
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
+      $this->_addFK("fk_vm", "o_vm", "VM");
       $this->_addFK("fk_net", "o_net", "Net");
       $this->_addFK("fk_switch", "o_switch", "NSwitch");
       $this->_addFK("fk_zone", "o_zone", "Zone");

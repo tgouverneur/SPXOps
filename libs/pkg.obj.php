@@ -13,7 +13,7 @@
  */
 class Pkg extends MySqlObj
 {
-  public $id = -1;
+    public $id = -1;
     public $name = '';
     public $lname = '';
     public $arch = '';
@@ -24,10 +24,12 @@ class Pkg extends MySqlObj
     public $fmri = '';
     public $status = '';
     public $fk_server = -1;
+    public $fk_vm = -1;
     public $t_add = -1;
     public $t_upd = -1;
 
     public $o_server = null;
+    public $o_vm = null;
 
     public function log($str)
     {
@@ -73,7 +75,7 @@ class Pkg extends MySqlObj
     {
         return array(
                  'name' => $this->name,
-         'version' => $this->version,
+                 'version' => $this->version,
                  'details' => '<a href="/view/w/pkg/i/'.$this->id.'">View</a>',
                  't_add' => date('d-m-Y', $this->t_add),
                 );
@@ -99,6 +101,7 @@ class Pkg extends MySqlObj
                         'fmri' => SQL_PROPE,
                         'status' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fk_vm' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE,
                  );
@@ -114,10 +117,12 @@ class Pkg extends MySqlObj
                         'fmri' => 'fmri',
                         'status' => 'status',
                         'fk_server' => 'fk_server',
+                        'fk_vm' => 'fk_vm',
                         't_add' => 't_add',
                         't_upd' => 't_upd',
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
+      $this->_addFK("fk_vm", "o_vm", "VM");
   }
 }

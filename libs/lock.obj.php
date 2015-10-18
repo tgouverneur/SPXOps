@@ -13,12 +13,18 @@
  */
 class Lock extends MySqlObj
 {
-  public $id = -1;
+    public $id = -1;
     public $fk_server = -1;
+    public $fk_vm = -1;
     public $fk_check = -1;
     public $fk_pid = -1;
     public $fct = '';
     public $t_add = -1;
+
+    public $o_server = null;
+    public $o_vm = null;
+    public $o_check = null;
+    public $o_pid = null;
 
     public function fetchAll($all = 1)
     {
@@ -117,6 +123,7 @@ class Lock extends MySqlObj
                         'id' => SQL_INDEX,
                         'fk_check' => SQL_PROPE,
                         'fk_server' => SQL_PROPE,
+                        'fk_vm' => SQL_PROPE,
                         'fk_pid' => SQL_PROPE,
                         'fct' => SQL_PROPE,
                         't_add' => SQL_PROPE,
@@ -125,12 +132,14 @@ class Lock extends MySqlObj
                         'id' => 'id',
                         'fk_check' => 'fk_check',
                         'fk_server' => 'fk_server',
+                        'fk_vm' => 'fk_vm',
                         'fk_pid' => 'fk_pid',
                         'fct' => 'fct',
                         't_add' => 't_add',
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
+      $this->_addFK("fk_vm", "o_vm", "VM");
       $this->_addFK("fk_check", "o_check", "Check");
       $this->_addFK("fk_pid", "o_pid", "Pid");
   }
