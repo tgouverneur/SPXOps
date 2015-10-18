@@ -85,6 +85,16 @@ CREATE TABLE `jt_server_sgroup` (
 ) ENGINE=InnoDB;
 
 --
+-- Table structure for table `jt_vm_sgroup`
+--
+
+CREATE TABLE `jt_vm_sgroup` (
+  `fk_vm` int(11) NOT NULL,
+  `fk_sgroup` int(11) NOT NULL,
+  PRIMARY KEY (`fk_vm`,`fk_sgroup`)
+) ENGINE=InnoDB;
+
+--
 -- Table structure for table `list_act`
 --
 
@@ -229,6 +239,7 @@ CREATE TABLE `list_disk` (
   `f_local` int(1) NOT NULL DEFAULT '1',
   `f_san` int(1) NOT NULL DEFAULT '0',
   `fk_server` int(11) NOT NULL,
+  `fk_vm` int(11) NOT NULL,
   `t_add` int(11) NOT NULL DEFAULT '-1',
   `t_upd` int(11) NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`)
@@ -300,6 +311,7 @@ CREATE TABLE `list_lock` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `fk_check` int(11) NOT NULL DEFAULT '-1',
   `fk_server` int(11) NOT NULL DEFAULT '-1',
+  `fk_vm` int(11) NOT NULL DEFAULT '-1',
   `fk_pid` int(11) NOT NULL,
   `fct` varchar(15) NOT NULL,
   `t_add` int(11) NOT NULL DEFAULT '-1',
@@ -370,6 +382,7 @@ CREATE TABLE `list_net` (
   `flags` varchar(255) NOT NULL,
   `f_ipmp` int(1) NOT NULL DEFAULT '0',
   `fk_server` int(11) NOT NULL,
+  `fk_vm` int(11) NOT NULL DEFAULT '-1',
   `fk_zone` int(11) NOT NULL,
   `fk_switch` int(11) NOT NULL DEFAULT '0',
   `fk_net` int(11) NOT NULL DEFAULT '0',
@@ -392,6 +405,7 @@ CREATE TABLE `list_nfs` (
   `size` bigint(22) NOT NULL,
   `used` bigint(22) NOT NULL,
   `fk_server` int(11) NOT NULL,
+  `fk_vm` int(11) NOT NULL DEFAULT '-1',
   `t_add` int(11) NOT NULL,
   `t_upd` int(11) NOT NULL,
   PRIMARY KEY (`id`)
@@ -455,6 +469,7 @@ CREATE TABLE `list_pkg` (
   `fmri` varchar(255) NOT NULL,
   `status` varchar(200) NOT NULL,
   `fk_server` int(11) NOT NULL,
+  `fk_vm` int(11) NOT NULL,
   `t_add` int(11) NOT NULL,
   `t_upd` int(11) NOT NULL,
   PRIMARY KEY (`id`)
@@ -522,6 +537,7 @@ CREATE TABLE `list_result` (
   `f_ack` int(1) NOT NULL DEFAULT '0',
   `fk_check` int(11) NOT NULL DEFAULT '-1',
   `fk_server` int(11) NOT NULL DEFAULT '-1',
+  `fk_vm` int(11) NOT NULL DEFAULT '-1',
   `fk_login` int(11) NOT NULL DEFAULT '-1',
   `t_add` int(11) NOT NULL,
   `t_upd` int(11) NOT NULL,
@@ -690,9 +706,13 @@ CREATE TABLE `list_slr` (
 CREATE TABLE `list_vm` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
+  `hostname` varchar(200) NOT NULL,
   `status` varchar(20) NOT NULL,
   `xml` longtext NOT NULL,
   `fk_server` int(11) NOT NULL,
+  `fk_os` int(11) NOT NULL DEFAULT '-1',
+  `fk_suser` int(11) NOT NULL DEFAULT '-1',
+  `f_upd` int(1) NOT NULL DEFAULT '0',
   `t_add` int(11) NOT NULL,
   `t_upd` int(11) NOT NULL,
   PRIMARY KEY (`id`)
