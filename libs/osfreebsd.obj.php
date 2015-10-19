@@ -2,30 +2,32 @@
 
 class OSFreeBSD extends OSType
 {
-  public static $extraActions = array();
+    public static $extraActions = array();
 
     public static $binPaths = array(
-    "/bin",
-    "/usr/bin",
-    "/usr/local/bin",
-    "/sbin",
-    "/usr/sbin",
-    "/usr/local/sbin",
-  );
+        "/bin",
+        "/usr/bin",
+        "/usr/local/bin",
+        "/sbin",
+        "/usr/sbin",
+        "/usr/local/sbin",
+    );
 
     protected static $_update = array(
-    "updateUname",
-    "updateDmiDecode",
-    "updateSysCtl",
-    "updateZfs",
-    "updateNetwork",
-    "updatePackages",
-    "updateSwap",
-//    "updateCpu",
-//    "updateNfsShares",
-//    "updateNfsMounts",
-//    "updateDisk",
-//    "updateCdp",
+        'Server' => array(
+            "updateUname",
+            "updateDmiDecode",
+            "updateSysCtl",
+            "updateZfs",
+            "updateNetwork",
+            "updatePackages",
+            "updateSwap",
+        //    "updateCpu",
+        //    "updateNfsShares",
+        //    "updateNfsMounts",
+        //    "updateDisk",
+        //    "updateCdp",
+        ),
   );
 
   /**

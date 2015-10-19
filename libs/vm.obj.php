@@ -219,7 +219,7 @@ class VM extends MySqlObj
          $slog->_job = $job;
 
          if (!$s_vm || $s_vm->value != 1) {
-            Logger::log("VM Support is not enabled", $slog, LLOG_ERROR);
+            Logger::log("VM Support is not enabled", $slog, LLOG_ERR);
             return -1;
          }
 
@@ -258,6 +258,7 @@ class VM extends MySqlObj
                  Logger::log('[-] Trying to detect OS for '.$s, $s, LLOG_INFO);
                  $oso = OS::detect($s);
                  $s->fk_os = $oso->id;
+                 $s->f_upd = 1; // switch update flag to 1
                  $s->update();
                  $s->o_os = $oso;
                  Logger::log('[-] Detected OS for '.$s.' is '.$oso, $s, LLOG_INFO);
@@ -281,7 +282,7 @@ class VM extends MySqlObj
          $slog->_job = $job;
 
          if (!$s_vm || $s_vm->value != 1) {
-            Logger::log("VM Support is not enabled", $slog, LLOG_ERROR);
+            Logger::log("VM Support is not enabled", $slog, LLOG_ERR);
             return -1;
          }
 
@@ -294,7 +295,7 @@ class VM extends MySqlObj
          if ($s_dns_search) {
              $dns_domains = preg_split('/,/', $s_dns_search->value);
          } else {
-            Logger::log("No DNS Search specified, please check the settings", $slog, LLOG_ERROR);
+            Logger::log("No DNS Search specified, please check the settings", $slog, LLOG_ERR);
             return -1;
          }
 
@@ -377,6 +378,8 @@ class VM extends MySqlObj
                  );
 
       $this->_addFK("fk_server", "o_server", "Server");
+      $this->_addFK("fk_suser", "o_suser", "SUser");
+      $this->_addFK("fk_os", "o_os", "OS");
 
       $this->_addRL("a_pkg", "Pkg", array('id' => 'fk_vm'));
       $this->_addRL("a_hostdisk", "Disk", array('id' => 'fk_vm'));

@@ -13,20 +13,28 @@ class OSLinux extends OSType
     "/usr/local/sbin",
   );
 
-    protected static $_update = array(
-    "updateUname",
-    "updateRelease",
-    "updateLinuxVms",
-    "updateDmiDecode",
-    "updateNetwork",
-    "updateHostId",
-    "updatePackages",
-    "updateProc",
-    "updateNfsShares",
-    "updateNfsMounts",
-    "updateLvm",
-//    "updateCdp",
-//    "updateSwap",
+  protected static $_update = array(
+      'Server' => array(
+        "updateUname",
+        "updateRelease",
+        "updateLinuxVms",
+        "updateDmiDecode",
+        "updateNetwork",
+        "updateHostId",
+        "updatePackages",
+        "updateProc",
+        "updateNfsShares",
+        "updateNfsMounts",
+        "updateLvm",
+    //    "updateCdp",
+    //    "updateSwap",
+    ),
+    'VM' => array(
+        "updateUname",
+        "updateRelease",
+        "updateHostId",
+        "updateProc",
+    ),
   );
 
   /* updates function for Linux */
@@ -405,6 +413,7 @@ class OSLinux extends OSType
         return $found_p;
     }
 
+    /* @TODO: make it compatible with VMs */
     public static function updatePackages(&$s)
     {
         $distrib = $s->data('linux:name');

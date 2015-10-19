@@ -55,7 +55,6 @@ class Update
       }
   }
 
-    /*@TODO: make it specific, just ripped from server() for now */
     public static function vm($s, $f = null)
     {
         if (!$s) {
@@ -63,7 +62,7 @@ class Update
         }
 
         if (!$s->fk_os || $s->fk_os == -1) {
-            Logger::log('[!] OS for vm '.$s.' is unknown, aborting', $s, LLOG_ERROR);
+            Logger::log('[!] OS for vm '.$s.' is unknown, aborting', $s, LLOG_ERR);
             return -1;
         }
 
@@ -187,25 +186,21 @@ class Update
     public static function allVMs(&$job)
     {
         $s_vm = Setting::get('vm', 'enable');
-        $s_tries = Setting::get('vm', 'detect_tries');
 
         $slog = new VM();
         $slog->_job = $job;
                
         if (!$s_vm || $s_vm->value != 1) {
-            Logger::log("VM Support is not enabled", $slog, LLOG_ERROR);
+            Logger::log("VM Support is not enabled", $slog, LLOG_ERR);
             return -1;
         }
                
-        if (!$s_tries) {
-            $s_tries = 3;
-        }
-                    
         $table = "`list_vm`";
         $index = "`id`";
         $cindex = "COUNT(`id`)";
-        $where = "WHERE `f_upd`='1' AND `fk_os`!=-1";
+        $where = "WHERE `f_upd`='1' AND `hostname`!='' AND `fk_suser`!=-1 AND `status`='running' AND `fk_os`!=-1";
         $it = new mIterator('VM', $index, $table, array('q' => $where, 'a' => array()), $cindex);
+        Logger::log("[-] Looping through all relevant VMs and launching update", $slog, LLOG_INFO);
 
         while (($s = $it->next())) {
             $s->fetchFromId();

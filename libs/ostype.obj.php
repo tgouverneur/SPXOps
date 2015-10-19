@@ -22,9 +22,10 @@ class OSType
   }
 
 
-  public static function update(Server$s, $f = null)
+  public static function update(MySqlObj &$s, $f = null)
   {
       $oclass = get_called_class();
+      $moclass = get_class($s);
       if ($f) {
           if (method_exists($oclass, $f)) {
               Logger::log('Running '.$oclass.'::'.$f, $s, LLOG_INFO);
@@ -32,12 +33,16 @@ class OSType
                   return $oclass::$f($s);
               } catch (Exception $e) {
                   Logger::log($oclass.'::'.$f.' has failed with '.$s.': '.$e, $s, LLOG_ERR);
+                  return -1;
               }
           }
-
-          return;
+          return 0;
       }
-      foreach ($oclass::$_update as $method) {
+      if (!isset($oclass::$_update[$moclass])) {
+          Logger::log('[!] '.$oclass.'::$_update['.$moclass.'] Not found', $s, LLOG_ERR);
+          return -1;
+      }
+      foreach ($oclass::$_update[$moclass] as $method) {
           if (method_exists($oclass, $method)) {
               Logger::log('Running '.$oclass.'::'.$method, $s, LLOG_INFO);
               try {

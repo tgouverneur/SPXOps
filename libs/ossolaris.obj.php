@@ -2,43 +2,45 @@
 
 class OSSolaris extends OSType
 {
-  public static $extraActions = array();
+    public static $extraActions = array();
 
     public static $binPaths = array(
-    "/bin",
-    "/usr/bin",
-    "/usr/local/bin",
-    "/sbin",
-    "/usr/sbin",
-    "/usr/local/sbin",
-    "/usr/ccs/sbin",
-    "/opt/csw/bin",
-    "/opt/csw/sbin",
-  );
+        "/bin",
+        "/usr/bin",
+        "/usr/local/bin",
+        "/sbin",
+        "/usr/sbin",
+        "/usr/local/sbin",
+        "/usr/ccs/sbin",
+        "/opt/csw/bin",
+        "/opt/csw/sbin",
+    );
 
     protected static $_update = array(
-    "updateUname",
-    "updatePrtDiag",
-    "updatePrtConf",
-    "updateRelease",
-    "updateSneep",
-    "updateNetwork",
-    "updateCpu",
-    "updateHostId",
-    "updateZones",
-    "updatePatches",
-    "updatePackages",
-    "updateNfsShares",
-    "updateNfsMounts",
-    "updateProjects",
-    "updateDisk",
-//    "updateFcInfo",
-    "updateZfs",
-    "updateSds",
-    "updateSwap",
-//    "updateCdp",
-//    "updateSwap",
-  );
+        'Server' => array(
+            "updateUname",
+            "updatePrtDiag",
+            "updatePrtConf",
+            "updateRelease",
+            "updateSneep",
+            "updateNetwork",
+            "updateCpu",
+            "updateHostId",
+            "updateZones",
+            "updatePatches",
+            "updatePackages",
+            "updateNfsShares",
+            "updateNfsMounts",
+            "updateProjects",
+            "updateDisk",
+        //    "updateFcInfo",
+            "updateZfs",
+            "updateSds",
+            "updateSwap",
+        //    "updateCdp",
+        //    "updateSwap",
+        ),
+    );
 
   /* Extra actions functions */
   public static function actionZFSArc(&$s)

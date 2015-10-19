@@ -11,15 +11,17 @@ class OSAix extends OSType
     "/usr/local/sbin",
   );
 
-    protected static $_update = array(
-    "updatePrtConf",
-    "updateLParStat",
-    "updateHostId",
-    "updateOsLevel",
-    "updateUname",
-    "updateNetwork",
-  //  "updateNfsShares",
-  //  "updateNfsMounts",
+  protected static $_update = array(
+      'Server' => array(
+        "updatePrtConf",
+        "updateLParStat",
+        "updateHostId",
+        "updateOsLevel",
+        "updateUname",
+        "updateNetwork",
+      //  "updateNfsShares",
+      //  "updateNfsMounts",
+      ),
   );
 
   /* updates function for AIX */
