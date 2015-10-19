@@ -138,28 +138,28 @@ class OSLinux extends OSType
                   } // skip cdrom devices
                   $vm_disks .= $disk->source->Attributes()[0].';';
               }
-              if ($vm->data('hw:disks') != $vm_disks) {
-                  $vm->setData('hw:disks', $vm_disks);
-                  $s->log("$vm hw:disks => $vm_disks", LLOG_INFO);
+              if ($vm->data('kvm:disks') != $vm_disks) {
+                  $vm->setData('kvm:disks', $vm_disks);
+                  $s->log("$vm kvm:disks => $vm_disks", LLOG_INFO);
                   $u++;
               }
               $vm_nets = '';
               foreach ($vm->o_xml->devices->interface as $net) {
                   $vm_nets .= $net->mac->Attributes()[0].','.$net->source->Attributes()[0].','.$net->model->Attributes()[0].';';
               }
-              if ($vm->data('hw:net') != $vm_nets) {
-                  $vm->setData('hw:net', $vm_nets);
-                  $s->log("$vm hw:net => $vm_nets", LLOG_INFO);
+              if ($vm->data('kvm:net') != $vm_nets) {
+                  $vm->setData('kvm:net', $vm_nets);
+                  $s->log("$vm kvm:net => $vm_nets", LLOG_INFO);
                   $u++;
               }
-              if ($vm->data('hw:nrcpu') != $vm_nrcpu) {
-                  $vm->setData('hw:nrcpu', $vm_nrcpu);
-                  $s->log("$vm hw:nrcpu => $vm_nrcpu", LLOG_INFO);
+              if ($vm->data('kvm:nrcpu') != $vm_nrcpu) {
+                  $vm->setData('kvm:nrcpu', $vm_nrcpu);
+                  $s->log("$vm kvm:nrcpu => $vm_nrcpu", LLOG_INFO);
                   $u++;
               }
-              if ($vm->data('hw:memory') != $vm_mem) {
-                  $vm->setData('hw:memory', $vm_mem);
-                  $s->log("$vm hw:memory => $vm_mem", LLOG_INFO);
+              if ($vm->data('kvm:memory') != $vm_mem) {
+                  $vm->setData('kvm:memory', $vm_mem);
+                  $s->log("$vm kvm:memory => $vm_mem", LLOG_INFO);
                   $u++;
               }
           }

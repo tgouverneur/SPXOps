@@ -114,7 +114,7 @@ class VM extends MySqlObj
     public function getDisks()
     {
         $this->a_disk = array();
-        $disks = $this->data('hw:disks');
+        $disks = $this->data('kvm:disks');
         foreach (explode(';', $disks) as $disk) {
             if (empty($disk)) {
                 continue;
@@ -129,7 +129,7 @@ class VM extends MySqlObj
     public function getNets()
     {
         $this->a_net = array();
-        $nets = $this->data('hw:net');
+        $nets = $this->data('kvm:net');
         foreach (explode(';', $nets) as $net) {
             if (empty($net)) {
                 continue;
@@ -201,8 +201,8 @@ class VM extends MySqlObj
             'Name' => $this->name,
             'Status' => $this->status,
             'Server' => ($this->o_server) ? $this->o_server->link() : 'Unknown',
-            '# CPU' => $this->data('hw:nrcpu'),
-            'Memory' => Pool::formatBytes($this->data('hw:memory') * 1024),
+            '# CPU' => $this->data('kvm:nrcpu'),
+            'Memory' => Pool::formatBytes($this->data('kvm:memory') * 1024),
             'Updated on' => date('d-m-Y', $this->t_upd),
             'Added on' => date('d-m-Y', $this->t_add),
         );
