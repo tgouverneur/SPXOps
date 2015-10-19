@@ -74,7 +74,17 @@ class Result extends MySqlObj
         $filter = array();
 
         $filter['fk_check'] = 'CST:'.$c->id;
-        $filter['fk_server'] = 'CST:'.$s->id;
+        switch(get_class($s)) {
+            case 'Server':
+                $filter['fk_server'] = 'CST:'.$s->id;
+            break;
+            case 'VM':
+                $filter['fk_vm'] = 'CST:'.$s->id;
+            break;
+            default:
+                throw new SPXException('Result::getLast: $s unsupported type');
+            break;
+        }
 
         $r = Result::getAll(true, $filter, $sort, 0, 1);
         if (count($r)) {
@@ -82,7 +92,6 @@ class Result extends MySqlObj
 
             return $r;
         }
-
         return;
     }
 

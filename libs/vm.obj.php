@@ -15,6 +15,7 @@ class VM extends MySqlObj
 {
     use logTrait;
     use sshTrait;
+    use checkTrait;
     public static $RIGHT = 'SRV';
 
     public $id = -1;
@@ -341,6 +342,70 @@ class VM extends MySqlObj
          return 0;
      }
 
+    public static function dashboardArray($fk_os = null)
+    {
+        /* Optimization of last check result calculation,
+           we are doing the fetch here instead of inside server.obj
+           to allow the fetch for all the server at once!
+        */
+        $a = array();
+        $m = MySqlCM::getInstance();
+        $index = "`fk_vm`,`fk_check`,`t_upd`,`rc`,`f_ack`";
+        $table = "(select `fk_vm`,`fk_check`,`t_upd`,`rc`,`f_ack` from `list_result` order by `t_upd` desc) a";
+        /* @TODO implement OS filtering */
+        if ($fk_os) {
+            $where = "where `fk_vm`!=-1 group by `fk_vm`,`fk_check` order by `t_upd` desc";
+        } else {
+            $where = "where `fk_vm`!=-1 group by `fk_vm`,`fk_check` order by `t_upd` desc";
+        }
+        if (($idx = $m->fetchIndex($index, $table, $where))) {
+            foreach ($idx as $t) {
+                $d = new Result();
+                $d->fk_check = $t["fk_check"];
+                $d->fk_vm = $t["fk_vm"];
+                $d->t_upd = $t["t_upd"];
+                $d->f_ack = $t["f_ack"];
+                $d->rc = $t["rc"];
+                if (!isset($a[$d->fk_vm])) {
+                    $a[$d->fk_vm] = new Server($d->fk_vm);
+                    $a[$d->fk_vm]->fetchFromId();
+                    $a[$d->fk_vm]->ack = false;
+                }
+                if (!$a[$d->fk_vm]->a_lr) {
+                    $a[$d->fk_vm]->a_lr = array();
+                }
+                if (isset($a[$d->fk_vm]->rc)) {
+                    if ($d->rc < $a[$d->fk_vm]->rc && !$d->f_ack) {
+                        $a[$d->fk_vm]->rc = $d->rc;
+                    }
+                } else {
+                    $a[$d->fk_vm]->rc = $d->rc;
+                }
+                if ($d->rc && $d->f_ack) {
+                    $a[$d->fk_vm]->ack = true;
+                }
+                array_push($a[$d->fk_vm]->a_lr, $d);
+            }
+        }
+        return $a;
+    }
+
+
+     public function delete() {
+         $this->fetchAll(1);
+         $this->fetchRL('a_result');
+         foreach ($this->_rel as $r) {
+             if ($this->{$r->ar} && count($this->{$r->ar})) {
+                 foreach ($this->{$r->ar} as $e) {
+                     $e->delete();
+                 }
+             }
+         }
+         
+        parent::_delAllJT();
+        parent::delete();
+     }
+
 
   /**
    * ctor
@@ -381,6 +446,7 @@ class VM extends MySqlObj
       $this->_addFK("fk_suser", "o_suser", "SUser");
       $this->_addFK("fk_os", "o_os", "OS");
 
+      $this->_addRL("a_result", "Result", array('id' => 'fk_vm'));
       $this->_addRL("a_pkg", "Pkg", array('id' => 'fk_vm'));
       $this->_addRL("a_hostdisk", "Disk", array('id' => 'fk_vm'));
       $this->_addRL("a_hostnet", "Net", array('id' => 'fk_vm'));

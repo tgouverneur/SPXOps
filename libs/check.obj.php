@@ -300,6 +300,19 @@ CODE;
         parent::delete();
     }
 
+    public static function vm(&$s)
+    {
+        if (!count($s->a_check)) {
+            return;
+        }
+
+        foreach ($s->a_check as $c) {
+            $s->log("Launching $c ...", LLOG_INFO);
+            $c->doCheck($s);
+            $s->log("$c done", LLOG_DEBUG);
+        }
+    }
+
     public static function server(&$s)
     {
         if (!count($s->a_check)) {
@@ -312,6 +325,38 @@ CODE;
             $s->log("$c done", LLOG_DEBUG);
         }
     }
+
+    public static function jobVM(&$job, $sid)
+    {
+        $s = new VM($sid);
+        if ($s->fetchFromId()) {
+            throw new SPXException('VM not found in database');
+        }
+        $s->_job = $job;
+        $s->fetchJT('a_sgroup');
+        if ($job && $job->fk_login > 0) {
+            $s->buildCheckList(true);
+        } else {
+            $s->buildCheckList();
+        }
+
+        if (!count($s->a_check)) {
+            $s->log("No checks to be done on $s, skipping...", LLOG_INFO);
+            return;
+        }
+
+        try {
+            $s->log("Connecting to $s", LLOG_INFO);
+            $s->connect();
+            $s->log("Launching the checks", LLOG_DEBUG);
+            Check::vm($s);
+            $s->log("Disconnecting from VM", LLOG_INFO);
+            $s->disconnect();
+        } catch (Exception $e) {
+            throw($e);
+        }
+    }
+
 
     public static function jobServer(&$job, $sid)
     {
@@ -344,6 +389,37 @@ CODE;
             throw($e);
         }
     }
+
+    public static function vmChecks(&$job)
+    {
+        $s_vm = Setting::get('vm', 'enable');
+
+        $slog = new VM();
+        $slog->_job = $job;
+               
+        if (!$s_vm || $s_vm->value != 1) {
+            Logger::log("VM Support is not enabled", $slog, LLOG_ERR);
+            return -1;
+        }
+     
+        $table = "`list_vm`";
+        $index = "`id`";
+        $cindex = "COUNT(`id`)";
+        $where = "WHERE `hostname`!='' AND `fk_os`!=-1 AND `fk_suser`!=-1 AND `f_upd`='1'";
+        $it = new mIterator('VM', $index, $table, array('q' => $where, 'a' => array()), $cindex);
+
+        while (($s = $it->next())) {
+            $s->fetchFromId();
+            $j = new Job();
+            $j->class = 'Check';
+            $j->fct = 'jobVM';
+            $j->arg = $s->id;
+            $j->state = S_NEW;
+            $j->insert();
+            Logger::log("Added job to check VM $s", $slog, LLOG_INFO);
+        }
+    }
+
 
     public static function serverChecks(&$job)
     {

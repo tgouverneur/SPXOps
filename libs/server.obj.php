@@ -15,6 +15,7 @@ class Server extends MySqlObj implements JsonSerializable
 {
     use logTrait;
     use sshTrait;
+    use checkTrait;
     public static $RIGHT = 'SRV';
 
     public $id = -1;
@@ -45,17 +46,11 @@ class Server extends MySqlObj implements JsonSerializable
     public $a_hba = array();
     public $a_disk = array();
     public $a_pool = array();
-    public $a_result = array();
     public $a_rrd = array();
+    public $a_result = array();
 
     public $a_nfss = array(); /* nfs shares */
     public $a_nfsm = array(); /* nfs mount */
-
-    /* Check system */
-    public $a_check = array();
-    public $a_lr = array();
-    public $rc = 0;
-    public $ack = false;
 
     /* Logging */
     public $_job = null;
@@ -99,50 +94,6 @@ class Server extends MySqlObj implements JsonSerializable
         return array();
     }
 
-    public function buildCheckList($force = false)
-    {
-        $checks = Check::getAll(true);
-        $now = time();
-        $this->a_check = array();
-
-        foreach ($checks as $check) {
-
-          /* Check Groups */
-          $check->fetchJT('a_sgroup');
-          $f_group = 0;
-          $f_egroup = 0;
-
-            foreach ($check->a_sgroup as $grp) {
-                if ($this->isInJT('a_sgroup', $grp)) {
-                    if ($check->f_except[''.$grp]) {
-                        $f_egroup = 1;
-                    } else {
-                        $f_group = 1;
-                    }
-                }
-            }
-            if (!$f_group || $f_egroup) {
-                continue;
-            }
-
-            $this->a_lr[$check->id] = Result::getLast($check, $this);
-
-            if ($this->a_lr[$check->id] === null) {
-                array_push($this->a_check, $check);
-                continue;
-            }
-            $this->a_lr[$check->id]->o_check = $check;
-
-            if ($force) { /* don't take timestamp into account */
-                array_push($this->a_check, $check);
-                continue;
-            }
-            if (($now - $this->a_lr[$check->id]->t_upd) >= $check->frequency) {
-                array_push($this->a_check, $check);
-            }
-        }
-    }
-
     public function equals($z)
     {
         if (!strcmp($this->hostname, $z->hostname)) {
@@ -160,7 +111,7 @@ class Server extends MySqlObj implements JsonSerializable
             $ret[] = 'Missing Hostname';
         } else {
             if ($new) { /* check for already-exist */
-        $check = new Server();
+                $check = new Server();
                 $check->hostname = $this->hostname;
                 if (!$check->fetchFromField('hostname')) {
                     $this->hostname = '';
@@ -439,42 +390,41 @@ class Server extends MySqlObj implements JsonSerializable
 
         foreach ($cfs as $c) {
             switch ($c) {
-    case 'hostname':
-    case 'description':
-    case 'f_rce':
-    case 'f_upd':
-      $ret[$c] = $this->{$c};
-    break;
-    case 'os':
-          if (!$this->o_os && $this->fk_os > 0) {
-              $this->fetchFK('fk_os');
+                case 'hostname':
+                case 'description':
+                case 'f_rce':
+                case 'f_upd':
+                      $ret[$c] = $this->{$c};
+                break;
+                case 'os':
+                  if (!$this->o_os && $this->fk_os > 0) {
+                      $this->fetchFK('fk_os');
+                  }
+                  $ret['os'] = ($this->o_os) ? $this->o_os->name : 'Unknown';
+                break;
+                case 'nrvms':
+                  if (!count($this->a_vm)) {
+                      $this->fetchRL('a_vm');
+                      $this->vmStats();
+                  }
+                  $ret[$c] = $this->vm_nb;
+                break;
+                case 'nrvmscores':
+                      if (!count($this->a_vm)) {
+                          $this->fetchRL('a_vm');
+                          $this->vmStats();
+                      }
+                      $ret[$c] = $this->vm_core;
+                break;
+                case 'nrvmsram':
+                  if (!count($this->a_vm)) {
+                      $this->fetchRL('a_vm');
+                      $this->vmStats();
+                  }
+                  $ret[$c] = Pool::formatBytes($this->vm_mem * 1024);
+                break;
           }
-      $ret['os'] = ($this->o_os) ? $this->o_os->name : 'Unknown';
-    break;
-        case 'nrvms':
-          if (!count($this->a_vm)) {
-              $this->fetchRL('a_vm');
-              $this->vmStats();
-          }
-          $ret[$c] = $this->vm_nb;
-    break;
-        case 'nrvmscores':
-          if (!count($this->a_vm)) {
-              $this->fetchRL('a_vm');
-              $this->vmStats();
-          }
-          $ret[$c] = $this->vm_core;
-    break;
-        case 'nrvmsram':
-          if (!count($this->a_vm)) {
-              $this->fetchRL('a_vm');
-              $this->vmStats();
-          }
-          $ret[$c] = Pool::formatBytes($this->vm_mem * 1024);
-    break;
-      }
         }
-
         return $ret;
     }
 
@@ -523,9 +473,9 @@ class Server extends MySqlObj implements JsonSerializable
         $table = "(select `fk_server`,`fk_check`,`t_upd`,`rc`,`f_ack` from `list_result` order by `t_upd` desc) a";
         /* @TODO implement OS filtering */
         if ($fk_os) {
-            $where = " group by `fk_server`,`fk_check` order by `t_upd` desc";
+            $where = "where `fk_server`!=-1 group by `fk_server`,`fk_check` order by `t_upd` desc";
         } else {
-            $where = "group by `fk_server`,`fk_check` order by `t_upd` desc";
+            $where = "where `fk_server`!=-1 group by `fk_server`,`fk_check` order by `t_upd` desc";
         }
         if (($idx = $m->fetchIndex($index, $table, $where))) {
             foreach ($idx as $t) {
@@ -556,7 +506,6 @@ class Server extends MySqlObj implements JsonSerializable
                 array_push($a[$d->fk_server]->a_lr, $d);
             }
         }
-
         return $a;
     }
 
