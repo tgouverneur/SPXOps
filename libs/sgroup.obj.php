@@ -13,18 +13,19 @@
  */
 class SGroup extends MySqlObj
 {
-  public $id = -1;
+    public $id = -1;
     public $name = '';
     public $description = '';
     public $t_add = -1;
     public $t_upd = -1;
 
     public $a_server = array();
+    public $a_vm = array();
     public $a_check = array();
     public $f_except = array();
 
-  /* for alerts */
-  public $a_ugroup = array();
+    /* for alerts */
+    public $a_ugroup = array();
 
     public function __toString()
     {
@@ -53,7 +54,7 @@ class SGroup extends MySqlObj
             $ret[] = 'Missing Name';
         } else {
             if ($new) { /* check for already-exist */
-        $check = new SGroup();
+                $check = new SGroup();
                 $check->name = $this->name;
                 if (!$check->fetchFromField('name')) {
                     $this->name = '';
@@ -128,7 +129,8 @@ class SGroup extends MySqlObj
                  );
 
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
-    $this->_addJT('a_server', 'Server', 'jt_server_sgroup', array('id' => 'fk_sgroup'), array('id' => 'fk_server'), array());
+      $this->_addJT('a_server', 'Server', 'jt_server_sgroup', array('id' => 'fk_sgroup'), array('id' => 'fk_server'), array());
+      $this->_addJT('a_vm', 'VM', 'jt_vm_sgroup', array('id' => 'fk_sgroup'), array('id' => 'fk_vm'), array());
       $this->_addJT('a_check', 'Check', 'jt_check_sgroup', array('id' => 'fk_sgroup'), array('id' => 'fk_check'), array('f_except'));
       $this->_addJT('a_ugroup', 'UGroup', 'jt_sgroup_ugroup', array('id' => 'fk_sgroup'), array('id' => 'fk_ugroup'), array());
   }

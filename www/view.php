@@ -106,6 +106,7 @@ try {
          goto screen;
        }
        $obj->fetchJT('a_server');
+       $obj->fetchJT('a_vm');
        $content = new Template('../tpl/view_sgroup.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);

@@ -15,6 +15,7 @@ class OSLinux extends OSType
 
   protected static $_update = array(
       'Server' => array(
+        "updateGroup",
         "updateUname",
         "updateRelease",
         "updateLinuxVms",
@@ -30,6 +31,7 @@ class OSLinux extends OSType
     //    "updateSwap",
     ),
     'VM' => array(
+        "updateGroup",
         "updateUname",
         "updateRelease",
         "updateHostId",
@@ -38,6 +40,40 @@ class OSLinux extends OSType
   );
 
   /* updates function for Linux */
+
+  /**
+   * Update OS group association
+   */
+  public static function updateGroup(&$s) {
+      if (!$s->o_os) {
+          return -1;
+      }
+      $sg = new SGroup();
+      $sg->name = $s->o_os->name;
+      if ($sg->fetchFromField('name')) {
+          $s->log('[!] Server group: '.$s->o_os->name.' does not exists, creating...', LLOG_INFO);
+          $sg->description = 'OS Group';
+          $sg->insert();
+      }
+      /* check if $s is inside $sg */
+      switch(get_class($s)) {
+          case 'Server':
+              $sg->fetchJT('a_server');
+              if (!$sg->isInJT('a_server', $s)) {
+                  $s->log('[!] Server '.$s.' is not in group '.$sg, LLOG_INFO);
+                  $sg->addToJT('a_server', $s);
+              }
+          break;
+          case 'VM':
+              $sg->fetchJT('a_vm');
+              if (!$sg->isInJT('a_vm', $s)) {
+                  $s->log('[!] VM '.$s.' is not in group '.$sg, LLOG_INFO);
+                  $sg->addToJT('a_vm', $s);
+              }
+          break;
+      }
+      return 0;
+  }
 
   /**
    * VMs

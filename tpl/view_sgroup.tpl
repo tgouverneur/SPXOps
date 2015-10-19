@@ -26,7 +26,7 @@
 	   </table>
 	  </div>
           <div class="col-md-4">
-           <h3>Members</h3>
+           <h3>Server Members</h3>
            <table id="LListserverTable" class="table table-condensed">
              <tbody>
 <?php foreach($obj->a_server as $server) { ?>
@@ -73,7 +73,18 @@
           </div>
           </form>
           <div class="col-md-8">
-           <h3>Free</h3>
+           <h3>VM Members</h3>
+           <table id="LListserverTable" class="table table-condensed">
+             <tbody>
+<?php foreach($obj->a_vm as $server) { ?>
+            <tr id="LListvm<?php echo $server->id; ?>">
+                <td><?php echo $server->link(); ?></td>
+                <td><a href="#" onClick="delLList('sgroup', <?php echo $obj->id; ?>, 'vm', <?php echo $server->id; ?>);">Remove</a></td>
+            </tr>
+<?php } ?>
+             </tbody>
+           </table>
+ 
           </div>
        </div>
       </div>
