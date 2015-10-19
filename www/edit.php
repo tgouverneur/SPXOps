@@ -254,7 +254,7 @@ try {
        $content->set('page', $page);
        $page['title'] .= $what;
        if (isset($_POST['submit'])) { /* clicked on the Edit button */
-         $fields = array('description', 'm_error', 'm_warn', 'f_noalerts', 'f_root', 'frequency', 'lua');
+         $fields = array('description', 'm_error', 'm_warn', 'f_noalerts', 'f_vm', 'f_root', 'frequency', 'lua');
          foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
              if (isset($_POST[$field])) {

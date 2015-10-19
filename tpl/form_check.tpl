@@ -80,6 +80,12 @@ if (!isset($pservers)) $pservers = array();
                  <a href="#" rel="tooltip" title="This check need root access">Need root</a>
                 </label>
                </div>
+              <div class="checkbox">
+                <label>
+                 <input name="f_vm" type="checkbox" <?php if ($obj->f_vm) { echo "checked"; } ?>>
+                 <a href="#" rel="tooltip" title="This check supports VMs">VM Support</a>
+                </label>
+               </div>
             </div>
           </div>
 	  <div class="form-group">

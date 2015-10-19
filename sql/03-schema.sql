@@ -121,6 +121,7 @@ CREATE TABLE `list_check` (
   `m_warn` varchar(200) NOT NULL,
   `f_noalerts` int(1) NOT NULL DEFAULT '0',
   `f_root` int(1) NOT NULL DEFAULT '0',
+  `f_vm` int(1) NOT NULL DEFAULT '1',
   `t_add` int(11) NOT NULL,
   `t_upd` int(11) NOT NULL,
   PRIMARY KEY (`id`)

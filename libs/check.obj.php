@@ -29,6 +29,7 @@ CODE;
     public $m_warn = '';
     public $f_noalerts = 0;
     public $f_root = 0;
+    public $f_vm = 1;
     public $t_add = -1;
     public $t_upd = -1;
 
@@ -258,6 +259,7 @@ CODE;
                  'Description' => 'description',
                  'Frequency' => 'frequency',
                  'Need Root' => 'f_root',
+                 'Support VM' => 'f_vm',
                  'Alerts Disabled' => 'f_noalerts',
                 );
     }
@@ -269,6 +271,7 @@ CODE;
                  'description' => $this->description,
                  'frequency' => Utils::parseFrequency($this->frequency),
                  'f_root' => $this->f_root,
+                 'f_vm' => $this->f_vm,
                  'f_noalerts' => $this->f_noalerts,
                 );
     }
@@ -281,8 +284,9 @@ CODE;
         'Error Message' => $this->m_error,
         'Warning Message' => $this->m_warn,
         'Frequency' => Utils::parseFrequency($this->frequency),
-        'No Alerts?' => ($this->f_root) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
+        'No Alerts?' => ($this->f_noalerts) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Need root?' => ($this->f_root) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
+        'VM Support?' => ($this->f_vm) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Updated on' => date('d-m-Y', $this->t_upd),
         'Added on' => date('d-m-Y', $this->t_add),
     );
@@ -381,6 +385,7 @@ CODE;
                         'm_warn' => SQL_PROPE,
                         'f_noalerts' => SQL_PROPE,
                         'f_root' => SQL_PROPE,
+                        'f_vm' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE,
                  );
@@ -394,6 +399,7 @@ CODE;
                         'm_warn' => 'm_warn',
                         'f_noalerts' => 'f_noalerts',
                         'f_root' => 'f_root',
+                        'f_vm' => 'f_vm',
                         't_add' => 't_add',
                         't_upd' => 't_upd',
                  );
