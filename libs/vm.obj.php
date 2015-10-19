@@ -13,7 +13,8 @@
  */
 class VM extends MySqlObj
 {
-  use logTrait;
+    use logTrait;
+    use sshTrait;
     public static $RIGHT = 'SRV';
 
     public $id = -1;
@@ -29,6 +30,8 @@ class VM extends MySqlObj
     public $t_upd = -1;
 
     public $o_server = null;
+    public $o_os = null;
+    public $o_suser = null;
     public $o_xml = null;
 
     public $a_net = array();
@@ -206,6 +209,65 @@ class VM extends MySqlObj
 
         return $ret;
     }
+
+     public static function detectOSes(&$job)
+     {
+         $s_vm = Setting::get('vm', 'enable');
+         $s_tries = Setting::get('vm', 'detect_tries');
+
+         $slog = new VM();
+         $slog->_job = $job;
+
+         if (!$s_vm || $s_vm->value != 1) {
+            Logger::log("VM Support is not enabled", $slog, LLOG_ERROR);
+            return -1;
+         }
+
+         if (!$s_tries) {
+             $s_tries = 3;
+         }
+
+         $table = "`list_vm`";
+         $index = "`id`";
+         $cindex = "COUNT(`id`)";
+         $where = "WHERE `fk_server` != -1 AND `hostname`!='' AND `fk_os`=-1";
+         $it = new mIterator('VM', $index, $table, array('q' => $where, 'a' => array()), $cindex);
+ 
+         while (($s = $it->next())) {
+             $s->fetchFromId();
+             $s->_job = $job;
+             $s->fetchData();
+             $c = $s->data('detectOS:try');
+             if (!$c) {
+                 $c = 1;
+             } else {
+                 if ($c >= $s_tries) {
+                     Logger::log("[!] Max OS Detection tries for $s reached, skipping...", $slog, LLOG_INFO);
+                     continue;
+                 }
+                 $c++;
+             }
+             $s->setData('detectOS:try', $c);
+             $found = false;
+             /* Try to detect OS */
+             try {
+                 Logger::log("[-] Trying to connect SSH to $s", $slog, LLOG_INFO);
+                 $s->connect();
+                 Logger::log('[-] Trying to detect OS for '.$s, $s, LLOG_INFO);
+                 $oso = OS::detect($s);
+                 $s->fk_os = $oso->id;
+                 $s->update();
+                 $s->o_os = $oso;
+                 Logger::log('[-] Detected OS for '.$s.' is '.$oso, $s, LLOG_INFO);
+                 $s->disconnect();
+
+             } catch (Exception $e) {
+                 Logger::log('[1] Error while trying to detect OS for '.$s, $s, LLOG_INFO);
+                 /*@TODO: more logging */
+             }
+         }
+         return 0;
+     }
 
      public static function detectHostnames(&$job)
      {

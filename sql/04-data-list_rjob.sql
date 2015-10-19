@@ -3,3 +3,5 @@ INSERT INTO `list_rjob` (`id`, `class`, `fct`, `arg`, `frequency`, `fk_login`, `
 
 -- VM Support
 INSERT INTO `list_rjob` (`class`, `fct`, `arg`, `frequency`, `fk_login`, `t_last`, `t_add`, `t_upd`) VALUES ('VM', 'detectHostnames', '', 7200, 2, 0, 0, 0);
+INSERT INTO `list_rjob` (`class`, `fct`, `arg`, `frequency`, `fk_login`, `t_last`, `t_add`, `t_upd`) VALUES ('VM', 'detectOSes', '', 7200, 2, 0, 0, 0);
+INSERT INTO `list_rjob` (`class`, `fct`, `arg`, `frequency`, `fk_login`, `t_last`, `t_add`, `t_upd`) VALUES ('Update', 'allVMs', '', 14400, 2, 0, 0, 0);

@@ -14,6 +14,27 @@
 class Update
 {
 
+  public static function jobVM(&$job, $sid)
+  {
+      $s = new VM($sid);
+      if ($s->fetchFromId()) {
+          throw new SPXException('VM not found in database');
+      }
+      $s->_job = $job;
+
+      try {
+          $s->log("Connecting to $s", LLOG_INFO);
+          $s->connect();
+          $s->log("Launching the Update", LLOG_DEBUG);
+          Update::vm($s);
+          $s->log("Disconnecting from $s", LLOG_INFO);
+          $s->disconnect();
+      } catch (Exception $e) {
+          throw($e);
+      }
+  }
+
+
   public static function jobServer(&$job, $sid)
   {
       $s = new Server($sid);
@@ -33,6 +54,34 @@ class Update
           throw($e);
       }
   }
+
+    /*@TODO: make it specific, just ripped from server() for now */
+    public static function vm($s, $f = null)
+    {
+        if (!$s) {
+            throw new SPXException("Update::server: $s is null");
+        }
+
+        if (!$s->fk_os || $s->fk_os == -1) {
+            Logger::log('[!] OS for vm '.$s.' is unknown, aborting', $s, LLOG_ERROR);
+            return -1;
+        }
+
+        $s->fetchAll(1);
+
+        $classname = $s->o_os->class;
+        if (class_exists($classname)) {
+            if ($f) {
+                return $classname::update($s, $f);
+            } else {
+                Logger::log('Launching '.$classname.'::update', $s, LLOG_INFO);
+                return $classname::update($s);
+            }
+        }
+
+        return -1;
+    }
+
 
     public static function server($s, $f = null)
     {
@@ -57,7 +106,6 @@ class Update
                 return $classname::update($s, $f);
             } else {
                 Logger::log('Launching '.$classname.'::update', $s, LLOG_INFO);
-
                 return $classname::update($s);
             }
         }
@@ -133,6 +181,41 @@ class Update
                 $job->log("Removing $vm, has not been updated in last 10 days", null, LLOG_INFO);
                 $vm->delete();
             }
+        }
+    }
+
+    public static function allVMs(&$job)
+    {
+        $s_vm = Setting::get('vm', 'enable');
+        $s_tries = Setting::get('vm', 'detect_tries');
+
+        $slog = new VM();
+        $slog->_job = $job;
+               
+        if (!$s_vm || $s_vm->value != 1) {
+            Logger::log("VM Support is not enabled", $slog, LLOG_ERROR);
+            return -1;
+        }
+               
+        if (!$s_tries) {
+            $s_tries = 3;
+        }
+                    
+        $table = "`list_vm`";
+        $index = "`id`";
+        $cindex = "COUNT(`id`)";
+        $where = "WHERE `f_upd`='1' AND `fk_os`!=-1";
+        $it = new mIterator('VM', $index, $table, array('q' => $where, 'a' => array()), $cindex);
+
+        while (($s = $it->next())) {
+            $s->fetchFromId();
+            $j = new Job();
+            $j->class = 'Update';
+            $j->fct = 'jobVM';
+            $j->arg = $s->id;
+            $j->state = S_NEW;
+            $j->insert();
+            Logger::log("Added job to update VM $s", $slog, LLOG_INFO);
         }
     }
 
