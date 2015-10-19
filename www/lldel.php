@@ -172,6 +172,23 @@ try {
         } else {
           throw new ExitException('Specified server is not in this group');
         }
+     } else if (!strcmp($o, 'vm')) {
+       $obj->fetchJT('a_vm');
+       $tobj = new VM($t);
+       if ($tobj->fetchFromId()) {
+         throw new ExitException('Cannot find Server provided inside the database');
+        }
+        if ($obj->isInJT('a_vm', $tobj)) {
+          $obj->delFromJT('a_vm', $tobj);
+          Act::add("Removed vm $tobj from $obj group", $lm->o_login);
+          $ret['rc'] = 0;
+          $ret['id'] = $tobj->id;
+          $ret['llist'] = 'vm';
+          $ret['msg'] = "Removed vm $tobj from $obj group";
+
+        } else {
+          throw new ExitException('Specified vm is not in this group');
+        }
      } else {
        throw new ExitException('Unrecognized target class');
      }

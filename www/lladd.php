@@ -304,6 +304,62 @@ try {
              $ret['msg'] = $nradd." Have been added to $obj group.";
            }
        }
+     } else if (!strcmp($o, 'vm')) {
+       $obj->fetchJT('a_vm');
+       if (!$r || $r == 0) {
+         $tobj = new VM($t);
+         if ($tobj->fetchFromId()) {
+             throw new ExitException('Cannot find VM provided inside the database');
+         }
+          if (!$obj->isInJT('a_vm', $tobj)) {
+            $obj->addToJT('a_vm', $tobj);
+            Act::add("Added vm $tobj to $obj group", $lm->o_login);
+            $ret['rc'] = 0;
+            $ret['res'] = json_encode(array(
+				json_encode(array(
+					'id' => $tobj->id,
+					'value' => $tobj->link(),
+				)),
+			  ));
+            $ret['llist'] = 'vm';
+            $ret['src'] = 'sgroup';
+            $ret['srcid'] = $obj->id;
+            $ret['msg'] = "Added vm $tobj to $obj group";
+
+          } else {
+              throw new ExitException('Specified vm is already in this group');
+          }
+       } else {
+         $q = '%'.$t.'%';
+         $f = array();
+         $s = array('ASC:hostname');
+         $f['hostname'] = 'LIKE:'.$q;
+         $a_list = VM::getAll(true, $f, $s);
+         if (!count($a_list)) {
+           $ret['rc'] = 1;
+           $ret['msg'] = 'No VM(s) found';
+         } else {
+             $res = array();
+             $nradd = 0;
+             foreach($a_list as $tobj) {
+               if (!$obj->isInJT('a_vm', $tobj)) {
+                 $obj->addToJT('a_vm', $tobj);
+                 Act::add("Added vm $tobj to $obj group", $lm->o_login);
+                 $nradd++;
+                 array_push($res, json_encode(array(
+                                            'id' => $tobj->id,
+                                            'value' => $tobj->link(),
+                                    )));
+               }
+             }
+             $ret['llist'] = 'vm';
+             $ret['src'] = 'sgroup';
+             $ret['srcid'] = $obj->id;
+             $ret['rc'] = 0;
+             $ret['res'] = json_encode($res);
+             $ret['msg'] = $nradd." Have been added to $obj group.";
+           }
+       }
      } else {
        throw new ExitException('Unrecognized target class');
      }
