@@ -225,12 +225,14 @@ class VM extends MySqlObj
 
          if (!$s_tries) {
              $s_tries = 3;
+         } else {
+             $s_tries = $s_tries->value;
          }
 
          $table = "`list_vm`";
          $index = "`id`";
          $cindex = "COUNT(`id`)";
-         $where = "WHERE `fk_server` != -1 AND `hostname`!='' AND `fk_os`=-1";
+         $where = "WHERE `status`='running' AND `fk_server` != -1 AND `hostname`!='' AND `fk_os`=-1";
          $it = new mIterator('VM', $index, $table, array('q' => $where, 'a' => array()), $cindex);
  
          while (($s = $it->next())) {
@@ -285,6 +287,8 @@ class VM extends MySqlObj
 
          if (!$s_tries) {
              $s_tries = 3;
+         } else {
+             $s_tries = $s_tries->value;
          }
 
          if ($s_dns_search) {
