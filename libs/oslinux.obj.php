@@ -46,6 +46,7 @@ class OSLinux extends OSType
    */
   public static function updateGroup(&$s) {
       if (!$s->o_os) {
+          $s->log('[!] No Server group associated', LLOG_INFO);
           return -1;
       }
       $sg = new SGroup();

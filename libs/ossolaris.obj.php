@@ -18,6 +18,7 @@ class OSSolaris extends OSType
 
     protected static $_update = array(
         'Server' => array(
+            "updateGroup",
             "updateUname",
             "updatePrtDiag",
             "updatePrtConf",
@@ -41,6 +42,10 @@ class OSSolaris extends OSType
         //    "updateSwap",
         ),
     );
+
+  public static function updateGroup(&$s) {
+      return OSLinux::updateGroup($s);
+  }
 
   /* Extra actions functions */
   public static function actionZFSArc(&$s)

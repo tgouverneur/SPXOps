@@ -15,6 +15,7 @@ class OSFreeBSD extends OSType
 
     protected static $_update = array(
         'Server' => array(
+            "updateGroup",
             "updateUname",
             "updateDmiDecode",
             "updateSysCtl",
@@ -29,6 +30,10 @@ class OSFreeBSD extends OSType
         //    "updateCdp",
         ),
   );
+
+  public static function updateGroup(&$s) {
+      return OSLinux::updateGroup($s);
+  }
 
   /**
    * dmidecode

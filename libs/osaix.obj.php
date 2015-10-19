@@ -13,6 +13,7 @@ class OSAix extends OSType
 
   protected static $_update = array(
       'Server' => array(
+        "updateGroup",
         "updatePrtConf",
         "updateLParStat",
         "updateHostId",
@@ -23,6 +24,10 @@ class OSAix extends OSType
       //  "updateNfsMounts",
       ),
   );
+
+  public static function updateGroup(&$s) {
+      return OSLinux::updateGroup($s);
+  }
 
   /* updates function for AIX */
 
