@@ -52,6 +52,21 @@ class OSType
               }
           }
       }
+
+      /* run through plugins hooks */
+      $hooks = array();
+      switch($moclass) {
+          case 'Server':
+              $hooks = Plugin::getHooks(P_HOOK_UPD_SRV);
+              break;
+          case 'VM':
+              $hooks = Plugin::getHooks(P_HOOK_UPD_VM);
+              break;
+      }
+      foreach($hooks as $hook) {
+          Logger::log('[-] Launching Hook '.$hook->name, $s, LLOG_INFO);
+          $hook->call($s);
+      }
       $s->update();
 
       return 0;

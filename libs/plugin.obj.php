@@ -14,6 +14,8 @@
 if (!defined('PLUGIN_LOADED')) {
 
   /* Hooks definition */
+  define('P_HOOK_UPD_SRV', 1);  // Update::server hook
+  define('P_HOOK_UPD_VM', 2);  // Update::vm hook
 
   define('PLUGIN_LOADED', true);
 }
@@ -57,15 +59,16 @@ class Plugin
 
     public static function registerHook($n, $h)
     {
+        if (!isset(Plugin::$_hooks[$n])) {
+            Plugin::$_hooks[$n] = array();
+        }
         array_push(Plugin::$_hooks[$n], $h);
-
         return true;
     }
 
     public static function registerPlugin($p)
     {
         array_push(Plugin::$_plugins, $p);
-
         return true;
     }
 
@@ -115,6 +118,18 @@ class Plugin
 
         return $ret;
     }
+
+    public static function getHooks($n)
+    {
+        $ret = array();
+        foreach (Plugin::$_hooks as $ph) {
+            if ($ph->type == $n) {
+                $ret[] = $ph;
+            }
+        }
+        return $ph;
+    }
+
 
     public static function getWebAction($p, $n)
     {
