@@ -27,7 +27,7 @@
 	 </tr>
 	</thead>
 	<tbody>
-<?php foreach($obj->a_lr as $r) { ?>
+<?php foreach($obj->a_lr as $r) { if ($r === null) continue; ?>
 	 <tr<?php echo ' class="'.Result::colorRC($r->rc).'" '; ?>>
 	  <td><?php echo Result::colorRC($r->rc); ?></td>
 	  <td><?php echo $r->o_check->name; ?></td>

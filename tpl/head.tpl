@@ -90,6 +90,9 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Checks <b class="caret"></b></a>
                 <ul class="dropdown-menu" role="menu">
                   <li><a href="/dashboard">Dashboard</a></li>
+<?php if (Setting::get('vm', 'enable') && Setting::get('vm', 'enable')->value == 1) { ?>
+                  <li><a href="/dashboard_vm">VM Dashboard</a></li>
+<?php } ?>
                   <li><a href="/list/w/results">Results</a></li>
                   <li><a href="/list/w/check">List</a></li>
                   <li><a href="/add/w/check">Add</a></li>

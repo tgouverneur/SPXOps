@@ -367,7 +367,7 @@ class VM extends MySqlObj
                 $d->f_ack = $t["f_ack"];
                 $d->rc = $t["rc"];
                 if (!isset($a[$d->fk_vm])) {
-                    $a[$d->fk_vm] = new Server($d->fk_vm);
+                    $a[$d->fk_vm] = new VM($d->fk_vm);
                     $a[$d->fk_vm]->fetchFromId();
                     $a[$d->fk_vm]->ack = false;
                 }

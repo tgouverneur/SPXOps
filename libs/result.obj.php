@@ -32,10 +32,15 @@ class Result extends MySqlObj
 
     public static function getHash($c, $o) {
         $hs = '';
-        if ($c->rc < 0) {
-            $hs .= $c->id.$c->fk_check.$c->fk_server;
+        if ($c->fk_server > 0) {
+            $fk = 'fk_server';
         } else {
-            $hs .= $o->id.$o->fk_check.$o->fk_server;
+            $fk = 'fk_vm';
+        }
+        if ($c->rc < 0) {
+            $hs .= $c->id.$c->fk_check.$c->{$fk};
+        } else {
+            $hs .= $o->id.$o->fk_check.$o->{$fk};
         }
         return md5($hs);
     }
@@ -45,6 +50,7 @@ class Result extends MySqlObj
         if ($r->rc == $this->rc &&
             $r->fk_check == $this->fk_check &&
             $r->fk_server == $this->fk_server &&
+            $r->fk_vm == $this->fk_vm &&
             !strcmp($r->details, $this->details)) {
             return true;
         }
@@ -98,6 +104,10 @@ class Result extends MySqlObj
     public function fetchAll($all = 1)
     {
         try {
+            if (!$this->o_vm && $this->fk_vm > 0) {
+                $this->fetchFK('fk_vm');
+            }
+
             if (!$this->o_server && $this->fk_server > 0) {
                 $this->fetchFK('fk_server');
             }
@@ -145,22 +155,35 @@ class Result extends MySqlObj
         if (!$this->o_server && $this->fk_server > 0) {
             $this->fetchFK('fk_server');
         }
+        if (!$this->o_vm && $this->fk_vm > 0) {
+            $this->fetchFK('fk_vm');
+        }
         if (!$this->o_check && $this->fk_check > 0) {
             $this->fetchFK('fk_check');
         }
 
-        return array(
+        $ret = array(
                  '_color' => Result::colorRC($this->rc),
                  'check' => $this->o_check->link(),
-                 'server' => $this->o_server->link(),
                  'message' => $this->message,
                  't_upd' => date('d-m-Y H:m:s', $this->t_upd),
                 );
+
+        if ($this->o_server) {
+           $ret['server'] = $this->o_server->link();
+        }
+        if ($this->o_vm) {
+           $ret['server'] = $this->o_vm->link();
+        }
+        return $ret;
     }
 
     public function __toString()
     {
         try {
+            if (!$this->o_vm && $this->fk_vm > 0) {
+                $this->fetchFK('fk_vm');
+            }
             if (!$this->o_server && $this->fk_server > 0) {
                 $this->fetchFK('fk_server');
             }
@@ -171,7 +194,13 @@ class Result extends MySqlObj
             echo '';
         }
 
-        $rc = $this->o_check.'/'.$this->o_server.'='.$this->rc;
+        if ($this->o_server) {
+            $rc = $this->o_check.'/'.$this->o_server.'='.$this->rc;
+        } else if ($this->o_vm) {
+            $rc = $this->o_check.'/'.$this->o_vm.'='.$this->rc;
+        } else {
+            $rc = $this->o_check.'/null='.$this->rc;
+        }
 
         return $rc;
     }
@@ -180,13 +209,22 @@ class Result extends MySqlObj
     {
         $rc = '';
         try {
+            if (!$this->o_vm && $this->fk_vm > 0) {
+                $this->fetchFK('fk_vm');
+            }
             if (!$this->o_server && $this->fk_server > 0) {
                 $this->fetchFK('fk_server');
             }
             if (!$this->o_check && $this->fk_check > 0) {
                 $this->fetchFK('fk_check');
             }
-            $rc = $this->o_check->link().'/'.$this->o_server->link().'='.Result::colorRC($this->rc);
+            if ($this->o_server) {
+                $rc = $this->o_check->link().'/'.$this->o_server->link().'='.Result::colorRC($this->rc);
+            } elseif ($this->o_vm) {
+                $rc = $this->o_check->link().'/'.$this->o_vm->link().'='.Result::colorRC($this->rc);
+            } else {
+                $rc = $this->o_check->link().'/null='.Result::colorRC($this->rc);
+            }
         } catch (Exception $e) {
             echo '';
         }
