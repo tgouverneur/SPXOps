@@ -49,7 +49,7 @@ CODE;
             $ret[] = 'Missing Name';
         } else {
             if ($new) { /* check for already-exist */
-        $check = new Check();
+                $check = new Check();
                 $check->name = $this->name;
                 if (!$check->fetchFromField('name')) {
                     $this->name = '';
@@ -59,13 +59,13 @@ CODE;
             }
         }
 
-    /* @TODO: Add LUA Validation code */
+        /* @TODO: Add LUA Validation code */
 
-    if (count($ret)) {
-        return $ret;
-    } else {
-        return;
-    }
+        if (count($ret)) {
+            return $ret;
+        } else {
+            return;
+        }
     }
 
   private function getLuaObject(&$s) {
@@ -140,6 +140,19 @@ CODE;
           $s->log("$this Cannot acquire lock for $s ($rc)", LLOG_ERR);
           return -1;
       }
+
+      switch(get_class($s)) {
+          case 'Server':
+              $fk = 'fk_server';
+              break;
+          case 'VM':
+              $fk = 'fk_vm';
+              break;
+          default:
+              throw new SPXException('doCheck(): unsupported server class');
+              break;
+      }
+
       $lua = $this->getLuaObject($s);
       try {
           $lua->eval($this->lua);
@@ -151,7 +164,7 @@ CODE;
 
           $r = new Result();
           $r->fk_check = $this->id;
-          $r->fk_server = $s->id;
+          $r->{$fk} = $s->id;
           $r->rc = $rc;
           $this->updateResult($r, $ret);
           $done = false;
@@ -197,8 +210,18 @@ CODE;
           return -1;
       }
       $args = array('idPid' => $pid->id,
-                    'idServer' => $obj->id,
                     'idCheck' => $this->id);
+
+      switch(get_class($obj)) {
+          case 'Server':
+              $args['idVM'] = -1;
+              $args['idServer'] = $obj->id;
+              break;
+          case 'VM':
+              $args['idVM'] = $obj->id;
+              $args['idServer'] = -1;
+              break;
+      }
       $ret = array('rc' => -1);
       if ($m->call('lockCheck', $args, $ret)) {
           return -1;
@@ -212,8 +235,18 @@ CODE;
     public function unlockCheck(&$obj)
     {
       $m = MySqlCM::getInstance();
-      $args = array('idServer' => $obj->id,
-                    'idCheck' => $this->id);
+      $args = array('idCheck' => $this->id);
+
+      switch(get_class($obj)) {
+          case 'Server':
+              $args['idVM'] = -1;
+              $args['idServer'] = $obj->id;
+              break;
+          case 'VM':
+              $args['idVM'] = $obj->id;
+              $args['idServer'] = -1;
+              break;
+      }
       $ret = array();
       if ($m->call('unlockCheck', $args, $ret)) {
           return -1;
@@ -225,11 +258,13 @@ CODE;
     {
         $cl = new Lock();
         $cl->fk_check = $this->id;
-        $cl->fk_server = $obj->id;
-        if ($cl->fetchFromFields(array('fk_check', 'fk_server'))) {
+        $fk = $cl->setIt($obj);
+        if ($fk === false) {
             return false;
         }
-
+        if ($cl->fetchFromFields(array('fk_check', $fk))) {
+            return false;
+        }
         return true;
     }
 

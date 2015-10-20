@@ -55,7 +55,7 @@ DELIMITER ;
 --
 DELIMITER //
 CREATE PROCEDURE lockCheck
-(idPid INT, idServer INT, idCheck INT, OUT rc INT)
+(idPid INT, idServer INT, idVM INT, idCheck INT, OUT rc INT)
 BEGIN
   DECLARE vLID INT DEFAULT 0;
   DECLARE record_not_found INT DEFAULT 0;
@@ -69,7 +69,7 @@ BEGIN
   FETCH c1 INTO vLID;
   CLOSE c1;
   IF record_not_found THEN
-    INSERT INTO list_lock(fk_pid, fk_server, fk_check, fct, t_add) VALUES(idPid, idServer, idCheck, '', UNIX_TIMESTAMP());
+    INSERT INTO list_lock(fk_pid, fk_server, fk_vm, fk_check, fct, t_add) VALUES(idPid, idServer, idVM, idCheck, '', UNIX_TIMESTAMP());
     SET rc = 0;
   ELSE
     SET rc = 2;
@@ -83,12 +83,12 @@ DELIMITER ;
 --
 DELIMITER //
 CREATE PROCEDURE unlockCheck
-(idServer INT, idCheck INT)
+(idServer INT, idVM INT, idCheck INT)
 BEGIN
   DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
   DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
   START TRANSACTION;
-    DELETE FROM list_lock where fk_server = idServer AND fk_check = idCheck;
+    DELETE FROM list_lock where fk_server = idServer AND fk_vm = idVM AND fk_check = idCheck;
   COMMIT;
 END //
 DELIMITER ;

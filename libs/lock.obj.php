@@ -32,6 +32,9 @@ class Lock extends MySqlObj
             if (!$this->o_server && $this->fk_server > 0) {
                 $this->fetchFK('fk_server');
             }
+            if (!$this->o_vm && $this->fk_vm > 0) {
+                $this->fetchFK('fk_vm');
+            }
             if (!$this->o_check && $this->fk_check > 0) {
                 $this->fetchFK('fk_check');
             }
@@ -41,6 +44,20 @@ class Lock extends MySqlObj
         } catch (Exception $e) {
             throw($e);
         }
+    }
+
+    public function setIt($s) {
+        switch(get_class($s)) {
+            case 'Server':
+                $this->fk_server = $s->id;
+                return 'fk_server';
+                break;
+            case 'VM':
+                $this->fk_vm = $s->id;
+                return 'fk_vm';
+                break;
+        }
+        return false;
     }
 
     public static function lockFctIfNot($fct)

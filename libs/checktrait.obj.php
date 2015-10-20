@@ -16,40 +16,47 @@ trait checkTrait {
 
         foreach ($checks as $check) {
 
+          /* If we are a VM and check doesn't
+           * support it, skip
+           */
+          if (!strcmp('VM', get_class($this)) && !$check->f_vm) {
+              continue;
+          }
+
           /* Check Groups */
           $check->fetchJT('a_sgroup');
           $f_group = 0;
           $f_egroup = 0;
 
-            foreach ($check->a_sgroup as $grp) {
-                if ($this->isInJT('a_sgroup', $grp)) {
-                    if ($check->f_except[''.$grp]) {
-                        $f_egroup = 1;
-                    } else {
-                        $f_group = 1;
-                    }
-                }
-            }
-            if (!$f_group || $f_egroup) {
-                continue;
-            }
+          foreach ($check->a_sgroup as $grp) {
+              if ($this->isInJT('a_sgroup', $grp)) {
+                  if ($check->f_except[''.$grp]) {
+                      $f_egroup = 1;
+                  } else {
+                      $f_group = 1;
+                  }
+              }
+          }
+          if (!$f_group || $f_egroup) {
+              continue;
+          }
 
-            $this->a_lr[$check->id] = Result::getLast($check, $this);
+          $this->a_lr[$check->id] = Result::getLast($check, $this);
 
-            if ($this->a_lr[$check->id] === null) {
-                array_push($this->a_check, $check);
-                continue;
-            }
-            $this->a_lr[$check->id]->o_check = $check;
+          if ($this->a_lr[$check->id] === null) {
+              array_push($this->a_check, $check);
+              continue;
+          }
+          $this->a_lr[$check->id]->o_check = $check;
 
-            if ($force) { /* don't take timestamp into account */
-                array_push($this->a_check, $check);
-                continue;
-            }
-            if (($now - $this->a_lr[$check->id]->t_upd) >= $check->frequency) {
-                array_push($this->a_check, $check);
-            }
-        }
+          if ($force) { /* don't take timestamp into account */
+              array_push($this->a_check, $check);
+              continue;
+          }
+          if (($now - $this->a_lr[$check->id]->t_upd) >= $check->frequency) {
+              array_push($this->a_check, $check);
+          }
+       }
     }
 
 }
