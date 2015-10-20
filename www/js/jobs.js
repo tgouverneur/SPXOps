@@ -26,7 +26,8 @@ function jobSuccess(data, textStatus, jqXHR) {
     $("#error-msg").text(data['msg']);
     $("#error-box").show();  
   } else {
-    $("#success-msg").text(data['msg']);
+    href = ' (<a href="/view/w/job/i/' + data['id'] + '">'+data['id'] + '</a>)'
+    $("#success-msg").html(data['msg'] + href);
     $("#success-box").show();
   }
 }

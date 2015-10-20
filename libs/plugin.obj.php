@@ -127,7 +127,7 @@ class Plugin
                 $ret[] = $ph;
             }
         }
-        return $ph;
+        return $ret;
     }
 
 

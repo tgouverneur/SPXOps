@@ -72,6 +72,7 @@ try {
        $j->insert();
        Act::add("Requested a check of the server $s", $lm->o_login);
        $ret['rc'] = 0;
+       $ret['id'] = $j->id;
        $ret['msg'] = "Job to check server $s has been succesfully added to the queue...";
      } else if ($f == 'jobVM') {
        $s = new VM($a);
@@ -87,6 +88,7 @@ try {
        $j->insert();
        Act::add("Requested a check of the VM $s", $lm->o_login);
        $ret['rc'] = 0;
+       $ret['id'] = $j->id;
        $ret['msg'] = "Job to check VM $s has been succesfully added to the queue...";
      }
    break;
@@ -105,6 +107,7 @@ try {
        $j->insert();
        Act::add("Requested an update of the server $s", $lm->o_login);
        $ret['rc'] = 0;
+       $ret['id'] = $j->id;
        $ret['msg'] = "Job to update server $s has been succesfully added to the queue...";
      } else if ($f == 'jobCluster') {
        $oc = new Cluster($a);
@@ -120,6 +123,7 @@ try {
        $j->insert();
        Act::add("Requested an update of the cluster $oc", $lm->o_login);
        $ret['rc'] = 0;
+       $ret['id'] = $j->id;
        $ret['msg'] = "Job to update cluster $oc has been succesfully added to the queue...";
      } else if ($f == 'jobVM') {
        $s = new VM($a);
@@ -135,6 +139,7 @@ try {
        $j->insert();
        Act::add("Requested an update of the VM $s", $lm->o_login);
        $ret['rc'] = 0;
+       $ret['id'] = $j->id;
        $ret['msg'] = "Job to update VM $s has been succesfully added to the queue...";
      }
    break;

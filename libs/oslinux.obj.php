@@ -36,6 +36,7 @@ class OSLinux extends OSType
         "updateRelease",
         "updateHostId",
         "updateProc",
+        "updatePackages",
     ),
   );
 
@@ -362,7 +363,7 @@ class OSLinux extends OSType
   public static function updatePackagesDeb(&$s)
   {
       //dpkg-qu ery -W -f '${Package};${Version};${Architecture};${Status};${binary:Summary}\n' '*'
-    $dpkg = $s->findBin('dpkg-query');
+      $dpkg = $s->findBin('dpkg-query');
       $cmd_dpkg = "$dpkg -W -f '\${Package};\${Version};\${Architecture};\${Status};\${binary:Summary}\\n' '*'";
       $out_dpkg = $s->exec($cmd_dpkg);
 
@@ -450,35 +451,48 @@ class OSLinux extends OSType
         return $found_p;
     }
 
-    /* @TODO: make it compatible with VMs */
     public static function updatePackages(&$s)
     {
         $distrib = $s->data('linux:name');
         if (empty($distrib)) {
             return 0;
         }
+
+        switch(get_class($s)) {
+            case 'Server':
+                $fk = 'fk_server';
+                break;
+            case 'VM':
+                $fk = 'fk_vm';
+                break;
+            default:
+                $s->log('[!] OSLinux::updatePackages Unsupported object type', LLOG_INFO);
+                return -1;
+                break;
+        }
+
         switch ($s->data('linux:name')) {
-      case 'Debian':
-        $found_p = OSLinux::updatePackagesDeb($s);
-      break;
-      case 'RHEL':
-      case 'SLES':
-        $found_p = OSLinux::updatePackagesRpm($s);
-      break;
-      case 'Gentoo':
-        $found_p = OSLinux::updatePackagesEbd($s);
-      break;
-      default:
-        return 0;
-      break;
-    }
+          case 'Debian':
+            $found_p = OSLinux::updatePackagesDeb($s);
+          break;
+          case 'RHEL':
+          case 'SLES':
+            $found_p = OSLinux::updatePackagesRpm($s);
+          break;
+          case 'Gentoo':
+            $found_p = OSLinux::updatePackagesEbd($s);
+          break;
+          default:
+            return 0;
+          break;
+        }
 
         foreach ($found_p as $pkg) {
             $po = new Pkg();
             $po->name = $pkg['name'];
-            $po->fk_server = $s->id;
+            $po->{$fk} = $s->id;
 
-            if ($po->fetchFromFields(array('name', 'fk_server'))) {
+            if ($po->fetchFromFields(array('name', $fk))) {
                 $s->log('new package found: '.$po, LLOG_INFO);
                 $po->insert();
                 array_push($s->a_pkg, $po);
