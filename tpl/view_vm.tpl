@@ -22,6 +22,17 @@
 <?php foreach($obj->htmlDump() as $k => $v) { ?>
 	      <tr><td><?php echo $k; ?></td><td><?php echo $v; ?></td></tr>
 <?php } ?>
+<?php if ($obj->o_os) { ?>
+<?php   foreach($obj->o_os->htmlDump($obj) as $k => $v) { ?>
+	      <tr><td><?php echo $k; ?></td><td><?php echo $v; ?></td></tr>
+<?php   } ?>
+<?php } ?>
+<?php if ($obj->o_suser) { ?>
+<?php   foreach($obj->o_suser->htmlDump($obj) as $k => $v) { ?>
+              <tr><td><?php echo $k; ?></td><td><?php echo $v; ?></td></tr>
+<?php   } ?>
+<?php } ?>  
+
 	     </tbody>
 	   </table>
 	  </div>
@@ -32,6 +43,14 @@
   	       <tr><th>Net</th><th>MAC</th><th>Model</th></tr>
 <?php foreach($obj->a_net as $net) { ?>
   	       <tr><td><?php echo $net->net; ?></td><td><?php echo $net->mac; ?></td><td><?php echo $net->model; ?></td></tr>
+<?php } ?>
+<?php if ($obj->o_os) {
+        $model = new Model();
+        $model->name = 'VM';
+        $model->vendor = 'VM';
+        foreach($model->htmlDump($obj) as $k => $v) { ?>
+         <tr><td><?php echo $k; ?></td><td><?php echo $v; ?></td></tr>
+<?php   } ?>
 <?php } ?>
              </tbody>
            </table>
@@ -48,6 +67,8 @@
               <li class="dropdown active">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Action <b class="caret"></b></a>
                 <ul class="dropdown-menu">
+                  <li><a href="#" onClick="addJob('Update', 'jobVM', '<?php echo $obj->id; ?>');">Launch Update</a></li>
+                  <li><a href="#" onClick="addJob('Check', 'jobVM', '<?php echo $obj->id; ?>');">Launch Check</a></li>
                 <?php foreach (Plugin::getActionLinks('VMACTION') as $l) { ?>
                   <li><a href="<?php echo $l->getHref($obj->id); ?>"><?php echo $l->desc; ?></a></li>
                 <?php } ?>

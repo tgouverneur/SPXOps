@@ -70,9 +70,24 @@ try {
        $j->state = S_NEW;
        $j->fk_login = $lm->o_login->id;
        $j->insert();
-       Act::add("Requested an update of the server $s", $lm->o_login);
+       Act::add("Requested a check of the server $s", $lm->o_login);
        $ret['rc'] = 0;
        $ret['msg'] = "Job to check server $s has been succesfully added to the queue...";
+     } else if ($f == 'jobVM') {
+       $s = new VM($a);
+       if ($s->fetchFromId()) {
+         throw new ExitException('VM specified not found in database', 2);
+       }
+       $j = new Job();
+       $j->class = $c;
+       $j->fct = $f;
+       $j->arg = $a;
+       $j->state = S_NEW;
+       $j->fk_login = $lm->o_login->id;
+       $j->insert();
+       Act::add("Requested a check of the VM $s", $lm->o_login);
+       $ret['rc'] = 0;
+       $ret['msg'] = "Job to check VM $s has been succesfully added to the queue...";
      }
    break;
    case 'Update':
@@ -106,7 +121,22 @@ try {
        Act::add("Requested an update of the cluster $oc", $lm->o_login);
        $ret['rc'] = 0;
        $ret['msg'] = "Job to update cluster $oc has been succesfully added to the queue...";
-     } 
+     } else if ($f == 'jobVM') {
+       $s = new VM($a);
+       if ($s->fetchFromId()) {
+         throw new ExitException('VM specified not found in database', 2);
+       }
+       $j = new Job();
+       $j->class = $c;
+       $j->fct = $f;
+       $j->arg = $a;
+       $j->state = S_NEW;
+       $j->fk_login = $lm->o_login->id;
+       $j->insert();
+       Act::add("Requested an update of the VM $s", $lm->o_login);
+       $ret['rc'] = 0;
+       $ret['msg'] = "Job to update VM $s has been succesfully added to the queue...";
+     }
    break;
    default:
      throw new ExitException('Unknown class provided', 2);

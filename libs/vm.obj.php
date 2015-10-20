@@ -208,6 +208,10 @@ class VM extends MySqlObj
             'Added on' => date('d-m-Y', $this->t_add),
         );
 
+        if (!empty($this->hostname)) {
+            $ret['Hostname'] = $this->hostname;
+        }
+
         return $ret;
     }
 
