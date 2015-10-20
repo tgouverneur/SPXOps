@@ -455,6 +455,26 @@ CREATE TABLE `list_pid` (
 ) ENGINE=InnoDB;
 
 --
+-- Table structure for table `list_process`
+--
+
+CREATE TABLE `list_process` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pid` int(11) NOT NULL,
+  `ppid` int(11) NOT NULL,
+  `user` varchar(80) NOT NULL,
+  `etime` varchar(100) NOT NULL,
+  `ctime` varchar(100) NOT NULL,
+  `tty` varchar(50) NOT NULL,
+  `cmd` varchar(255) NOT NULL,
+  `fk_server` int(11) NOT NULL DEFAULT '-1',
+  `fk_vm` int(11) NOT NULL DEFAULT '-1',
+  `t_add` int(11) NOT NULL,
+  `t_upd` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+--
 -- Table structure for table `list_pkg`
 --
 

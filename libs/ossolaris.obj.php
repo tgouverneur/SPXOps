@@ -38,6 +38,7 @@ class OSSolaris extends OSType
             "updateZfs",
             "updateSds",
             "updateSwap",
+            "updateProcess",
         //    "updateCdp",
         //    "updateSwap",
         ),
@@ -2311,6 +2312,11 @@ d101 1 1 /dev/dsk/emcpower58a
       }
 
       return $found_d;
+  }
+
+  public static function updateProcess(&$s) {
+      // ps -A -o zone,pid,ppid,user,etime,time,tty,args
+      return 0;
   }
 
   public static function updateZfs(&$s)
