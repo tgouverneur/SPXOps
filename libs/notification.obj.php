@@ -16,9 +16,23 @@ class Notification
   public static function jobSendNotification(&$job, $s_arg) {
   }
 
-  public static function sendResult(Server &$s, Result $cr, Result $oldcr = null)
+  public static function sendResult(MySqlObj &$s, Result $cr, Result $oldcr = null)
   {
       $a_login = array();
+
+      switch(get_class($s)) {
+          case 'Server':
+              $fk = 'fk_server';
+              $oo = 'o_server';
+              break;
+          case 'VM':
+              $fk = 'fk_vm';
+              $oo = 'o_vm';
+              break;
+          default:
+              throw new SPXException('Notification::sendResult(): unsupported server type');
+              break;
+      }
 
       if ($cr->rc == 0 && !$oldcr) { // First check result and it's OK, don't send anything.
           return;
@@ -26,18 +40,18 @@ class Notification
 
       Logger::log('Notification request...'.$cr.' / '.$oldcr, null, LLOG_DEBUG);
 
-      if (!$cr->o_server && $cr->fk_server > 0) {
-          $cr->fetchFK('fk_server');
+      if (!$cr->{$oo} && $cr->{$fk} > 0) {
+          $cr->fetchFK($fk);
       }
       if (!$cr->o_check && $cr->fk_check > 0) {
           $cr->fetchFK('fk_check');
       }
 
     /* fetch Server groups */
-    $cr->o_server->fetchJT('a_sgroup');
+    $cr->{$oo}->fetchJT('a_sgroup');
 
     /* fetch Server Groups link to User Groups */
-    foreach ($cr->o_server->a_sgroup as $sg) {
+    foreach ($cr->{$oo}->a_sgroup as $sg) {
         $sg->fetchJT('a_ugroup');
       /* for each user group, add each login where notifications are enabled */
       foreach ($sg->a_ugroup as $ug) {
