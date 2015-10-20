@@ -58,7 +58,6 @@ class Job extends MySqlObj
             $j->fetchAll(1);
             $j->o_pid = $pid;
         }
-
         return $j;
     }
 
@@ -137,13 +136,16 @@ class Job extends MySqlObj
         $this->fk_log = $this->o_log->id;
         $this->t_start = time();
         if ($this->state != S_RUN) {
-            $this->state = S_RUN;
+            throw SPXException('Job::runJob(): state is not RUNNING, aborting.');
         }
-        if ($this->o_pid) {
+        if (!$this->o_pid) {
             $this->o_pid = Pid::getMyPid();
         }
         if ($this->fk_pid <= 0) {
-            $this->fk_pid = $this->o_pid->id;
+            throw SPXException('Job::runJob(): fk_pid was not set, aborting.');
+        }
+        if ($this->fk_pid != $this->o_pid->id) {
+            throw SPXException('Job::runJob(): fk_pid is not our pid!, aborting.');
         }
         $this->update();
 

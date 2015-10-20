@@ -40,11 +40,11 @@ DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
 DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
 SET pID = 0;
 START TRANSACTION;
-SELECT id INTO pID FROM list_job WHERE state=1 ORDER BY id ASC LIMIT 0,1;
+SELECT id INTO pID FROM list_job WHERE state=1 AND fk_pid=-1 ORDER BY id ASC LIMIT 0,1;
 IF record_not_found THEN
   SET pID = 0;
 ELSE
-  UPDATE list_job SET state=2, fk_pid = idPid WHERE id = pID;
+  UPDATE list_job SET state=2, fk_pid = idPid WHERE id = pID AND state=1 AND fk_pid=-1;
 END IF;
 COMMIT;
 END //

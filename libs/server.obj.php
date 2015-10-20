@@ -78,8 +78,8 @@ class Server extends MySqlObj implements JsonSerializable
         $this->vm_mem = 0;
         foreach ($this->a_vm as $vm) {
             $vm->fetchData();
-            $this->vm_core += $vm->data('hw:nrcpu');
-            $this->vm_mem += $vm->data('hw:memory');
+            $this->vm_core += $vm->data('kvm:nrcpu');
+            $this->vm_mem += $vm->data('kvm:memory');
         }
     }
 

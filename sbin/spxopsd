@@ -147,7 +147,7 @@
     }
 
       if (!$this->f_master ||
-    $this->_foreground) { /* Only child are doing the reluctant work ... */
+            $this->_foreground) { /* Only child are doing the reluctant work ... */
       try {
           $j = Job::fetchFirst($this);
           if ($j) {
@@ -156,6 +156,7 @@
           }
       } catch (Exception $e) {
           sleep($this->_interval);
+          $this->log("Caught exception: :$e", LLOG_ERR);
           throw($e);
       }
 
@@ -192,7 +193,7 @@
           sleep($this->_interval);
           throw($e);
       }
-      }
+    }
       $m->disconnect();
       $this->log("sleeping..", LLOG_DEBUG);
       sleep($this->_interval);
