@@ -78,6 +78,8 @@
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">View <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a class="logsModalLink" href="/modallist/w/logs/o/VM/i/<?php echo $obj->id; ?>">View Logs</a></li>
+                  <li><a href="/modallist/w/packages/o/VM/i/<?php echo $obj->id; ?>" class="packagesModalLink">View Packages</a></li>
+                  <li><a href="/modallist/w/sresults/o/VM/i/<?php echo $obj->id; ?>" class="resultsModalLink">View Check Results</a></li>
                 </ul>
               </li>
             </ul>

@@ -40,14 +40,14 @@ try {
      case 'logs':
        if (!isset($_GET['o']) || empty($_GET['o'])) {
          $content = new Template('../tpl/modalerror.tpl');
-	 $content->set('error', 'No class specified');
+         $content->set('error', 'No class specified');
          goto screen;
        }
        $o_name = $_GET['o'];
        if (!class_exists($o_name) ||
            !method_exists($o_name, 'fetchLogs')) {
          $content = new Template('../tpl/modalerror.tpl');
-	 $content->set('error', 'This kind of object doesn\'t support Logs');
+         $content->set('error', 'This kind of object doesn\'t support Logs');
          goto screen;
        }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
@@ -93,13 +93,13 @@ try {
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Server ID not provided');
-	 goto screen;
+         goto screen;
        }
        $s = new Server($_GET['i']);
        if ($s->fetchFromId()) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Server ID not found');
-	 goto screen;
+         goto screen;
        }
        $s->fetchRL('a_patch');
        $content = new Template('../tpl/modallist.tpl');
@@ -124,12 +124,31 @@ try {
        if (!$lm->o_login->cRight('CHKBOARD', R_VIEW)) {
          throw new ExitException('Access Denied, please check your access rights!');
        }
+       if (!isset($_GET['o']) || empty($_GET['o'])) {
+           $o = 'Server';
+       } else {
+           $o = $_GET['o'];
+       }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Server ID not provided');
          goto screen;
        }
-       $a_list = Result::getAll(true, array('fk_server' => $_GET['i']), array('DESC:t_upd', 'DESC:t_add'));
+       switch($o) {
+           case 'Server':
+               $fk = 'fk_server';
+           break;
+           case 'VM':
+               $fk = 'fk_vm';
+           break;
+           default:
+             $content = new Template('../tpl/modalerror.tpl');
+             $content->set('error', 'Type provided is unknown');
+             goto screen;
+           break;
+       }
+ 
+       $a_list = Result::getAll(true, array($fk => $_GET['i']), array('DESC:t_upd', 'DESC:t_add'));
        $content = new Template('../tpl/modallist.tpl');
        $content->set('a_list', $a_list);
        $content->set('oc', 'Result');
@@ -159,15 +178,32 @@ try {
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
          throw new ExitException('Access Denied, please check your access rights!');
        }
+       if (!isset($_GET['o']) || empty($_GET['o'])) {
+           $o = 'Server';
+       } else {
+           $o = $_GET['o'];
+       }
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/modalerror.tpl');
          $content->set('error', 'Server ID not provided');
          goto screen;
        }
-       $s = new Server($_GET['i']);
+       switch($o) {
+           case 'Server':
+               $s = new Server($_GET['i']);
+           break;
+           case 'VM':
+               $s = new VM($_GET['i']);
+           break;
+           default:
+             $content = new Template('../tpl/modalerror.tpl');
+             $content->set('error', 'Type provided is unknown');
+             goto screen;
+           break;
+       }
        if ($s->fetchFromId()) {
          $content = new Template('../tpl/modalerror.tpl');
-         $content->set('error', 'Server ID not found');
+         $content->set('error', $o.' ID not found');
          goto screen;
        }
        $s->fetchRL('a_pkg');

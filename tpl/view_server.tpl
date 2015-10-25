@@ -76,11 +76,11 @@
               <li class="dropdown active">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">View <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="/modallist/w/patches/i/<?php echo $obj->id; ?>" class="patchesModalLink">View Patches</a></li>
-                  <li><a href="/modallist/w/packages/i/<?php echo $obj->id; ?>" class="packagesModalLink">View Packages</a></li>
-                  <li><a href="/modallist/w/projects/i/<?php echo $obj->id; ?>" class="projectsModalLink">View Projects</a></li>
-                  <li><a href="/modallist/w/disks/i/<?php echo $obj->id; ?>" class="disksModalLink">View Disks</a></li>
-                  <li><a href="/modallist/w/sresults/i/<?php echo $obj->id; ?>" class="resultsModalLink">View Check Results</a></li>
+                  <li><a href="/modallist/w/patches/o/Server/i/<?php echo $obj->id; ?>" class="patchesModalLink">View Patches</a></li>
+                  <li><a href="/modallist/w/packages/o/Server/i/<?php echo $obj->id; ?>" class="packagesModalLink">View Packages</a></li>
+                  <li><a href="/modallist/w/projects/o/Server/i/<?php echo $obj->id; ?>" class="projectsModalLink">View Projects</a></li>
+                  <li><a href="/modallist/w/disks/o/Server/i/<?php echo $obj->id; ?>" class="disksModalLink">View Disks</a></li>
+                  <li><a href="/modallist/w/sresults/o/Server/i/<?php echo $obj->id; ?>" class="resultsModalLink">View Check Results</a></li>
                   <li><a href="/modallist/w/logs/o/Server/i/<?php echo $obj->id; ?>" class="logsModalLink">View Logs</a></li>
                 </ul>
               </li>
