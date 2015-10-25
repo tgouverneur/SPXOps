@@ -41,7 +41,7 @@
            <table class="table table-condensed">
              <tbody>
   	       <tr><th>Net</th><th>MAC</th><th>Model</th></tr>
-<?php foreach($obj->a_net as $net) { ?>
+<?php foreach($obj->a_hostnet as $net) { ?>
   	       <tr><td><?php echo $net->net; ?></td><td><?php echo $net->mac; ?></td><td><?php echo $net->model; ?></td></tr>
 <?php } ?>
 <?php if ($obj->o_os) {
@@ -91,7 +91,7 @@
            <table class="table table-condensed">
              <tbody>
                <tr><th>File</th></tr>
-<?php foreach($obj->a_disk as $disk) { ?>
+<?php foreach($obj->a_hostdisk as $disk) { ?>
                <tr><td><?php echo $disk->file; ?></td></tr>
 <?php } ?>  
              </tbody>

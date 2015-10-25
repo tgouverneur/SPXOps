@@ -405,7 +405,7 @@ screen:
      
 } catch (Exception $e) {
     /* @TODO: LOG EXCEPTION */
-    $h = Utils::getHTTPError('Unexpected Exception');
+    $h = Utils::getHTTPError('Unexpected Exception: ');
     echo $h->fetch();
 }
 ?>

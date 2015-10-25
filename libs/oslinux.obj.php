@@ -37,6 +37,7 @@ class OSLinux extends OSType
         "updateHostId",
         "updateProc",
         "updatePackages",
+        "updateNetwork",
     ),
   );
 
@@ -538,6 +539,20 @@ class OSLinux extends OSType
    */
   public static function updateNetwork(&$s)
   {
+      switch(get_class($s)) {
+          case 'Server':
+              $fk = 'fk_server';
+              break;
+          case 'VM':
+              $fk = 'fk_vm';
+              break;
+          default:
+              $s->log('[!] OSLinux::updateNetwork Unsupported object type', LLOG_INFO);
+              return -1;
+              break;
+      }
+
+
       $ip = $s->findBin('ip');
       $cmd_ip = "$ip addr";
       $out_ip = $s->exec($cmd_ip);
@@ -557,10 +572,10 @@ class OSLinux extends OSType
 
           if (preg_match('/^[0-9]*: ([a-z0-9]*): ([A-Z,_<>]*)/', $line, $m)) {
               $pnet = new Net();
-              $pnet->fk_server = $s->id;
+              $pnet->{$fk} = $s->id;
               $pnet->layer = 2; // ether
-        $pnet->ifname = $m[1];
-              if ($pnet->fetchFromFields(array('layer', 'ifname', 'fk_server'))) {
+              $pnet->ifname = $m[1];
+              if ($pnet->fetchFromFields(array('layer', 'ifname', $fk))) {
                   $pnet->insert();
                   $s->log("Added $pnet to server", LLOG_INFO);
                   $s->a_net[] = $pnet;
@@ -584,15 +599,15 @@ class OSLinux extends OSType
               $f_eth = explode(' ', $line);
               $vnet = new Net();
               $vnet->ifname = $c_if->ifname;
-              $vnet->fk_server = $s->id;
+              $vnet->{$fk} = $s->id;
               $vnet->layer = 3; /* IP */
-        $ipaddr = explode('/', $m[1]);
+              $ipaddr = explode('/', $m[1]);
               if (count($ipaddr) < 2) {
                   continue;
               }
               $vnet->address = $ipaddr[0];
               $vnet->netmask = $ipaddr[1];
-              if ($vnet->fetchFromFields(array('ifname', 'version', 'fk_server', 'layer', 'address', 'netmask'))) {
+              if ($vnet->fetchFromFields(array('ifname', 'version', $fk, 'layer', 'address', 'netmask'))) {
                   $vnet->insert();
                   $s->log("Added alias $vnet to server", LLOG_INFO);
                   $s->a_net[] = $vnet;
@@ -611,13 +626,13 @@ class OSLinux extends OSType
               $f_eth = explode(' ', $line);
               $vnet = new Net();
               $vnet->ifname = $c_if->ifname;
-              $vnet->fk_server = $s->id;
+              $vnet->{$fk} = $s->id;
               $vnet->layer = 3; /* IP */
-        $vnet->version = 6; /* v6 */
-        $ipaddr = explode('/', $m[1]);
+              $vnet->version = 6; /* v6 */
+              $ipaddr = explode('/', $m[1]);
               $vnet->address = $ipaddr[0];
               $vnet->netmask = $ipaddr[1];
-              if ($vnet->fetchFromFields(array('ifname', 'version', 'fk_server', 'layer', 'address', 'netmask'))) {
+              if ($vnet->fetchFromFields(array('ifname', 'version', $fk, 'layer', 'address', 'netmask'))) {
                   $vnet->insert();
                   $s->log("Added alias6 $vnet to server", LLOG_INFO);
                   $s->a_net[] = $vnet;

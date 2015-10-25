@@ -35,11 +35,11 @@ class VM extends MySqlObj
     public $o_suser = null;
     public $o_xml = null;
 
-    public $a_net = array();
-    public $a_disk = array();
-
     public $a_hostnet = array();
     public $a_hostdisk = array();
+
+    public $a_net = array();
+    public $a_disk = array();
     public $a_pkg = array();
     public $a_lock = array();
     public $a_nfss = array();
@@ -62,7 +62,7 @@ class VM extends MySqlObj
             $ret['o_server'] = $this->o_server->jsonSerialize();
         }
         $ret['disks'] = array();
-        foreach($this->a_disk as $disk) {
+        foreach($this->a_hostdisk as $disk) {
             $ret['disks'][] = $disk->file;
         }
         return $ret;
@@ -92,8 +92,8 @@ class VM extends MySqlObj
             if ($all) {
 
                 $this->fetchRL('a_pkg');
-                $this->fetchRL('a_hostdisk');
-                $this->fetchRL('a_hostnet');
+                $this->fetchRL('a_disk');
+                $this->fetchRL('a_net');
                 $this->fetchRL('a_nfss');
                 $this->fetchRL('a_nfsm');
 
@@ -114,14 +114,14 @@ class VM extends MySqlObj
 
     public function getDisks()
     {
-        $this->a_disk = array();
+        $this->a_hostdisk = array();
         $disks = $this->data('kvm:disks');
         foreach (explode(';', $disks) as $disk) {
             if (empty($disk)) {
                 continue;
             }
             $d = new VMdisk($disk);
-            array_push($this->a_disk, $d);
+            array_push($this->a_hostdisk, $d);
         }
 
         return 0;
@@ -129,7 +129,7 @@ class VM extends MySqlObj
 
     public function getNets()
     {
-        $this->a_net = array();
+        $this->a_hostnet = array();
         $nets = $this->data('kvm:net');
         foreach (explode(';', $nets) as $net) {
             if (empty($net)) {
@@ -140,7 +140,7 @@ class VM extends MySqlObj
             $net = $f[1];
             $model = $f[2];
             $n = new VMnet($mac, $net, $model);
-            array_push($this->a_net, $n);
+            array_push($this->a_hostnet, $n);
         }
 
         return 0;
@@ -452,8 +452,8 @@ class VM extends MySqlObj
 
       $this->_addRL("a_result", "Result", array('id' => 'fk_vm'));
       $this->_addRL("a_pkg", "Pkg", array('id' => 'fk_vm'));
-      $this->_addRL("a_hostdisk", "Disk", array('id' => 'fk_vm'));
-      $this->_addRL("a_hostnet", "Net", array('id' => 'fk_vm'));
+      $this->_addRL("a_disk", "Disk", array('id' => 'fk_vm'));
+      $this->_addRL("a_net", "Net", array('id' => 'fk_vm'));
       $this->_addRL("a_nfss", "NFS", array('id' => 'fk_vm', 'CST:share' => 'type'));
       $this->_addRL("a_nfsm", "NFS", array('id' => 'fk_vm', 'CST:mount' => 'type'));
 
