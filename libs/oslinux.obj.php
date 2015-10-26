@@ -653,9 +653,9 @@ class OSLinux extends OSType
 
       OSType::cleanRemoved($s, 'a_net', null, $found_if);
 
-    /* default router */
+      /* default router */
 
-    $cmd_ip = "$ip ro";
+      $cmd_ip = "$ip ro";
       $out_ip = $s->exec($cmd_ip);
 
       $lines = explode(PHP_EOL, $out_ip);
@@ -678,7 +678,7 @@ class OSLinux extends OSType
       }
 
       if ($defrouter &&
-    strcmp($s->data('net:defrouter'), $defrouter)) {
+            strcmp($s->data('net:defrouter'), $defrouter)) {
           $s->setData('net:defrouter', $defrouter);
           $s->log("Change defrouter => $defrouter", LLOG_INFO);
       }

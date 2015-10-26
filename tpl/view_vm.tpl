@@ -96,6 +96,46 @@
 <?php } ?>  
              </tbody>
            </table>
+           <h3>Network Interfaces</h3>
+	     <div class="panel-group" id="network">
+<?php $i = 0; foreach($obj->getNetworks() as $net) { ?>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+		    <a data-toggle="collapse" data-parent="#accordion" href="#collapse<?php echo $i; ?>" aria-expanded="true" aria-controls="collapseOne">
+                      <?php echo $net; ?> 
+<?php if ($net->f_ipmp) { ?>
+		      (Group: <?php echo $net->group; ?>)
+<?php } ?>
+		      (<?php echo count($net->a_addr); ?> address found)
+	              <col-md- class="caret"></col-md->
+                    </a>
+                  </div>
+                  <div id="collapse<?php echo $i; ?>" class="accordion-body collapse">
+                    <div class="accordion-inner">
+		     <table class="table table-condensed table-striped">
+<?php $switch = $net->getSwitch();
+      if ($switch) { ?>
+			<caption>Connected to switch <?php echo $switch->name; ?> interface <?php echo $net->o_net->ifname; ?></caption>
+<?php } ?>
+		      <thead>
+		       <tr><td>IPv</td><td>Address</td><td>Netmask</td><td>Zone</td>
+		      </thead>
+		      <tbody>
+<?php		foreach ($net->a_addr as $addr) { ?>
+		       <tr>
+			<td><?php echo $addr->version; ?></td>
+			<td><?php echo $addr->address; ?></td>
+			<td><?php echo $addr->netmask; ?></td>
+			<td><?php if ($addr->o_zone) { echo $addr->o_zone; } else { echo 'global'; } ?></td>
+		       </tr>
+<?php } ?>
+		      </tbody>
+		     </table>
+                    </div>
+                  </div>
+                </div>
+<?php $i++; } ?>
+ 
            <h3>Plugin data</h3>
            <table class="table table-condensed">
              <tbody>

@@ -112,6 +112,34 @@ class VM extends MySqlObj
         }
     }
 
+    public function getNetworks()
+    {
+        $ret = array();
+
+        foreach ($this->a_net as $net) {
+            if (!$net->layer == 2) {
+                continue;
+            }
+            if (!isset($ret[$net->ifname])) {
+                $ret[$net->ifname] = $net;
+                $net->fetchAll();
+            }
+        }
+        foreach ($this->a_net as $net) {
+            if ($net->layer == 2) {
+                continue;
+            }
+            $net->fetchAll();
+            if (isset($ret[$net->ifname])) {
+                $ret[$net->ifname]->a_addr[] = $net;
+            }
+        }
+
+        return $ret;
+    }
+
+
+
     public function getDisks()
     {
         $this->a_hostdisk = array();
