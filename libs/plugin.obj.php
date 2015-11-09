@@ -49,11 +49,17 @@ class Plugin
 
     public static function registerWeb($n, $o)
     {
-        if (!isset(Plugin::$_wmenu[$n])) {
-            Plugin::$_wmenu[$n] = array();
+        if (empty($o->cat)) {
+            if (!isset(Plugin::$_wmenu[$n])) {
+                Plugin::$_wmenu[$n] = array();
+            }
+            array_push(Plugin::$_wmenu[$n], $o);
+        } else {
+            if (!isset(Plugin::$_wmenu[$o->cat])) {
+                Plugin::$_wmenu[$o->cat] = array();
+            }
+            array_push(Plugin::$_wmenu[$o->cat], $o);
         }
-        array_push(Plugin::$_wmenu[$n], $o);
-
         return true;
     }
 
@@ -110,9 +116,9 @@ class Plugin
         $ret = array();
         foreach (Plugin::$_wmenu as $name => $cat) {
             if (is_array($cat) && count($cat) > 0) { /* at least one element here */
-    if (!$cat[0]->is_std) { /* non std, use it! */
-      $ret[] = $name;
-    }
+                if (!$cat[0]->is_std) { /* non std, use it! */
+                  $ret[] = $name;
+                }
             }
         }
 

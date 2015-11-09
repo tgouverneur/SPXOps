@@ -40,7 +40,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#"><?php echo Setting::get('general', 'sitename')->value; ?></a>
+          <a class="navbar-brand" href="/about"><?php echo Setting::get('general', 'sitename')->value; ?></a>
         </div>
 	<div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -144,7 +144,6 @@
 <?php } ?>
                 </ul>
               </li>
-              <li><a href="/about">About</a></li>
             </ul>
 <?php if (isset($page['login'])) { ?>
 	    <p class="navbar-text pull-right">Welcome <?php echo $page['login']->fullname; ?> ! (<a href="/logout">logout</a>)</p>
