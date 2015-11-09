@@ -18,18 +18,23 @@
  */
 class mIterator
 {
-
-     private $_table = "";
+    private $_table = "";
     private $_where = "";
     private $_index = "";
     private $_cindex = "";
     private $_arr = array();
-    private $_cc = "";
+    private $_cc = '';
+    private $_o = null;
     private $_cur = 0;
 
     private $_pos = -1;
     private $_num = -1;
     private $_step = 1000;
+    private $_fullFetch = false;
+
+    public function setFullFetch($f=true) {
+        $this->_fullFetch = $f;
+    }
 
     private function _fetch()
     {
@@ -43,7 +48,12 @@ class mIterator
             $this->_pos = 0;
         }
 
-        if ($idx = $m->fetchIndex($this->_index, $this->_table, array('q' => $this->_where['q'].' LIMIT '.$this->_pos.','.$this->_step, 'a' => $this->_where['a']))) {
+        if ($this->_fullFetch) {
+            $idx = $m->fetchEntries($this->_o->getKeys(), $this->_table, array('q' => $this->_where['q'].' LIMIT '.$this->_pos.','.$this->_step, 'a' => $this->_where['a']));
+        } else {
+            $idx = $m->fetchIndex($this->_index, $this->_table, array('q' => $this->_where['q'].' LIMIT '.$this->_pos.','.$this->_step, 'a' => $this->_where['a']));
+        }
+        if ($idx) {
             $this->_arr = array();
             foreach ($idx as $v) {
                 $o = new $this->_cc();
@@ -69,7 +79,8 @@ class mIterator
         $this->_table = $table;
         $this->_where = $where;
         $this->_cc = $cc; /* Example object */
-       $this->_cindex = $cindex.' AS n';
+        $this->_cindex = $cindex.' AS n';
+        $this->_o = new $this->_cc();
 
         $m = MysqlCM::getInstance();
        /* Count row number for query */

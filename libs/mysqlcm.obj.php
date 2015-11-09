@@ -519,6 +519,56 @@ class MySqlCM
    * Fetch index of a table following $where condition
    * @return The index datas of the table
    */
+  public function fetchEntries($index, $table, $where)
+  {
+      $this->_nres = null;
+      $args = array();
+
+      if (is_array($index)) {
+
+          $str_index = '';
+          $i = 0;
+          foreach ($index as $k) {
+
+            if ($i && $i < count($index)) {
+                $str_index .= ',';
+            }
+            $str_index .= sprintf('`%s`', $k);
+            $i++;
+          }
+          $index = $str_index;
+      }
+
+      $qf = 'SELECT %s FROM %s %s';
+      if (is_array($where)) {
+          $query = sprintf($qf, $index, $table, $where['q']);
+          $args = $where['a'];
+      } else {
+          $query = sprintf($qf, $index, $table, $where);
+      }
+
+      if (!$this->_Query($query, $args)) {
+          $data = array();
+          try {
+              $data = $this->_res->fetchAll(PDO::FETCH_ASSOC);
+          } catch (PDOException $e) {
+              throw($e);
+          }
+
+          $this->_res->closeCursor();
+          unset($this->_res);
+
+          return $data;
+      } else {
+          return 0;
+      }
+  }
+
+
+  /**
+   * Fetch index of a table following $where condition
+   * @return The index datas of the table
+   */
   public function fetchIndex($index, $table, $where)
   {
       $this->_nres = null;

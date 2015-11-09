@@ -16,7 +16,7 @@
  */
 class MySqlObj
 {
-  protected $_my = array();
+    protected $_my = array();
     protected $_myc = array();
     protected $_table = "";
     protected $_nfotable = "";
@@ -25,6 +25,10 @@ class MySqlObj
     protected $_fks = array();
     protected $_rel = array();
     protected $_jt = array();
+
+  public function getKeys() {
+      return array_keys($this->_my);
+  }
 
   /* additionnal datas */
 
