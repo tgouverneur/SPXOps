@@ -28,6 +28,7 @@ DELIMITER ;
 
 --
 -- Fetch first job
+-- !! This gives priority over interactive jobs !!
 --
 DELIMITER //
 CREATE PROCEDURE getFirstJob
@@ -40,7 +41,7 @@ DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
 DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
 SET pID = 0;
 START TRANSACTION;
-SELECT id INTO pID FROM list_job WHERE state=1 AND fk_pid=-1 ORDER BY id ASC LIMIT 0,1;
+SELECT id INTO pID FROM list_job WHERE state=1 AND fk_pid=-1 ORDER BY fk_login DESC, id ASC LIMIT 0,1;
 IF record_not_found THEN
   SET pID = 0;
 ELSE
