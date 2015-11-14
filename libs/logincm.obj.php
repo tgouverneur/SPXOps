@@ -23,6 +23,7 @@ class LoginCM
 
     public function startSession()
     {
+        $this->checkEnforceSSL();
         session_start();
         $this->checkLogin();
         $this->checkAPIKey();
@@ -30,6 +31,24 @@ class LoginCM
             $this->o_login->getAddr();
             $this->o_login->fetchData();
         }
+    }
+
+    public function isHTTPS() {
+        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
+    }
+
+    public function checkEnforceSSL() {
+        if ($this->isHTTPS()) {
+            return true;
+        }
+        $enforceSSL = Setting::get('general', 'enforceSSL');
+        if (!$enforceSSL || !$enforceSSL->value) {
+            return true;
+        }
+        /* redirects to https */
+        $redirect = "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        header("Location: $redirect");
+        die();
     }
 
     public function login($username, $password, $keep = 0)

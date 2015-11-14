@@ -27,6 +27,36 @@ class Dataset extends MySqlObj
 
     public $o_pool = null;
 
+    public function getSnapshotName() {
+        if (strcmp($this->type, 'snapshot')) {
+            return null;
+        }
+        $f = preg_split('/@/', $this->name);
+        if (count($f) != 2) {
+            return null;
+        }
+        return $f[1];
+    }
+
+    public function getFilesystemName($full=0) {
+        if (strcmp($this->type, 'snapshot')) {
+            if ($full) {
+                return $this->getFullName();
+            } else {
+                return $this->name;
+            }
+        }
+        if ($full) {
+            $f = preg_split('/@/', $this->getFullName());
+        } else {
+            $f = preg_split('/@/', $this->name);
+        }
+        if (count($f) != 2) {
+            return null;
+        }
+        return $f[0];
+    }
+
     public function getFullName()
     {
         $ret = '';

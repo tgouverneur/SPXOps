@@ -9,3 +9,6 @@ INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('vm', 'enable', 'Allow VMs Indexations', '', '0', '0 or 1');
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('vm', 'detect_tries', 'How many times should we try', '', '3', '');
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('vm', 'dns_search', 'DNS Search', 'List of domains separated by comma', '', '');
+
+-- SSL enforce
+INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('general', 'enforceSSL', 'Enforce HTTPS', 'Redirects HTTP to HTTPS', '0', '0=no, 1=yes');

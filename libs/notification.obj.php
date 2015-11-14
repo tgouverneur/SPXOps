@@ -109,8 +109,6 @@ class Notification
 
     public static function sendMail($to, $short, $msg)
     {
-        Logger::log('Mail message to: '.$to, null, LLOG_DEBUG);
-
         $mfrom = Setting::get('general', 'mailfrom')->value;
         $domain = explode('@', $mfrom);
         $domain = $domain[0];

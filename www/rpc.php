@@ -156,9 +156,6 @@ try {
        echo json_encode($ret);
      break;
      case 'job':
-       if (!$lm->o_login->cRight('JOB', R_VIEW)) {
-            throw new ExitException('Not authorized');
-       }
        if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
             throw new ExitException('Missing argument');
        }
@@ -167,10 +164,13 @@ try {
        if ($job->fetchFromId()) {
             throw new ExitException('Cannot fetch Job');
        }
+       if (!$lm->o_login->cRight('JOB', R_VIEW) && $job->fk_login != $lm->o_login->id) {
+            throw new ExitException('Not authorized');
+       }
        try {
          $job->fetchAll(1);
        } catch (Exception $e) {
-	 // do nothing!
+         // do nothing!
        }
        $ret = array();
        $ret['id'] = $job->id;
