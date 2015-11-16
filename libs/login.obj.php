@@ -19,6 +19,7 @@ class Login extends MySqlObj
     public $password_c = ''; /* only for form-based validation */
     public $fullname = '';
     public $email = '';
+    public $fk_utoken = -1;
     public $f_noalerts = 0;
     public $f_active = 1;
     public $f_admin = 0;
@@ -29,6 +30,8 @@ class Login extends MySqlObj
 
     public $a_ugroup = array();
     public $a_right = array();
+
+    public $o_utoken = null;
 
     public $i_raddr = '';
 
@@ -271,6 +274,7 @@ class Login extends MySqlObj
                         'password' => SQL_PROPE,
                         'fullname' => SQL_PROPE,
                         'email' => SQL_PROPE,
+                        'fk_utoken' => SQL_PROPE,
                         'f_active' => SQL_PROPE,
                         'f_noalerts' => SQL_PROPE,
                         'f_admin' => SQL_PROPE,
@@ -286,6 +290,7 @@ class Login extends MySqlObj
                         'password' => 'password',
                         'fullname' => 'fullname',
                         'email' => 'email',
+                        'fk_utoken' => 'fk_utoken',
                         'f_noalerts' => 'f_noalerts',
                         'f_active' => 'f_active',
                         'f_admin' => 'f_admin',
@@ -296,5 +301,6 @@ class Login extends MySqlObj
                  );
                 /* array(),  Object, jt table,     source mapping, dest mapping, attribuytes */
     $this->_addJT('a_ugroup', 'UGroup', 'jt_login_ugroup', array('id' => 'fk_login'), array('id' => 'fk_ugroup'), array());
+    $this->_addFK("fk_utoken", "o_utoken", "UToken");
   }
 }

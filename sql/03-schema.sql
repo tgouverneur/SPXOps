@@ -335,6 +335,20 @@ CREATE TABLE `list_log` (
 ) ENGINE=InnoDB;
 
 --
+-- Table structure for table `list_utoken`
+--
+
+CREATE TABLE `list_utoken` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `counter` int(11) NOT NULL DEFAULT '0',
+  `secret` varchar(120) NOT NULL,
+  `type` int(11) NOT NULL DEFAULT '-1',
+  `t_add` int(11) NOT NULL DEFAULT '-1',
+  `t_upd` int(11) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+--
 -- Table structure for table `list_login`
 --
 
@@ -344,6 +358,7 @@ CREATE TABLE `list_login` (
   `password` varchar(255) NOT NULL,
   `fullname` varchar(255) NOT NULL,
   `email` varchar(200) NOT NULL,
+  `fk_utoken` int(11) NOT NULL DEFAULT '-1',
   `f_noalerts` int(1) NOT NULL DEFAULT '0',
   `f_active` int(1) NOT NULL DEFAULT '1',
   `f_admin` int(1) NOT NULL DEFAULT '0',
