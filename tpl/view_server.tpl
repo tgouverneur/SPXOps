@@ -49,15 +49,15 @@
           </div>
           <div class="col-md-4">
            <h3>Actions</h3>
-	    <ul class="nav nav-pills nav-stacked">
-	      <li class="dropdown active">
-		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
-	        <ul class="dropdown-menu">
+            <ul class="nav nav-pills nav-stacked">
+              <li class="dropdown active">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
+                <ul class="dropdown-menu">
                   <li><a href="/edit/w/server/i/<?php echo $obj->id; ?>">Edit</a></li>
                   <li><a href="/del/w/server/i/<?php echo $obj->id; ?>">Delete</a></li>
                   <li><a href="/log/w/server/i/<?php echo $obj->id; ?>">Add Log entry</a></li>
-	        </ul>
-	      </li>
+                </ul>
+              </li>
               <li class="dropdown active">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Action <b class="caret"></b></a>
                 <ul class="dropdown-menu">

@@ -12,3 +12,8 @@ INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `
 
 -- SSL enforce
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('general', 'enforceSSL', 'Enforce HTTPS', 'Redirects HTTP to HTTPS', '0', '0=no, 1=yes');
+
+-- OATH
+INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('user', 'hotpMaxSkew', 'HOTP Counter Max Skew', '', '10', '');
+INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('user', 'oathLockReplayAttack', 'OATH Lock Replay Attacks', '', '1', '0=no, 1=yes');
+

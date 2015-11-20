@@ -342,7 +342,10 @@ CREATE TABLE `list_utoken` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `counter` int(11) NOT NULL DEFAULT '0',
   `secret` varchar(120) NOT NULL,
-  `type` int(11) NOT NULL DEFAULT '-1',
+  `type` varchar(10) NOT NULL,
+  `digit` int(1) NOT NULL DEFAULT '6',
+  `f_init` int(1) NOT NULL DEFAULT '0',
+  `f_locked` int(1) NOT NULL DEFAULT '0',
   `t_add` int(11) NOT NULL DEFAULT '-1',
   `t_upd` int(11) NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`)

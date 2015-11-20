@@ -31,31 +31,45 @@
        <div class="col-md-8">
         <div class="row">
           <div class="col-md-6">
-           <h3>Groups</h3>
-           <table id="LListugroupTable" class="table table-condensed">
+          <h3>User Token</h3>
+          <?php if ($obj->o_utoken) { ?>
+            <table class="table table-condensed">
              <tbody>
-<?php foreach($obj->a_ugroup as $grp) { ?>
-	    <tr id="LListugroup<?php echo $grp->id; ?>">
-		<td><?php echo $grp->link(); ?></td>
-		<td><a href="#" onClick="delLList('login', <?php echo $obj->id; ?>, 'ugroup', <?php echo $grp->id; ?>);">Remove</a></td>
-	    </tr>
-<?php } ?>
+    <?php foreach($obj->o_utoken->htmlDump() as $k => $v) { ?>
+              <tr><td><?php echo $k; ?></td><td><?php echo $v; ?></td></tr>
+    <?php } ?>
              </tbody>
-           </table>
-          </div>
+            </table>
+          <?php } else { ?>
+          <p>There is no token associated, you may add one using the <b>Token > Add</b> menu.</p>
+          <?php } ?>
+         </div>
           <div class="col-md-4">
            <h3>Actions</h3>
-	    <ul class="nav nav-pills nav-stacked">
-	      <li class="dropdown active">
+            <ul class="nav nav-pills nav-stacked">
+              <li class="dropdown active">
                   <a href="/del/w/login/i/<?php echo $obj->id; ?>">Delete</a>
+              </li>
+              <li class="dropdown active">
                   <a href="/edit/w/login/i/<?php echo $obj->id; ?>">Edit</a>
-	      </li>
+              </li>
+              <?php if (LoginCM::getInstance()->o_login->id == $obj->id || LoginCM::getInstance()->o_login->f_admin) { /* Only show token management to self and admin */ ?>
+              <li class="dropdown active">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Token  <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/add/w/utoken">Add</a></li>
+                    <li><a href="/token/w/init">Init</a></li>
+                    <li><a href="/token/w/check">Check</a></li>
+                    <li><a href="/token/w/remove">Remove</a></li>
+                </ul>
+              </li>
+              <?php } ?>
             </ul>
           </div>
         </div>
         <div class="row">
-        <?php if ($obj->f_api) { ?>
-            <div class="col-md-8">
+        <?php if ($obj->f_api && (LoginCM::getInstance()->o_login->f_admin || LoginCM::getInstance()->o_login->id == $obj->id)) { ?>
+            <div class="col-md-6">
                  <h3>API Key</h3>
                     <table class="table table-condensed">
                       <tbody>
@@ -71,6 +85,18 @@
     </div>
         <div class="row">
           <div class="col-md-4">
+           <h3>Groups</h3>
+           <table id="LListugroupTable" class="table table-condensed">
+             <tbody>
+<?php foreach($obj->a_ugroup as $grp) { ?>
+	    <tr id="LListugroup<?php echo $grp->id; ?>">
+		<td><?php echo $grp->link(); ?></td>
+		<td><a href="#" onClick="delLList('login', <?php echo $obj->id; ?>, 'ugroup', <?php echo $grp->id; ?>);">Remove</a></td>
+	    </tr>
+<?php } ?>
+             </tbody>
+           </table>
+ 
            <h3>Add Group</h3>
            <form class="form-inline">
  	   <div class="form-group">

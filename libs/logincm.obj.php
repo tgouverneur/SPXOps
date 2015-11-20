@@ -51,7 +51,7 @@ class LoginCM
         die();
     }
 
-    public function login($username, $password, $keep = 0)
+    public function login($username, $password, $otp = '', $keep = 0)
     {
         $l = new Login();
         $l->username = $username;
@@ -63,6 +63,15 @@ class LoginCM
         }
         if ($l->auth($password) === false) {
             return -1;
+        }
+        if ($l->fk_utoken > 0) {
+            $l->fetchFK('fk_utoken');
+            $uto = $l->o_utoken;
+            if ($uto->f_init > 0) {
+                if (!$uto->checkValue($otp)) {
+                    return -2;
+                }
+            }
         }
         $this->isLogged = 1;
         $this->o_login = $l;

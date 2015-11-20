@@ -164,6 +164,51 @@ try {
          goto screen;
        }
      break;
+     case 'utoken':
+         if ($lm->o_login->fk_utoken > 0) {
+             throw new ExitException('There is already a token associated with this account');
+         }
+         /* being logged-in is enough to add a user token, so don't do right check here */
+         $what = 'User Token';
+         $obj = new UToken();
+         $content = new Template('../tpl/form_utoken.tpl');
+         $page['title'] .= $what;
+         if (isset($_POST['submit'])) { /* clicked on the Add button */
+             $self = $lm->o_login;
+             $fields = array('secret', 'counter', 'type', 'digit');
+             foreach($fields as $field) {
+               if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+                 if (isset($_POST[$field])) {
+                   $obj->{$field} = 1;
+                 } else {
+                   $obj->{$field} = 0;
+                 }
+               } else {
+                 if (isset($_POST[$field])) {
+                   $obj->{$field} = $_POST[$field];
+                 }
+               }
+             }
+             $errors = $obj->valid();
+             if ($errors) {
+               $content->set('error', $errors);
+               $content->set('obj', $obj);
+               goto screen;
+             }
+             $obj->insert();
+             $self->fk_utoken = $obj->id;
+             $self->update();
+             $a = Act::add('Added an User Token for himself', $lm->o_login);
+             $content = new Template('../tpl/message.tpl');
+             $content->set('msg', "User Token has been added to database");
+             $a_link = array(
+                  array('href' => '/view/w/login/i/self',
+                        'name' => 'Back to My Profile',
+                       ),
+                  );
+ 
+         }
+     break;
      case 'ugroup':
        if (!$lm->o_login->cRight('UGRP', R_ADD)) {
          throw new ExitException('Access Denied, please check your access rights!');

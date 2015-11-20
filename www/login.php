@@ -37,9 +37,10 @@ try {
  $content = new Template("../tpl/login.tpl");
 
  if (isset($_POST['submit'])) {
-   $username = $password = '';
+   $OTPValue = $username = $password = '';
    if (isset($_POST['username'])) $username = $_POST['username'];
    if (isset($_POST['password'])) $password = $_POST['password'];
+   if (isset($_POST['OTPValue'])) $OTPValue = $_POST['OTPValue'];
    $remember = false;
    $errors = array();
    if (isset($_POST['remember'])) {
@@ -51,7 +52,12 @@ try {
    if (empty($password)) {
      $errors[] = 'Empty password';
    }
-   if (count($errors) || ($rc = $lm->login($username, $password, $remember))) {
+   try {
+       $rc = $lm->login($username, $password, $OTPValue, $remember);
+   } catch (SPXException $e) {
+       $errors[] = $e->getMessage();
+   }
+   if (count($errors) || $rc) {
      $errors[] = 'Unable to authenticate your username and password, please check';
    } else {
      $page['login'] = $lm->o_login;
@@ -60,7 +66,8 @@ try {
      $content->set('msg', "Welcome ".$lm->o_login->fullname.", you are successfully logged in");
      goto screen;
    }
-   $l = new Login(); $l->username = $username;
+   $l = new Login(); 
+   $l->username = $username;
    $l->getAddr();
    Act::add("[$l] Failed Login tentative from ".$l->i_raddr, $l);
    $content->set('error', $errors);

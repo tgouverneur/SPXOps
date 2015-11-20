@@ -188,6 +188,9 @@ try {
          goto screen;
        }
        $obj->fetchJT('a_ugroup');
+       if ($obj->fk_utoken > 0) {
+           $obj->fetchFK('fk_utoken');
+       }
        $content = new Template('../tpl/view_login.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);

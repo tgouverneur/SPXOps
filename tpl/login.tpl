@@ -27,6 +27,14 @@
 	      <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password">
 	    </div>
 	  </div>
+     <hr class="col-sm-5 col-sm-offset-3">
+	  <div class="form-group">
+	    <label for="inputOATH" class="col-sm-2 col-sm-offset-3 control-label">Token Value (if any)</label>
+	    <div class="col-sm-3">
+	      <input type="text" class="form-control" id="inputOTPValue" name="OTPValue" placeholder="00000000">
+	    </div>
+	  </div>
+	
 	  <div class="form-group">
 	    <div class="col-sm-offset-5 col-sm-2">
 	      <div class="checkbox">

@@ -22,7 +22,7 @@ class HTTP
     public function isAjax()
     {
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-    $_SERVER['HTTP_X_REQUESTED_WITH'] == "XMLHttpRequest") {
+            $_SERVER['HTTP_X_REQUESTED_WITH'] == "XMLHttpRequest") {
             return true;
         }
 
@@ -60,8 +60,9 @@ class HTTP
 
     public static function redirect($url)
     {
-        header("Status: 301 Moved Permanently");
+        //header("Status: 301 Moved Permanently");
         header("Location: ".$url);
+        die();
     }
 
   /**
