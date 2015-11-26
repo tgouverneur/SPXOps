@@ -1083,7 +1083,17 @@ class MySqlObj
             } else {
                 $where .= "WHERE ";
             }
-            if (!strncmp('CST:', $src, 4)) {
+
+            if (is_array($src)) {
+                $where .= '`'.$dst.'` IN (';
+                $i=0;
+                foreach($src as $v) {
+                    if ($i) $where .= ',';
+                    $where .= $my->quote($v);
+                    $i++;
+                }
+                $where .= ')';
+            } elseif (!strncmp('CST:', $src, 4)) {
                 $sstring = preg_replace('/^CST:/', '', $src);
                 $where .= "`".$dst."`=".$my->quote($sstring);
             } elseif (!strncmp('LIKE:', $src, 5)) {
