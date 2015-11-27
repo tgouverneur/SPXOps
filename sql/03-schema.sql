@@ -197,6 +197,7 @@ CREATE TABLE `list_dataset` (
   `name` varchar(200) NOT NULL,
   `size` bigint(22) NOT NULL,
   `available` bigint(22) NOT NULL,
+  `compressratio` float NOT NULL DEFAULT '1.00',
   `reserved` bigint(22) NOT NULL,
   `used` bigint(22) NOT NULL,
   `uchild` bigint(22) NOT NULL,
