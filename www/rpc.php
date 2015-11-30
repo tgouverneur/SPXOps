@@ -182,10 +182,10 @@ try {
        $ret['upd'] = '';
        $ret['stop'] = '';
        if ($job->o_pid) $ret['pid'] = $job->o_pid->pid;
-       if ($job->t_start > 0) $ret['start'] = date('d-m-Y H:m:s', $job->t_start);
-       if ($job->t_stop > 0) $ret['stop'] = date('d-m-Y H:m:s', $job->t_stop);
-       if ($job->t_add > 0) $ret['add'] = date('d-m-Y H:m:s', $job->t_add);
-       if ($job->t_upd > 0) $ret['upd'] = date('d-m-Y H:m:s', $job->t_upd);
+       if ($job->t_start > 0) $ret['start'] = date('d-m-Y H:i:s', $job->t_start);
+       if ($job->t_stop > 0) $ret['stop'] = date('d-m-Y H:i:s', $job->t_stop);
+       if ($job->t_add > 0) $ret['add'] = date('d-m-Y H:i:s', $job->t_add);
+       if ($job->t_upd > 0) $ret['upd'] = date('d-m-Y H:i:s', $job->t_upd);
        if ($job->o_log) $ret['log'] = $job->o_log->log;
        echo json_encode($ret);
      break;

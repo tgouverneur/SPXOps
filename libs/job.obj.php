@@ -237,8 +237,8 @@ class Job extends MySqlObj
                  'class' => $this->class,
                  'fct' => $this->fct,
                  'state' => $this->stateStr(),
-                 't_add' => date('d-m-Y H:m:s', $this->t_add),
-                 't_upd' => date('d-m-Y H:m:s', $this->t_upd),
+                 't_add' => date('d-m-Y H:i:s', $this->t_add),
+                 't_upd' => date('d-m-Y H:i:s', $this->t_upd),
                 );
     }
 
@@ -251,10 +251,10 @@ class Job extends MySqlObj
         'State' => $this->stateStr(),
         'PID' => $this->o_pid,
         'Added by' => ($this->o_login) ? $this->o_login : 'Unknown',
-        'Started at' => ($this->t_start == -1)?"-":date('d-m-Y H:m:s', $this->t_start),
-        'Stopped at' => ($this->t_stop == -1)?"-":date('d-m-Y H:m:s', $this->t_stop),
-        'Added on' => date('d-m-Y H:m:s', $this->t_add),
-        'Updated on' => date('d-m-Y H:m:s', $this->t_upd),
+        'Started at' => ($this->t_start == -1)?"-":date('d-m-Y H:i:s', $this->t_start),
+        'Stopped at' => ($this->t_stop == -1)?"-":date('d-m-Y H:i:s', $this->t_stop),
+        'Added on' => date('d-m-Y H:i:s', $this->t_add),
+        'Updated on' => date('d-m-Y H:i:s', $this->t_upd),
     );
     }
 

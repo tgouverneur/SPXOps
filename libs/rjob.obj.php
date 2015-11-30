@@ -113,9 +113,9 @@ class RJob extends MySqlObj
                  'class' => $this->class,
                  'fct' => $this->fct,
                  'frequency' => Utils::parseFrequency($this->frequency),
-                 't_last' => date('d-m-Y H:m:s', $this->t_last),
-                 't_next' => date('d-m-Y H:m:s', $this->t_last + $this->frequency),
-                 't_upd' => date('d-m-Y H:m:s', $this->t_upd),
+                 't_last' => date('d-m-Y H:i:s', $this->t_last),
+                 't_next' => date('d-m-Y H:i:s', $this->t_last + $this->frequency),
+                 't_upd' => date('d-m-Y H:i:s', $this->t_upd),
                 );
     }
 
@@ -127,9 +127,9 @@ class RJob extends MySqlObj
         'Argument' => $this->arg,
         'frequency' => Utils::parseFrequency($this->frequency),
         'Added by' => ($this->o_login) ? $this->o_login : 'Unknown',
-        'Last run at' => date('d-m-Y H:m:s', $this->t_last),
-        'Added on' => date('d-m-Y H:m:s', $this->t_add),
-        'Updated on' => date('d-m-Y H:m:s', $this->t_upd),
+        'Last run at' => date('d-m-Y H:i:s', $this->t_last),
+        'Added on' => date('d-m-Y H:i:s', $this->t_add),
+        'Updated on' => date('d-m-Y H:i:s', $this->t_upd),
     );
     }
 

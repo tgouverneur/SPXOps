@@ -166,7 +166,7 @@ class Result extends MySqlObj
                  '_color' => Result::colorRC($this->rc),
                  'check' => $this->o_check->link(),
                  'message' => $this->message,
-                 't_upd' => date('d-m-Y H:m:s', $this->t_upd),
+                 't_upd' => date('d-m-Y H:i:s', $this->t_upd),
                 );
 
         if ($this->o_server) {

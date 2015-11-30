@@ -80,7 +80,7 @@ class Notification
           $msg .= 'Result: '.Result::colorRC($cr->rc)."\r\n";
       }
       $msg .= 'Message: '.$cr->message."\r\n";
-      $msg .= 'When: '.date('d-m-Y H:m:s', $cr->t_upd)."\r\n";
+      $msg .= 'When: '.date('d-m-Y H:i:s', $cr->t_upd)."\r\n";
       $msg .= 'Details: '.$cr->details."\r\n";
       if ($oldcr && strcmp($cr->details, $oldcr->details)) {
           $msg .= 'Old Details: '.$oldcr->details;
@@ -145,7 +145,7 @@ class Notification
         $headers = 'From: '.$mfrom."\r\n";
         $headers .= 'X-Mailer: SPXOps'."\r\n";
         $headers .= 'Reply-To: no-reply@'.$domain."\r\n";
-        $msg .= 'When: '.date('d-m-Y H:m:s', $cr->t_upd)."\r\n";
+        $msg .= 'When: '.date('d-m-Y H:i:s', $cr->t_upd)."\r\n";
         $msg .= 'Message: '.$msg."\r\n";
 
         foreach ($a_login as $l) {

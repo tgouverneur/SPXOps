@@ -148,7 +148,7 @@ class Pid extends MySqlObj
         'f_master' => $this->f_master,
         'current' => ($this->o_job) ? $this->o_job->link() : 'None',
         't_upd' => (time() - $this->t_upd).' sec ago',
-        't_add' => date('Y-m-d H:m:s', $this->t_add),
+        't_add' => date('Y-m-d H:i:s', $this->t_add),
        );
     }
 

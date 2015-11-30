@@ -90,7 +90,7 @@ class Log extends MySqlObj
         }
 
         $rc['msg'] = $this->msg;
-        $rc['t_add'] = date('d-m-Y H:m:s', $this->t_add);
+        $rc['t_add'] = date('d-m-Y H:i:s', $this->t_add);
 
         return $rc;
     }
