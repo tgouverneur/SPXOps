@@ -112,6 +112,7 @@ try {
 } catch (Exception $e) {
     /* @TODO: LOG EXCEPTION */
     $h = Utils::getHTTPError('Unexpected Exception');
+    //print $e;
     echo $h->fetch();
 }
 ?>

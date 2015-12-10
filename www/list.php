@@ -251,14 +251,14 @@ try {
          throw new ExitException('Access Denied, please check your access rights!');
        } 
        $npp = Setting::get('display', 'jobPerPage')->value;
-       $a_list = Job::getAll(true, array(), array('DESC:t_upd'));
+       $a_list = Job::getAll(true, array(), array('DESC:t_upd'), 0, 5000);
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
        $content->set('canView', true);
        if ($lm->o_login->cRight('JOB', R_DEL)) $content->set('canDel', true);
        $content->set('what', 'Jobs');
        $content->set('oc', 'Job');
-       $page['title'] .= 'Jobs';
+       $page['title'] .= 'Jobs (last 5000)';
      break;
      case 'login':
        if (!$lm->o_login->cRight('USR', R_VIEW)) {

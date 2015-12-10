@@ -73,7 +73,7 @@ class Job extends MySqlObj
 
     public static function cleanJobs(&$job)
     {
-        $t_old = time() - (3600*12); // 12h
+        $t_old = time() - (3600*24); // 12h
         $table = "`list_job`";
         $index = "`id`";
         $cindex = "COUNT(`id`)";
