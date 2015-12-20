@@ -1,4 +1,4 @@
- <?php
+<?php
 /**
  * Mysql management objects
  * @author Gouverneur Thomas <tgo@espix.net>

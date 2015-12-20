@@ -32,10 +32,8 @@ try {
  $page['title'] = 'Plugins';
 
  if ($lm->o_login) {
-   $page['login'] = &$lm->o_login;
-   $lm->o_login->fetchRights();
- } else {
-   throw new ExitException('You must be logged-in to access this page');
+    $page['login'] = &$lm->o_login;
+    $lm->o_login->fetchRights();
  }
 
  $js = array();
@@ -53,11 +51,18 @@ try {
        if (!$wa) {
          throw new ExitException('The Plugin or Action you requested is not registered');
        }
+
+       if ($wa->n_right && $wa->n_level) {
        
-       if ($wa->n_right) { /* Preliminary right check */
-         if (!$lm->o_login->cRight($wa->n_right, $wa->n_level)) {
-           throw new ExitException('Access Denied, please check your access rights!');
-         }
+           if (!$lm->o_login) {
+               throw new ExitException('You must be logged-in to access this page');
+           }
+
+           if ($wa->n_right) { /* Preliminary right check */
+             if (!$lm->o_login->cRight($wa->n_right, $wa->n_level)) {
+               throw new ExitException('Access Denied, please check your access rights!');
+             }
+           }
        }
        $content = null;
        $wa->call($wa); /* supposed to fill $content */
@@ -107,6 +112,17 @@ try {
         }
         header('Content-Type: '.$e->dest);
         echo $e->getMessage();
+    } else if ($e->type == 5){
+        foreach($e->options as $o) {
+            header($o);
+        }
+        header('Content-Type: '.$e->dest);
+        if ($e->fp) {
+            while(!feof($e->fp)) {
+                echo fread($e->fp, 128 * 1024);
+            }
+            fclose($e->fp);
+        }
     }
      
 } catch (Exception $e) {
@@ -115,4 +131,5 @@ try {
     //print $e;
     echo $h->fetch();
 }
+
 ?>
