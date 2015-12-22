@@ -56,6 +56,15 @@ class SSHSession
         return 0;
     }
 
+    public function recvFile($source, $dest)
+    {
+        if (!$this->_connected) {
+            throw new SPXException('Cannot recvFile(): not connected');
+        }
+        return ssh2_scp_recv($this->_con, $source, $dest);
+    }
+
+
     public function sendFile($source, $dest, $rights = 0644)
     {
         if (!$this->_connected) {

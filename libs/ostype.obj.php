@@ -3,7 +3,7 @@
 class OSType
 {
 
-  protected static function cleanRemoved(MySqlObj &$s, $a, $p, &$a_found) {
+  public static function cleanRemoved(MySqlObj &$s, $a, $p, &$a_found) {
       foreach ($s->{$a} as $item) {
           if ($p) {
               if (isset($a_found[$item->{$p}])) {

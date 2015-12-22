@@ -37,6 +37,10 @@ trait sshTrait {
       }
   }
 
+  public function recvFile($source, $dest) {
+      return $this->_ssh->recvFile($source, $dest);
+  }
+
   public function disconnect()
   {
       $this->_ssh = null;

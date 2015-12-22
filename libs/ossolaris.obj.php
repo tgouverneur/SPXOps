@@ -2225,9 +2225,9 @@ d101 1 1 /dev/dsk/emcpower58a
       return $found_v;
   }
 
-  private static function getZpoolDatasets(&$s, &$p) {
+  public static function getZpoolDatasets(&$s, &$p) {
       $zfs = $s->findBin('zfs');
-      $cmd_dset = "$zfs list -H -r -o space,type,quota,reservation,compressratio %s";
+      $cmd_dset = "$zfs list -H -r -o space,type,quota,reservation,compressratio,creation %s";
       $cmd_d = sprintf($cmd_dset, $p->name);
 
       $found_d = array();
@@ -2241,7 +2241,7 @@ d101 1 1 /dev/dsk/emcpower58a
               continue;
           }
 
-          $f = preg_split("/\s+/", $line);
+          $f = preg_split("/\t/", $line);
           $name = $f[0];
           $name = preg_replace("/^".$p->name."\//", '', $name);
           $do = new Dataset();
@@ -2258,6 +2258,11 @@ d101 1 1 /dev/dsk/emcpower58a
               $compressratio = $m[1];
           } else {
               $compressratio = null;
+          }
+
+          $sd = -1;
+          if (isset($f[11])) {
+              $sd = strtotime($f[11]);
           }
 
           $type = $f[7];
@@ -2310,6 +2315,11 @@ d101 1 1 /dev/dsk/emcpower58a
               $upd = true;
               $s->log("updated $do compressratio => $compressratio", LLOG_DEBUG);
               $do->compressratio = $compressratio;
+          }
+          if ($sd && $do->creation != $sd) {
+              $upd = true;
+              $s->log("updated $do creation => $sd", LLOG_DEBUG);
+              $do->creation = $sd;
           }
           if ($used && $do->used != $used) {
               $upd = true;

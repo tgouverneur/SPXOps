@@ -21,6 +21,7 @@ class Dataset extends MySqlObj
     public $reserved = -1;
     public $used = -1;
     public $uchild = -1;
+    public $creation = -1;
     public $type = '';
     public $fk_pool = -1;
     public $t_add = -1;
@@ -115,6 +116,7 @@ class Dataset extends MySqlObj
                         'size' => SQL_PROPE,
                         'available' => SQL_PROPE,
                         'compressratio' => SQL_PROPE,
+                        'creation' => SQL_PROPE,
                         'reserved' => SQL_PROPE,
                         'used' => SQL_PROPE,
                         'uchild' => SQL_PROPE,
@@ -129,6 +131,7 @@ class Dataset extends MySqlObj
                         'size' => 'size',
                         'available' => 'available',
                         'compressratio' => 'compressratio',
+                        'creation' => 'creation',
                         'reserved' => 'reserved',
                         'used' => 'used',
                         'uchild' => 'uchild',
