@@ -1,0 +1,47 @@
+#!/usr/bin/php
+<?php
+  /**
+   * SSH lib regression testing
+   *
+   * @author Gouverneur Thomas <tgo@espix.net>
+   * @copyright Copyright (c) 2015, Gouverneur Thomas
+   * @version 1.0
+   * @package CLI
+   * @category utils
+   * @subpackage list
+   * @filesource
+   * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
+   */
+  require_once dirname(__FILE__).'/../libs/utils.obj.php';
+  error_reporting(E_ALL);
+
+  $m = MySqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  $id = 120; // default
+  if (count($argv) == 2) {
+      $id = $argv[1];
+  }
+
+  $s = new Server($id);
+  if ($s->fetchFromId()) {
+      die('[!] Server id not found');
+  }
+  $s->fetchAll(1);
+
+  echo "[-] Connecting to ".$s->hostname."\n";
+  $s->connect();
+  echo "[-] Trying to transfer file\n";
+  $ret = $s->recvFile('/etc/motd', '/tmp/motd.'.$id);
+  //define('SSH_DEBUG', true);
+  echo "[-] Trying to run a small-return command (uname -a)\n";
+  $ret = $s->exec('/usr/bin/uname -a', null, 500);
+  echo "--------\n$ret\n--------";
+  echo "[-] Trying to run a long-return command (prtconf -vvv)\n";
+  $ret = $s->exec('/usr/sbin/prtconf -vvv', null, 500);
+  echo "[-] Return length: ".strlen($ret)."\n";
+  $s->disconnect();
+
+?>

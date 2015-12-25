@@ -11,10 +11,13 @@
  * @filesource
  * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
+
+define('SSH_SESSION_RSIZE', 32768);
+
 class SSHSession
 {
 
-  public $hostname;
+    public $hostname;
     public $port;
     public $o_user = null;
 
@@ -61,7 +64,29 @@ class SSHSession
         if (!$this->_connected) {
             throw new SPXException('Cannot recvFile(): not connected');
         }
-        return ssh2_scp_recv($this->_con, $source, $dest);
+        $sftp = ssh2_sftp($this->_con);
+        /* first stat the file to get its size */
+        $sf = ssh2_sftp_stat($sftp, $source);
+        $fsize = $sf['size'];
+
+        $fh_src = fopen("ssh2.sftp://$sftp".$source, 'r');
+        $fh_dst = fopen($dest, 'w');
+        if (!$fh_src || !$fh_dst) {
+            return false;
+        }
+
+        $rs = 0;
+        while (!feof($fh_src) && $rs < $fsize) {
+            $buf = fread($fh_src, 8192);
+            if ($buf === false) {
+                break;
+            }
+            $rs += strlen($buf);
+            fwrite($fh_dst, $buf);
+        }
+        fclose($fh_src);
+        fclose($fh_dst);
+        return true;
     }
 
 
@@ -159,25 +184,57 @@ class SSHSession
         if (!($stream = ssh2_exec($this->_con, $c))) {
             throw new SPXException('Cannot get SSH Stream');
         } else {
-            stream_set_blocking($stream, true);
+            stream_set_blocking($stream, 1);
+            stream_set_chunk_size($stream, SSH_SESSION_RSIZE);
+            stream_set_write_buffer($stream, 0);
+            stream_set_read_buffer($stream, 0);
             while (true) {
+                if (defined('SSH_DEBUG')) { echo '[D] Current buf len='.strlen($buf)."\n"; }
+                if (strpos($buf, '__COMMAND_FINISHED__') !== false) {
+                    fclose($stream);
+                    $buf = str_replace("__COMMAND_FINISHED__\n", '', $buf);
+                    return $buf;
+                }
                 $wa = null;
                 $ex = null;
                 $ra = array($stream);
-                $nc = stream_select($ra, $wa, $ex, $timeout);
-                if ($nc) {
-                    $buf .= stream_get_line($stream, 4096, PHP_EOL).PHP_EOL;
-                    if (strpos($buf, "__COMMAND_FINISHED__") !== false) {
-                        fclose($stream);
-                        $buf = str_replace("__COMMAND_FINISHED__\n", "", $buf);
+                $nc = stream_select($ra, $wa, $ex, 0, 200000);
+ 
+                if ($nc === false) {
+                    if (defined('SSH_DEBUG')) { echo '[D] Select() returned false'."\n"; }
+                    fclose($stream);
+                    return $buf;
+                } else if ($nc > 0) { /* something to read */
+                    $chunk = fread($stream, SSH_SESSION_RSIZE);
+                    $buf .= $chunk;
+                    if (defined('SSH_DEBUG')) { echo '[D] SSH Read len='.strlen($chunk)."\n"; }
 
-                        return $buf;
-                    }
                     if ((time()-$time_start) > $timeout) {
                         fclose($stream);
                         throw new SPXException('Command timeout');
                     }
                 } else {
+                    /* work around a select/fread bug */
+                    /* I know... this is .. eeww. */
+                    if (defined('SSH_DEBUG')) { echo '[D] stream_select == '; print_r($nc); echo "\n";}
+                    stream_set_blocking($stream, 0);
+                    $it_fread = 0;
+                    $it_cnt = 3;
+                    while(($chunk = fread($stream, SSH_SESSION_RSIZE)) || $it_cnt) {
+                        if ($chunk !== false && strlen($chunk)) {
+                            $buf .= $chunk;
+                            $it_cnt++;
+                        } else {
+                            $it_cnt--;
+                            usleep(1000);
+                        }
+                        $it_fread++;
+                        if (defined('SSH_DEBUG')) { echo '[D] fread bug == '.strlen($chunk)."\n";}
+                    }
+                    stream_set_blocking($stream, 1);
+                    if (defined('SSH_DEBUG')) { echo '[D] it_fread bug == '.$it_fread."\n"; }
+                    if ($it_fread) continue;
+
                     if ((time()-$time_start) >= $timeout) {
                         fclose($stream);
                         throw new SPXException('Command timeout');
@@ -186,6 +243,52 @@ class SSHSession
             }
         }
     }
+
+
+    /* Commented, this is the ideal (with s/stream_get_line/fread/) one but there's a bug with stream_select and ssh2 ext right now... */
+    /*
+    public function execSecure($c, $timeout = 30)
+    {
+        if (!$this->_connected) {
+            throw new SPXException('Cannot execSecure(): not connected');
+        }
+        $c = $c.";echo \"__COMMAND_FINISHED__\"";
+        $time_start = time();
+        $buf = "";
+        if (!($stream = ssh2_exec($this->_con, $c))) {
+            throw new SPXException('Cannot get SSH Stream');
+        } else {
+            stream_set_blocking($stream, true);
+            while (true) {
+                $wa = null;
+                $ex = null;
+                $ra = array($stream);
+                $nc = stream_select($ra, $wa, $ex, 1);
+                if ($nc) {
+                    $line = stream_get_line($stream, 4096, PHP_EOL).PHP_EOL;
+                    $buf .= $line;
+                    if (defined('SSH_DEBUG')) { echo '[D] SSH Read: '.$line; }
+                    if (strpos($buf, "__COMMAND_FINISHED__") !== false) {
+                        fclose($stream);
+                        $buf = str_replace("__COMMAND_FINISHED__\n", "", $buf);
+                        return $buf;
+                    }
+                    if ((time()-$time_start) > $timeout) {
+                        fclose($stream);
+                        throw new SPXException('Command timeout');
+                    }
+                } else {
+                    if (defined('SSH_DEBUG')) { echo '[D] stream_set_blocking == false'."\n"; }
+                    if ((time()-$time_start) >= $timeout) {
+                        fclose($stream);
+                        throw new SPXException('Command timeout');
+                    }
+                }
+            }
+        }
+    }
+    */
+
 
     public function exec($c)
     {
