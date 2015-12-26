@@ -20,7 +20,7 @@
 	   <table class="table table-condensed">
 	     <tbody>
 <?php foreach($obj->htmlDump() as $k => $v) { ?>
-	      <tr><td><?php echo $k; ?></td><td><?php echo $v; ?></td></tr>
+	      <tr><td><?php echo $k; ?></td><td id="job<?php echo preg_replace('/ /', '_', $k); ?>"><?php echo $v; ?></td></tr>
 <?php } ?>
 	     </tbody>
 	   </table>
@@ -28,7 +28,7 @@
           <div class="col-md-8">
            <h3>Log</h3>
 <?php if (isset($obj->o_log)) { ?>
-	   <pre class="pre-scrollable">
+	   <pre id="jobLog" class="pre-scrollable">
 <?php echo $obj->o_log->log; ?>
 	   </pre>
 <?php } ?>
@@ -39,4 +39,39 @@
         $('.alert .close').on('click', function() {
           $(this).parent().hide();
         });
-      </script>
+         window.refreshJob = 1;
+         $('.alert .close').on('click', function() {
+           $(this).parent().hide();
+         });
+         function refreshJobInfo() {
+           if (window.refreshJob == 1) {
+              $.ajax({
+             url: '/rpc/w/job' + '/i/<?php echo $obj->id; ?>',
+             dataType: 'json',
+             success: updateLogInfo,
+             error: failedRPC,
+             cache: false
+            });
+           }
+         }
+         function updateLogInfo(data, textStatus, jqXHR) {
+           $('#jobLog').html(data['log']);
+           $('#jobState').text(data['state']);
+           if (data['state'] == 'DONE' || data['state'] == 'STALLED' || data['state'] == 'FAILED') {
+             window.refreshJob = 0;
+           } else {
+             setTimeout(function(){refreshJobInfo()}, 1000);
+           }
+         }
+         function failedRPC(jqXHR, textStatus, errorThrown) {
+           var msg = 'RPC Call Failure: ';
+           if (errorThrown != '') {
+             msg = msg + ' HTTP Error: ' + errorThrown;
+           } else {
+             msg = msg + jqXHR.responseText;
+           }
+           $("#error-msg").text(msg);
+           $("#error-box").show();
+         }
+         setTimeout(function(){refreshJobInfo();}, 1000);
+       </script>
