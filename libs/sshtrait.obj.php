@@ -38,7 +38,8 @@ trait sshTrait {
   }
 
   public function recvFile($source, $dest) {
-      return $this->_ssh->recvFile($source, $dest);
+      $fsize = $this->fileStat($source);
+      return $this->_ssh->recvFile($source, $dest, $fsize);
   }
 
   public function disconnect()
@@ -134,6 +135,12 @@ trait sshTrait {
           }
       }
       return false;
+  }
+
+  public function fileStat($file) {
+      $stat = $this->findBin('stat');
+      $ret = $this->exec($stat.' -c%s '.$file);
+      return $ret;
   }
 
   public function findBin($bin, $paths = null)

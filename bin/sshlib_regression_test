@@ -33,12 +33,12 @@
 
   echo "[-] Connecting to ".$s->hostname."\n";
   $s->connect();
+  //define('SSH_DEBUG', true);
   echo "[-] Trying to transfer file\n";
   $ret = $s->recvFile('/etc/motd', '/tmp/motd.'.$id);
-  //define('SSH_DEBUG', true);
   echo "[-] Trying to run a small-return command (uname -a)\n";
   $ret = $s->exec('/usr/bin/uname -a', null, 500);
-  echo "--------\n$ret\n--------";
+  echo "--------\n$ret\n--------\n";
   echo "[-] Trying to run a long-return command (prtconf -vvv)\n";
   $ret = $s->exec('/usr/sbin/prtconf -vvv', null, 500);
   echo "[-] Return length: ".strlen($ret)."\n";

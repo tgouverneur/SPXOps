@@ -13,6 +13,7 @@
  */
 
 define('SSH_SESSION_RSIZE', 32768);
+define('SSH_SFTP_RSIZE', 32768);
 
 class SSHSession
 {
@@ -59,16 +60,14 @@ class SSHSession
         return 0;
     }
 
-    public function recvFile($source, $dest)
+    public function recvFile($source, $dest, $fsize)
     {
         if (!$this->_connected) {
             throw new SPXException('Cannot recvFile(): not connected');
         }
         $sftp = ssh2_sftp($this->_con);
-        /* first stat the file to get its size */
-        $sf = ssh2_sftp_stat($sftp, $source);
-        $fsize = $sf['size'];
 
+        if (defined('SSH_DEBUG')) { echo '[D] stat size='.$fsize."\n"; }
         $fh_src = fopen("ssh2.sftp://$sftp".$source, 'r');
         $fh_dst = fopen($dest, 'w');
         if (!$fh_src || !$fh_dst) {
@@ -77,7 +76,7 @@ class SSHSession
 
         $rs = 0;
         while (!feof($fh_src) && $rs < $fsize) {
-            $buf = fread($fh_src, 8192);
+            $buf = fread($fh_src, SSH_SFTP_RSIZE);
             if ($buf === false) {
                 break;
             }
@@ -216,6 +215,9 @@ class SSHSession
                 } else {
                     /* work around a select/fread bug */
                     /* I know... this is .. eeww. */
+                    if (defined('SSH_DEBUG')) {
+                        print_r(stream_get_meta_data($stream));
+                    }
                     if (defined('SSH_DEBUG')) { echo '[D] stream_select == '; print_r($nc); echo "\n";}
                     stream_set_blocking($stream, 0);
                     $it_fread = 0;
@@ -229,7 +231,8 @@ class SSHSession
                             usleep(1000);
                         }
                         $it_fread++;
-                        if (defined('SSH_DEBUG')) { echo '[D] fread bug == '.strlen($chunk)."\n";}
+                        if (defined('SSH_DEBUG')) { echo '[D] fread bug == '.strlen($chunk)." ($it_cnt)\n";}
+                        //print_r(stream_get_meta_data($stream));
                     }
                     stream_set_blocking($stream, 1);
                     if (defined('SSH_DEBUG')) { echo '[D] it_fread bug == '.$it_fread."\n"; }
