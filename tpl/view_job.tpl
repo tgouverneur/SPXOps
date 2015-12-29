@@ -27,11 +27,9 @@
 	  </div>
           <div class="col-md-8">
            <h3>Log</h3>
-<?php if (isset($obj->o_log)) { ?>
 	   <pre id="jobLog" class="pre-scrollable">
-<?php echo $obj->o_log->log; ?>
+<?php if (isset($obj->o_log)) { echo $obj->o_log->log; } ?>
 	   </pre>
-<?php } ?>
           </div>
        </div>
       </div>

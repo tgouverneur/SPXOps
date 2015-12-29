@@ -179,6 +179,7 @@ class SSHSession
         return;
     }
 
+     
     public function execSecure($c, $timeout = 30)
     {
         if (!$this->_connected) {
@@ -196,6 +197,7 @@ class SSHSession
                 }
                 continue;
             }
+            break;
         }
         if (!$stream) {
             throw new SPXException('Cannot get SSH Stream');
@@ -209,6 +211,7 @@ class SSHSession
                 if (strpos($buf, '__COMMAND_FINISHED__') !== false) {
                     fclose($stream);
                     $buf = str_replace("__COMMAND_FINISHED__\n", '', $buf);
+                    if (defined('SSH_DEBUG')) { echo '[D] Clean return'."\n"; }
                     return $buf;
                 }
                 $wa = null;
@@ -263,7 +266,6 @@ class SSHSession
             }
         }
     }
-
 
     /* Commented, this is the ideal (with s/stream_get_line/fread/) one but there's a bug with stream_select and ssh2 ext right now... */
     /*
