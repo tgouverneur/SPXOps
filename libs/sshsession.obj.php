@@ -14,6 +14,7 @@
 
 define('SSH_SESSION_RSIZE', 32768);
 define('SSH_SFTP_RSIZE', 32768);
+define('SSH_EXEC_RETRY', 3);
 
 class SSHSession
 {
@@ -58,6 +59,12 @@ class SSHSession
         }
 
         return 0;
+    }
+
+    private function _reconnect() {
+        $this->_connected = false;
+        $this->_con = null;
+        return $this->connect();
     }
 
     public function recvFile($source, $dest, $fsize)
@@ -180,7 +187,17 @@ class SSHSession
         $c = $c.";echo \"__COMMAND_FINISHED__\"";
         $time_start = time();
         $buf = "";
-        if (!($stream = ssh2_exec($this->_con, $c))) {
+        $stream = null;
+        /* Try to run the command up to SSH_EXEC_RETRY in case we fail to get a stream */
+        for ($t = 0; $t < SSH_EXEC_RETRY; $t++) {
+            if (!($stream = ssh2_exec($this->_con, $c))) {
+                if ($this->_reconnect()) {
+                    throw new SPXException('Cannot get SSH Stream (reconnection failed)');
+                }
+                continue;
+            }
+        }
+        if (!$stream) {
             throw new SPXException('Cannot get SSH Stream');
         } else {
             stream_set_blocking($stream, 1);

@@ -1155,8 +1155,8 @@ zfs:0:arcstats:l2_writes_sent   376002
   public static function updateRelease(&$s)
   {
 
-    /* get cat */
-    $cat = $s->findBin('cat');
+      /* get cat */
+      $cat = $s->findBin('cat');
 
       $cmd_cat = "$cat /etc/release";
       $out_cat = $s->exec($cmd_cat);
@@ -1164,6 +1164,10 @@ zfs:0:arcstats:l2_writes_sent   376002
       $release_lines = explode(PHP_EOL, $out_cat);
       $release = $release_lines[0];
       $f_release = explode(' ', $release);
+      if (count($f_release) < 3) {
+          $s->log('[!] Invalid /etc/release format detected, aborting...', LLOG_ERR);
+          return;
+      }
       $release_major = $f_release[1];
       $release_update = $f_release[2];
       if ($release_major == 'Solaris' || $f_release[0] == 'Oracle') {
