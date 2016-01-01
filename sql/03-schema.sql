@@ -203,6 +203,7 @@ CREATE TABLE `list_dataset` (
   `used` bigint(22) NOT NULL,
   `uchild` bigint(22) NOT NULL,
   `type` varchar(20) DEFAULT NULL,
+  `origin` varchar(200) DEFAULT NULL,
   `fk_pool` int(11) NOT NULL,
   `t_add` int(11) NOT NULL,
   `t_upd` int(11) NOT NULL,

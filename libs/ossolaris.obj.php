@@ -2231,7 +2231,7 @@ d101 1 1 /dev/dsk/emcpower58a
 
   public static function getZpoolDatasets(&$s, &$p) {
       $zfs = $s->findBin('zfs');
-      $cmd_dset = "$zfs list -H -r -o space,type,quota,reservation,compressratio,creation %s";
+      $cmd_dset = "$zfs list -H -r -o space,type,quota,reservation,compressratio,creation,origin %s";
       $cmd_d = sprintf($cmd_dset, $p->name);
 
       $found_d = array();
@@ -2267,6 +2267,11 @@ d101 1 1 /dev/dsk/emcpower58a
           $sd = -1;
           if (isset($f[11])) {
               $sd = strtotime($f[11]);
+          }
+
+          $origin = '';
+          if (isset($f[12])) {
+              $origin = $f[12];
           }
 
           $type = $f[7];
@@ -2319,6 +2324,11 @@ d101 1 1 /dev/dsk/emcpower58a
               $upd = true;
               $s->log("updated $do compressratio => $compressratio", LLOG_DEBUG);
               $do->compressratio = $compressratio;
+          }
+          if ($origin && $do->origin != $origin) {
+              $upd = true;
+              $s->log("updated $do origin => $origin", LLOG_DEBUG);
+              $do->origin = $origin;
           }
           if ($sd && $do->creation != $sd) {
               $upd = true;
