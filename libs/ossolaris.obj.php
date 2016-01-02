@@ -2271,7 +2271,9 @@ d101 1 1 /dev/dsk/emcpower58a
 
           $origin = '';
           if (isset($f[12])) {
-              $origin = $f[12];
+              if (strcmp($origin, '-')) {
+                  $origin = $f[12];
+              }
           }
 
           $type = $f[7];
