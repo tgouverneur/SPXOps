@@ -19,7 +19,7 @@
    $dur_time ='';
  }
 ?>
-      <footer class="col-md-offset-1">&copy; 2012-2016 <a href="http://espix.net">Espix Network SPRL</a> - <a href="https://github.com/tgouverneur/SPXOps/wiki">SPXOps</a> vDEVEL<?php echo $dur_time; ?></footer>
+      <footer class="col-md-offset-1">&copy; 2012-2016 <a href="http://espix.net">Espix Network SPRL</a> - <a href="https://github.com/tgouverneur/SPXOps/wiki">SPXOps</a> v<?php echo Config::$version; ?><?php echo $dur_time; ?></footer>
     </div> <!-- /container -->
 <?php if (isset($js)) { foreach($js as $j) { ?>
     <script src="/js/<?php echo $j; ?>"></script>
