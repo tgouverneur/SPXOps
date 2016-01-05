@@ -25,6 +25,8 @@ try {
  $h = HTTP::getInstance();
  $h->parseUrl();
 
+ header('API-Version: '.Config::$version);
+
  if ($lm->o_login) {
    $lm->o_login->fetchRights();
  } else {
