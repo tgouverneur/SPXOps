@@ -37,6 +37,7 @@ try {
  $foot = new Template("../tpl/foot.tpl");
  $content = new Template("../tpl/error.tpl");
  $content->set('error', "The page you requested has not been found...");
+ new SPXException('HTTP/404 trigger: '.$_SERVER['REQUEST_URI']); /* Just create an exception to get it logged into the exception log */
 
  $index->set('head', $head);
  $index->set('content', $content);
@@ -54,7 +55,6 @@ try {
     }
 
 } catch (Exception $e) {
-    /* @TODO: LOG EXCEPTION */
     $h = Utils::getHTTPError('Unexpected Exception');
     echo $h->fetch();
 }
