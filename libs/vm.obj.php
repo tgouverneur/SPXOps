@@ -49,7 +49,11 @@ class VM extends MySqlObj
     public $a_sgroup = array();
 
     public function jsonSerialize() {
-        $this->fetchAll();
+        $this->fetchData();
+        $this->fetchRL('a_disk');
+        if (!$this->o_server && $this->fk_server > 0) {
+            $this->fetchFK('fk_server');
+        }
         $this->getDisks();
         $ret = array(
                 'name' => $this->name,

@@ -3,7 +3,7 @@
  * Logger
  *
  * @author Gouverneur Thomas <tgo@espix.net>
- * @copyright Copyright (c) 2007-2012, Gouverneur Thomas
+ * @copyright Copyright (c) 2007-2016, Gouverneur Thomas
  * @version 1.0
  * @package objects
  * @category classes
