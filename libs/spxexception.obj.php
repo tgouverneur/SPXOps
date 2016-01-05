@@ -26,7 +26,8 @@ class SPXException extends Exception
         $pid = getmypid();
         $uid = posix_getuid();
         $uname = posix_getlogin();
-        fprintf(SPXException::$_logfd, "[%s] Exception received. PID=%d UID=%d USER=%s\n\t* Message: %s\n\t* Stack trace:\n%s\n", date("Y-m-d H:i:s"), $pid, $uid, $uname, $this->getMessage(), preg_replace('/^/m', "\t\t", $this->getTraceAsString()));
+        fprintf(SPXException::$_logfd, "[%s] Exception received. PID=%d UID=%d USER=%s\n\t* Message: %s\n\t* Stack trace:\n%s\n", 
+            date("Y-m-d H:i:s"), $pid, $uid, $uname, $this->getMessage(), preg_replace('/^/m', "\t\t", $this->getTraceAsString()));
         if (SPXException::$_logfd) {
             SPXException::closeLog();
         }
