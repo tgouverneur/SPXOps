@@ -335,7 +335,7 @@ try {
        $obj->delete();
        Act::add('Deleted the User: '.$obj->username, $lm->o_login);
        $a_link = array(
-            array('href' => '/list/w/users',
+            array('href' => '/list/w/login',
                   'name' => 'Back to list of users',
                  ),
             );
