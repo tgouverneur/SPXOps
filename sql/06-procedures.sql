@@ -35,17 +35,18 @@ CREATE PROCEDURE getFirstJob
 (idPID INT, OUT pID INT)
 BEGIN
 DECLARE record_not_found INT DEFAULT 0;
-DECLARE vPid INT DEFAULT -1;
+DECLARE vPid INT DEFAULT 0;
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET record_not_found = 1;
 DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
 DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
 SET pID = 0;
 START TRANSACTION;
-SELECT id INTO pID FROM list_job WHERE state=1 AND fk_pid=-1 ORDER BY fk_login DESC, id ASC LIMIT 0,1;
+SELECT id INTO vPid FROM list_job WHERE state=1 AND fk_pid=-1 ORDER BY fk_login DESC, id ASC LIMIT 0,1 FOR UPDATE;
 IF record_not_found THEN
   SET pID = 0;
 ELSE
-  UPDATE list_job SET state=2, fk_pid = idPid WHERE id = pID AND state=1 AND fk_pid=-1;
+  UPDATE list_job SET state=2, fk_pid = idPid WHERE id = vPid AND state=1 AND fk_pid=-1;
+  SET pID = vPid;
 END IF;
 COMMIT;
 END //

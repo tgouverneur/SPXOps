@@ -39,7 +39,7 @@ class SSHSession
         }
 
         if (!($this->_con = ssh2_connect($this->hostname, $this->port))) {
-            throw new SPXException('Cannot connect');
+            throw new SPXException('Cannot connect to host: '.$this->hostname.':'.$this->port);
         }
         $authDone = false;
         if ($this->o_user->pubkey()) {
