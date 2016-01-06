@@ -93,6 +93,23 @@ class Notification
   }
 
   /* Notify site-admin that a new user has requested a login */
+  public static function sendReport($message, $from) {
+      $a_admin = Login::getAll(true, array('f_admin' => 'CST:1'));
+      $short = 'Report received';
+      $msg = "Dear SPXOps Admin,\n\n";
+      $msg .= "We have received a new report from someone browsing SPXOps, here is the details of his message:\n\n";
+      $msg .= "Username: ".$from->username;
+      $msg .= "\nEmail: ".$from->email;
+      $msg .= "\nFull Name: ".$from->fullname;
+      $msg .= "\nReport content: ".$message;
+      $msg .= "\n\nThanks!\n";
+      foreach ($a_admin as $admin) {
+        Notification::sendMail($admin->email, $short, $msg);
+      }
+  }
+
+
+  /* Notify site-admin that a new user has requested a login */
   public static function notifyNewUser($obj) {
       $a_admin = Login::getAll(true, array('f_admin' => 'CST:1'));
       $short = $obj.' Requested a login';
