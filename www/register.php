@@ -72,7 +72,7 @@ switch($what) {
        goto screen;
      }
      /* Must crypt the password */
-     $obj->bcrypt($obj->password);
+     $obj->encryptPassword($obj->password);
      /* We're using self-register, flag the account as not active and notice administrators */
      $obj->f_active = 0;
      $obj->insert();

@@ -177,30 +177,31 @@ class Login extends MySqlObj
     public function cRight($short, $right)
     {
         if (isset($this->a_right[$short]) &&
-    $this->a_right[$short] & $right) {
+            $this->a_right[$short] & $right) {
             return true;
         }
 
         return false;
     }
 
-    public function bcrypt($input, $rounds = 7)
-    {
-        $salt = "";
-        $salt_chars = array_merge(range('A', 'Z'), range('a', 'z'), range(0, 9));
-        for ($i = 0; $i < 22; $i++) {
-            $salt .= $salt_chars[array_rand($salt_chars)];
-        }
-        $this->password = crypt($input, sprintf('$2y$%02d$', $rounds).$salt);
+    public function encryptPassword($pwd) {
+        $this->password =  LoginCM::_hashPBKDF2($pwd);
     }
-
 
     public function auth($pwd)
     {
-        if (crypt($pwd, $this->password) === $this->password) {
-            return true;
+        if (LoginCM::_isPBKDF2($this->password)) {
+            if (LoginCM::_validatePBKDF2($pwd, $this->password)) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            if (crypt($pwd, $this->password) === $this->password) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

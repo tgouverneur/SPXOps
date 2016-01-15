@@ -445,7 +445,7 @@ try {
          }
 
          /* Must crypt the password */
-         if (!empty($obj->password) && !empty($obj->password_c)) $obj->bcrypt($obj->password); // If password_c is empty then password has not been modified
+         if (!empty($obj->password) && !empty($obj->password_c)) $obj->encryptPassword($obj->password); // If password_c is empty then password has not been modified
          $obj->update();
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "User $obj has been updated to database");

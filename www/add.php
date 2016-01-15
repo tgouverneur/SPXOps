@@ -447,37 +447,37 @@ try {
        $page['title'] .= $what;
        if (isset($_POST['submit'])) { /* clicked on the Add button */
          $fields = array('fullname', 'email', 'username', 'password', 'password_c', 'f_noalerts', 'f_admin', 'f_api');
-	 foreach($fields as $field) {
+         foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
-	     if (isset($_POST[$field])) {
-	       $obj->{$field} = 1;
-	     } else {
-	       $obj->{$field} = 0;
-	     }
-	   } else {
-	     if ($_POST[$field]) {
-	       $obj->{$field} = $_POST[$field];
-	     }
-	   }
-	 }
-	 $errors = $obj->valid();
-	 if ($errors) {
-	   $content->set('error', $errors);
-	   $content->set('obj', $obj);
-	   goto screen;
-	 }
-	 /* Must crypt the password */
-	 $obj->bcrypt($obj->password);
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid();
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         /* Must crypt the password */
+         $obj->encryptPassword($obj->password);
          $obj->insert();
          $a = Act::add('Added the user: '.$obj->username, $lm->o_login);
          $content = new Template('../tpl/message.tpl');
-	 $content->set('msg', "User $obj has been added to database");
+         $content->set('msg', "User $obj has been added to database");
          $a_link = array(
               array('href' => '/list/w/login',
                     'name' => 'Back to list of users',
                    ),
-              );
-	 goto screen;
+          );
+         goto screen;
        }
      break;
      default:
