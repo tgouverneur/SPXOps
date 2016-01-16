@@ -34,7 +34,7 @@ try {
      throw new ExitException('Access Denied, please check your access rights!');
    }
  } else {
-   throw new ExitException('You must be logged-in to access this page');
+   throw new ExitException(null, 6);
  }
 
  $index = new Template("../tpl/index.tpl");
@@ -82,8 +82,10 @@ screen:
 
 } catch (ExitException $e) {
      
-    if ($e->type == 2) { 
+    if ($e->type == EXIT_JSON) { 
         echo Utils::getJSONError($e->getMessage());
+    } else if ($e->type == EXIT_LOGIN) { /* login needed */
+        LoginCM::requestLogin();
     } else {
         $h = Utils::getHTTPError($e->getMessage());
         echo $h->fetch();

@@ -34,7 +34,7 @@ try {
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   throw new ExitException('You must be logged-in to access this page');
+   throw new ExitException(null, EXIT_LOGIN);
  }
 
  if ($lm->o_login) $page['login'] = &$lm->o_login;
@@ -191,6 +191,8 @@ screen:
     } else if ($e->type == 1) {
         $h = Utils::getHTTPError($e->getMessage());
         echo $h->fetch();
+    } else if ($e->type == EXIT_LOGIN) { /* login needed */
+        LoginCM::requestLogin();
     } else if ($e->type == 3) {
         HTTP::redirect($e->dest);
     }

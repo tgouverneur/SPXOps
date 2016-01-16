@@ -119,6 +119,24 @@ class LoginCM
         return 0;
     }
 
+    public static function requestLogin() {
+        if (!isset($_SESSION['ORIG_REQUEST']) && empty($_SESSION['ORIG_REQUEST'])) {
+            $_SESSION['ORIG_REQUEST'] = $_SERVER['REQUEST_URI'];
+        }
+        /* Redirect to login page.. */
+        HTTP::redirect('/login/r/1');
+    }
+
+    public static function getOriginalRequest() {
+        if (isset($_SESSION['ORIG_REQUEST']) && !empty($_SESSION['ORIG_REQUEST'])) {
+            $uri = $_SESSION['ORIG_REQUEST'];
+            unset($_SESSION['ORIG_REQUEST']);
+            return $uri;
+        }
+        return null;
+    }
+
+
     public function logout()
     {
         if ($this->isLogged) {

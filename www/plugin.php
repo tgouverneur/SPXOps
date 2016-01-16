@@ -55,7 +55,7 @@ try {
        if ($wa->n_right && $wa->n_level) {
        
            if (!$lm->o_login) {
-               throw new ExitException('You must be logged-in to access this page');
+               throw new ExitException(null, EXIT_LOGIN);
            }
 
            if ($wa->n_right) { /* Preliminary right check */
@@ -99,20 +99,20 @@ try {
 
 } catch (ExitException $e) {
      
-    if ($e->type == 2) { 
+    if ($e->type == EXIT_JSON) { 
         echo Utils::getJSONError($e->getMessage());
-    } else if ($e->type == 1) {
+    } else if ($e->type == EXIT_HTTP) {
         $h = Utils::getHTTPError($e->getMessage());
         echo $h->fetch();
-    } else if ($e->type == 3) {
+    } else if ($e->type == EXIT_REDIR) {
         HTTP::redirect($e->dest);
-    } else if ($e->type == 4){
+    } else if ($e->type == EXIT_DOWN) {
         foreach($e->options as $o) {
             header($o);
         }
         header('Content-Type: '.$e->dest);
         echo $e->getMessage();
-    } else if ($e->type == 5){
+    } else if ($e->type == EXIT_LDOWN) {
         foreach($e->options as $o) {
             header($o);
         }
@@ -123,6 +123,8 @@ try {
             }
             fclose($e->fp);
         }
+    } else if ($e->type == EXIT_LOGIN) { /* login needed */
+        LoginCM::requestLogin();
     }
      
 } catch (Exception $e) {

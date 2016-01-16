@@ -35,6 +35,9 @@ try {
 
  $foot = new Template("../tpl/foot.tpl");
  $content = new Template("../tpl/login.tpl");
+ if (isset($_GET['r']) && $_GET['r'] == 1) {
+     $content->set('error', 'You must be logged-in to access this page, please enter your credentials below');
+ }
 
  if (isset($_POST['submit'])) {
    $OTPValue = $username = $password = '';
@@ -64,6 +67,7 @@ try {
      $head->set('page', $page);
      $content = new Template('../tpl/message.tpl');
      $content->set('msg', "Welcome ".$lm->o_login->fullname.", you are successfully logged in");
+     $content->set('redir', LoginCM::getOriginalRequest());
      goto screen;
    }
    $l = new Login(); 

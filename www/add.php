@@ -35,7 +35,7 @@ try {
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   throw new ExitException('You must be logged-in to access this page');
+   throw new ExitException(null, 6);
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
@@ -501,8 +501,13 @@ screen:
 
 } catch (ExitException $e) {
 
-    $h = Utils::getHTTPError($e->getMessage());
-    echo $h->fetch();
+    if ($e->type == EXIT_LOGIN) { /* login needed */
+        LoginCM::requestLogin();
+    } else {
+
+        $h = Utils::getHTTPError($e->getMessage());
+        echo $h->fetch();
+    }
 
 } catch (Exception $e) {
     /* @TODO: LOG EXCEPTION */

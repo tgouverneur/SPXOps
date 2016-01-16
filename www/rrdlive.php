@@ -34,7 +34,7 @@ try {
    $page['login'] = &$lm->o_login;
    $lm->o_login->fetchRights();
  } else {
-   throw new ExitException('You must be logged-in to access this page');
+   throw new ExitException(null, EXIT_LOGIN);
  }
  if (!$lm->o_login->cRight('SRV', R_VIEW)) {
    throw new ExitException('Access Denied, please check your access rights!');
@@ -63,6 +63,8 @@ screen:
      
     if ($e->type == 2) { 
         echo Utils::getJSONError($e->getMessage());
+    } else if ($e->type == EXIT_LOGIN) { /* login needed */
+        LoginCM::requestLogin();
     } else {
         $h = Utils::getHTTPError($e->getMessage());
         echo $h->fetch();

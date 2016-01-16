@@ -34,7 +34,7 @@ try {
  if ($lm->o_login) {
    $page['login'] = &$lm->o_login;
  } else {
-   throw new ExitException('You must be logged-in to access this page');
+   throw new ExitException(null, EXIT_LOGIN);
  }
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
@@ -93,6 +93,8 @@ screen:
      
     if ($e->type == 2) { 
         echo Utils::getJSONError($e->getMessage());
+    } else if ($e->type == EXIT_LOGIN) { /* login needed */
+        LoginCM::requestLogin();
     } else {
         $h = Utils::getHTTPError($e->getMessage());
         echo $h->fetch();

@@ -1,8 +1,16 @@
 <?php
 
+/* Types */
+define('EXIT_HTTP', 1);
+define('EXIT_JSON', 2);
+define('EXIT_REDIR', 3);
+define('EXIT_DOWN', 4);
+define('EXIT_LDOWN', 5);
+define('EXIT_LOGIN', 6);
+
 class ExitException extends Exception
 {
-    public $type = 1; // 1== HTTP, 2==JSON, 3==redirect, 4==download, 5==download large file
+    public $type = 1; // 1== HTTP, 2==JSON, 3==redirect, 4==download, 5==download large file, 6==login needed
     public $dest = '';
     public $options = array();
     public $fp = null;
