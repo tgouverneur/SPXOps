@@ -2124,10 +2124,11 @@ d101 1 1 /dev/dsk/emcpower58a
           $free = Pool::formatSize($f[2]);
           $used = $size - $free;
           $p = new Pool();
+          $p->type = 'ZFS';
           $p->fk_server = $s->id;
           $p->name = $name;
           $upd = false;
-          if ($p->fetchFromFields(array('fk_server', 'name'))) {
+          if ($p->fetchFromFields(array('fk_server', 'name', 'type'))) {
               $s->log("Adding pool $p", LLOG_INFO);
               $p->insert();
               $s->a_pool[] = $p;

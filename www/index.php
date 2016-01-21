@@ -77,7 +77,7 @@ try {
      usort($a_litem, 'a_cmp');
 
      $now = time();
-     $hago = $now - 3600;
+     $hago = $now - (3600 * 8);
      foreach(Login::getAll(true, array(), array('DESC:t_last')) as $l) {
          if ($l->t_last >= $hago) {
              $a_login[] = $l;

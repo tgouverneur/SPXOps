@@ -26,7 +26,7 @@ class OSLinux extends OSType
         "updateProc",
         "updateNfsShares",
         "updateNfsMounts",
-    //  "updateLvm",
+        "updateLvm",
         "updateZfs",
     //    "updateCdp",
     //    "updateSwap",
@@ -1042,6 +1042,7 @@ class OSLinux extends OSType
       $lines = explode(PHP_EOL, $out_vgs);
       $found_v = array();
       $upd = false;
+      $s->a_pool = array();
       foreach ($lines as $line) {
           $line = trim($line);
           if (empty($line)) {
@@ -1057,9 +1058,10 @@ class OSLinux extends OSType
 
           $vg = new Pool();
           $vg->name = $name;
+          $vg->type = 'LVM';
           $vg->fk_server = $s->id;
           $upd = false;
-          if ($vg->fetchFromFields(array('fk_server', 'name'))) {
+          if ($vg->fetchFromFields(array('fk_server', 'name', 'type'))) {
               $s->log("Adding pool $vg", LLOG_INFO);
               $vg->insert();
               $s->a_pool[] = $vg;

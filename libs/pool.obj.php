@@ -13,7 +13,7 @@
  */
 class Pool extends MySqlObj
 {
-  public $id = -1;
+    public $id = -1;
     public $name = '';
     public $type = '';
     public $size = -1;
@@ -28,8 +28,8 @@ class Pool extends MySqlObj
     public $a_dataset = array();
     public $a_disk = array();
 
-  /* JT attrs */
-  public $slice = array();
+    /* JT attrs */
+    public $slice = array();
     public $role = array();
 
     public function log($str)
@@ -112,10 +112,10 @@ class Pool extends MySqlObj
              'Size' => 'size',
              'Used' => 'used',
              'Free' => 'free',
-         'Status' => 'status',
-         'Server' => 'server',
-         'Added' => 't_add',
-         'Updated' => 't_upd',
+             'Status' => 'status',
+             'Server' => 'server',
+             'Added' => 't_add',
+             'Updated' => 't_upd',
         );
     }
 
