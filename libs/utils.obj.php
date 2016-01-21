@@ -2,6 +2,27 @@
 
 class Utils
 {
+    public static function formatSeconds($i) {
+        if ($i == 0) {
+            return 'now';
+        }
+        $ret = '';
+        if ($i >= 3600) {
+            $h = floor($i / 3600);
+            $ret .= $h.'h';
+            $i -= 3600*$h;
+        }
+        if ($i >= 60) {
+            $h = floor($i / 60);
+            $ret .= $h.'m';
+            $i -= 60*$h;
+        }
+        if ($i > 0) {
+            $ret .= $i.'s';
+        }
+        return $ret;
+    }
+
     public static function getHTTPError($msg) {
         $page = array();
         $page['title'] = 'Error';

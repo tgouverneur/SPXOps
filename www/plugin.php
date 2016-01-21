@@ -117,9 +117,13 @@ try {
             header($o);
         }
         header('Content-Type: '.$e->dest);
+        @ob_end_flush();
+        flush();
         if ($e->fp) {
             while(!feof($e->fp)) {
                 echo fread($e->fp, 128 * 1024);
+                @ob_end_flush();
+                flush();
             }
             fclose($e->fp);
         }

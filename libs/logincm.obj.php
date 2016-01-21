@@ -199,6 +199,8 @@ class LoginCM
                 } else {
                     $this->o_login = $l;
                     $this->isLogged = 1;
+                    $l->t_last = time();
+                    $l->update();
                 }
             } elseif (isset($_COOKIE[Config::$sitename])) {
                 $v = array();
@@ -216,7 +218,7 @@ class LoginCM
                     if (!strcmp($v['vstr'], $vstr)) {
                         $this->o_login = $l;
                         $this->isLogged = 1;
-                        $l->last_seen = time();
+                        $l->t_last = time();
                         $l->update();
                         $_SESSION['username'] = $l->username;
                     }

@@ -199,6 +199,16 @@ class Job extends MySqlObj
         }
     }
 
+    public function owner() {
+        if ($this->o_login) {
+            return ''.$this->o_login;
+        }
+        if ($this->fk_login > 0) {
+            return $this->fk_login;
+        }
+        return 'system';
+    }
+
     public function fetchOwner() {
             if (!$this->o_login && $this->fk_login > 0) {
                 $this->fetchFK('fk_login');

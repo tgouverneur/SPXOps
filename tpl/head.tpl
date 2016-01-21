@@ -101,6 +101,7 @@
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
                 <ul class="dropdown-menu" role="menu">
+                  <li><a href="/list/w/act">Show user activities</a></li>
                   <li><a href="/list/w/jobs#">Jobs list</a></li>
                   <li><a href="/tools/w/cdp">CDP Packets</a></li>
                   <li><a href="/rrdlive">RRD Live</a></li>

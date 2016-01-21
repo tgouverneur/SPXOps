@@ -2082,9 +2082,16 @@ d101 1 1 /dev/dsk/emcpower58a
    * zfs
    */
 
-  private static function getZpoolList(&$s) {
+  public static function getZpoolList(&$s) {
 
       $zpool = $s->findBin('zpool');
+
+      if ($s->o_os && !strcmp($s->o_os->name, 'Linux')) {
+          /* if OS is Linux, default zpool commands using sudo */
+          $sudo = $s->findBin('sudo');
+          $zpool = $sudo.' '.$zpool;
+          $s->log('[+] (OSSolaris::getZpoolList) Detected ZFS On Linux, using sudo for any zfs commands...', LLOG_INFO);
+      }
 
       $cmd_zpool = "$zpool list -H -o name,size,free,capacity";
       $cmd_ozpool = "$zpool list -H -o name,size,available,capacity";
@@ -2102,7 +2109,6 @@ d101 1 1 /dev/dsk/emcpower58a
             return 0;
           }
       }
-
       $lines = explode(PHP_EOL, $out_zpool);
       $found_z = array();
       $upd = false;
@@ -2151,10 +2157,17 @@ d101 1 1 /dev/dsk/emcpower58a
       return $found_z;
   }
 
-  private static function getZpoolDisks(&$s, &$p) {
+  public static function getZpoolDisks(&$s, &$p) {
       $zpool = $s->findBin('zpool');
       $cmd_status = "$zpool status %s";
       $role = '';
+
+      if ($s->o_os && !strcmp($s->o_os->name, 'Linux')) {
+          /* if OS is Linux, default zpool commands using sudo */
+          $sudo = $s->findBin('sudo');
+          $zpool = $sudo.' '.$zpool;
+          $s->log('[+] (OSSolaris::getZpoolDisks) Detected ZFS On Linux, using sudo for any zfs commands...', LLOG_INFO);
+      }
 
       $p->fetchJT('a_disk');
       $p->fetchRL('a_dataset');
@@ -2224,6 +2237,8 @@ d101 1 1 /dev/dsk/emcpower58a
               }
               $found_v[$do->dev] = $do;
               continue;
+          } else {
+              $s->log('[!] Unknown disk kind found: '.$line, LLOG_INFO);
           }
       }
       return $found_v;
@@ -2231,6 +2246,14 @@ d101 1 1 /dev/dsk/emcpower58a
 
   public static function getZpoolDatasets(&$s, &$p) {
       $zfs = $s->findBin('zfs');
+
+      if ($s->o_os && !strcmp($s->o_os->name, 'Linux')) {
+          /* if OS is Linux, default zpool commands using sudo */
+          $sudo = $s->findBin('sudo');
+          $zfs = $sudo.' '.$zfs;
+          $s->log('[+] (OSSolaris::getZpoolDatasets) Detected ZFS On Linux, using sudo for any zfs commands...', LLOG_INFO);
+      }
+
       $cmd_dset = "$zfs list -H -r -o space,type,quota,reservation,compressratio,creation,origin %s";
       $cmd_d = sprintf($cmd_dset, $p->name);
 

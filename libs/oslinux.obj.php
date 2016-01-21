@@ -26,7 +26,8 @@ class OSLinux extends OSType
         "updateProc",
         "updateNfsShares",
         "updateNfsMounts",
-        "updateLvm",
+    //  "updateLvm",
+        "updateZfs",
     //    "updateCdp",
     //    "updateSwap",
     ),
@@ -1127,6 +1128,36 @@ class OSLinux extends OSType
 
       return 0;
   }
+
+   public static function updateZfs(&$s)
+   {
+       if (!$s->isFile('/etc/zfs/zpool.cache')) {
+           $s->log('[!] No ZFS on this server, skipping...', LLOG_INFO);
+           return;
+       }
+
+       $s->a_pool = array(); /* LVM is also touching a_pool, so clean it! */
+ 
+       $found_z = OSSolaris::getZpoolList($s);
+       OSType::cleanRemoved($s, 'a_pool', 'name', $found_z);
+ 
+       foreach ($s->a_pool as $p) {
+ 
+           /* update zpool devices */
+           $found_v = OSSOlaris::getZpoolDisks($s, $p);
+           foreach ($p->a_disk as $d) {
+               if (isset($found_v[$d->dev])) {
+                   continue;
+               }
+               $s->log("Removing disk $d from pool $p", LLOG_INFO);
+               $p->delFromJT('a_disk', $d);
+           }
+ 
+           /* dataset indexation */
+           $found_d = OSSolaris::getZpoolDatasets($s, $p);
+           OSType::cleanRemoved($p, 'a_dataset', 'name', $found_d);
+       }
+   }
 
   /**
    * CDP
