@@ -17,3 +17,7 @@ INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('user', 'hotpMaxSkew', 'HOTP Counter Max Skew', '', '10', '');
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('user', 'oathLockReplayAttack', 'OATH Lock Replay Attacks', '', '1', '0=no, 1=yes');
 
+-- Job failure notification
+INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('daemon', 'notifyFailedJobs', 'Notify Job owner if job fail', '', '0', '0 or 1');
+INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('daemon', 'notifyFailedSystemJobs', 'Notify Admins if system job fail', '', '0', '0 or 1');
+

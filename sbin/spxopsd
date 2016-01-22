@@ -164,6 +164,7 @@
           if ($j) {
               $this->log("Trying to execute job :$j", LLOG_DEBUG);
               $j->runJob();
+              $j->notify();
           }
       } catch (Exception $e) {
           sleep($this->_interval);
@@ -177,7 +178,7 @@
           $rjobs = RJob::getAll();
           foreach ($rjobs as $rjob) {
               if (($rjob->t_last + $rjob->frequency) <= $this->_crun) { // RUN IT FFS!
-            $this->log("Added $rjob to the job queue ", LLOG_INFO);
+                  $this->log("Added $rjob to the job queue ", LLOG_INFO);
                   $rjob->addIt();
                   $rjob->t_last = $this->_crun;
                   $rjob->update();

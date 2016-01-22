@@ -110,7 +110,10 @@ class Notification
       $msg .= "\nReport content: ".$message;
       $msg .= "\n\nThanks!\n";
       foreach ($a_admin as $admin) {
-        Notification::sendMail($admin->email, $short, $msg);
+          if ($admin->f_noalerts) {
+              continue;
+          }
+          Notification::sendMail($admin->email, $short, $msg);
       }
   }
 
@@ -126,7 +129,10 @@ class Notification
       $msg .= "\nFull Name: ".$obj->fullname;
       $msg .= "\n\nThanks!\n";
       foreach ($a_admin as $admin) {
-        Notification::sendMail($admin->email, $short, $msg);
+          if ($admin->f_noalerts) {
+              continue;
+          }
+          Notification::sendMail($admin->email, $short, $msg);
       }
   }
 
@@ -146,6 +152,40 @@ class Notification
         $mail->msg = $msg;
         $mail->headers = $headers;
         $mail->insert();
+    }
+
+    public static function sendJobFailure(Job $j) {
+
+        $name = 'SPXOps Admin';
+        if ($j->o_login) {
+            if ($j->o_login->f_noalerts) { /* do not send if user disabled alerting */
+                return;
+            }
+            $name = $j->o_login->fullname;
+        }
+        $short = 'Job #'.$j->id.' '.$j->stateStr().' '.$j->class.'::'.$j->fct;
+        $msg = "Dear $name,\n\n";
+        if ($j->o_log) {
+            $msg .= "The job mentionned below has failed with ".$j->stateStr()." status and is associated with the following log:\n\n";
+            $msg .= "-------------------------------[ LOG START ]-------------------------------\n";
+            $msg .= $j->o_log->log;
+            $msg .= "-------------------------------[ LOG END ]-------------------------------\n";
+        } else {
+            $msg .= "The job mentionned below has failed with ".$j->stateStr()." status and no associated log\n";
+        }
+        /* @TODO: add url to complete job info on website */
+        if ($j->o_login) {
+          Notification::sendMail($j->o_login->email, $short, $msg);
+        } else {
+            $a_admin = Login::getAll(true, array('f_admin' => 'CST:1'));
+            foreach ($a_admin as $admin) {
+                if ($admin->f_noalerts) {
+                    continue;
+                }
+                Notification::sendMail($admin->email, $short, $msg);
+            }
+        }
+        return;
     }
 
     public static function sendAlert(AlertType $at, $short, $msg)
@@ -189,14 +229,6 @@ class Notification
         }
     }
 
-    public function fetchAll($all = 1)
-    {
-    }
+    
 
-  /**
-   * ctor
-   */
-  public function __construct()
-  {
-  }
 }

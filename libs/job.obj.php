@@ -21,8 +21,8 @@ if (!defined('S_NONE')) {
 
 class Job extends MySqlObj
 {
-  public $id = -1;        /* ID in the MySQL table */
-  public $class = '';
+    public $id = -1;        /* ID in the MySQL table */
+    public $class = '';
     public $fct = '';
     public $arg = '';
     public $state = S_NONE;
@@ -105,19 +105,19 @@ class Job extends MySqlObj
   {
       switch ($this->state) {
       case S_NONE:
-    return 'No state';
-    break;
+        return 'No state';
+        break;
       case S_NEW:
-    return 'NEW';
-    break;
+        return 'NEW';
+        break;
       case S_RUN:
-    return 'RUNNING';
+        return 'RUNNING';
         break;
       case S_FAIL:
-    return 'FAILED';
+        return 'FAILED';
         break;
       case S_DONE:
-    return 'DONE';
+        return 'DONE';
         break;
       case S_STALL:
         return 'STALLED';
@@ -126,6 +126,27 @@ class Job extends MySqlObj
 
       return 'UNKNOWN';
   }
+
+    public function notify() {
+        if ($this->state != S_FAIL && $this->state != S_STALL) {
+            return; // No need, job's okay
+        }
+        $this->fetchOwner();
+        $notifyFailedJobs = Setting::get('daemon', 'notifyFailedJobs');
+        $notifyFailedSystemJobs = Setting::get('daemon', 'notifyFailedSystemJobs');
+        if ($this->fk_login <= 0 || !$this->o_login) {
+            if (!$notifyFailedSystemJobs->value) { /* nopenopenope */
+                return;
+            }
+            Notification::sendJobFailure($this);
+        } else {
+            if (!$notifyFailedJobs->value) { /* nopenopenope */
+                return;
+            }
+            Notification::sendJobFailure($this);
+        }
+        return;
+    }
 
     public function runJob()
     {
@@ -155,7 +176,6 @@ class Job extends MySqlObj
             $this->o_log->rc = -1;
             $this->o_log->update();
             $this->update();
-
             return;
         }
 
@@ -177,7 +197,7 @@ class Job extends MySqlObj
             $this->state = S_DONE;
         }
 
-    /* Update job log */
+        /* Update job log */
         $this->o_log->update();
         $this->update();
     }
