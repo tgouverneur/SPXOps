@@ -88,7 +88,13 @@ class Notification
 
       foreach ($a_login as $l) {
           Logger::log('Going to send notification for check '.$cr->o_check.' to '.$l, null, LLOG_DEBUG);
-          mail($l->email, $subject, $msg, $headers);
+          //mail($l->email, $subject, $msg, $headers);
+          $mail = new SPXMail();
+          $mail->to = $l->email;
+          $mail->subject = $subject;
+          $mail->msg = $msg;
+          $mail->headers = $headers;
+          $mail->insert();
       }
   }
 
@@ -133,7 +139,13 @@ class Notification
         $headers = 'From: '.$mfrom."\r\n";
         $headers .= 'X-Mailer: SPXOps'."\r\n";
         $headers .= 'Reply-To: no-reply@'.$domain."\r\n";
-        mail($to, $subject, $msg, $headers);
+        //mail($to, $subject, $msg, $headers);
+        $mail = new SPXMail();
+        $mail->to = $to;
+        $mail->subject = $subject;
+        $mail->msg = $msg;
+        $mail->headers = $headers;
+        $mail->insert();
     }
 
     public static function sendAlert(AlertType $at, $short, $msg)
@@ -142,18 +154,18 @@ class Notification
 
         Logger::log('Notification request...'.$at, LLOG_DEBUG);
 
-    /* fetch Server groups */
-    $at->fetchJT('a_ugroup');
+        /* fetch Server groups */
+        $at->fetchJT('a_ugroup');
 
-    /* for each user group, add each login where notifications are enabled */
-    foreach ($at->a_ugroup as $ug) {
-        $ug->fetchJT('a_login');
-        foreach ($ug->a_login as $ugl) {
-            if (!isset($a_login[$ugl->id]) && !$ugl->f_noalerts) {
-                $a_login[$ugl->id] = $ugl;
+        /* for each user group, add each login where notifications are enabled */
+        foreach ($at->a_ugroup as $ug) {
+            $ug->fetchJT('a_login');
+            foreach ($ug->a_login as $ugl) {
+                if (!isset($a_login[$ugl->id]) && !$ugl->f_noalerts) {
+                    $a_login[$ugl->id] = $ugl;
+                }
             }
         }
-    }
 
         $mfrom = Setting::get('general', 'mailfrom')->value;
         $domain = explode('@', $mfrom);
@@ -167,7 +179,13 @@ class Notification
 
         foreach ($a_login as $l) {
             Logger::log('Going to send notification for check '.$cr->o_check.' to '.$l, LLOG_DEBUG);
-            mail($l->email, $subject, $msg, $headers);
+            //mail($l->email, $subject, $msg, $headers);
+            $mail = new SPXMail();
+            $mail->to = $l->email;
+            $mail->subject = $subject;
+            $mail->msg = $msg;
+            $mail->headers = $headers;
+            $mail->insert();
         }
     }
 

@@ -308,6 +308,22 @@ CREATE TABLE `list_joblog` (
 ) ENGINE=InnoDB;
 
 --
+-- Table structure for table `list_mail`
+--
+
+CREATE TABLE `list_mail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `to` varchar(255) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `msg` longtext NOT NULL,
+  `headers` text NOT NULL,
+  `t_add` int(11) NOT NULL,
+  `t_upd` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+--
 -- Table structure for table `list_lock`
 --
 

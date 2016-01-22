@@ -12,7 +12,7 @@
    * @filesource
    * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
    */
-  require_once dirname(__FILE__).'/../libs/utils.obj.php';
+  require_once dirname(__FILE__).'/../../libs/utils.obj.php';
   error_reporting(E_ALL);
 
   $m = MySqlCM::getInstance();
