@@ -10,7 +10,7 @@
           <?php } else { ?>
       <div class="row">
         <div class="col-md-9"><p class="bg-success"><b>Online Users</b>: <?php foreach ($a_login as $l) { echo $l.'('.Utils::formatSeconds($now - $l->t_last).'), '; } ?></p></div>
-        <div class="col-md-3"><p class="bg-info"><b>Currently running jobs</b>: <?php echo $n_job; ?></p></div>
+        <div class="col-md-3"><p class="bg-info"><b>Jobs RUNNING/QUEUED</b>: <?php echo $n_job['run'].' / '.$n_job['new']; ?></p></div>
       </div>
       <div class="row">
 	    <div class="col-md-4">

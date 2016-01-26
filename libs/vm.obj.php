@@ -55,6 +55,7 @@ class VM extends MySqlObj
             $this->fetchFK('fk_server');
         }
         $this->getDisks();
+        $this->getNets();
         $ret = array(
                 'name' => $this->name,
                 'status' => $this->status,
@@ -66,8 +67,17 @@ class VM extends MySqlObj
             $ret['o_server'] = $this->o_server->jsonSerialize();
         }
         $ret['disks'] = array();
+        $ret['net'] = array();
         foreach($this->a_hostdisk as $disk) {
             $ret['disks'][] = $disk->file;
+        }
+        $i=0;
+        foreach($this->a_hostnet as $net) {
+            $ret['net'][$i] = array();
+            $ret['net'][$i]['net'] = $net->net;
+            $ret['net'][$i]['mac'] = $net->mac;
+            $ret['net'][$i]['model'] = $net->model;
+            $i++;
         }
         return $ret;
     }

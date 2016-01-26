@@ -84,7 +84,9 @@ try {
          }
      }
 
-     $n_job = $m->count('list_job', 'WHERE `state`=2');
+     $n_job = array();
+     $n_job['run'] = $m->count('list_job', 'WHERE `state`=2');
+     $n_job['new'] = $m->count('list_job', 'WHERE `state`=1');
 
      $content->set('stats', $stats);
      $content->set('a_job', $a_job);
