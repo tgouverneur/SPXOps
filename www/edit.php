@@ -40,6 +40,56 @@ try {
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
+     case 'rjob':
+       if (!$lm->o_login->cRight('RJOB', R_EDIT)) {
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $suid = $_GET['i'];
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'ID of Recurrent Job is not provided');
+         goto screen;
+       }
+       $what = 'Recurrent Job';
+       $obj = new RJob($suid);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', $what.' not found in the database');
+         goto screen;
+       }
+       $content = new Template('../tpl/form_rjob.tpl');
+       $content->set('obj', $obj);
+       $content->set('edit', true);
+       $content->set('page', $page);
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Edit button */
+         $fields = array('class', 'fct', 'frequency', 'arg');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if (isset($_POST[$field])) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         $errors = $obj->valid(false);
+         if ($errors) {
+           $content->set('error', $errors);
+           $content->set('obj', $obj);
+           goto screen;
+         }
+         $obj->update();
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', $what." $obj has been updated");
+         goto screen;
+       }
+     break;
      case 'suser':
        if (!$lm->o_login->cRight('CUSER', R_EDIT)) {
          throw new ExitException('Access Denied, please check your access rights!');
@@ -48,15 +98,15 @@ try {
          $suid = $_GET['i'];
        } else {
          $content = new Template('../tpl/error.tpl');
-	 $content->set('error', 'ID of SSH User is not provided');
-	 goto screen;
+         $content->set('error', 'ID of SSH User is not provided');
+         goto screen;
        }
        $what = 'SSH User';
        $obj = new SUser($suid);
        if ($obj->fetchFromId()) {
          $content = new Template('../tpl/error.tpl');
-	 $content->set('error', 'SSH User not found in the database');
-	 goto screen;
+         $content->set('error', 'SSH User not found in the database');
+         goto screen;
        }
        $content = new Template('../tpl/form_suser.tpl');
        $content->set('obj', $obj);
