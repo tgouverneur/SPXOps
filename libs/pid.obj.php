@@ -18,6 +18,7 @@ class Pid extends MySqlObj
     public $pid = 0;
     public $ppid = -1;
     public $f_master = 0;
+    public $f_kill = 0;
     public $t_add = -1;
     public $t_upd = -1;
 
@@ -65,6 +66,14 @@ class Pid extends MySqlObj
                 $lock->delete();
             }
         }
+    }
+
+    public function kill() {
+        if ($this->f_master) {
+            return false;
+        }
+        posix_kill($this->pid, 9);
+        return true;
     }
 
     public function checkMe(&$d)
@@ -191,6 +200,7 @@ class Pid extends MySqlObj
                         'pid' => SQL_PROPE,
                         'ppid' => SQL_PROPE,
                         'f_master' => SQL_PROPE,
+                        'f_kill' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE,
                  );
@@ -200,6 +210,7 @@ class Pid extends MySqlObj
                         'pid' => 'pid',
                         'ppid' => 'ppid',
                         'f_master' => 'f_master',
+                        'f_kill' => 'f_kill',
                         't_add' => 't_add',
                         't_upd' => 't_upd',
                  );

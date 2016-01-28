@@ -120,6 +120,7 @@ try {
        $a_list = Pid::getAll(true, array(), array('ASC:agent', 'ASC:pid'));
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
+       $content->set('canKill', true);
        $content->set('what', 'Daemon Instance');
        $content->set('oc', 'Pid');
        $page['title'] .= 'Daemon Instance';

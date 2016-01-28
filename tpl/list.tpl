@@ -25,6 +25,9 @@
 <?php if (isset($canView)) { ?>
                <th></th>
 <?php } ?>
+<?php if (isset($canKill)) { ?>
+               <th></th>
+<?php } ?>
 	     </tr>
 	    </thead>
 	    <tbody>
@@ -53,6 +56,9 @@
 <?php } ?>
 <?php if (isset($canView)) { ?>
                <td><a href="/view/w/<?php echo strtolower($oc); ?>/i/<?php echo $e->id; ?>">View</a></td>
+<?php } ?>
+<?php if (isset($canKill)) { ?>
+               <td><a href="/del/w/<?php echo strtolower($oc); ?>/i/<?php echo $e->id; ?>">Kill</a></td>
 <?php } ?>
              </tr>
 <?php } ?>

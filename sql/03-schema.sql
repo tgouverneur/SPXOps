@@ -485,6 +485,7 @@ CREATE TABLE `list_pid` (
   `pid` int(11) NOT NULL,
   `ppid` int(11) NOT NULL,
   `f_master` int(1) NOT NULL,
+  `f_kill` int(1) NOT NULL DEFAULT '0',
   `t_upd` int(11) NOT NULL,
   `t_add` int(11) NOT NULL,
   PRIMARY KEY (`id`),

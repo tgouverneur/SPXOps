@@ -139,6 +139,41 @@ try {
               );
        goto screen;
      break;
+    case 'pid':
+        if (!$lm->o_login->cRight('PID', R_DEL)) {
+            throw new ExitException('Access Denied, please check your access rights!');
+        }
+       $what = 'Daemon Process';
+       $page['title'] .= $what;
+       $obj = new Pid();
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $obj->id = $_GET['i'];
+         if ($obj->fetchFromId()) {
+           $content = new Template('../tpl/error.tpl');
+           $content->set('error', "Daemon PID specified cannot be found in the database");
+           goto screen;
+         }
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Daemon PID not specified");
+         goto screen;
+       }
+       if ($obj->f_master) {
+           throw new ExitException('You cannot kill master PID');
+       }
+       $content = new Template('../tpl/message.tpl');
+       $content->set('msg', "Daemon PID $obj has been marked to be Killed on the next round..");
+       $obj->f_kill = 1;
+       $obj->update();
+       Act::add('Killed PID: '.$obj, $lm->o_login);
+       $a_link = array(
+              array('href' => '/list/w/pid',
+                    'name' => 'Back to list of daemon processes',
+                   ),
+              );
+       goto screen;
+
+        break;
      case 'rjob':
        if (!$lm->o_login->cRight('RJOB', R_DEL)) {
          throw new ExitException('Access Denied, please check your access rights!');

@@ -155,6 +155,15 @@
             $this->log('Sent email to '.$mail->to, LLOG_DEBUG);
             $mail->delete();
         }
+
+        /**
+         * Check if there are some PIDs to Kill...
+         */
+        $a_pkill = Pid::getAll(true, array('f_kill' => 1));
+        foreach($a_pkill as $pid) {
+            Logger::log("Pid $pid is going to be killed.", $pid, LLOG_INFO);
+            $pid->kill();
+        }
       }
 
       if (!$this->f_master ||
