@@ -33,11 +33,16 @@ class Disk extends MySqlObj
     public $o_server = null;
     public $o_vm = null;
 
-  /* JT Attrs */
-  public $slice = array();
+    /* JT Attrs */
+    public $slice = array();
     public $role = array();
 
     public $a_pool = array();
+
+    public function link()
+    {
+        return '<a href="/view/w/disk/i/'.$this->id.'">'.$this.'</a>';
+    }
 
     public function log($str)
     {
@@ -106,6 +111,22 @@ class Disk extends MySqlObj
         parent::_delAllJT();
         parent::delete();
     }
+
+     public function htmlDump()
+     {
+         $ret = array(
+             'Device' => $this->dev,
+             'Serial' => $this->serial,
+             'Vendor' => $this->vendor,
+             'Product' => $this->product,
+             'Size' => Pool::formatBytes($this->size),
+             'LUN ID' => $this->lunid,
+             'San' => ($this->f_san) ? '<span class="glyphicon glyphicon-ok-sign"></span>' : '<span class="glyphicon glyphicon-remove-circle"></span>',
+             'Updated on' => date('d-m-Y', $this->t_upd),
+             'Added on' => date('d-m-Y', $this->t_add),
+         );
+         return $ret;
+     }
 
   /**
    * ctor

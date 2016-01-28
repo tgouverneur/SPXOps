@@ -91,7 +91,7 @@
              <tbody>
 <?php foreach ($obj->a_disk as $disk) { ?>
                 <tr>
-                  <td><?php echo $disk->dev; ?></td>
+                  <td><?php echo $disk->link(); ?></td>
                   <td><?php echo $disk->role[''.$obj]; ?></td>
                   <td><?php echo Pool::formatBytes($disk->size); ?></td>
                 </tr>

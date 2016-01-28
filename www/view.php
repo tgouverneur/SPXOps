@@ -224,6 +224,27 @@ try {
        $head->set('css', $css);
        $head->set('js', $js);
      break;
+     case 'disk':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
+       $what = 'Disk';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "You didn't provided the ID of the $what to view");
+         goto screen;
+       } 
+       $obj = new Disk($_GET['i']);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "Unable to find the $what in database");
+         goto screen;
+       }
+       $obj->fetchAll(1);
+       $content = new Template('../tpl/view_disk.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
+     break;
      case 'vm':
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
          throw new ExitException('Access Denied, please check your access rights!');
@@ -342,16 +363,15 @@ try {
          goto screen;
        }
        try {
-       $obj->fetchAll(1);
+           $obj->fetchAll(1);
        } catch (Exception $e) {
-	 echo '';
-	 /* @TODO: maybe we should log theses exception to a special log to allow debugging... */
+         echo '';
+         /* @TODO: maybe we should log theses exception to a special log to allow debugging... */
        }
        $content = new Template('../tpl/view_rjob.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);
      break;
-
      case 'job':
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {
          throw new ExitException('Access Denied, please check your access rights!');
@@ -371,8 +391,8 @@ try {
        try {
          $obj->fetchAll(1);
        } catch (Exception $e) {
-	 echo '';
-	 /* @TODO: maybe we should log theses exception to a special log to allow debugging... */
+         echo '';
+         /* @TODO: maybe we should log theses exception to a special log to allow debugging... */
        }
        $content = new Template('../tpl/view_job.tpl');
        $page['title'] .= $what;
