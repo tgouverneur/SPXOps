@@ -82,6 +82,7 @@ class Pool extends MySqlObj
 
     public function fetchAll($all = 1)
     {
+        global $roles;
         try {
             if (!$this->o_server && $this->fk_server > 0) {
                 $this->fetchFK('fk_server');
@@ -90,6 +91,25 @@ class Pool extends MySqlObj
             if ($all) {
                 $this->fetchRL('a_dataset');
                 $this->fetchJT('a_disk');
+                /* sort drives per role */
+                $roles = array();
+                foreach($this->a_disk as $d) {
+                    $roles[] = array_values($d->role)[0];
+                }
+                natsort($roles);
+                function cmp_disk_role($a, $b) {
+                    global $roles;
+                    $i = $v_a = $v_b = 0;
+                    foreach($roles as $r) {
+                        $i++;
+                        if (!$v_a && !strcmp($r, array_values($a->role)[0])) $v_a = $i;
+                        if (!$v_b && !strcmp($r, array_values($b->role)[0])) $v_b = $i;
+                        if ($v_a && $v_b) break;
+                    }
+                    if ($v_a == $v_b) return 0;
+                    return ($v_a < $v_b) ? -1 : 1;
+                }
+                usort($this->a_disk, 'cmp_disk_role');
             }
         } catch (Exception $e) {
             throw($e);
