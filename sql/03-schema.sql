@@ -235,6 +235,8 @@ CREATE TABLE `list_disk` (
   `vdev` varchar(200) NOT NULL,
   `drv` varchar(50) NOT NULL,
   `serial` varchar(100) NOT NULL,
+  `class` varchar(100) NOT NULL,
+  `location` varchar(255) NOT NULL,
   `vendor` varchar(100) NOT NULL,
   `product` varchar(100) NOT NULL,
   `rev` varchar(20) NOT NULL,

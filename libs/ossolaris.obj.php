@@ -1,4 +1,11 @@
 <?php
+ 
+define('PRTCONF_HEADER', 1);
+define('PRTCONF_MAIN', 2);
+define('PRTCONF_SECTION', 3);
+define('PRTCONF_DRV', 4);
+define('PRTCONF_DISKPATHS', 5);
+define('PRTCONF_DMINOR', 6);
 
 class OSSolaris extends OSType
 {
@@ -268,6 +275,211 @@ zfs:0:arcstats:l2_writes_sent   376002
   }
 
   /* updates function for Solaris */
+   private static function prtconf_parse($buf) {
+
+      $ret = array();
+      $stack = array();
+      $lines = explode(PHP_EOL, $buf);
+      $state = PRTCONF_HEADER;
+      $instance = -1;
+      $ncur = 0;
+      $curptr2 = $curptr = null;
+      $pathnr = null;
+      $pathdev = null;
+
+      for ($i=0; $i<count($lines); $i++) {
+          $line = $lines[$i];
+          if (empty($line)) { 
+              continue; 
+          }
+          $n = strspn($line, ' ') / 4; /* prtconf sucks, there's no tabs but spaces! grmbl */
+          $line = trim($line);
+          switch($state) {
+              case PRTCONF_HEADER:
+                  if (preg_match('/^System Peripherals .*:$/', $line)) {
+                      $state = PRTCONF_MAIN;
+                  } else if (preg_match('/^([^:]+):(.+)$/', $line, $m)) {
+                      $name = trim($m[1]);
+                      $value = trim($m[2]);
+                      $ret[$name] = $value;
+                  }
+                  break;
+              case PRTCONF_MAIN:
+                  if (!preg_match('/:/', $line)) {
+                      $ret[$line] = array();
+                      $stack[$n] = &$ret[$line];
+                      $state = PRTCONF_DRV;
+                  }
+                  break;
+              case PRTCONF_DRV:
+                  if (preg_match('/^([^,]+), instance #([0-9]+)$/', $line, $m)) {
+                      $drv = $m[1];
+                      $instance = $m[2];
+                      if (!isset($stack[$n-1][$drv])) {
+                          $stack[$n-1][$drv] = array();
+                          $stack[$n] = &$stack[$n-1][$drv];
+                      }
+                      $stack[$n][$instance] = array();
+                      $ncur = $n;
+                  } else if (preg_match("/^name='([^']+)' type=([^ ]+)/", $line, $m)) {
+                      $name = $m[1];
+                      $type = $m[2];
+                      $dev = null;
+                      $values = null;
+                      $value = null;
+                      $nitems = null;
+                      /* see if there is a dev */
+                      if (preg_match("/dev=([^ ]+)/", $line, $d)) {
+                          $dev = $d[1];
+                      }
+                      /* next line contains the items */
+                      if (preg_match("/items=([^ ]+)/", $line, $n)) {
+                          $nitems = $n[1];
+                          if ($nitems > 0) {
+                              $i++;
+                              $line = $lines[$i];
+                              $line = trim($line);
+                              if (preg_match('/^value=(.*)$/', $line, $m)) {
+                                  $value = $m[1];
+                              }
+                          }
+                      }
+                      switch($type) {
+                          case 'string':
+                              $value = trim($value, "'");
+                              $values = preg_split("/' \+ '/", $value);
+                              break;
+                          case 'byte':
+                          case 'unknown':
+                          case 'int64':
+                          case 'int':
+                              $values = explode('.', $value);
+                              break;
+                          case 'boolean':
+                          default:
+                              break;
+                      }
+                      if ($instance == -1) {
+                          $stack[$ncur][$name] = array();
+                          $curptr = &$stack[$ncur][$name];
+                      } else {
+                          $stack[$ncur][$instance][$name] = array();
+                          $curptr = &$stack[$ncur][$instance][$name];
+                      }
+                      $curptr['type'] = $type;
+                      if ($nitems) $curptr['count'] = $nitems;
+                      if ($values) $curptr['items'] = $values;
+                      if ($dev) $curptr['dev'] = $dev;
+
+                  } else if (preg_match('/^([^:]+): (.*)$/', $line, $m)) {
+                      $name = trim($m[1]);
+                      $value = trim($m[2]);
+                      if ($instance == -1) {
+                          $stack[$ncur][$name] = $value;
+                      } else {
+                          $stack[$ncur][$instance][$name] = $value;
+                      }
+                  } else if (preg_match('/^Paths from multipath bus adapters:$/', $line)) {
+                      $state = PRTCONF_DISKPATHS;
+                      $pathnr = null;
+                      $pathdev = null;
+                      if ($instance == -1) {
+                          $stack[$ncur]['paths'] = array();
+                          $curptr = &$stack[$ncur]['paths'];
+                      } else {
+                          $stack[$ncur][$instance]['paths'] = array();
+                          $curptr = &$stack[$ncur][$instance]['paths'];
+                      }
+
+                  } else if (preg_match('/:$/', $line)) { /* Section title, skip */
+                      continue;
+                  }
+                  break;
+              case PRTCONF_DISKPATHS:
+                  /*
+                   * mpt_sas#12 (online)
+                   * Device Minor Nodes:
+                   */
+                  if (preg_match('/^Path ([0-9]+): (.*)$/', $line, $m)) {
+                      $pathnr = $m[1];
+                      $pathdev = $m[2];
+                      $curptr[$pathnr] = array();
+                      $curptr[$pathnr]['dev'] = $pathdev;
+                  } else if (preg_match('/^([^#])#([0-9]+) \(([^)]+)\)$/', $line, $m)) {
+                      $curptr[$pathnr]['controller'] = $m[1].'#'.$m[2];
+                      $curptr[$pathnr]['state'] = $m[3];
+                  } else if (preg_match('/^Device Minor Nodes:$/', $line)) {
+                      $state = PRTCONF_DMINOR;
+                  } else if (preg_match("/^name='([^']+)' type=([^ ]+)/", $line, $m)) {
+                      $name = $m[1];
+                      $type = $m[2];
+                      $dev = null;
+                      $values = null;
+                      $value = null;
+                      $nitems = null;
+                      /* see if there is a dev */
+                      if (preg_match("/dev=([^ ]+)/", $line, $d)) {
+                          $dev = $d[1];
+                      }
+                      /* next line contains the items */
+                      if (preg_match("/items=([^ ]+)/", $line, $n)) {
+                          $nitems = $n[1];
+                          if ($nitems > 0) {
+                              $i++;
+                              $line = $lines[$i];
+                              $line = trim($line);
+                              if (preg_match('/^value=(.*)$/', $line, $m)) {
+                                  $value = $m[1];
+                              }
+                          }
+                      }
+                      switch($type) {
+                          case 'string':
+                              $value = trim($value, "'");
+                              $values = preg_split("/' \+ '/", $value);
+                              break;
+                          case 'byte':
+                          case 'unknown':
+                          case 'int64':
+                          case 'int':
+                              $values = explode('.', $value);
+                              break;
+                          case 'boolean':
+                          default:
+                              break;
+                      }
+                      $curptr[$pathnr][$name] = array();
+                      $curptr2 = &$curptr[$pathnr][$name];
+                      $curptr2['type'] = $type;
+                      if ($nitems) $curptr2['count'] = $nitems;
+                      if ($values) $curptr2['items'] = $values;
+                      if ($dev) $curptr2['dev'] = $dev;
+
+                  }
+                  break;
+              case PRTCONF_DMINOR:
+                  if (preg_match('/^([^,]+), instance #([0-9]+)$/', $line, $m)) {
+                      $i--;
+                      $state = PRTCONF_DRV;
+                  }
+                  break;
+          }
+      }
+      return $ret;
+  }
+
+  private static function prtconf_disk($pc) {
+      $ret = array();
+      if (is_array($pc) && array_key_exists('disk', $pc)) {
+          $ret = $pc['disk'];
+      } else if (is_array($pc)) {
+          foreach($pc as $item) {
+              $ret = array_merge($ret, OSSolaris::prtconf_disk($item));
+          }
+      }
+      return $ret;
+  }
+
 
   /**
    * nfs_shares
@@ -1213,27 +1425,90 @@ zfs:0:arcstats:l2_writes_sent   376002
           return 0;
       }
 
-    /* get prtconf */
-    $prtconf = $s->findBin('prtconf');
+      /* get prtconf */
+      $prtconf = $s->findBin('prtconf');
 
-      $cmd_prtconf = "$prtconf";
+      $cmd_prtconf = "$prtconf -vvv";
       $out_prtconf = $s->exec($cmd_prtconf);
 
       $memsize = 0;
 
-      $prtconf_lines = explode(PHP_EOL, $out_prtconf);
-      foreach ($prtconf_lines as $line) {
-          $line = trim($line);
-          if (preg_match('/^Memory size:/', $line)) {
-              $f_mem = explode(' ', $line);
-              $memsize = $f_mem[2];
-              break;
-          }
+      $pc = OSSolaris::prtconf_parse($out_prtconf);
+
+      if (isset($pc['Memory size'])) {
+          $f_mem = explode(' ', $pc['Memory size']);
+          $memsize = $f_mem[0];
       }
 
       if ($memsize && $s->data('hw:memory') != $memsize) {
           $s->setData('hw:memory', $memsize);
           $s->log('Updating Memory size: '.$memsize, LLOG_INFO);
+      }
+
+      /*
+       * We can get a lot of infos on disks using prtconf,
+       * let's try to correlate detected disks and the ones
+       * found in prtconf...
+       */
+      $disks = OSSolaris::prtconf_disk($pc);
+      $s->fetchRL('a_disk');
+      foreach($disks as $disk) {
+        $serial = $devid = $class = $vendor = $product = $rev = $guid = $location = null;
+        foreach (array('inquiry-serial-no' => 'serial', 
+                     'devid' => 'devid', 
+                     'class' => 'class', 
+                     'inquiry-vendor-id' => 'vendor', 
+                     'inquiry-product-id' => 'product', 
+                     'inquiry-revision-id' => 'rev', 
+                     'client-guid' => 'guid') as $k => $v) {
+          if (array_key_exists($k, $disk)) {
+              ${$v} = $disk[$k]['items'][0];
+          } else {
+              ${$v} = null;
+          }
+        }
+        if (array_key_exists('location', $disk)) {
+          $location = $disk['location'];
+        }
+        foreach($s->a_disk as $sd) {
+            if (!strcmp($sd->guidFromDev(), $guid)) {
+                $mod = false;
+                if ($serial && strcmp($serial, $sd->serial)) {
+                    $sd->serial = $serial;
+                    $mod = true;
+                    $s->log('Updated '.$sd->dev.' serial: '.$sd->serial, LLOG_INFO);
+                }
+                if ($class && strcmp($class, $sd->class)) {
+                    $sd->class = $class;
+                    $mod = true;
+                    $s->log('Updated '.$sd->dev.' class: '.$sd->class, LLOG_INFO);
+                }
+                if ($product && strcmp($product, $sd->product)) {
+                    $sd->product = $product;
+                    $mod = true;
+                    $s->log('Updated '.$sd->dev.' product: '.$sd->product, LLOG_INFO);
+                }
+                if ($rev && strcmp($rev, $sd->rev)) {
+                    $sd->rev = $rev;
+                    $mod = true;
+                    $s->log('Updated '.$sd->dev.' rev: '.$sd->rev, LLOG_INFO);
+                }
+                if ($vendor && strcmp($vendor, $sd->vendor)) {
+                    $sd->vendor = $vendor;
+                    $mod = true;
+                    $s->log('Updated '.$sd->dev.' vendor: '.$sd->vendor, LLOG_INFO);
+                }
+                if ($location && strcmp($location, $sd->location)) {
+                    $sd->location = $location;
+                    $mod = true;
+                    $s->log('Updated '.$sd->dev.' location: '.$sd->location, LLOG_INFO);
+                }
+                if ($mod) {
+                    $sd->update();
+                }
+            }
+        }
+ 
       }
 
       return 0;

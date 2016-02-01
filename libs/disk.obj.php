@@ -20,6 +20,8 @@ class Disk extends MySqlObj
     public $serial = '';
     public $vendor = '';
     public $product = '';
+    public $location = '';
+    public $class = '';
     public $rev = '';
     public $size = -1;
     public $lunid = '';
@@ -47,6 +49,13 @@ class Disk extends MySqlObj
     public function log($str)
     {
         Logger::log($str, $this);
+    }
+
+    public function guidFromDev() {
+        if (preg_match('/c[0-9]+t(.*)d0$/', $this->dev, $m)) {
+            return strtolower($m[1]);
+        }
+        return null;
     }
 
     public function equals($z)
@@ -115,10 +124,12 @@ class Disk extends MySqlObj
      public function htmlDump()
      {
          $ret = array(
+             'Class' => $this->class,
              'Device' => $this->dev,
              'Serial' => $this->serial,
              'Vendor' => $this->vendor,
              'Product' => $this->product,
+             'Location' => $this->location,
              'Size' => Pool::formatBytes($this->size),
              'LUN ID' => $this->lunid,
              'San' => ($this->f_san) ? '<span class="glyphicon glyphicon-ok-sign"></span>' : '<span class="glyphicon glyphicon-remove-circle"></span>',
@@ -146,6 +157,8 @@ class Disk extends MySqlObj
                         'product' => SQL_PROPE,
                         'rev' => SQL_PROPE,
                         'size' => SQL_PROPE,
+                        'class' => SQL_PROPE,
+                        'location' => SQL_PROPE,
                         'lunid' => SQL_PROPE,
                         'f_local' => SQL_PROPE,
                         'f_san' => SQL_PROPE,
@@ -164,6 +177,8 @@ class Disk extends MySqlObj
                         'vendor' => 'vendor',
                         'product' => 'product',
                         'size' => 'size',
+                        'location' => 'location',
+                        'class' => 'class',
                         'lunid' => 'lunid',
                         'f_local' => 'f_local',
                         'f_san' => 'f_san',
