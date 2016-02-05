@@ -97,17 +97,19 @@ class Pool extends MySqlObj
                     $roles[] = array_values($d->role)[0];
                 }
                 natsort($roles);
-                function cmp_disk_role($a, $b) {
-                    global $roles;
-                    $i = $v_a = $v_b = 0;
-                    foreach($roles as $r) {
-                        $i++;
-                        if (!$v_a && !strcmp($r, array_values($a->role)[0])) $v_a = $i;
-                        if (!$v_b && !strcmp($r, array_values($b->role)[0])) $v_b = $i;
-                        if ($v_a && $v_b) break;
+                if(!function_exists('cmp_disk_role')) {
+                    function cmp_disk_role($a, $b) {
+                        global $roles;
+                        $i = $v_a = $v_b = 0;
+                        foreach($roles as $r) {
+                            $i++;
+                            if (!$v_a && !strcmp($r, array_values($a->role)[0])) $v_a = $i;
+                            if (!$v_b && !strcmp($r, array_values($b->role)[0])) $v_b = $i;
+                            if ($v_a && $v_b) break;
+                        }
+                        if ($v_a == $v_b) return 0;
+                        return ($v_a < $v_b) ? -1 : 1;
                     }
-                    if ($v_a == $v_b) return 0;
-                    return ($v_a < $v_b) ? -1 : 1;
                 }
                 usort($this->a_disk, 'cmp_disk_role');
             }
