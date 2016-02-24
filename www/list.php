@@ -181,6 +181,8 @@ try {
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
          throw new ExitException('Access Denied, please check your access rights!');
        }
+       /* get custom fields for user */
+       $cfs = $lm->o_login->getListPref('vm');
        $npp = Setting::get('display', 'vmPerPage')->value;
        $a_list = VM::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/list.tpl');
@@ -188,6 +190,11 @@ try {
        $content->set('canView', true);
        $content->set('what', 'VM');
        $content->set('oc', 'VM');
+       $actions = array( 
+                      'Display settings' => '/ds/w/vm',
+                  );
+       $content->set('actions', $actions);
+       $content->set('cfs', $cfs);
        $page['title'] .= 'VMs';
      break;
      case 'server':

@@ -214,23 +214,109 @@ class VM extends MySqlObj
 
     public static function printCols($cfs = array())
     {
-        return array('Name' => 'name',
+        $defaults = array('Name' => 'name',
                  'Status' => 'status',
                  'Server' => 'server',
                 );
+
+        $optional = array(
+            'OS' => 'os',
+            'OS Version' => 'osver',
+            'OS Kernel' => 'oskernel',
+        );
+
+        if (!is_array($cfs) && !strcmp($cfs, 'all')) {
+            return array_merge($defaults, $optional);
+        }
+         
+        if (!count($cfs)) {
+            return $defaults;
+        }
+
+        $ret = array();
+        foreach ($cfs as $col) {
+            foreach ($defaults as $n => $v) {
+                if (!strcmp($col, $v)) {
+                    $ret[$n] = $v;
+                }
+            }
+            foreach ($optional as $n => $v) {
+                if (!strcmp($col, $v)) {
+                    $ret[$n] = $v;
+                }
+            }
+        }
+                  
+        return $ret;
+
+
     }
 
     public function toArray($cfs = array())
     {
-        if (!$this->o_server && $this->fk_server > 0) {
-            $this->fetchFK('fk_server');
+        $ret = array();
+
+        foreach ($cfs as $c) {
+            switch ($c) {
+                case 'name':
+                case 'status':
+                    $ret[$c] = $this->{$c};
+                    break;
+                case 'server':
+                    if (!$this->o_server && $this->fk_server > 0) {
+                        $this->fetchFK('fk_server');
+                    }
+                    $ret[$c] = ($this->o_server) ? $this->o_server->hostname : 'Unknown';
+                    break;
+                case 'osver':
+                    if (!$this->dataCount()) {
+                        $this->fetchData();
+                    }
+                    if (!$this->o_os && $this->fk_os > 0) {
+                        $this->fetchFK('fk_os');
+                    }
+                    if (!$this->o_os) {
+                        $ret['osver'] = 'N/A';
+                    } else {
+                        $spec = $this->o_os->htmlDump($this);
+                        if (isset($spec['Version'])) {
+                            $ret['osver'] = $spec['Version'];
+                        } else {
+                            $ret['osver'] = 'N/A';
+                        }
+                    }
+                    break;
+                case 'oskernel':
+                    if (!$this->dataCount()) {
+                        $this->fetchData();
+                    }
+                    if (!$this->o_os && $this->fk_os > 0) {
+                        $this->fetchFK('fk_os');
+                    }
+                    if (!$this->o_os) {
+                        $ret['oskernel'] = 'N/A';
+                    } else {
+                        $spec = $this->o_os->htmlDump($this);
+                            if (isset($spec['Kernel'])) {
+                            $ret['oskernel'] = $spec['Kernel'];
+                        } else {
+                            $ret['oskernel'] = 'N/A';
+                        }
+                    }
+                break;
+                case 'os':
+                    if (!$this->o_os && $this->fk_os > 0) {
+                        $this->fetchFK('fk_os');
+                    }   
+                    $ret['os'] = ($this->o_os) ? $this->o_os->name : 'Unknown';
+                    break;
+                default:
+                    break;
+
+            }
         }
 
-        return array(
-                 'name' => $this->name,
-                 'status' => $this->status,
-                 'server' => ($this->o_server) ? $this->o_server->hostname : 'Unknown',
-                );
+        return $ret;
     }
 
     public function htmlDump()

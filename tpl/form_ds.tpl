@@ -15,7 +15,7 @@
 	<div class="page-header">
 	  <h1>Display Settings for <?php echo $what; ?></h1>
 	</div>
-        <form method="POST" role="form" action="/ds/w/server" class="form-horizontal">
+        <form method="POST" role="form" action="/ds/w/<?php echo strtolower($what); ?>" class="form-horizontal">
           <div class="form-group">
             <label class="col-sm-4 col-sm-offset-2 control-label" for="inputDisplaySettings">Tick box for column to be shown</label>
             <div class="col-sm-3">

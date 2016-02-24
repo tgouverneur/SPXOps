@@ -1282,7 +1282,7 @@ class OSLinux extends OSType
       return array(
                 'Distribution' => $s->data('linux:name'),
                 'Version' => $version,
-        'Kernel' => $s->data('os:kernel'),
+                'Kernel' => $s->data('os:kernel'),
            );
   }
 

@@ -49,7 +49,7 @@ if (!isset($edit)) $edit = false;
 	    <div class="col-sm-3">
 	      <select class="form-control" name="frequency" id="selectFrequency">
 		<option value="-1">Upon request</option>
-<?php $f = array(3600, 7200, 14400, 21600, 28800, 43200, 57600, 86400, 172800, 604800, 2678400);
+<?php $f = array(300, 600, 1200, 3600, 7200, 14400, 21600, 28800, 43200, 57600, 86400, 172800, 604800, 2678400);
       foreach($f as $freq) { ?>
                 <option value="<?php echo $freq; ?>" <?php if ($freq == $obj->frequency) echo "selected"; ?>><?php echo Utils::parseFrequency($freq); ?></option>
 <?php } ?>

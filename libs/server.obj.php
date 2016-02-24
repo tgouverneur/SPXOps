@@ -357,6 +357,8 @@ class Server extends MySqlObj implements JsonSerializable
             '# VM' => 'nrvms',
             '# VM Cores' => 'nrvmscores',
             '# VM Memory' => 'nrvmsram',
+            'OS Version' => 'osver',
+            'OS Kernel' => 'oskernel',
         );
 
         if (!is_array($cfs) && !strcmp($cfs, 'all')) {
@@ -395,6 +397,34 @@ class Server extends MySqlObj implements JsonSerializable
                 case 'f_rce':
                 case 'f_upd':
                       $ret[$c] = $this->{$c};
+                break;
+                case 'osver':
+                  if (!$this->dataCount()) {
+                      $this->fetchData();
+                  }
+                  if (!$this->o_os && $this->fk_os > 0) {
+                      $this->fetchFK('fk_os');
+                  }
+                  $spec = $this->o_os->htmlDump($this);
+                  if (isset($spec['Version'])) {
+                      $ret['osver'] = $spec['Version'];
+                  } else {
+                      $ret['osver'] = 'N/A';
+                  }
+                break;
+                case 'oskernel':
+                  if (!$this->dataCount()) {
+                      $this->fetchData();
+                  }
+                  if (!$this->o_os && $this->fk_os > 0) {
+                      $this->fetchFK('fk_os');
+                  }
+                  $spec = $this->o_os->htmlDump($this);
+                  if (isset($spec['Kernel'])) {
+                      $ret['oskernel'] = $spec['Kernel'];
+                  } else {
+                      $ret['oskernel'] = 'N/A';
+                  }
                 break;
                 case 'os':
                   if (!$this->o_os && $this->fk_os > 0) {
