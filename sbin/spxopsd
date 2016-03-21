@@ -60,12 +60,12 @@
           if ($m->connect()) {
               $this->log(" Error with SQL db: ".$m->getError());
               sleep($this->_interval);
-
               return -1;
           }
       } catch (Exception $e) {
           sleep($this->_interval);
           throw($e);
+          return -1;
       }
 
       $this->log('Entering run() ['.$this->f_master.']('.$this->pid.':'.$this->ppid.')', LLOG_DEBUG);
@@ -84,6 +84,8 @@
       } catch (Exception $e) {
         $this->log('Pid::ping() error: '.$e->getMesssage(), LLOG_DEBUG);
         $this->log('BT: '.$e->getTraceAsString().':', LLOG_DEBUG);
+        sleep($this->_interval);
+        return -1;
       }
 
       /* refresh main settings */
@@ -327,7 +329,9 @@
          $this->network = new SPXNet(Config::$server_ipaddr, Config::$server_port, $this, 1);
          $daemon = new Daemon($this->network, false);
          $m = MysqlCM::getInstance();
-         $m->connect();
+         if ($m->connect()) {
+             throw new SPXException('SPXOps::spawnNetwork(): Cannot connect to SQL database');
+         }
          $pid = new Pid();
          $pid->agent = Config::$agentname;
          $pid->pid = $daemon->getPid();
@@ -342,7 +346,9 @@
          $newD = new SPXOpsd($this);
          $daemon = new Daemon($newD, false);
          $m = MysqlCM::getInstance();
-         $m->connect();
+         if ($m->connect()) {
+             throw new SPXException('SPXOps::spawnProcess(): Cannot connect to SQL database');
+         }
          $pid = new Pid();
          $pid->agent = Config::$agentname;
          $pid->pid = $daemon->getPid();
