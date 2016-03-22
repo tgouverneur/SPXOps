@@ -57,7 +57,7 @@ class Logger
         if ($obj && isset($obj->_job) && $obj->_job) {
             $obj->_job->log($str);
         } elseif ($cn::$_logfd) {
-            fprintf($cn::$_logfd, "[%s] %s\n", date("Y-m-d H:m:s"), $str);
+            fprintf($cn::$_logfd, "[%s] %s\n", date("Y-m-d H:i:s"), $str);
         } else {
             echo "$str\n";
         }
