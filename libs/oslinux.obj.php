@@ -82,7 +82,7 @@ class OSLinux extends OSType
   /**
    * VMs
    */
-  public static function updateLinuxVms(&$s)
+  public static function updateLinuxVms(&$s, $full=true)
   {
       $virsh = $s->findBin('virsh');
 
@@ -112,83 +112,91 @@ class OSLinux extends OSType
 
           $vm = new VM();
           $vm->name = $f[1];
+          $new = false;
           if ($vm->fetchFromField('name')) {
               $s->log('new VM registered: '.$vm, LLOG_INFO);
+              $new = true;
               $vm->insert();
               array_push($s->a_vm, $vm);
+          } else {
+              $s->log("\t* $vm Found", LLOG_INFO);
           }
           $vm->fetchData();
           $u = 0;
           if ($vm->fk_server != $s->id) {
               $vm->fk_server = $s->id;
               $s->log("VM $vm reassigned to $s", LLOG_INFO);
+              $new = true;
               $u++;
           }
           /* get the XML dump */
-          $out_vdump = $s->exec($cmd_vdump.' '.$vm->name);
-          $xmldump = trim($out_vdump);
-          if (strcmp($vm->xml, $xmldump)) {
-              $vm->xml = $xmldump;
-              $s->log("$vm XML dump updated", LLOG_INFO);
-              $vm->parseXML();
-              $u++;
-              $vm_mem = $vm->o_xml->memory;
-              $vm_nrcpu = $vm->o_xml->vcpu;
-              $vm_disks = '';
-              foreach ($vm->o_xml->devices->disk as $disk) {
-                  if (!strcmp($disk->Attributes()['device'], 'cdrom')) {
-                      continue;
-                  } // skip cdrom devices
-                  $vm_disks .= $disk->source->Attributes()[0].';';
+          if ($new || $full) {
+              $s->log("\t* Deep collection for $vm started", LLOG_INFO);
+              $out_vdump = $s->exec($cmd_vdump.' '.$vm->name);
+              $xmldump = trim($out_vdump);
+              if (strcmp($vm->xml, $xmldump)) {
+                  $vm->xml = $xmldump;
+                  $s->log("$vm XML dump updated", LLOG_INFO);
+                  $vm->parseXML();
+                  $u++;
+                  $vm_mem = $vm->o_xml->memory;
+                  $vm_nrcpu = $vm->o_xml->vcpu;
+                  $vm_disks = '';
+                  foreach ($vm->o_xml->devices->disk as $disk) {
+                      if (!strcmp($disk->Attributes()['device'], 'cdrom')) {
+                          continue;
+                      } // skip cdrom devices
+                      $vm_disks .= $disk->source->Attributes()[0].';';
+                  }
+                  if ($vm->data('kvm:disks') != $vm_disks) {
+                      $vm->setData('kvm:disks', $vm_disks);
+                      $s->log("$vm kvm:disks => $vm_disks", LLOG_INFO);
+                      $u++;
+                  }
+                  $vm_nets = '';
+                  foreach ($vm->o_xml->devices->interface as $net) {
+                      $vm_nets .= $net->mac->Attributes()[0].','.$net->source->Attributes()[0].','.$net->model->Attributes()[0].';';
+                  }
+                  if ($vm->data('kvm:net') != $vm_nets) {
+                      $vm->setData('kvm:net', $vm_nets);
+                      $s->log("$vm kvm:net => $vm_nets", LLOG_INFO);
+                      $u++;
+                  }
+                  if ($vm->data('kvm:nrcpu') != $vm_nrcpu) {
+                      $vm->setData('kvm:nrcpu', $vm_nrcpu);
+                      $s->log("$vm kvm:nrcpu => $vm_nrcpu", LLOG_INFO);
+                      $u++;
+                  }
+                  if ($vm->data('kvm:memory') != $vm_mem) {
+                      $vm->setData('kvm:memory', $vm_mem);
+                      $s->log("$vm kvm:memory => $vm_mem", LLOG_INFO);
+                      $u++;
+                  }
               }
-              if ($vm->data('kvm:disks') != $vm_disks) {
-                  $vm->setData('kvm:disks', $vm_disks);
-                  $s->log("$vm kvm:disks => $vm_disks", LLOG_INFO);
+              /* get the VNC display */
+              $out_vncport = trim($s->exec($cmd_vncdisplay.' '.$vm->name));
+              if (preg_match('/^:([0-9]+)/', $out_vncport, $m)) {
+                  $vncport = 5900 + $m[1];
+                  if ($vm->data('vnc:port') != $vncport) {
+                      $vm->setData('vnc:port', $vncport);
+                      $s->log("$vm vnc:port => $vncport", LLOG_INFO);
+                      $u++;
+                  }
+              } else {
+                  if (!empty($vm->data('vnc:port'))) {
+                      $vm->setData('vnc:port', '');
+                      $s->log("$vm vnc:port => ''", LLOG_INFO);
+                      $u++;
+                  }
+              }
+              /* get the state */
+              $out_vstate = $s->exec($cmd_vstate.' '.$vm->name);
+              $state = trim($out_vstate);
+              if (strcmp($vm->status, $state)) {
+                  $vm->status = $state;
+                  $s->log("$vm state changed to $state", LLOG_INFO);
                   $u++;
               }
-              $vm_nets = '';
-              foreach ($vm->o_xml->devices->interface as $net) {
-                  $vm_nets .= $net->mac->Attributes()[0].','.$net->source->Attributes()[0].','.$net->model->Attributes()[0].';';
-              }
-              if ($vm->data('kvm:net') != $vm_nets) {
-                  $vm->setData('kvm:net', $vm_nets);
-                  $s->log("$vm kvm:net => $vm_nets", LLOG_INFO);
-                  $u++;
-              }
-              if ($vm->data('kvm:nrcpu') != $vm_nrcpu) {
-                  $vm->setData('kvm:nrcpu', $vm_nrcpu);
-                  $s->log("$vm kvm:nrcpu => $vm_nrcpu", LLOG_INFO);
-                  $u++;
-              }
-              if ($vm->data('kvm:memory') != $vm_mem) {
-                  $vm->setData('kvm:memory', $vm_mem);
-                  $s->log("$vm kvm:memory => $vm_mem", LLOG_INFO);
-                  $u++;
-              }
-          }
-          /* get the VNC display */
-          $out_vncport = trim($s->exec($cmd_vncdisplay.' '.$vm->name));
-          if (preg_match('/^:([0-9]+)/', $out_vncport, $m)) {
-              $vncport = 5900 + $m[1];
-              if ($vm->data('vnc:port') != $vncport) {
-                  $vm->setData('vnc:port', $vncport);
-                  $s->log("$vm vnc:port => $vncport", LLOG_INFO);
-                  $u++;
-              }
-          } else {
-              if (!empty($vm->data('vnc:port'))) {
-                  $vm->setData('vnc:port', '');
-                  $s->log("$vm vnc:port => ''", LLOG_INFO);
-                  $u++;
-              }
-          }
-          /* get the state */
-          $out_vstate = $s->exec($cmd_vstate.' '.$vm->name);
-          $state = trim($out_vstate);
-          if (strcmp($vm->status, $state)) {
-              $vm->status = $state;
-              $s->log("$vm state changed to $state", LLOG_INFO);
-              $u++;
           }
           if ($u) {
               $s->log("updated $u infos about VM $vm", LLOG_INFO);
