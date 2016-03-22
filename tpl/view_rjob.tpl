@@ -1,4 +1,11 @@
 	<div class="page-header"><h1>Recurrent Job</h1></div>
+    <?php if (isset($success)) { ?>
+        <div class="alert alert-block alert-success fade in" id="success-box2">
+          <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
+          <h4>Success!</h4>
+          <p id="success-msg"><?php echo $success; ?></p>
+        </div>
+    <?php } ?>
         <div class="alert alert-block alert-success fade in" id="success-box" style="display:none;">
           <button type="button" class="close"><col-md- aria-hidden="true">&times;</col-md-><col-md- class="sr-only">Close</col-md-></button>
           <h4>Success!</h4>
@@ -33,6 +40,12 @@
                 <ul class="dropdown-menu">
                   <li><a href="/del/w/rjob/i/<?php echo $obj->id; ?>">Delete</a></li>
                   <li><a href="/edit/w/rjob/i/<?php echo $obj->id; ?>">Edit</a></li>
+                </ul>
+              </li>
+              <li class="dropdown active">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Action <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="/view/w/rjob/i/<?php echo $obj->id; ?>/a/run">Run Now</a></li>
                 </ul>
               </li>
             </ul>

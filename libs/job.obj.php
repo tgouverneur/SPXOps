@@ -104,26 +104,25 @@ class Job extends MySqlObj
   public function stateStr()
   {
       switch ($this->state) {
-      case S_NONE:
-        return 'No state';
-        break;
-      case S_NEW:
-        return 'NEW';
-        break;
-      case S_RUN:
-        return 'RUNNING';
-        break;
-      case S_FAIL:
-        return 'FAILED';
-        break;
-      case S_DONE:
-        return 'DONE';
-        break;
-      case S_STALL:
-        return 'STALLED';
-        break;
-    }
-
+          case S_NONE:
+              return 'NONE';
+              break;
+          case S_NEW:
+              return 'NEW';
+              break;
+          case S_RUN:
+              return 'RUNNING';
+              break;
+          case S_FAIL:
+              return 'FAILED';
+              break;
+          case S_DONE:
+              return 'DONE';
+              break;
+          case S_STALL:
+              return 'STALLED';
+              break;
+      }
       return 'UNKNOWN';
   }
 

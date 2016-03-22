@@ -490,7 +490,7 @@ class MySqlObj
    * Fetch object with XXX
    * @return -1 on error
    */
-  public function fetchFromFields($on_fields)
+  public function fetchFromFields($on_fields, $sort = '')
   {
       $i = 0;
       $fields = "";
@@ -516,7 +516,7 @@ class MySqlObj
           $i++;
       }
 
-      if (($data = $my->select($fields, $this->_table, $where)) === false) {
+      if (($data = $my->select($fields, $this->_table, $where, $sort)) === false) {
           return -1;
       } else {
           if ($my->getNR() != 0) {

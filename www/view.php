@@ -371,6 +371,15 @@ try {
        $content = new Template('../tpl/view_rjob.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);
+       if (isset($_GET['a']) && !strcmp('run', $_GET['a'])) {
+           if (!$lm->o_login->cRight('RJOB', R_EDIT)) {
+               throw new ExitException('Access Denied, please check your access rights!');
+           }
+           /* run it now! */
+           $obj->t_last = 0;
+           $obj->update();
+           $content->set('success', 'Recurrent job has been scheduled to run now.');
+       }
      break;
      case 'job':
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {
