@@ -466,6 +466,11 @@ CODE;
 
         while (($s = $it->next())) {
             $s->fetchFromId();
+            $s->fetchJT('a_sgroup');
+            $s->buildCheckList();
+            if (!count($s->a_check)) { /* check if there are checks to be done for this VM before adding a job */
+                continue;
+            }
             $j = new Job();
             $j->class = 'Check';
             $j->fct = 'jobVM';
@@ -489,6 +494,12 @@ CODE;
 
         while (($s = $it->next())) {
             $s->fetchFromId();
+            $s->fetchJT('a_sgroup');
+            $s->buildCheckList();
+            if (!count($s->a_check)) { /* check if there are checks to be done for this server before adding a job */
+                Logger::log("Skipping job for server $s", $slog, LLOG_INFO);
+                continue;
+            }
             $j = new Job();
             $j->class = 'Check';
             $j->fct = 'jobServer';
