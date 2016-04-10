@@ -21,3 +21,7 @@ INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('daemon', 'notifyFailedJobs', 'Notify Job owner if job fail', '', '0', '0 or 1');
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('daemon', 'notifyFailedSystemJobs', 'Notify Admins if system job fail', '', '0', '0 or 1');
 
+-- Twilio
+INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('twilio', 'accountSid', 'Account SID', '', '', '');
+INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('twilio', 'fromNumber', 'Originating Number', '', '', '');
+INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('twilio', 'authToken', 'Auth Token', '', '', '');

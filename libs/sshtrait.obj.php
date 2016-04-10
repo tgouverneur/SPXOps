@@ -114,6 +114,17 @@ trait sshTrait {
       return trim($buf);
   }
 
+  public function execLUA($cmd, $timeout = 120)
+  {
+      try {
+          $buf = $this->_ssh->execSecure($cmd, $timeout);
+      } catch (Exception $e) {
+          return false;
+      }
+
+      return trim($buf);
+  }
+
   public function isFile($path)
   {
       if (!$this->_ssh) {

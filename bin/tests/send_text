@@ -1,0 +1,27 @@
+#!/usr/bin/php
+<?php
+  /**
+   * @author Gouverneur Thomas <tgo@espix.net>
+   * @copyright Copyright (c) 2016, Gouverneur Thomas
+   * @version 1.0
+   * @package CLI
+   * @category utils
+   * @subpackage list
+   * @filesource
+   * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
+   */
+  require_once dirname(__FILE__).'/../../libs/utils.obj.php';
+  error_reporting(E_ALL);
+
+  $m = MySqlCM::getInstance();
+  if ($m->connect()) {
+    die($argv[0]." Error with SQL db: ".$m->getError()."\n");
+  }
+
+  $login = new Login();
+  $login->username = 'tgouverneur';
+  $login->fetchFromField('username');
+  echo $login->sendText('plop from spxops!');
+
+
+?>

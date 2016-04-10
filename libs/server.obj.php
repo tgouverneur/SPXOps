@@ -60,6 +60,15 @@ class Server extends MySqlObj implements JsonSerializable
     public $vm_cores = 0;
     public $vm_mem = 0;
 
+    public function getSQDN() {
+        $ret = $this->hostname;
+        if (preg_match('/\./', $this->hostname)) {
+            $ret = preg_split('/\./', $this->hostname);
+            $ret = $ret[0];
+        }
+        return $ret;
+    }
+
     public function getRRD($path)
     {
         foreach ($this->a_rrd as $rrd) {

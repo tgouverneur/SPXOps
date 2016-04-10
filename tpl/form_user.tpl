@@ -29,7 +29,7 @@ if (!isset($edit)) $edit = false;
             <div class="col-sm-3">
               <input class="form-control" type="text" name="fullname" value="<?php echo $obj->fullname; ?>" id="inputFullname" placeholder="Full Name">
             </div>
-	  </div>
+          </div>
           <div class="form-group">
             <label class="col-sm-2 col-sm-offset-3 control-label" for="inputEmail">E-Mail</label>
             <div class="col-sm-3">
@@ -52,6 +52,12 @@ if (!isset($edit)) $edit = false;
             <label class="col-sm-2 col-sm-offset-3 control-label" for="inputPasswordConfirm">Confirmation</label>
             <div class="col-sm-3">
               <input class="form-control" type="password" name="password_c" id="inputPasswordConfirm" placeholder="Confirmation">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 col-sm-offset-3 control-label" for="inputPhone">Phone</label>
+            <div class="col-sm-3">
+              <input class="form-control" type="text" name="phone" value="<?php echo $obj->phone; ?>" id="inputFullname" placeholder="+9123456789">
             </div>
           </div>
           <div class="form-group">

@@ -58,7 +58,7 @@ if (!isset($pservers)) $pservers = array();
 	    <div class="col-sm-7">
 	      <select class="form-control" name="frequency" id="selectFrequency">
 		<option value="-1">Upon request</option>
-<?php $f = array(3600, 7200, 14400, 21600, 28800, 43200, 57600, 86400, 172800, 604800, 2678400);
+<?php $f = array(300, 600, 1800, 3600, 7200, 14400, 21600, 28800, 43200, 57600, 86400, 172800, 604800, 2678400);
       foreach($f as $freq) { ?>
 		<option value="<?php echo $freq; ?>" <?php if ($freq == $obj->frequency) echo "selected"; ?>><?php echo Utils::parseFrequency($freq); ?></option>
 <?php } ?>
@@ -69,11 +69,17 @@ if (!isset($pservers)) $pservers = array();
             <label class="col-sm-2 col-sm-offset-3 control-label" for="inputOptions">Options</label>
             <div class="col-sm-7">
               <div class="checkbox">
-		<label>
-                 <input name="f_noalerts" type="checkbox" <?php if ($obj->f_noalerts) { echo "checked"; } ?>>
-		 <a href="#" rel="tooltip" title="Disable alerting for this check">Alerts Disabled</a>
+                <label>
+                 <input name="f_text" type="checkbox" <?php if ($obj->f_text) { echo "checked"; } ?>>
+                 <a href="#" rel="tooltip" title="Enable sending Texts for this check">Send Texts</a>
                 </label>
-  	       </div>
+               </div>
+              <div class="checkbox">
+                <label>
+                 <input name="f_noalerts" type="checkbox" <?php if ($obj->f_noalerts) { echo "checked"; } ?>>
+                 <a href="#" rel="tooltip" title="Disable alerting for this check">Alerts Disabled</a>
+                </label>
+               </div>
               <div class="checkbox">
                 <label>
                  <input name="f_root" type="checkbox" <?php if ($obj->f_root) { echo "checked"; } ?>>

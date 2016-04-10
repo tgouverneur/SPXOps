@@ -161,6 +161,18 @@ class Pid extends MySqlObj
        );
     }
 
+    public static function addMyPid()
+    {
+        $pid = new Pid();
+        $pid->agent = Config::$agentname;
+        $pid->pid = posix_getpid();
+        if ($pid->fetchFromFields(array('pid', 'agent'))) {
+            $pid->insert();
+        }
+
+        return $pid;
+    }
+
     public static function getMyPid()
     {
         $pid = new Pid();

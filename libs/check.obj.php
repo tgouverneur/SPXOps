@@ -21,17 +21,19 @@ class Check extends MySqlObj
     public $description = '';
     public $frequency = 0;
     public $lua = <<<CODE
-  function check()
+function check()
     return 0;
-  end
+end
 CODE;
     public $m_error = '';
     public $m_warn = '';
     public $f_noalerts = 0;
+    public $f_text = 0;
     public $f_root = 0;
     public $f_vm = 1;
     public $t_add = -1;
     public $t_upd = -1;
+    public $obj = null;
 
     public $a_sgroup = array();
     public $f_except = array();
@@ -68,9 +70,20 @@ CODE;
         }
     }
 
+    public function getObjectList($name) {
+        $ret = array(null);
+        foreach($this->obj->{$name} as $i) {
+            $ret[] = ''.$i;
+        }
+        unset($ret[0]);
+        return $ret;
+    }
+
   private function getLuaObject(&$s) {
       $lua = new Lua();
       $lua->registerCallback('exec', array(&$s, 'exec'));
+      $lua->registerCallback('getObjectList', array(&$this, 'getObjectList'));
+      $lua->registerCallback('execLUA', array(&$s, 'execLUA'));
       $lua->registerCallback('findBin', array(&$s, 'findBin'));
       $lua->registerCallback('isFile', array(&$s, 'isFile'));
       return $lua;
@@ -154,9 +167,11 @@ CODE;
       }
 
       $lua = $this->getLuaObject($s);
+      $this->obj = $s;
       try {
           $lua->eval($this->lua);
           $ret = $lua->call("check");
+          $this->obj = null;
           $ret = $this->getStatusFromRet($ret);
           $rc = $ret['rc'];
           $msg = $ret['msg'];
@@ -207,7 +222,10 @@ CODE;
       $m = MySqlCM::getInstance();
       $pid = Pid::getMyPid();
       if (!$pid) {
-          return -1;
+          $pid = Pid::addMyPid();
+          if (!$pid) {
+              return -1;
+          }
       }
       $args = array('idPid' => $pid->id,
                     'idCheck' => $this->id);
@@ -296,6 +314,7 @@ CODE;
                  'Need Root' => 'f_root',
                  'Support VM' => 'f_vm',
                  'Alerts Disabled' => 'f_noalerts',
+                 'Send Text' => 'f_text',
                 );
     }
 
@@ -308,6 +327,7 @@ CODE;
                  'f_root' => $this->f_root,
                  'f_vm' => $this->f_vm,
                  'f_noalerts' => $this->f_noalerts,
+                 'f_text' => $this->f_text,
                 );
     }
 
@@ -319,6 +339,7 @@ CODE;
         'Error Message' => $this->m_error,
         'Warning Message' => $this->m_warn,
         'Frequency' => Utils::parseFrequency($this->frequency),
+        'Send Text?' => ($this->f_text) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'No Alerts?' => ($this->f_noalerts) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Need root?' => ($this->f_root) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'VM Support?' => ($this->f_vm) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
@@ -495,6 +516,7 @@ CODE;
                         'm_error' => SQL_PROPE,
                         'm_warn' => SQL_PROPE,
                         'f_noalerts' => SQL_PROPE,
+                        'f_text' => SQL_PROPE,
                         'f_root' => SQL_PROPE,
                         'f_vm' => SQL_PROPE,
                         't_add' => SQL_PROPE,
@@ -509,6 +531,7 @@ CODE;
                         'm_error' => 'm_error',
                         'm_warn' => 'm_warn',
                         'f_noalerts' => 'f_noalerts',
+                        'f_text' => 'f_text',
                         'f_root' => 'f_root',
                         'f_vm' => 'f_vm',
                         't_add' => 't_add',

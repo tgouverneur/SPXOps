@@ -18,6 +18,7 @@ class Login extends MySqlObj
     public $password = '';
     public $password_c = ''; /* only for form-based validation */
     public $fullname = '';
+    public $phone = '';
     public $email = '';
     public $fk_utoken = -1;
     public $f_noalerts = 0;
@@ -34,6 +35,40 @@ class Login extends MySqlObj
     public $o_utoken = null;
 
     public $i_raddr = '';
+
+    public function sendText($body) {
+
+        $accountSid = Setting::get('twilio', 'accountSid');
+        $authToken = Setting::get('twilio', 'authToken');
+        $fromNumber = Setting::get('twilio', 'fromNumber');
+        if (!$accountSid ||
+            !$authToken ||
+            !$fromNumber) {
+
+            throw new SPXException('Twilio API is not setup, please check the settings page.');
+        }
+
+        if (empty($accountSid) ||
+            empty($authToken) ||
+            empty($fromNumber)) {
+
+            throw new SPXException('Twilio API is not setup, please check the settings page.');
+        }
+        $data = array();
+        $data['To'] = $this->phone;
+        $data['From'] = $fromNumber->value;
+        $data['Body'] = $body;
+
+        $c = curl_init('https://api.twilio.com/2010-04-01/Accounts/'.$accountSid->value.'/Messages.json');
+        curl_setopt($c, CURLOPT_USERPWD, $accountSid->value . ":" . $authToken->value);
+        curl_setopt($c, CURLOPT_POST, 1);
+        curl_setopt($c, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($c, CURLOPT_TIMEOUT, 10);
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+        $data = curl_exec($c);
+        curl_close($c);
+        return $data;
+    }
 
     public function setListPref($list, $val)
     {
@@ -230,6 +265,7 @@ class Login extends MySqlObj
         return array(
                  'username' => $this->username,
                  'fullname' => $this->fullname,
+                 'phone' => $this->phone,
                  'email' => $this->email,
                  'f_noalerts' => $this->f_noalerts,
                  'f_active' => $this->f_active,
@@ -244,6 +280,7 @@ class Login extends MySqlObj
         return array(
         'Username' => $this->username,
         'Full Name' => $this->fullname,
+        'Phone' => $this->phone,
         'E-Mail' => $this->email,
         'No Alerts?' => ($this->f_noalerts) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
         'Active?' => ($this->f_active) ? '<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>' : '<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>',
@@ -274,6 +311,7 @@ class Login extends MySqlObj
                         'username' => SQL_PROPE|SQL_EXIST,
                         'password' => SQL_PROPE,
                         'fullname' => SQL_PROPE,
+                        'phone' => SQL_PROPE,
                         'email' => SQL_PROPE,
                         'fk_utoken' => SQL_PROPE,
                         'f_active' => SQL_PROPE,
@@ -290,6 +328,7 @@ class Login extends MySqlObj
                         'username' => 'username',
                         'password' => 'password',
                         'fullname' => 'fullname',
+                        'phone' => 'phone',
                         'email' => 'email',
                         'fk_utoken' => 'fk_utoken',
                         'f_noalerts' => 'f_noalerts',

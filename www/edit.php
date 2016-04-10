@@ -304,7 +304,7 @@ try {
        $content->set('page', $page);
        $page['title'] .= $what;
        if (isset($_POST['submit'])) { /* clicked on the Edit button */
-         $fields = array('description', 'm_error', 'm_warn', 'f_noalerts', 'f_vm', 'f_root', 'frequency', 'lua');
+         $fields = array('description', 'm_error', 'm_warn', 'f_text', 'f_noalerts', 'f_vm', 'f_root', 'frequency', 'lua');
          foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
              if (isset($_POST[$field])) {
@@ -462,7 +462,7 @@ try {
        $content->set('page', $page);
        $page['title'] .= $what;
        if (isset($_POST['submit'])) { /* clicked on the Edit button */
-         $fields = array('fullname', 'email', 'password', 'password_c', 'f_noalerts', 'f_admin', 'f_api');
+         $fields = array('fullname', 'email', 'phone', 'password', 'password_c', 'f_noalerts', 'f_admin', 'f_api');
          foreach($fields as $field) {
            if (!strncmp($field, 'f_', 2)) { // should be a checkbox
              if (isset($_POST[$field])) {
@@ -499,6 +499,11 @@ try {
          $obj->update();
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "User $obj has been updated to database");
+         $a_link = array(
+                     array('href' => '/list/w/login',
+                           'name' => 'Back to list of users',
+                     ),
+                  );
          goto screen;
        }
      break;
