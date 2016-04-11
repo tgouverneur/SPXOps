@@ -85,7 +85,7 @@ class Notification
       if ($oldcr && strcmp($cr->details, $oldcr->details)) {
           $msg .= 'Old Details: '.$oldcr->details;
       }
-      $text_content = $s.':'.$cr->o_check.' status: '.Result::colorRC($cr->rc).' (was: '.Result::colorRC($oldcr->rc).') msg: '.$cr->message;
+      $text_content = $s.':'.$cr->o_check.' status: '.Result::colorRC($cr->rc).' (was: '.Result::colorRC($oldcr->rc).') msg: '.$cr->message.': '.$cr->details;
 
       foreach ($a_login as $l) {
           Logger::log('Going to send notification for check '.$cr->o_check.' to '.$l, null, LLOG_DEBUG);
