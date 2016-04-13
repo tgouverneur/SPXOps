@@ -22,6 +22,11 @@ class Update
       }
       $s->_job = $job;
 
+      if (!strcmp($s->status, 'running')) {
+          $s->log($s.' is not in running state, exiting', LLOG_ERR);
+          return;
+      }
+
       try {
           $s->log("Connecting to $s", LLOG_INFO);
           $s->connect();
@@ -58,7 +63,7 @@ class Update
     public static function vm($s, $f = null)
     {
         if (!$s) {
-            throw new SPXException("Update::server: $s is null");
+            throw new SPXException("Update::vm: $s is null");
         }
 
         if (!$s->fk_os || $s->fk_os == -1) {

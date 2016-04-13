@@ -389,6 +389,12 @@ CODE;
             throw new SPXException('VM not found in database');
         }
         $s->_job = $job;
+
+        if (!strcmp($s->state, 'running')) {
+            $s->log($s.' is not in running state, exiting', LLOG_ERR);
+            return;
+        }   
+
         $s->fetchJT('a_sgroup');
         if ($job && $job->fk_login > 0) {
             $s->buildCheckList(true);
@@ -461,7 +467,7 @@ CODE;
         $table = "`list_vm`";
         $index = "`id`";
         $cindex = "COUNT(`id`)";
-        $where = "WHERE `hostname`!='' AND `fk_os`!=-1 AND `fk_suser`!=-1 AND `f_upd`='1'";
+        $where = "WHERE `status`='running' AND `hostname`!='' AND `fk_os`!=-1 AND `fk_suser`!=-1 AND `f_upd`='1'";
         $it = new mIterator('VM', $index, $table, array('q' => $where, 'a' => array()), $cindex);
 
         while (($s = $it->next())) {
