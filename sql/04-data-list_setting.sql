@@ -25,3 +25,6 @@ INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('twilio', 'accountSid', 'Account SID', '', '', '');
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('twilio', 'fromNumber', 'Originating Number', '', '', '');
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('twilio', 'authToken', 'Auth Token', '', '', '');
+
+-- Auto-log
+INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('general', 'autoLog', 'Automaticaly log some server actions', 'i.e.: server reboot, server patching detected, etc.', '1', '0=no, 1=yes');
