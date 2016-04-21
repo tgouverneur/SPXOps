@@ -243,6 +243,17 @@ try {
        $content->set('oc', 'Cluster');
        $page['title'] .= 'Clusters';
      break;
+     case 'logs':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
+       $a_list = Log::getAll(true, array(), array('DESC:t_add'));
+       $content = new Template('../tpl/list.tpl');
+       $content->set('a_list', $a_list);
+       $content->set('what', 'Logs');
+       $content->set('oc', 'Log');
+       $page['title'] .= 'Logs';
+     break;
      case 'act':
        if (!$lm->o_login->cRight('ACT', R_VIEW)) {
          throw new ExitException('Access Denied, please check your access rights!');
