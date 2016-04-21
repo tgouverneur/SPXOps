@@ -80,6 +80,8 @@ class Log extends MySqlObj
 
         if ($this->o_login) {
             $rc['who'] = ''.$this->o_login->link();
+        } else if ($this->fk_login <= 0) {
+            $rc['who'] = 'System';
         } else {
             $rc['who'] = 'unknown';
         }

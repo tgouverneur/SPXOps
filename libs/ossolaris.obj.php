@@ -929,7 +929,7 @@ zfs:0:arcstats:l2_writes_sent   376002
                    $l_sec = $l_up;
                    $msg = 'Reboot detected (last uptime was: %d days, %d:%d:%d)';
                    $msg = sprintf($msg, $l_days, $l_hours, $l_min, $l_sec);
-                   $s->addLog($msg);
+                   $s->addLog($msg, $boottime);
 
               }
               $s->log('[-] Updated boottime to be: '.$boottime, LLOG_INFO);
