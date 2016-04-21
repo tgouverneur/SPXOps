@@ -37,8 +37,8 @@ class Log extends MySqlObj
             }
 
             if (!empty($this->o_class) &&
-      class_exists($this->o_class) &&
-      $this->fk_what > 0) {
+              class_exists($this->o_class) &&
+              $this->fk_what > 0) {
                 $oc = $this->o_class;
                 $this->o_what = new $oc($this->fk_what);
                 $this->o_what->fetchFromId();

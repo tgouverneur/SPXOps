@@ -307,7 +307,7 @@ class MySqlObj
       $names = "";
       $i = 0;
 
-      if (isset($this->t_add)) {
+      if (isset($this->t_add) && $this->t_add <= 0) { /* do not update it if already enforced */
           $this->t_add = time();
       }
 

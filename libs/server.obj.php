@@ -485,6 +485,21 @@ class Server extends MySqlObj implements JsonSerializable
             $ret['# VM Cores'] = $this->vm_core;
             $ret['# VM Memory'] = Pool::formatBytes($this->vm_mem * 1024);
         }
+        $l_up = $this->data('os:boottime');
+        if ($l_up) {
+            $now = time();
+            $l_up = $now - $l_up;
+            $l_days = floor($l_up / 86400);
+            $l_up -= ($l_days * 86400);
+            $l_hours = floor(($l_up / 3600));
+            $l_up -= ($l_hours * 3600);
+            $l_min = floor(($l_up / 60));
+            $l_up -= ($l_min * 60);
+            $l_sec = $l_up;
+            $msg = '%d days, %d:%d:%d';
+            $msg = sprintf($msg, $l_days, $l_hours, $l_min, $l_sec);
+            $ret['Uptime'] = $msg;
+        }
         if ($this->o_cluster) {
             $ret['Cluster'] = '<a href="/view/w/cluster/i/'.$this->o_cluster->id.'">'.$this->o_cluster.'</a>';
         }
