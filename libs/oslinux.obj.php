@@ -857,70 +857,69 @@ class OSLinux extends OSType
       }
 
       switch ($distrib) {
-      case 'RHEL':
-        $d['name'] = 'RHEL';
-
-        break;
-      case 'LSB':
-        if (isset($a_lsb['DISTRIB_ID'])) {
-            $d['name'] = $a_lsb['DISTRIB_ID'];
-        }
-        if (isset($a_lsb['DISTRIB_RELEASE'])) {
-            $d['version'] = $a_lsb['DISTRIB_RELEASE'];
-        }
-        if (isset($a_lsb['DISTRIB_CODENAME'])) {
-            $d['ver_name'] = $a_lsb['DISTRIB_CODENAME'];
-        }
-        break;
-      case 'debian':
-        $d['name'] = 'Debian';
-        $cmd = "$cat /etc/debian_version";
-        $o_cmd = $s->exec($cmd);
-        if (!empty($o_cmd)) {
-            if (preg_match('/^[0-9]/', $o_cmd)) {
-                $d['version'] = $o_cmd;
-            } else {
-                $d['ver_name'] = $o_cmd;
+          case 'RHEL':
+            $d['name'] = 'RHEL';
+            break;
+          case 'LSB':
+            if (isset($a_lsb['DISTRIB_ID'])) {
+                $d['name'] = $a_lsb['DISTRIB_ID'];
             }
-        }
-        if ($a_os) {
-            if (isset($a_os['PRETTY_NAME'])) {
-                $pn = $a_os['PRETTY_NAME'];
-                $pn = preg_replace('/Debian GNU\/Linux /', '', $pn);
-                $d['ver_name'] = $pn;
+            if (isset($a_lsb['DISTRIB_RELEASE'])) {
+                $d['version'] = $a_lsb['DISTRIB_RELEASE'];
             }
-        }
-        break;
-      case 'SLES':
-        $d['name'] = 'SLES';
-        $cmd = "$cat /etc/SuSE-release";
-        $o_cmd = $s->exec($cmd);
-        if (!empty($o_cmd)) {
-            $v = '';
-            $vars = Utils::parseVars($o_cmd);
-            if (isset($vars['VERSION'])) {
-                $v = $vars['VERSION'];
+            if (isset($a_lsb['DISTRIB_CODENAME'])) {
+                $d['ver_name'] = $a_lsb['DISTRIB_CODENAME'];
             }
-            if (isset($vars['PATCHLEVEL'])) {
-                $v .= '.'.$vars['PATCHLEVEL'];
+            break;
+          case 'debian':
+            $d['name'] = 'Debian';
+            $cmd = "$cat /etc/debian_version";
+            $o_cmd = $s->exec($cmd);
+            if (!empty($o_cmd)) {
+                if (preg_match('/^[0-9]/', $o_cmd)) {
+                    $d['version'] = $o_cmd;
+                } else {
+                    $d['ver_name'] = $o_cmd;
+                }
             }
-            $d['version'] = $v;
+            if ($a_os) {
+                if (isset($a_os['PRETTY_NAME'])) {
+                    $pn = $a_os['PRETTY_NAME'];
+                    $pn = preg_replace('/Debian GNU\/Linux /', '', $pn);
+                    $d['ver_name'] = $pn;
+                }
+            }
+            break;
+          case 'SLES':
+            $d['name'] = 'SLES';
+            $cmd = "$cat /etc/SuSE-release";
+            $o_cmd = $s->exec($cmd);
+            if (!empty($o_cmd)) {
+                $v = '';
+                $vars = Utils::parseVars($o_cmd);
+                if (isset($vars['VERSION'])) {
+                    $v = $vars['VERSION'];
+                }
+                if (isset($vars['PATCHLEVEL'])) {
+                    $v .= '.'.$vars['PATCHLEVEL'];
+                }
+                $d['version'] = $v;
+            }
+            break;
+          case 'Gentoo':
+            $d['name'] = 'Gentoo';
+            $cmd = "$cat /etc/gentoo-release";
+            $o_cmd = $s->exec($cmd);
+            if (!empty($o_cmd)) {
+                $v = explode(' ', $o_cmd);
+                $v = $v[count($v) - 1];
+                $d['version'] = $v;
+            }
+            break;
+          default:
+            $s->log('Unknown Linux distribution', LLOG_INFO);
+            break;
         }
-        break;
-      case 'Gentoo':
-        $d['name'] = 'Gentoo';
-        $cmd = "$cat /etc/gentoo-release";
-        $o_cmd = $s->exec($cmd);
-        if (!empty($o_cmd)) {
-            $v = explode(' ', $o_cmd);
-            $v = $v[count($v) - 1];
-            $d['version'] = $v;
-        }
-        break;
-      default:
-        $s->log('Unknown Linux distribution', LLOG_INFO);
-        break;
-    }
 
       if ($s->data('linux:name') != $d['name']) {
           $s->log('linux:name => '.$d['name'], LLOG_INFO);
@@ -928,11 +927,19 @@ class OSLinux extends OSType
       }
 
       if ($s->data('linux:version') != $d['version']) {
+          if (!empty($s->data('linux:version')) { /* Update, not first change */
+              $msg = 'OS Version changed to '.$d['version'].' (was: '.$s->data('linux:version').')';
+              $s->addLog($msg);
+          }
           $s->log('linux:version => '.$d['version'], LLOG_INFO);
           $s->setData('linux:version', $d['version']);
       }
 
       if ($s->data('linux:ver_name') != $d['ver_name']) {
+          if (!empty($s->data('linux:ver_name')) { /* Update, not first change */
+              $msg = 'OS Version changed to '.$d['ver_name'].' (was: '.$s->data('linux:ver_name').')';
+              $s->addLog($msg);
+          }
           $s->log('linux:ver_name => '.$d['ver_name'], LLOG_INFO);
           $s->setData('linux:ver_name', $d['ver_name']);
       }

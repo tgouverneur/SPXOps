@@ -1442,11 +1442,19 @@ zfs:0:arcstats:l2_writes_sent   376002
       }
 
       if ($s->data('os:major') != $release_major) {
+          if (!empty($s->data('os:major')) { /* Update, not first change */
+              $msg = 'OS Major version changed to '.$release_major.' (was: '.$s->data('os:major').')';
+              $s->addLog($msg);
+          }
           $s->setData('os:major', $release_major);
           $s->log('os:major => '.$release_major, LLOG_INFO);
       }
 
       if ($s->data('os:update') != $release_update) {
+          if (!empty($s->data('os:update')) { /* Update, not first change */
+              $msg = 'OS Release version changed to '.$release_update.' (was: '.$s->data('os:update').')';
+              $s->addLog($msg);
+          }
           $s->setData('os:update', $release_update);
           $s->log('os:update => '.$release_update, LLOG_INFO);
       }
