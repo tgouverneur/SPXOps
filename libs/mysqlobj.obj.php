@@ -1093,6 +1093,9 @@ class MySqlObj
                     $i++;
                 }
                 $where .= ')';
+            } elseif (!strncmp('NOT:', $src, 4)) {
+                $sstring = preg_replace('/^NOT:/', '', $src);
+                $where .= "`".$dst."`!=".$my->quote($sstring);
             } elseif (!strncmp('CST:', $src, 4)) {
                 $sstring = preg_replace('/^CST:/', '', $src);
                 $where .= "`".$dst."`=".$my->quote($sstring);

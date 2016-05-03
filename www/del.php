@@ -106,10 +106,42 @@ try {
               );
        goto screen;
      break;
+     case 'log':
+       if (!$lm->o_login->cRight('SRV', R_DEL)) { /* @TODO: Fix it */
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
+       $what = 'Event Log';
+       $page['title'] .= $what;
+       $obj = new Log();
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $obj->id = $_GET['i'];
+         if ($obj->fetchFromId()) {
+           $content = new Template('../tpl/error.tpl');
+           $content->set('error', "$what specified cannot be found in the database");
+           goto screen;
+         }
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', "$what not specified");
+         goto screen;
+       }
+       if ($obj->fk_login != $lm->o_login->id) {
+         throw new ExitException('You are not the owner of this log!');
+       }
+       $content = new Template('../tpl/message.tpl');
+       $content->set('msg', "$what $obj has been removed from database");
+       $obj->delete();
+       $a_link = array(
+              array('href' => '/list/w/logs',
+                    'name' => 'Back to list of Event Logs',
+                   ),
+              );
+       goto screen;
+     break;
      case 'check':
        /**
-	* @TODO; Check dependancies before delete()ing
-	*/
+        * @TODO; Check dependancies before delete()ing
+        */
        if (!$lm->o_login->cRight('CHK', R_DEL)) {
          throw new ExitException('Access Denied, please check your access rights!');
        }

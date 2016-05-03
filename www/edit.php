@@ -202,21 +202,79 @@ try {
            goto screen;
          }
          $objold->update();
-	 foreach($obj->a_server as $s) {
-	   $s->fk_cluster = $objold->id;
-	   $s->update();
-	 }
-	 foreach($objold->a_server as $s) {
-	   if (!isset($obj->a_server[$s->id])) {
-	     $s->fk_cluster = -1;
-	     $s->update();
-	   }
-	 }
+         foreach($obj->a_server as $s) {
+           $s->fk_cluster = $objold->id;
+           $s->update();
+         }
+         foreach($objold->a_server as $s) {
+           if (!isset($obj->a_server[$s->id])) {
+             $s->fk_cluster = -1;
+             $s->update();
+           }
+         }
          $content = new Template('../tpl/message.tpl');
          $content->set('msg', "Cluster $obj has been updated inside database");
          goto screen;
        }
        $content->set('obj', $obj);
+     break;
+     case 'log':
+       if (!$lm->o_login->cRight('SRV', R_EDIT)) { /* @TODO: fix this */
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
+       $what = 'Log Entry';
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $suid = $_GET['i'];
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'ID of Log Entry is not provided');
+         goto screen;
+       }
+       $obj = new Log($suid);
+       if ($obj->fetchFromId()) {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'Log Entry not found in the database');
+         goto screen;
+       }
+       if ($lm->o_login->id != $obj->fk_login) {
+         throw new ExitException('Access Denied, You are not the owner of this log entry!');
+       }
+       $content = new Template('../tpl/form_log.tpl');
+       $content->set('obj', $obj);
+       $content->set('edit', true);
+       $content->set('page', $page);
+       $page['title'] .= $what;
+       if (isset($_POST['submit'])) { /* clicked on the Edit button */
+         $fields = array('msg');
+         foreach($fields as $field) {
+           if (!strncmp($field, 'f_', 2)) { // should be a checkbox
+             if (isset($_POST[$field])) {
+               $obj->{$field} = 1;
+             } else {
+               $obj->{$field} = 0;
+             }
+           } else {
+             if ($_POST[$field]) {
+               $obj->{$field} = $_POST[$field];
+             }
+           }
+         }
+         //$errors = $obj->valid(false);
+         //if ($errors) {
+         //  $content->set('error', $errors);
+         //  $content->set('obj', $obj);
+         //  goto screen;
+         //}
+         $obj->update();
+         $content = new Template('../tpl/message.tpl');
+         $content->set('msg', "Log Entry $obj has been updated to database");
+         $a_link = array(
+                     array('href' => '/list/w/logs',
+                           'name' => 'Back to list of Event Logs',
+                     ),
+                 );
+         goto screen;
+       }
      break;
      case 'server':
        if (!$lm->o_login->cRight('SRV', R_EDIT)) {

@@ -13,7 +13,9 @@
  */
 class Log extends MySqlObj
 {
-  public $id = -1;
+    use logTrait; // Logs can have sub-logs
+    public static $RIGHT = 'SRV';
+    public $id = -1;
     public $msg = '';
     public $fk_login = -1;
     public $fk_what = -1;
@@ -23,6 +25,12 @@ class Log extends MySqlObj
 
     public $o_login = null;
     public $o_what = null;
+    public $a_log = array();
+
+    public function link()
+    {
+        return '<a href="/view/w/log/i/'.$this->id.'">'.$this.'</a>';
+    }
 
     public function equals($z)
     {
@@ -43,6 +51,7 @@ class Log extends MySqlObj
                 $this->o_what = new $oc($this->fk_what);
                 $this->o_what->fetchFromId();
             }
+            $this->fetchLogs();
         } catch (Exception $e) {
             throw($e);
         }
@@ -66,6 +75,31 @@ class Log extends MySqlObj
                  'On' => 'on',
                  'When' => 't_add',
                 );
+    }
+
+    public function htmlDump()
+    {
+        $rc = array();
+
+        if ($this->o_login) {
+            $rc['Who'] = ''.$this->o_login->link();
+        } else if ($this->fk_login <= 0) {
+            $rc['Who'] = 'System';
+        } else {
+            $rc['Who'] = 'unknown';
+        }
+        if ($this->o_what) {
+            $rc['On'] = ''.$this->o_what->link();
+        } else {
+            $rc['On'] = 'unknown';
+        }
+        if (!strcmp($this->o_class, 'Log')) {
+            unset($rc['On']);
+        }
+
+        $rc['Added on'] = date('d-m-Y H:i:s', $this->t_add);
+
+        return $rc;
     }
 
     public function toArray($cfs = array())

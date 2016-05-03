@@ -72,7 +72,7 @@ try {
        $what = 'Check';
        if (!isset($_GET['i']) || empty($_GET['i'])) {
          $content = new Template('../tpl/error.tpl');
-	 $content->set('error', "You didn't provided the ID of the $what to view");
+         $content->set('error', "You didn't provided the ID of the $what to view");
          goto screen;
        }
        $obj = new Check($_GET['i']);
@@ -380,6 +380,31 @@ try {
            $obj->update();
            $content->set('success', 'Recurrent job has been scheduled to run now.');
        }
+     break;
+     case 'log':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
+       $what = 'Event Log';
+       if (!isset($_GET['i']) || empty($_GET['i'])) {
+         throw new ExitException("You didn't provided the ID of the $what to view");
+       }
+       $obj = new Log($_GET['i']);
+       if ($obj->fetchFromId()) {
+         throw new ExitException("Unable to find the $what in database");
+       }
+       if (!strcmp($obj->o_class, 'Log')) {
+         throw new ExitException("Cannot view this kind of log");
+       }
+       try {
+           $obj->fetchAll(1);
+       } catch (Exception $e) {
+         echo '';
+         /* @TODO: maybe we should log theses exception to a special log to allow debugging... */
+       }
+       $content = new Template('../tpl/view_log.tpl');
+       $page['title'] .= $what;
+       $content->set('obj', $obj);
      break;
      case 'job':
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {

@@ -88,26 +88,36 @@ class OSLinux extends OSType
       if (!empty($ret)) {
           $f = preg_split("/\s+/", $ret);
           $boottime = $f[1];
-          if ($s->data('os:boottime') != $boottime) {
+          if (is_numeric($boottime) && $s->data('os:boottime') != $boottime) {
               if (!empty($s->data('os:boottime'))) {
+
                   /**
-                   * It's not the first time we index
-                   * this data so let's insert a log
-                   * for that server, as it is probably
-                   * a reboot!
+                   * calculate drift between old and new boottime
+                   * so we can check if the new boottime is not a product
+                   * of Linux Kernel's stupidness in not knowing exactly
+                   * when it has booted off.
                    */
-                   $now = time();
-                   $l_up = $now - $s->data('os:boottime');
-                   $l_days = floor($l_up / 86400);
-                   $l_up -= ($l_days * 86400);
-                   $l_hours = floor(($l_up / 3600));
-                   $l_up -= ($l_hours * 3600);
-                   $l_min = floor(($l_up / 60));
-                   $l_up -= ($l_min * 60);
-                   $l_sec = $l_up;
-                   $msg = 'Reboot detected (last uptime was: %d days, %d:%d:%d)';
-                   $msg = sprintf($msg, $l_days, $l_hours, $l_min, $l_sec);
-                   $s->addLog($msg);
+                  $drift = abs($s->data('os:boottime') - $boottime);
+                  if ($drift > 300) { /* if delta is < 300 sec we don't log anything, just update the boottime in our db */
+                      /**
+                       * It's not the first time we index
+                       * this data so let's insert a log
+                       * for that server, as it is probably
+                       * a reboot!
+                       */
+                       $now = time();
+                       $l_up = $now - $s->data('os:boottime');
+                       $l_days = floor($l_up / 86400);
+                       $l_up -= ($l_days * 86400);
+                       $l_hours = floor(($l_up / 3600));
+                       $l_up -= ($l_hours * 3600);
+                       $l_min = floor(($l_up / 60));
+                       $l_up -= ($l_min * 60);
+                       $l_sec = $l_up;
+                       $msg = 'Reboot detected (last uptime was: %d days, %d:%d:%d)';
+                       $msg = sprintf($msg, $l_days, $l_hours, $l_min, $l_sec);
+                       $s->addLog($msg, $boottime);
+                   }
 
               }
               $s->log('[-] Updated boottime to be: '.$boottime, LLOG_INFO);

@@ -247,8 +247,9 @@ try {
        if (!$lm->o_login->cRight('SRV', R_VIEW)) {
          throw new ExitException('Access Denied, please check your access rights!');
        }
-       $a_list = Log::getAll(true, array(), array('DESC:t_add'));
+       $a_list = Log::getAll(true, array('o_class' => 'NOT:Log'), array('DESC:t_add'));
        $content = new Template('../tpl/list.tpl');
+       $content->set('canView', true);
        $content->set('a_list', $a_list);
        $content->set('what', 'Logs');
        $content->set('oc', 'Log');
