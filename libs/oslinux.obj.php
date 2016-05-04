@@ -927,7 +927,7 @@ class OSLinux extends OSType
       }
 
       if ($s->data('linux:version') != $d['version']) {
-          if (!empty($s->data('linux:version')) { /* Update, not first change */
+          if (!empty($s->data('linux:version'))) { /* Update, not first change */
               $msg = 'OS Version changed to '.$d['version'].' (was: '.$s->data('linux:version').')';
               $s->addLog($msg);
           }
@@ -936,7 +936,7 @@ class OSLinux extends OSType
       }
 
       if ($s->data('linux:ver_name') != $d['ver_name']) {
-          if (!empty($s->data('linux:ver_name')) { /* Update, not first change */
+          if (!empty($s->data('linux:ver_name'))) { /* Update, not first change */
               $msg = 'OS Version changed to '.$d['ver_name'].' (was: '.$s->data('linux:ver_name').')';
               $s->addLog($msg);
           }
