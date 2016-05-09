@@ -78,6 +78,7 @@
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">View <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a class="xmlModalLink" href="#">View XML</a></li>
+                  <li><a class="livexmlModalLink" href="#">View Live XML</a></li>
                   <li><a class="logsModalLink" href="/modallist/w/logs/o/VM/i/<?php echo $obj->id; ?>">View Logs</a></li>
                   <li><a href="/modallist/w/packages/o/VM/i/<?php echo $obj->id; ?>" class="packagesModalLink">View Packages</a></li>
                   <li><a href="/modallist/w/sresults/o/VM/i/<?php echo $obj->id; ?>" class="resultsModalLink">View Check Results</a></li>
@@ -243,6 +244,23 @@
           </div>
         </div>
       </div>
+      <!-- Live XML Configuration Modal -->
+      <div class="modal fade" tabindex="-1" role="dialog" id="livexmlModal" aria-labelledby="livexmlModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+             <h4 class="modal-title" id="livexmlModalLabel">Live XML Configuration</h3>
+           </div>
+           <div class="modal-body">
+           <pre><?php echo htmlentities($obj->livexml); ?></pre>
+           </div>
+           <div class="modal-footer">
+             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+           </div>
+          </div>
+        </div>
+      </div>
       <!-- XML Configuration Modal -->
       <div class="modal fade" tabindex="-1" role="dialog" id="xmlModal" aria-labelledby="xmlModal" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -300,6 +318,12 @@
           })
         .modal();
         e.preventDefault();
+        });
+        $('.livexmlModalLink').click(function(e) {
+          var modal = $('#livexmlModal');
+          e.preventDefault();
+          modal.on('show.bs.modal', function () {
+          }).modal();
         });
         $('.xmlModalLink').click(function(e) {
           var modal = $('#xmlModal');
