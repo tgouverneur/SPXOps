@@ -135,7 +135,8 @@ class OSLinux extends OSType
 
       $cmd_vlist = "$virsh -r -c qemu:///system list --all";
       $cmd_vstate = "$virsh -r -c qemu:///system domstate";
-      $cmd_vdump = "$virsh -r -c qemu:///system dumpxml";
+      $cmd_vdump = "$virsh -r -c qemu:///system dumpxml --inactive";
+      $cmd_vdumplive = "$virsh -r -c qemu:///system dumpxml";
       $cmd_vncdisplay = "$virsh -r -c qemu:///system vncdisplay";
 
       $out_vlist = $s->exec($cmd_vlist);
@@ -179,6 +180,12 @@ class OSLinux extends OSType
           /* get the XML dump */
           if ($new || $full) {
               $s->log("\t* Deep collection for $vm started", LLOG_INFO);
+              $out_vdumplive = $s->exec($cmd_vdumplive.' '.$vm->name);
+              $xmldumplive = trim($out_vdumplive);
+              if (strcmp($vm->livexml, $xmldumplive)) {
+                  $vm->livexml = $xmldumplive;
+                  $s->log("$vm Live XML dump updated", LLOG_INFO);
+              }
               $out_vdump = $s->exec($cmd_vdump.' '.$vm->name);
               $xmldump = trim($out_vdump);
               if (strcmp($vm->xml, $xmldump)) {

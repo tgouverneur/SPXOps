@@ -772,6 +772,7 @@ CREATE TABLE `list_vm` (
   `hostname` varchar(200) NOT NULL,
   `status` varchar(20) NOT NULL,
   `xml` longtext NOT NULL,
+  `livexml` longtext NOT NULL,
   `fk_server` int(11) NOT NULL,
   `fk_os` int(11) NOT NULL DEFAULT '-1',
   `fk_suser` int(11) NOT NULL DEFAULT '-1',
