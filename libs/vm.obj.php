@@ -203,6 +203,15 @@ class VM extends MySqlObj
         $s->log(sprintf("\t%15s - %s", $this->name, $this->status), LLOG_INFO);
     }
 
+    public function parseLiveXML()
+    {
+        if (empty($this->livexml)) {
+            return -1;
+        }
+        $xo = simplexml_load_string($this->livexml);
+        $this->o_livexml = $xo;
+    }
+
     public function parseXML()
     {
         if (empty($this->xml)) {
@@ -330,6 +339,8 @@ class VM extends MySqlObj
             'Name' => $this->name,
             'Status' => $this->status,
             'Server' => ($this->o_server) ? $this->o_server->link() : 'Unknown',
+            'Live # CPU' => $this->data('kvm:livenrcpu'),
+            'Live Memory' => Pool::formatBytes($this->data('kvm:livememory') * 1024),
             '# CPU' => $this->data('kvm:nrcpu'),
             'Memory' => Pool::formatBytes($this->data('kvm:memory') * 1024),
             'Updated on' => date('d-m-Y', $this->t_upd),

@@ -185,6 +185,20 @@ class OSLinux extends OSType
               if (strcmp($vm->livexml, $xmldumplive)) {
                   $vm->livexml = $xmldumplive;
                   $s->log("$vm Live XML dump updated", LLOG_INFO);
+                  $vm->parseLiveXML();
+                  $u++;
+                  $vm_livemem = $vm->o_livexml->memory;
+                  $vm_livenrcpu = $vm->o_livexml->vcpu;
+                  if ($vm->data('kvm:livenrcpu') != $vm_livenrcpu) {
+                      $vm->setData('kvm:livenrcpu', $vm_livenrcpu);
+                      $s->log("$vm kvm:livenrcpu => $vm_livenrcpu", LLOG_INFO);
+                      $u++;
+                  }
+                  if ($vm->data('kvm:livememory') != $vm_livemem) {
+                      $vm->setData('kvm:livememory', $vm_livemem);
+                      $s->log("$vm kvm:livememory => $vm_livemem", LLOG_INFO);
+                      $u++;
+                  }
               }
               $out_vdump = $s->exec($cmd_vdump.' '.$vm->name);
               $xmldump = trim($out_vdump);
