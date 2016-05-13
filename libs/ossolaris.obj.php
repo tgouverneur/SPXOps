@@ -1426,6 +1426,7 @@ zfs:0:arcstats:l2_writes_sent   376002
       }
 
       if (!strncmp($release_major, "11.", 3)) {
+          $release_update = null;
           $pkg = $s->findBin('pkg');
           $cmd_entire = "$pkg info entire";
           $out_entire = $s->exec($cmd_entire);
@@ -1450,7 +1451,7 @@ zfs:0:arcstats:l2_writes_sent   376002
           $s->log('os:major => '.$release_major, LLOG_INFO);
       }
 
-      if ($s->data('os:update') != $release_update) {
+      if ($release_update && $s->data('os:update') != $release_update) {
           if (!empty($s->data('os:update'))) { /* Update, not first change */
               $msg = 'OS Release version changed to '.$release_update.' (was: '.$s->data('os:update').')';
               $s->addLog($msg);
