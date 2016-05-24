@@ -57,9 +57,9 @@ class MySqlObj
   }
 
   /**
-   *
+   * $f_only in case you only want to fetch that particular data
    */
-  public function data($name)
+  public function data($name, $f_only=false)
   {
       if (!$this->_nfotable) {
           return null;
@@ -68,6 +68,12 @@ class MySqlObj
       if (isset($this->_datas[$name])) {
           return $this->_datas[$name];
       } else {
+          if ($f_only) {
+              $this->fetchData($name);
+              if (isset($this->_datas[$name])) {
+                  return $this->_datas[$name];
+              }
+          }
           return null;
       }
   }
@@ -207,7 +213,7 @@ class MySqlObj
   /**
    *
    */
-  public function fetchData()
+  public function fetchData($dkey = null)
   {
       if (!$this->_nfotable) {
           return;
@@ -224,6 +230,10 @@ class MySqlObj
       $where = "";
       $args = array();
       $w = 0;
+      if ($dkey) {
+          $where = 'WHERE `name`=\''.$dkey.'\'';
+          $w++;
+      }
       foreach ($ids as $id) {
           if ($id === false) {
               continue;
