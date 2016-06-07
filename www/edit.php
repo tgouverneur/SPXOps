@@ -534,8 +534,31 @@ try {
              }
            }
 	     }
+         
 
          $errors = $obj->valid(false);
+
+         /* special case for username change */
+         if ($lm->o_login->cRight('USR', R_EDIT)) { /* if you can modify users */
+             if (isset($_POST['username'])) {
+                 $new_username = $_POST['username'];
+                 if (strcmp($obj->username, $new_username)) {
+                     /* check if that username is not already taken */
+                     $t = new Login();
+                     $t->username = $new_username;
+                     if (!$t->fetchFromField('username')) {
+                         if (!$errors) {
+                             $errors = array('Username already taken');
+                         } else {
+                             $errors[] = 'Username already taken';
+                         }
+                     } else {
+                         $obj->username = $new_username;
+                     }
+                 }
+             }
+         }
+
          if ($errors) {
            $content->set('error', $errors);
            $content->set('obj', $obj);
