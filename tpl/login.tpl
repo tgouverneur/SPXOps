@@ -49,4 +49,10 @@
 	      <button type="submit" name="submit" value="1" class="btn btn-primary">Sign in</button>
 	    </div>
 	  </div>
+	  <div class="form-group">
+            <div class="col-sm-offset-5 col-sm-5">
+	      <a href="/reset">Forgot your password?</a>
+	    </div>
+	  </div>
+      
 	</form>

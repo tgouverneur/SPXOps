@@ -26,6 +26,7 @@ class Login extends MySqlObj
     public $f_admin = 0;
     public $f_api = 0;
     public $t_last = -1;
+    public $t_reset = -1;
     public $t_add = -1;
     public $t_upd = -1;
 
@@ -135,7 +136,7 @@ class Login extends MySqlObj
         }
 
         $lm = LoginCM::getInstance();
-        if ($this->f_admin && !$lm->o_login->f_admin) {
+        if ($lm->o_login && $this->f_admin && !$lm->o_login->f_admin) {
             $ret[] = 'You cannot add an admin user as you aren\'t administrator yourself.';
             $this->f_admin = false;
         }
@@ -171,7 +172,7 @@ class Login extends MySqlObj
             $this->password = $this->password_c = '';
         }
 
-        if (strcmp($this->password, $this->password_c) && $new && !empty($this->password_c)) {
+        if (strcmp($this->password, $this->password_c) && ($new || !empty($this->password_c))) {
             $ret[] = 'Password and its confirmation doesn\'t match';
             $this->password = $this->password_c = '';
         }
@@ -238,6 +239,16 @@ class Login extends MySqlObj
                 return false;
             }
         }
+    }
+
+    public function getResetCode() {
+        if ($this->t_reset < 0) {
+            return null;
+        }
+        $code = $this->username;
+        $code .= $this->t_reset;
+        $code .= md5(Config::$api_salt);
+        return base64_encode(md5($code));
     }
 
     public function getAPIKey() {
@@ -319,6 +330,7 @@ class Login extends MySqlObj
                         'f_admin' => SQL_PROPE,
                         'f_api' => SQL_PROPE,
                         't_last' => SQL_PROPE,
+                        't_reset' => SQL_PROPE,
                         't_add' => SQL_PROPE,
                         't_upd' => SQL_PROPE,
                  );
@@ -336,6 +348,7 @@ class Login extends MySqlObj
                         'f_admin' => 'f_admin',
                         'f_api' => 'f_api',
                         't_last' => 't_last',
+                        't_reset' => 't_reset',
                         't_add' => 't_add',
                         't_upd' => 't_upd',
                  );

@@ -28,3 +28,6 @@ INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `
 
 -- Auto-log
 INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('general', 'autoLog', 'Automaticaly log some server actions', 'i.e.: server reboot, server patching detected, etc.', '1', '0=no, 1=yes');
+
+-- Base URL
+INSERT INTO `list_setting` (`cat`, `name`, `textname`, `description`, `value`, `placeholder`) VALUES ('general', 'baseURL', 'Base URL of SPXOps', 'https://', '', '');

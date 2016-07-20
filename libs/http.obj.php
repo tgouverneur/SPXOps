@@ -96,6 +96,15 @@ class HTTP
         return true;
     }
 
+    public static function getBaseURL()
+    {
+        $s_base = Setting::get('general', 'baseURL');
+        if (!$s_base || empty($s_base->value)) {
+            return null;
+        }
+        return $s_base->value;
+    }
+
     public static function getDateTimeFormat()
     {
         $df = Setting::get('display', 'timeFormat');

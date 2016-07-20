@@ -102,7 +102,7 @@ class Notification
       }
   }
 
-  /* Notify site-admin that a new user has requested a login */
+  /* Notify site-admin that a new report has been sent */
   public static function sendReport($message, $from) {
       $a_admin = Login::getAll(true, array('f_admin' => 'CST:1'));
       $short = 'Report received';
@@ -156,6 +156,25 @@ class Notification
         $mail->msg = $msg;
         $mail->headers = $headers;
         $mail->insert();
+    }
+
+    public static function sendPasswordReset($obj) {
+
+        $name = 'SPXOps Admin';
+        $short = 'Password reset';
+        $msg = "Dear $name,\n\n";
+        $msg .= "You or someone else has request a password reset link for your SPXOps account.";
+        $msg .= " If this is not you, you can simply discard this email, the link above will anyway expire in 24h\n\n";
+        $url = HTTP::getBaseURL();
+        if (!$url) {
+            throw new ExitException('The base URL of SPXOps is not set, please contact your site admin');
+        }
+        $url .= "/reset/w/proceed/i/".$obj->id."/c/".$obj->getResetCode();
+        $msg .= "To reset your password, follow this link: ".$url;
+        $msg .= "\n\n\nBest,\n\n--SPXOps\n";
+
+        Notification::sendMail($obj->email, $short, $msg);
+        return;
     }
 
     public static function sendJobFailure(Job $j) {
