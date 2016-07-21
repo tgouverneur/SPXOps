@@ -129,7 +129,7 @@ class OSLinux extends OSType
   /**
    * VMs
    */
-  public static function updateLinuxVms(&$s, $full=true)
+  public static function updateLinuxVms(&$s, $full=true, $name=null)
   {
       $virsh = $s->findBin('virsh');
 
@@ -177,8 +177,13 @@ class OSLinux extends OSType
               $new = true;
               $u++;
           }
+          if ($name && !strcmp($name, $vm->name)) {
+              $do_full_name = true;
+          } else {
+              $do_full_name = false;
+          }
           /* get the XML dump */
-          if ($new || $full) {
+          if ($new || $full || $do_full_name) {
               $s->log("\t* Deep collection for $vm started", LLOG_INFO);
               $out_vdumplive = $s->exec($cmd_vdumplive.' '.$vm->name);
               $xmldumplive = trim($out_vdumplive);
