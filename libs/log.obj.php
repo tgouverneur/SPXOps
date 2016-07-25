@@ -14,7 +14,7 @@
 class Log extends MySqlObj
 {
     use logTrait; // Logs can have sub-logs
-    public static $RIGHT = 'SRV';
+    public static $RIGHT = 'VMLOG';
     public $id = -1;
     public $msg = '';
     public $fk_login = -1;

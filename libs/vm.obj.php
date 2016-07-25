@@ -16,7 +16,7 @@ class VM extends MySqlObj
     use logTrait;
     use sshTrait;
     use checkTrait;
-    public static $RIGHT = 'SRV';
+    public static $RIGHT = 'VMLOG';
 
     public $id = -1;
     public $name = '';

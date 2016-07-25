@@ -205,8 +205,8 @@ class Job extends MySqlObj
     {
         if ($this->o_log) {
             $this->o_log->log .= $str."\n";
+            $this->o_log->update();
         }
-        $this->o_log->update();
     }
 
     public function link($short = '')
