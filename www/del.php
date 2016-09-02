@@ -107,9 +107,6 @@ try {
        goto screen;
      break;
      case 'log':
-       if (!$lm->o_login->cRight('SRV', R_DEL)) { /* @TODO: Fix it */
-         throw new ExitException('Access Denied, please check your access rights!');
-       }
        $what = 'Event Log';
        $page['title'] .= $what;
        $obj = new Log();
@@ -125,8 +122,8 @@ try {
          $content->set('error', "$what not specified");
          goto screen;
        }
-       if ($obj->fk_login != $lm->o_login->id) {
-         throw new ExitException('You are not the owner of this log!');
+       if ($obj->fk_login != $lm->o_login->id && !$lm->o_login->cRight('SRV', R_DEL)) { /* @TODO: Fix it */
+         throw new ExitException('You are not the owner of this log or you don\'t have the right to remove it!');
        }
        $content = new Template('../tpl/message.tpl');
        $content->set('msg', "$what $obj has been removed from database");
