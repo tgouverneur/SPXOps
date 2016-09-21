@@ -70,6 +70,15 @@ CODE;
         }
     }
 
+    public function equals($z)
+    {
+        if (!strcmp($this->name, $z->name)) {
+            return true;
+        }
+        return false;
+    }
+
+
     public function getObjectList($name) {
         $ret = array(null);
         foreach($this->obj->{$name} as $i) {

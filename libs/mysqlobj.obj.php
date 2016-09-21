@@ -804,8 +804,8 @@ class MySqlObj
                     $good = true;
                     foreach ($rel->attrs as $name) {
                         if (isset($this->{$rel->ar}[$i]->{$name}[''.$this]) &&
-               isset($fobj->{$name}[''.$this]) &&
-               strcmp($this->{$rel->ar}[$i]->{$name}[''.$this], $fobj->{$name}[''.$this])) {
+                           isset($fobj->{$name}[''.$this]) &&
+                           strcmp($this->{$rel->ar}[$i]->{$name}[''.$this], $fobj->{$name}[''.$this])) {
                             $good = false;
                             break;
                         }
