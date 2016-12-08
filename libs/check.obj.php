@@ -399,7 +399,7 @@ CODE;
         }
         $s->_job = $job;
 
-        if (!strcmp($s->status, 'running')) {
+        if (strcmp($s->status, 'running')) {
             $s->log($s.' is not in running state, exiting', LLOG_ERR);
             return;
         }   

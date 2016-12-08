@@ -125,6 +125,30 @@ trait sshTrait {
       return trim($buf);
   }
 
+  public function isDir($path)
+  {
+      if (!$this->_ssh) {
+          throw new SPXException('SSH Not connected');
+      }
+
+      if (empty($path)) {
+          throw new SPXException('Path not provided');
+      }
+
+      try {
+          $r = $this->_ssh->execSecure('test -d '.$path.' && echo 1', 10);
+      } catch (Exception $e) {
+          throw($e);
+      }
+      if (!empty($r)) {
+          if ($r == 1) {
+              return true;
+          }
+      }
+      return false;
+  }
+
+
   public function isFile($path)
   {
       if (!$this->_ssh) {

@@ -157,7 +157,7 @@ class VM extends MySqlObj
     public function getDisks()
     {
         $this->a_hostdisk = array();
-        $disks = $this->data('kvm:disks');
+        $disks = $this->data('kvm:disks', true);
         foreach (explode(';', $disks) as $disk) {
             if (empty($disk)) {
                 continue;

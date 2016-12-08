@@ -29,6 +29,7 @@
   $cname = $fname = '';
 
   if (isset($opts['v'])) {
+      echo "[-] Enabling debug mode\n";
       Logger::logLevel(LLOG_DEBUG);
   }
 
