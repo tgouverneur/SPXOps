@@ -200,9 +200,8 @@ class Login extends MySqlObj
                 } else {
                     $ra = array(R_VIEW, R_ADD, R_EDIT, R_DEL);
                     foreach ($ra as $rr) {
-                        if (!($this->a_right[$r->short] & $rr) &&
-             ($ug->level[''.$r])) {
-                            $this->a_right[$r->short] |= $rr;
+                        if (!($this->a_right[$r->short] & $rr) && ($ug->level[''.$r]) & $rr) {
+                            $this->a_right[$r->short] |= $ug->level[''.$r];
                         }
                     }
                 }

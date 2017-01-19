@@ -98,6 +98,30 @@ class Dataset extends MySqlObj
         }
     }
 
+    public static function printCols($cfs = array()) {
+        return array(
+            'Pool' => 'pool',
+            'Name' => 'name',
+            'Type' => 'type',
+            'Used' => 'used',
+            'Size' => 'size',
+            'Used by Childs' => 'uchild',
+            'Creation Time' => 'creation',
+        );
+    }
+
+    public function toArray($cfs = array()) {
+        return array(
+            'name' => $this->name,
+            'type' => $this->type,
+            'used' => ($this->used >= 0 )?Pool::formatBytes($this->used):'N/A',
+            'size' => ($this->size >= 0 )?Pool::formatBytes($this->size):'N/A',
+            'uchild' => ($this->uchild >= 0 )?Pool::formatBytes($this->uchild):'N/A',
+            'creation' => date('d-m-Y H:i:s',$this->creation),
+            'pool' => ($this->o_pool)?$this->o_pool->name:$this->fk_pool,
+        );
+    }
+
     public function __toString()
     {
         return $this->name;
