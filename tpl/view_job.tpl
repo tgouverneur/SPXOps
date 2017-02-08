@@ -14,6 +14,17 @@
           <h4>Error!</h4>
           <p id="error-msg"></p>
         </div>
+        <?php if ($obj->pc_progress > -1) { ?>
+        <div class="row">
+          <div class="col-md-8 col-md-offset-4">
+            <div class="progress">
+              <div id="jobProgress" class="progress-bar" role="progressbar" aria-valuenow="<?php echo $obj->pc_progress; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $obj->pc_progress; ?>%; min-width: 2em;">
+                  <?php echo $obj->pc_progress; ?>%
+              </div>
+            </div>
+          </div>
+        </div>
+        <?php } ?>
         <div class="row">
           <div class="col-md-4">
            <h3>Job Information</h3>
@@ -55,6 +66,8 @@
          function updateLogInfo(data, textStatus, jqXHR) {
            $('#jobLog').html(data['log']);
            $('#jobState').text(data['state']);
+           $('#jobProgress').html(data['pc_progress'] + '%');
+           $('#jobProgress').width(data['pc_progress'] + '%');
            if (data['state'] == 'DONE' || data['state'] == 'STALLED' || data['state'] == 'FAILED') {
              window.refreshJob = 0;
            } else {

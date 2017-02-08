@@ -26,6 +26,7 @@ class Job extends MySqlObj
     public $fct = '';
     public $arg = '';
     public $state = S_NONE;
+    public $pc_progress = -1;
     public $fk_login = -1;
     public $fk_log = -1;
     public $fk_pid = -1;
@@ -280,6 +281,7 @@ class Job extends MySqlObj
     public function htmlDump()
     {
         return array(
+        'ID' => $this->id,
         'Class' => $this->class,
         'Function' => $this->fct,
         'Argument' => $this->arg,
@@ -300,10 +302,11 @@ class Job extends MySqlObj
       $this->_table = 'list_job';
       $this->_my = array(
             'id' => SQL_INDEX,
-                'class' => SQL_PROPE,
+            'class' => SQL_PROPE,
             'fct' => SQL_PROPE,
             'arg' => SQL_PROPE,
             'state' => SQL_PROPE,
+            'pc_progress' => SQL_PROPE,
             'fk_log' => SQL_PROPE,
             'fk_login' => SQL_PROPE,
             'fk_pid' => SQL_PROPE,
@@ -319,6 +322,7 @@ class Job extends MySqlObj
             'fct' => 'fct',
             'arg' => 'arg',
             'state' => 'state',
+            'pc_progress' => 'pc_progress',
             'fk_login' => 'fk_login',
             'fk_log' => 'fk_log',
             'fk_pid' => 'fk_pid',

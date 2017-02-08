@@ -286,6 +286,7 @@ CREATE TABLE `list_job` (
   `pid` int(10) NOT NULL,
   `arg` text NOT NULL,
   `state` int(11) NOT NULL,
+  `pc_progress` int(3) NOT NULL,
   `fk_login` int(11) NOT NULL,
   `fk_log` int(11) NOT NULL,
   `fk_pid` int(11) NOT NULL,

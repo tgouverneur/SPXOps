@@ -175,6 +175,7 @@ try {
        $ret = array();
        $ret['id'] = $job->id;
        $ret['state'] = $job->stateStr();
+       $ret['pc_progress'] = $job->pc_progress;
        $ret['pid'] = '';
        $ret['log'] = '';
        $ret['start'] = '';
