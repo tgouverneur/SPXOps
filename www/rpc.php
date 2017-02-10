@@ -153,7 +153,33 @@ try {
        $ret['id'] = $cr->id;
        $ret['message'] = $cr->message;
        $ret['details'] = $cr->details;
+       header('Content-Type: application/json');
        echo json_encode($ret);
+     break;
+     case 'joblist':
+       if (!$lm->o_login->cRight('JOB', R_VIEW)) {
+           throw ExitException('Not Authorized');
+       }
+       if (!isset($_GET['class']) || empty($_GET['class'])) {
+            throw new ExitException('Missing argument');
+       }
+       $jc = $_GET['class'];
+       $filter = array('class' => $jc);
+       if (isset($_GET['fct'])) {
+           $filter['fct'] = $_GET['fct'];
+       }
+       $a_job = Job::getAll(true, $filter, array('DESC:t_add'));
+       $ret = array();
+       foreach($a_job as $job) {
+           if ($job->state != S_RUN ||
+               $job->state != S_NEW)
+           {
+               $ret[] = $job->id;
+           }
+       }
+       header('Content-Type: application/json');
+       echo json_encode($ret);
+
      break;
      case 'job':
        if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
@@ -188,6 +214,7 @@ try {
        if ($job->t_add > 0) $ret['add'] = date('d-m-Y H:i:s', $job->t_add);
        if ($job->t_upd > 0) $ret['upd'] = date('d-m-Y H:i:s', $job->t_upd);
        if ($job->o_log) $ret['log'] = $job->o_log->log;
+       header('Content-Type: application/json');
        echo json_encode($ret);
      break;
      default:
