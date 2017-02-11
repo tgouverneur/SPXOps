@@ -134,6 +134,7 @@ try {
        }
        $id = $_GET['i'];
        $s = new VM();
+       $s->id = $id;
        if ($s->fetchFromId()) {
            throw new ExitException('Not found');
        }
@@ -149,6 +150,7 @@ try {
        }
        $id = $_GET['i'];
        $s = new Server();
+       $s->id = $id;
        if ($s->fetchFromId()) {
            throw new ExitException('Not found');
        }
@@ -233,6 +235,12 @@ try {
        $ret['id'] = $job->id;
        $ret['state'] = $job->stateStr();
        $ret['fct'] = $job->fct;
+       $ret['arg'] = null;
+       if (is_numeric($job->arg)) {
+           $ret['arg'] = $job->arg;
+       } else {
+           $ret['arg'] = unserialize($job->arg);
+       }
        $ret['pc_progress'] = $job->pc_progress;
        $ret['elapsed'] = -1;
        $ret['pid'] = '';
