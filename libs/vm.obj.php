@@ -48,14 +48,16 @@ class VM extends MySqlObj
 
     public $a_sgroup = array();
 
-    public function jsonSerialize() {
-        $this->fetchData();
-        $this->fetchRL('a_disk');
-        if (!$this->o_server && $this->fk_server > 0) {
-            $this->fetchFK('fk_server');
+    public function jsonSerialize($full=true) {
+        if ($full) {
+            $this->fetchData();
+            $this->fetchRL('a_disk');
+            if (!$this->o_server && $this->fk_server > 0) {
+                $this->fetchFK('fk_server');
+            }
+            $this->getDisks();
+            $this->getNets();
         }
-        $this->getDisks();
-        $this->getNets();
         $ret = array(
                 'name' => $this->name,
                 'status' => $this->status,
@@ -66,18 +68,20 @@ class VM extends MySqlObj
         if ($this->o_server) {
             $ret['o_server'] = $this->o_server->jsonSerialize();
         }
-        $ret['disks'] = array();
-        $ret['net'] = array();
-        foreach($this->a_hostdisk as $disk) {
-            $ret['disks'][] = $disk->file;
-        }
-        $i=0;
-        foreach($this->a_hostnet as $net) {
-            $ret['net'][$i] = array();
-            $ret['net'][$i]['net'] = $net->net;
-            $ret['net'][$i]['mac'] = $net->mac;
-            $ret['net'][$i]['model'] = $net->model;
-            $i++;
+        if ($full) {
+            $ret['disks'] = array();
+            $ret['net'] = array();
+            foreach($this->a_hostdisk as $disk) {
+                $ret['disks'][] = $disk->file;
+            }
+            $i=0;
+            foreach($this->a_hostnet as $net) {
+                $ret['net'][$i] = array();
+                $ret['net'][$i]['net'] = $net->net;
+                $ret['net'][$i]['mac'] = $net->mac;
+                $ret['net'][$i]['model'] = $net->model;
+                $i++;
+            }
         }
         return $ret;
     }

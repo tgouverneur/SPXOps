@@ -125,6 +125,36 @@ try {
        header('Content-Type: application/json');
        echo json_encode($slr);
      break;
+     case 'vm':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+            throw new ExitException('Not authorized');
+       }
+       if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
+            throw new ExitException('Missing argument');
+       }
+       $id = $_GET['i'];
+       $s = new VM();
+       if ($s->fetchFromId()) {
+           throw new ExitException('Not found');
+       }
+       header('Content-Type: application/json');
+       echo json_encode($s->jsonSerialize(false));
+     break;
+     case 'sname':
+       if (!$lm->o_login->cRight('SRV', R_VIEW)) {
+            throw new ExitException('Not authorized');
+       }
+       if (!isset($_GET['i']) || empty($_GET['i']) || !is_numeric($_GET['i'])) {
+            throw new ExitException('Missing argument');
+       }
+       $id = $_GET['i'];
+       $s = new Server();
+       if ($s->fetchFromId()) {
+           throw new ExitException('Not found');
+       }
+       header('Content-Type: application/json');
+       echo json_encode($s->jsonSerialize());
+     break;
      case 'server':
        if (!isset($_GET['s']) || empty($_GET['s'])) {
             throw new ExitException('Missing argument');
@@ -156,7 +186,7 @@ try {
        header('Content-Type: application/json');
        echo json_encode($ret);
      break;
-     case 'joblist':
+     case 'currentJobs':
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {
            throw ExitException('Not Authorized');
        }
@@ -171,11 +201,12 @@ try {
        $a_job = Job::getAll(true, $filter, array('DESC:t_add'));
        $ret = array();
        foreach($a_job as $job) {
-           if ($job->state != S_RUN ||
+           if ($job->state != S_RUN &&
                $job->state != S_NEW)
            {
-               $ret[] = $job->id;
+               continue;
            }
+           $ret[] = $job->id;
        }
        header('Content-Type: application/json');
        echo json_encode($ret);
@@ -201,7 +232,9 @@ try {
        $ret = array();
        $ret['id'] = $job->id;
        $ret['state'] = $job->stateStr();
+       $ret['fct'] = $job->fct;
        $ret['pc_progress'] = $job->pc_progress;
+       $ret['elapsed'] = -1;
        $ret['pid'] = '';
        $ret['log'] = '';
        $ret['start'] = '';
@@ -213,6 +246,7 @@ try {
        if ($job->t_stop > 0) $ret['stop'] = date('d-m-Y H:i:s', $job->t_stop);
        if ($job->t_add > 0) $ret['add'] = date('d-m-Y H:i:s', $job->t_add);
        if ($job->t_upd > 0) $ret['upd'] = date('d-m-Y H:i:s', $job->t_upd);
+       if ($job->t_start > 0) $ret['elapsed'] = (time() - $job->t_start);
        if ($job->o_log) $ret['log'] = $job->o_log->log;
        header('Content-Type: application/json');
        echo json_encode($ret);
