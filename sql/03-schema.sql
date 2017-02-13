@@ -668,7 +668,7 @@ CREATE TABLE `list_setting` (
   `name` varchar(50) NOT NULL,
   `textname` varchar(100) NOT NULL,
   `description` varchar(200) NOT NULL,
-  `value` varchar(100) NOT NULL,
+  `value` varchar(1000) NOT NULL,
   `placeholder` varchar(100) NOT NULL,
   `t_add` int(11) NOT NULL DEFAULT '-1',
   `t_upd` int(11) NOT NULL DEFAULT '-1',
