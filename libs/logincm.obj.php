@@ -44,6 +44,8 @@ class LoginCM
     public function startSession()
     {
         $this->checkEnforceSSL();
+        $a_param = session_get_cookie_params();
+        session_set_cookie_params($a_param['lifetime'], $a_param['path'], $a_param['domain'], true, true);
         session_start();
         $this->checkLogin();
         $this->checkAPIKey();
