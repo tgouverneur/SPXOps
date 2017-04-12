@@ -348,7 +348,7 @@ CREATE TABLE `list_lock` (
 
 CREATE TABLE `list_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `msg` varchar(255) NOT NULL,
+  `msg` TEXT NOT NULL,
   `o_class` varchar(20) NOT NULL,
   `fk_what` int(11) NOT NULL,
   `fk_login` int(11) NOT NULL,
