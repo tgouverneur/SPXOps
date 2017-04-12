@@ -69,10 +69,14 @@
 <?php if (isset($actions)) { ?>
  	<div class="page-header">
           <h1>Actions</h1>
-        </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
         <ul class="nav nav-pills nav-stacked">
 <?php foreach($actions as $name => $link) { ?>
-          <li class="col-md-2" role="presentation"><a href="<?php echo $link; ?>"><?php echo $name; ?></a></li>
+          <li class="col-md-4" role="presentation"><a href="<?php echo $link; ?>"><?php echo $name; ?></a></li>
 <?php } ?>
         </ul>
+      </div>
+    </div>
 <?php } ?>

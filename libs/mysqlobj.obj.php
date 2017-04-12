@@ -1105,15 +1105,26 @@ class MySqlObj
                 $where .= ')';
             } elseif (!strncmp('NOT:', $src, 4)) {
                 $sstring = preg_replace('/^NOT:/', '', $src);
-                $where .= "`".$dst."`!=".$my->quote($sstring);
+                $where .= "`".$dst."`!=";
+                if (is_int($sstring)) { $where .= $sstring; } else { $where .= $my->quote($sstring); }
+            } elseif (!strncmp('LT:', $src, 3)) {
+                $sstring = preg_replace('/^LT:/', '', $src);
+                $where .= "`".$dst."`<";
+                if (is_int($sstring)) { $where .= $sstring; } else { $where .= $my->quote($sstring); }
+            } elseif (!strncmp('GT:', $src, 3)) {
+                $sstring = preg_replace('/^GT:/', '', $src);
+                $where .= "`".$dst."`>";
+                if (is_int($sstring)) { $where .= $sstring; } else { $where .= $my->quote($sstring); }
             } elseif (!strncmp('CST:', $src, 4)) {
                 $sstring = preg_replace('/^CST:/', '', $src);
-                $where .= "`".$dst."`=".$my->quote($sstring);
+                $where .= "`".$dst."`=";
+                if (is_int($sstring)) { $where .= $sstring; } else { $where .= $my->quote($sstring); }
             } elseif (!strncmp('LIKE:', $src, 5)) {
                 $sstring = preg_replace('/^LIKE:/', '', $src);
                 $where .= "`".$dst."` LIKE ".$my->quote($sstring);
             } else {
-                $where .= "`".$dst."`=".$my->quote($src);
+                $where .= "`".$dst."`=";
+                if (is_int($src)) { $where .= $src; } else { $where .= $my->quote($src); }
             }
             $w++;
         }

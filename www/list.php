@@ -270,10 +270,39 @@ try {
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {
          throw new ExitException('Access Denied, please check your access rights!');
        } 
+       $filter = array();
+       /* load Job() */
+       new Job();
+       if (isset($_GET['filter'])) {
+           switch($_GET['filter']) {
+               case 'sys':
+                   $filter['fk_login'] = 'LT:1';
+               break;
+               case 'usr':
+                   $filter['fk_login'] = 'GT:0';
+               break;
+               case 'failed':
+                   $filter['state'] = S_FAIL;
+               break;
+               case 'stalled':
+                   $filter['state'] = S_STALL;
+               break;
+               case 'running':
+                   $filter['state'] = S_RUN;
+               break;
+           }
+       }
        $npp = Setting::get('display', 'jobPerPage')->value;
-       $a_list = Job::getAll(true, array(), array('DESC:t_upd'), 0, 5000);
+       $a_list = Job::getAll(true, $filter, array('DESC:t_upd'), 0, 5000);
+       $a_action = array();
+       $a_action['Show only failed jobs'] = '/list/w/jobs/filter/failed';
+       $a_action['Show only running jobs'] = '/list/w/jobs/filter/running';
+       $a_action['Show only stalled jobs'] = '/list/w/jobs/filter/stalled';
+       $a_action['Show only system jobs'] = '/list/w/jobs/filter/system';
+       $a_action['Show only user jobs'] = '/list/w/jobs/filter/user';
        $content = new Template('../tpl/list.tpl');
        $content->set('a_list', $a_list);
+       $content->set('actions', $a_action);
        $content->set('canView', true);
        if ($lm->o_login->cRight('JOB', R_DEL)) $content->set('canDel', true);
        $content->set('what', 'Jobs');
