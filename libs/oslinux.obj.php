@@ -40,6 +40,8 @@ class OSLinux extends OSType
         "updateProc",
         "updatePackages",
         "updateNetwork",
+        "updateUptime",
+        "updateNfsMounts",
     ),
   );
 
