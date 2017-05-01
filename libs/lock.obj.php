@@ -128,6 +128,76 @@ class Lock extends MySqlObj
         return '';
     }
 
+    public static function lockObjFctIfNot($obj, $fct)
+    {
+        $m = MysqlCM::getInstance();
+        $locked = false;
+        $pid = Pid::getMyPid();
+
+        /* Lock the table */
+        $rc = $m->lockTable('list_lock');
+        if ($rc) {
+            return $locked;
+        }
+        if (!self::isObjFctLocked($obj, $fct)) {
+            $rc = self::lockObjFct($obj, $fct, $pid);
+            if ($rc) {
+                /* Something bad happened, try anyway to delete lock... */
+                self::unlockObjFct($obj, $fct, $pid);
+            } else {
+                $locked = true;
+            }
+        }
+
+        $m->unlockTables();
+        return $locked;
+    }
+
+  /* Fct locking */
+  public static function lockObjFct($obj, $fct, $pid = null)
+  {
+      $cl = new Lock();
+      $cl->fct = $fct;
+      if ($pid) {
+          $cl->fk_pid = $pid->id;
+      }
+      $fk = $cl->setIt($obj);
+
+      return $cl->insert();
+  }
+
+   
+    public static function unlockObjFct($obj, $fct, $pid = null) {
+        $cl = new Lock();
+        $cl->fct = $fct;
+        $fk = $cl->setIt($obj);
+        if ($fk === false) {
+            return false;
+        }
+        if ($pid) {
+            $cl->fk_pid = $pid->id;
+        }
+        if ($cl->fetchFromFields(array('fct', 'fk_pid', $fk))) {
+            return false;
+        }
+        $cl->delete();
+        return true;
+    }
+
+    public static function isObjFctLocked($obj, $fct)
+    {
+        $cl = new Lock();
+        $cl->fct = $fct;
+        $fk = $cl->setIt($obj);
+        if ($fk === false) {
+            return false;
+        }
+        if ($cl->fetchFromFields(array('fct', $fk))) {
+            return false;
+        }
+        return true;
+    }
+
   /**
    * ctor
    */

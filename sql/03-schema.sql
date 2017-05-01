@@ -337,7 +337,7 @@ CREATE TABLE `list_lock` (
   `fk_server` int(11) NOT NULL DEFAULT '-1',
   `fk_vm` int(11) NOT NULL DEFAULT '-1',
   `fk_pid` int(11) NOT NULL,
-  `fct` varchar(15) NOT NULL,
+  `fct` varchar(60) NOT NULL,
   `t_add` int(11) NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
