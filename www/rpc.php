@@ -190,7 +190,7 @@ try {
      break;
      case 'currentJobs':
        if (!$lm->o_login->cRight('JOB', R_VIEW)) {
-           throw ExitException('Not Authorized');
+           throw new ExitException('Not Authorized');
        }
        if (!isset($_GET['class']) || empty($_GET['class'])) {
             throw new ExitException('Missing argument');
