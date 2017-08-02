@@ -174,8 +174,15 @@ class OSLinux extends OSType
           $vm->fetchData();
           $u = 0;
           if ($vm->fk_server != $s->id) {
-              $vm->fk_server = $s->id;
+              if ($vm->fk_server > 0) {
+                  $vm->fetchFK('fk_server');
+                  $msg = 'VM moved from '.$vm->o_server.' to '.$s;
+              } else {
+                  $msg = 'VM assigned to '.$s;
+              }
               $s->log("VM $vm reassigned to $s", LLOG_INFO);
+              $vm->addLog($msg);
+              $vm->fk_server = $s->id;
               $new = true;
               $u++;
           }
