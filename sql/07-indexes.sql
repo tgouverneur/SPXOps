@@ -21,3 +21,4 @@ CREATE INDEX list_disk_fk_vm ON list_disk(fk_vm);
 CREATE INDEX list_nfs_fk_vm_type ON list_nfs(fk_vm, type);
 CREATE INDEX list_pid_pid_agent ON list_pid(pid, agent);
 CREATE INDEX jt_disk_pool_fk_pool ON jt_disk_pool(fk_pool);
+CREATE INDEX list_log_o_class_fk_what ON list_log(o_class,fk_what);
