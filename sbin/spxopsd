@@ -183,6 +183,7 @@
           throw($e);
       }
 
+
       /* See if it's time to add some recurrent jobs */
       if (Lock::lockFctIfNot('rjob')) {
           $this->log("Locked RJob function for our usage", LLOG_DEBUG);

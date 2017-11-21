@@ -211,6 +211,7 @@ class SSHSession
                 if (strpos($buf, '__COMMAND_FINISHED__') !== false) {
                     fclose($stream);
                     $buf = str_replace("__COMMAND_FINISHED__\n", '', $buf);
+                    $buf = str_replace("__COMMAND_FINISHED__\r\n", '', $buf);
                     if (defined('SSH_DEBUG')) { echo '[D] Clean return'."\n"; }
                     return $buf;
                 }

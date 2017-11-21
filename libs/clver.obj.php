@@ -32,7 +32,7 @@ class CLVer extends MySqlObj
             $cat = $c->findBin('cat');
             if ($c->isFile('/etc/cluster/release')) { // Sun Cluster
 
-    $cmd_cat = "$cat /etc/cluster/release";
+                $cmd_cat = "$cat /etc/cluster/release";
                 $out_cat = $c->exec($cmd_cat);
 
                 $rel_lines = explode("\n", $out_cat);
