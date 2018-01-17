@@ -46,7 +46,7 @@
             <ul class="nav navbar-nav">
               <li class="active"><a href="/index">Home</a></li>
               <li class="dropdown"> 
-                <a href="#" class="dropdown-toggle" role="button" aria-expanded="false" data-toggle="dropdown">Informations <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" role="button" aria-expanded="false" data-toggle="dropdown">Information <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                   <li class="dropdown-header">Servers</li>
                   <li><a href="/list/w/server">List</a></li>
