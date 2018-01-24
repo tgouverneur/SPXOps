@@ -90,13 +90,13 @@ for i in `./scha_cluster_get -O ALL_RESOURCEGROUPS`; do nodelist=`./scha_resourc
                   $node = $node[0];
                   $c->log("Detected zone $zname for $rg", LLOG_DEBUG);
               }
-    /* Node should be found in node list of the cluster */
-    foreach ($c->a_server as $s) {
-        if (!strcmp($s->hostname, $node)) {
-            $nobj = $s;
-            break;
-        }
-    }
+            /* Node should be found in node list of the cluster */
+            foreach ($c->a_server as $s) {
+                if (!strncmp($s->hostname, $node, strlen($node))) { /* only compare strlen($node) so sqdn are supported as cluster members */
+                    $nobj = $s;
+                    break;
+                }
+            }
               if (!$nobj) {
                   $c->log("Unresolved server $node for $rg", LLOG_WARN);
                   continue;
