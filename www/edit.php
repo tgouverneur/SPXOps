@@ -40,6 +40,46 @@ try {
 
  if (isset($_GET['w']) && !empty($_GET['w'])) {
    switch($_GET['w']) {
+     case 'vm':
+       $what = 'VM';
+       if (!$lm->o_login->cRight('SRV', R_EDIT)) {
+         throw new ExitException('Access Denied, please check your access rights!');
+       }
+       if (isset($_GET['i']) && !empty($_GET['i'])) {
+         $suid = $_GET['i'];
+       } else {
+         $content = new Template('../tpl/error.tpl');
+         $content->set('error', 'ID of VM is not provided');
+         goto screen;
+       }
+       $obj = new VM();
+       $obj->id = $suid;
+       if ($obj->fetchFromId()) {
+         throw new ExitException('The VM ID provided has not been foudn in DB');
+       }
+       if (isset($_GET['a']) && !empty($_GET['a'])) {
+           switch($_GET['a']) {
+               case 'enable':
+                   $obj->f_upd = 1;
+                   $obj->update();
+                   $content = new Template('../tpl/message.tpl');
+                   $content->set('msg', $what." $obj has been updated");
+                   goto screen;
+               break;
+               case 'disable':
+                   $obj->f_upd = 0;
+                   $obj->update();
+                   $content = new Template('../tpl/message.tpl');
+                   $content->set('msg', $what." $obj has been updated");
+                   goto screen;
+               break;
+               default:
+                 throw new ExitException('Unknown action');
+           }
+       } else {
+         throw new ExitException('No action provided for this VM');
+       }
+     break;
      case 'rjob':
        if (!$lm->o_login->cRight('RJOB', R_EDIT)) {
          throw new ExitException('Access Denied, please check your access rights!');

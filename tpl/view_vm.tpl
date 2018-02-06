@@ -62,6 +62,8 @@
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#">Database <b class="caret"></b></a>
 	        <ul class="dropdown-menu">
                   <li><a href="/log/w/vm/i/<?php echo $obj->id; ?>">Add Log entry</a></li>
+                  <li><a href="/edit/w/vm/i/<?php echo $obj->id; ?>/a/disable">Disable Update</a></li>
+                  <li><a href="/edit/w/vm/i/<?php echo $obj->id; ?>/a/enable">Enable Update</a></li>
 	        </ul>
 	      </li>
               <li class="dropdown active">

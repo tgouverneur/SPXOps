@@ -347,6 +347,7 @@ class VM extends MySqlObj
             'Live Memory' => Pool::formatBytes($this->data('kvm:livememory') * 1024),
             '# CPU' => $this->data('kvm:nrcpu'),
             'Memory' => Pool::formatBytes($this->data('kvm:memory') * 1024),
+            'Update VM?' => ($this->f_upd) ? '<span class="glyphicon glyphicon-ok-sign"></span>' : '<span class="glyphicon glyphicon-remove-circle"></span>',
             'Updated on' => date('d-m-Y', $this->t_upd),
             'Added on' => date('d-m-Y', $this->t_add),
         );
