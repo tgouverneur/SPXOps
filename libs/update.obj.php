@@ -22,6 +22,10 @@ class Update
       }
       $s->_job = $job;
 
+      if (!$s->f_upd) {
+          throw new SPXException('VM f_upd is disabled');
+      }
+
       if (strcmp($s->status, 'running')) {
           $s->log($s.' is not in running state, exiting', LLOG_ERR);
           return;
