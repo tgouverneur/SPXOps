@@ -72,9 +72,11 @@ class SSHSession
         if (!$this->_connected) {
             throw new SPXException('Cannot recvFile(): not connected');
         }
-        $sftp = ssh2_sftp($this->_con);
+        //$sftp = ssh2_sftp($this->_con);
 
         if (defined('SSH_DEBUG')) { echo '[D] stat size='.$fsize."\n"; }
+        return ssh2_scp_recv($this->_con, $source, $dest);
+        /*
         $fh_src = fopen("ssh2.sftp://$sftp".$source, 'r');
         $fh_dst = fopen($dest, 'w');
         if (!$fh_src || !$fh_dst) {
@@ -93,6 +95,7 @@ class SSHSession
         fclose($fh_src);
         fclose($fh_dst);
         return true;
+         */
     }
 
 
