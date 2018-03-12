@@ -56,13 +56,13 @@ try {
      case 'server':
        $o = null;
        $i = null;
-       if (isset($_POST['ri']) && !empty($_POST['i'])) {
-         $i = $_POST['i'];
+       if (isset($_REQUEST['i']) && !empty($_REQUEST['i'])) {
+         $i = $_REQUEST['i'];
        } 
-       if (isset($_POST['o']) && !empty($_POST['o'])) {
-         $o = $_POST['o'];
+       if (isset($_REQUEST['o']) && !empty($_REQUEST['o'])) {
+         $o = $_REQUEST['o'];
        } 
-       $abj = new Server();
+       $obj = new Server();
        if ($i) {
            $obj->id = $i;
            if ($obj->fetchFromId()) {
@@ -76,6 +76,7 @@ try {
        } else {
            throw new ExitException('No server hostname/id provided', 2);
        }
+       $obj->fetchAll();
        header('Content-Type: application/json');
        echo json_encode($obj->jsonSerialize(), JSON_PRETTY_PRINT);
      break;

@@ -512,6 +512,8 @@ class Server extends MySqlObj implements JsonSerializable
         return array(
                 'id' => $this->id,
                 'hostname' => $this->hostname,
+		'os' => $this->fk_os,
+		'pools' => $this->a_pool,
            );
     }
 
