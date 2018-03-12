@@ -76,6 +76,7 @@ try {
        } else {
            throw new ExitException('No server hostname/id provided', 2);
        }
+       $obj->fetchAll();
        header('Content-Type: application/json');
        echo json_encode($obj->jsonSerialize(), JSON_PRETTY_PRINT);
      break;
