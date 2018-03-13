@@ -76,6 +76,12 @@ try {
        } else {
            throw new ExitException('No server hostname/id provided', 2);
        }
+       try {
+           if ($obj->fk_os > 0) $obj->fetchFK('fk_os');
+           $obj->fetchRL('a_pool');
+       } catch (SPXException $e) {
+           throw new ExitException($e->getMessage(), 2);
+       }
        header('Content-Type: application/json');
        echo json_encode($obj->jsonSerialize(), JSON_PRETTY_PRINT);
      break;

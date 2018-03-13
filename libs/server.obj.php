@@ -509,10 +509,23 @@ class Server extends MySqlObj implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return array(
+        $ret = array(
                 'id' => $this->id,
                 'hostname' => $this->hostname,
+                
            );
+        $ret['fk_os'] = $this->fk_os;
+
+        if ($this->o_os) {
+            $ret['os_name'] = $this->o_os->name;
+        }
+        if ($this->a_pool && count($this->a_pool)) {
+            $ret['a_pool'] = array();
+            foreach($this->a_pool as $pool) {
+                $ret['a_pool'][] = $pool->jsonSerialize();
+            }
+        }
+        return $ret;
     }
 
     public static function dashboardArray($fk_os = null)

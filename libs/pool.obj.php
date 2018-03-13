@@ -215,6 +215,16 @@ class Pool extends MySqlObj
         return round($k, 2)." PB";
     }
 
+    public function jsonSerialize() {
+        $ret = array(
+            'name' => $this->name,
+            'type' => $this->type,
+            'used' => $this->used,
+            'status' => $this->status,
+        );
+        return $ret;
+    }
+
     public static function formatSize($size)
     {
         if (!strcmp($size, 'none')) {
