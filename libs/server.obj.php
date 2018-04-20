@@ -414,11 +414,14 @@ class Server extends MySqlObj implements JsonSerializable
                   if (!$this->o_os && $this->fk_os > 0) {
                       $this->fetchFK('fk_os');
                   }
-                  $spec = $this->o_os->htmlDump($this);
-                  if (isset($spec['Version'])) {
-                      $ret['osver'] = $spec['Version'];
-                  } else {
-                      $ret['osver'] = 'N/A';
+                  if ($this->o_os) {
+                      $spec = $this->o_os->htmlDump($this);
+
+                      if (isset($spec['Version'])) {
+                          $ret['osver'] = $spec['Version'];
+                      } else {
+                          $ret['osver'] = 'N/A';
+                      }
                   }
                 break;
                 case 'oskernel':
@@ -428,18 +431,22 @@ class Server extends MySqlObj implements JsonSerializable
                   if (!$this->o_os && $this->fk_os > 0) {
                       $this->fetchFK('fk_os');
                   }
-                  $spec = $this->o_os->htmlDump($this);
-                  if (isset($spec['Kernel'])) {
-                      $ret['oskernel'] = $spec['Kernel'];
-                  } else {
-                      $ret['oskernel'] = 'N/A';
+                  if ($this->o_os) {
+                      $spec = $this->o_os->htmlDump($this);
+                      if (isset($spec['Kernel'])) {
+                          $ret['oskernel'] = $spec['Kernel'];
+                      } else {
+                          $ret['oskernel'] = 'N/A';
+                      }
                   }
                 break;
                 case 'os':
                   if (!$this->o_os && $this->fk_os > 0) {
                       $this->fetchFK('fk_os');
                   }
-                  $ret['os'] = ($this->o_os) ? $this->o_os->name : 'Unknown';
+                  if ($this->o_os) {
+                      $ret['os'] = ($this->o_os) ? $this->o_os->name : 'Unknown';
+                  }
                 break;
                 case 'nrvms':
                   if (!count($this->a_vm)) {
