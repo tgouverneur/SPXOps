@@ -57,7 +57,7 @@ if (!isset($edit)) $edit = false;
 	    <div class="col-sm-3">
 	      <select class="form-control" name="fk_suser" id="inputSSHUser">
 <?php foreach($susers as $suser) { ?>
-		<option value="<?php echo $suser->id; ?>" <?php if ($obj->fk_suser == $suser->id) echo "selected"; ?>><?php echo $suser; ?></option>
+		<option value="<?php echo $suser->id; ?>" <?php if ($obj->fk_suser == $suser->id) echo "selected"; ?>><?php echo $suser.'('.$suser->description.')'; ?></option>
 <?php } ?>
 	      </select>
 	    </div>
