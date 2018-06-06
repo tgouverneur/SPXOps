@@ -456,7 +456,8 @@ class OSLinux extends OSType
   {
       //dpkg-qu ery -W -f '${Package};${Version};${Architecture};${Status};${binary:Summary}\n' '*'
       $dpkg = $s->findBin('dpkg-query');
-      $cmd_dpkg = "$dpkg -W -f '\${Package};\${Version};\${Architecture};\${Status};\${binary:Summary}\\n' '*'";
+      $grep = $s->findBin('grep');
+      $cmd_dpkg = "$dpkg -W -f '\${Package};\${Version};\${Architecture};\${Status};\${binary:Summary}\\n' '*' | $grep -v 'not-installed;\$'";
       $out_dpkg = $s->exec($cmd_dpkg);
 
       $lines = explode(PHP_EOL, $out_dpkg);
@@ -579,6 +580,7 @@ class OSLinux extends OSType
             return 0;
           break;
         }
+        $f = array('lname', 'arch', 'version', 'basedir', 'vendor', 'desc', 'fmri', 'status');
 
         foreach ($found_p as $pkg) {
             $po = new Pkg();
@@ -586,19 +588,24 @@ class OSLinux extends OSType
             $po->{$fk} = $s->id;
 
             if ($po->fetchFromFields(array('name', $fk))) {
+                foreach ($f as $field) {
+                    $po->{$field} = $pkg[$field];
+                }
                 $s->log('new package found: '.$po, LLOG_INFO);
                 $po->insert();
                 array_push($s->a_pkg, $po);
+                continue;
             }
 
-            $f = array('lname', 'arch', 'version', 'basedir', 'vendor', 'desc', 'fmri', 'status');
+            $f_c = false;
             foreach ($f as $field) {
                 if (isset($pkg[$field]) && $pkg[$field] != $po->{$field}) {
                     $po->{$field} = $pkg[$field];
                     $s->log("$po:$field => ".$pkg[$field], LLOG_DEBUG);
+                    $f_c = true;
                 }
             }
-            $po->update();
+            if ($f_c) $po->update();
         }
 
         OSType::cleanRemoved($s, 'a_pkg', 'name', $found_p);
