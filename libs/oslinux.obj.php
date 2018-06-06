@@ -565,6 +565,7 @@ class OSLinux extends OSType
 
         switch ($s->data('linux:name')) {
           case 'Debian':
+          case 'Ubuntu':
             $found_p = OSLinux::updatePackagesDeb($s);
           break;
           case 'RHEL':
