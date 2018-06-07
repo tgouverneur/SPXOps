@@ -231,6 +231,7 @@ class OSLinux extends OSType
                       $vm_disks .= $disk->source->Attributes()[0].';';
                   }
                   if ($vm->data('kvm:disks') != $vm_disks) {
+                      $vm->addLog('Drive changed from '.$vm->data('kvm:disks').' to '.$vm_disks);
                       $vm->setData('kvm:disks', $vm_disks);
                       $s->log("$vm kvm:disks => $vm_disks", LLOG_INFO);
                       $u++;
@@ -566,7 +567,7 @@ class OSLinux extends OSType
 
         switch ($s->data('linux:name')) {
           case 'Debian':
-          case 'Ubuntu':
+          //case 'Ubuntu':
             $found_p = OSLinux::updatePackagesDeb($s);
           break;
           case 'RHEL':
