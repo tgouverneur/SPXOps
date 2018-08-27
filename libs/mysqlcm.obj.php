@@ -74,11 +74,15 @@ class MySqlCM
   /**
    * Singleton variable
    */
-  private static $_instance;
+  private static $_instance = array();
 
-    public static function delInstance()
+    public static function delInstance($name = null)
     {
-        self::$_instance = null;
+        if (!$name) {
+            $name = 'main';
+        }
+        $hash = hash('crc32', $name, false);
+        self::$_instance[$hash] = null;
     }
 
   /**
@@ -96,20 +100,24 @@ class MySqlCM
   /**
    * Returns the singleton instance
    */
-  public static function getInstance()
+  public static function getInstance($name = null)
   {
-      if (!isset(self::$_instance)) {
-          $c = __CLASS__;
-          self::$_instance = new $c();
+      if (!$name) {
+          $name = 'main';
       }
-      if (self::$_instance->_pid != getmypid()) {
-          self::delInstance();
+      $hash = hash('crc32', $name, false);
+      if (!isset(self::$_instance[$hash])) {
           $c = __CLASS__;
-          self::$_instance = new $c();
-          self::$_instance->_ePrint('['.time().']['.self::$_instance->_pid.'] fork() detected'."\n");
+          self::$_instance[$hash] = new $c();
+      }
+      if (self::$_instance[$hash]->_pid != getmypid()) {
+          self::delInstance($name);
+          $c = __CLASS__;
+          self::$_instance[$hash] = new $c();
+          self::$_instance[$hash]->_ePrint('['.time().']['.self::$_instance->_pid.']['.$name.'] fork() detected'."\n");
       }
 
-      return self::$_instance;
+      return self::$_instance[$hash];
   }
 
     public function quote($str)
@@ -236,7 +244,7 @@ class MySqlCM
    */
   public function __clone()
   {
-      trigger_error("Cannot clone a singlton object, use ::instance()", E_USER_ERROR);
+      trigger_error("Cannot clone a singleton object, use ::instance()", E_USER_ERROR);
   }
 
   /**
