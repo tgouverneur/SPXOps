@@ -13,12 +13,12 @@
  */
 if (!defined('SQL_NONE')) {
     define('SQL_NONE',   0);  /* not used */
- define('SQL_INDEX', 1);   /* is the property an index ? */
- define('SQL_WHERE', 2);   /* is the property an part of the where condition when search for object */
- define('SQL_EXIST', 4);   /* is the property a part of the condition for the object to exist in the db */
- define('SQL_PROPE', 8);   /* is the property should be fetched ? */
- define('SQL_SORTA', 16);  /* sort with this field by ASC ? */
- define('SQL_SORTD', 32);  /* sort with this field by DESC ? */
+    define('SQL_INDEX', 1);   /* is the property an index ? */
+    define('SQL_WHERE', 2);   /* is the property an part of the where condition when search for object */
+    define('SQL_EXIST', 4);   /* is the property a part of the condition for the object to exist in the db */
+    define('SQL_PROPE', 8);   /* is the property should be fetched ? */
+    define('SQL_SORTA', 16);  /* sort with this field by ASC ? */
+    define('SQL_SORTD', 32);  /* sort with this field by DESC ? */
 }
 
 /**
@@ -31,6 +31,11 @@ if (!defined('SQL_NONE')) {
  */
 class MySqlCM
 {
+  /**
+   * Resource Name
+   */   
+  private $_name = null;
+
   /**
    * Holds the db link
    */
@@ -52,24 +57,22 @@ class MySqlCM
    * Number of rows affected by latest query
    */
   private $_affect = null;
-
-    private $_reconnect = true;
-
-    private $_pid = -1;
+  private $_reconnect = true;
+  private $_pid = -1;
 
   /**
    * Debug mode
    */
   private $_debug = false;
-    private $_dfile = false;
-    private $_dfd = null;
-    private $_elapsed = 0;
+  private $_dfile = false;
+  private $_dfd = null;
+  private $_elapsed = 0;
   /**
    * Error logging
    */
   private $_errlog = false;
-    private $_errfile = false;
-    private $_efd = null;
+  private $_errfile = false;
+  private $_efd = null;
 
   /**
    * Singleton variable
@@ -109,11 +112,13 @@ class MySqlCM
       if (!isset(self::$_instance[$hash])) {
           $c = __CLASS__;
           self::$_instance[$hash] = new $c();
+          self::$_instance[$hash]->_name = $name;
       }
       if (self::$_instance[$hash]->_pid != getmypid()) {
           self::delInstance($name);
           $c = __CLASS__;
           self::$_instance[$hash] = new $c();
+          self::$_instance[$hash]->_name = $name;
           self::$_instance[$hash]->_ePrint('['.time().']['.self::$_instance->_pid.']['.$name.'] fork() detected'."\n");
       }
 
@@ -272,14 +277,14 @@ class MySqlCM
   {
       $attempts = 0;
 
-      $dbstring = "mysql:host=".Config::$mysql_host;
-      $dbstring .= "; port=".Config::$mysql_port;
-      $dbstring .= "; dbname=".Config::$mysql_db;
+      $dbstring = "mysql:host=".Config::$db_mysql[$this->_name]['host'];
+      $dbstring .= "; port=".Config::$db_mysql[$this->_name]['port'];
+      $dbstring .= "; dbname=".Config::$db_mysql[$this->_name]['name'];
       do {
           try {
               $this->_link = new PDO($dbstring,
-                               Config::$mysql_user,
-                               Config::$mysql_pass,
+                               Config::$db_mysql[$this->_name]['user'],
+                               Config::$db_mysql[$this->_name]['pass'],
                    array(PDO::ATTR_PERSISTENT => false,
                      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, ));
               $this->_link->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
@@ -290,14 +295,14 @@ class MySqlCM
                   $this->_error = null;
               }
               if ($this->_debug) {
-                  $this->_dPrint("[".time()."][$attempts] Connection failed to database ".Config::$mysql_db."@".Config::$mysql_host.":".Config::$mysql_port."\n");
+                  $this->_dPrint("[".time()."][$attempts] Connection failed to database ".Config::$db_mysql[$this->_name]['name']."@".Config::$db_mysql[$this->_name]['host'].":".Config::$db_mysql[$this->_name]['port']."\n");
               }
 
               return -1;
           }
       } while ($attempts++ < 3);
       if ($this->_debug) {
-          $this->_dPrint("[".time()."] Connection succesfull to database ".Config::$mysql_db."@".Config::$mysql_host.":".Config::$mysql_port."\n");
+          $this->_dPrint("[".time()."] Connection succesfull to database ".Config::$db_mysql[$this->_name]['name']."@".Config::$db_mysql[$this->_name]['host'].":".Config::                $db_mysql[$this->_name]['port']."\n");
       }
 
       return 0;
@@ -310,7 +315,7 @@ class MySqlCM
   public function disconnect()
   {
       if ($this->_debug) {
-          $this->_dPrint("[".time()."] Connection closed to database ".Config::$mysql_db."@".Config::$mysql_host.":".Config::$mysql_port."\n");
+          $this->_dPrint("[".time()."] Connection closed to database ".Config::$db_mysql[$this->_name]['name']."@".Config::$db_mysql[$this->_name]['host'].":".Config::                                $db_mysql[$this->_name]['port']."\n");
       }
 
       unset($this->_link);
