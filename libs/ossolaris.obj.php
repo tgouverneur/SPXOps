@@ -2653,17 +2653,17 @@ d101 1 1 /dev/dsk/emcpower58a
               $s->log("updated $do type => $type", LLOG_DEBUG);
               $do->type = $type;
           }
-          if ($available && $do->available != $available) {
+          if ($do->available != $available) {
               $upd = true;
               $s->log("updated $do available => $available", LLOG_DEBUG);
               $do->available = $available;
           }
-          if ($quota && $do->size != $quota) {
+          if ($do->size != $quota) {
               $upd = true;
               $s->log("updated $do size => $quota", LLOG_DEBUG);
               $do->size = $quota;
           }
-          if ($usedchild && $do->uchild != $usedchild) {
+          if ($do->uchild != $usedchild) {
               $upd = true;
               $s->log("updated $do uchild => $usedchild", LLOG_DEBUG);
               $do->uchild = $usedchild;
@@ -2683,7 +2683,7 @@ d101 1 1 /dev/dsk/emcpower58a
               $s->log("updated $do creation => $sd", LLOG_DEBUG);
               $do->creation = $sd;
           }
-          if ($used && $do->used != $used) {
+          if ($do->used != $used) {
               $upd = true;
               $s->log("updated $do used => $used", LLOG_DEBUG);
               $do->used = $used;

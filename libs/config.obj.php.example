@@ -18,11 +18,15 @@ class Config
     public static $api_salt = 'mysecretkey';
 
     /* database */
-    public static $mysql_host = 'localhost';
-    public static $mysql_user = 'spxops';
-    public static $mysql_pass = '';
-    public static $mysql_port = 3306;
-    public static $mysql_db = 'spxops';
+    public static $db_mysql = array(
+                    'main' => array(
+                        'host' = 'localhost',
+                        'user' => 'spxops',
+                        'pass' => '',
+                        'port' => 3306,
+                        'name' => 'spxops'
+                        )
+                    );
 
     /* MySQL Debug mode, comment to disable. */
     public static $mysql_debug = FALSE;

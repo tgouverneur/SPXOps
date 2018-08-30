@@ -18,8 +18,9 @@ class MySqlObj
 {
     protected $_my = array();
     protected $_myc = array();
-    protected $_table = "";
-    protected $_nfotable = "";
+    protected $_table = '';
+    protected $_nfotable = '';
+    protected $_instance = 'main';
     protected $_datas = array();
 
     protected $_fks = array();
@@ -99,13 +100,13 @@ class MySqlObj
           return;
       }
 
-    /* Build index list */
-    $ids = array_keys($this->_my, SQL_INDEX);
+      /* Build index list */
+      $ids = array_keys($this->_my, SQL_INDEX);
       if (count($ids) == 0) {
           throw new SPXException('No Index found for this object');
       }
 
-      $my = MySqlCM::getInstance();
+      $my = MySqlCM::getInstance($this->_instance);
 
       $where = "";
       $args = array();
@@ -149,7 +150,7 @@ class MySqlObj
           throw new SPXException('No Index found for this object');
       }
 
-      $my = MySqlCM::getInstance();
+      $my = MySqlCM::getInstance($this->_instance);
 
       if (isset($this->_datas[$name])) {
           if ($value === $this->_datas[$name]) {
@@ -225,7 +226,7 @@ class MySqlObj
           throw new SPXException('No Index in this object');
       }
 
-      $my = MySqlCM::getInstance();
+      $my = MySqlCM::getInstance($this->_instance);
 
       $where = "";
       $args = array();
@@ -295,7 +296,7 @@ class MySqlObj
       }
       $where = array('q' => $where, 'a' => $args);
 
-      $my = MySqlCM::getInstance();
+      $my = MySqlCM::getInstance($this->_instance);
       if (($data = $my->select("`".$id."`", $this->_table, $where)) !== false) {
           if ($my->getNR() == 1) {
               $this->{$this->_myc[$id]} = $data[0][$id];
@@ -325,7 +326,7 @@ class MySqlObj
           $this->t_upd = time();
       }
 
-      $my = MySqlCM::getInstance();
+      $my = MySqlCM::getInstance($this->_instance);
       foreach ($this->_my as $k => $v) {
           if (($v & SQL_INDEX) && (empty($this->{$this->_myc[$k]}) || $this->{$this->_myc[$k]} == -1)) {
               continue; /* skip index */
@@ -367,7 +368,7 @@ class MySqlObj
           $this->t_upd = time();
       }
 
-      $my = MySqlCM::getInstance();
+      $my = MySqlCM::getInstance($this->_instance);
       $w_args = array();
       $s_args = array();
       foreach ($ids as $id) {
@@ -409,7 +410,7 @@ class MySqlObj
   {
       $where = " WHERE ";
       $i = 0;
-      $my = MySqlCM::getInstance();
+      $my = MySqlCM::getInstance($this->_instance);
       foreach ($this->_my as $k => $v) {
           if ($v == SQL_INDEX) {
               continue;
@@ -483,7 +484,7 @@ class MySqlObj
               $where .= " AND `".$id."`='".$this->{$this->_myc[$id]}."'";
           }
 
-          $my = MySqlCM::getInstance();
+          $my = MySqlCM::getInstance($this->_instance);
           if ($my->select("`".$id."`", $this->_table, $where) === false) {
               return 1;
           } else {
@@ -513,7 +514,7 @@ class MySqlObj
           $i++;
       }
 
-      $my = MySqlCM::getInstance();
+      $my = MySqlCM::getInstance($this->_instance);
       $i = 0;
       foreach ($on_fields as $field) {
           if ($i) {
@@ -547,7 +548,7 @@ class MySqlObj
    */
   public function fetchFromField($field)
   {
-      $my = MySqlCM::getInstance();
+      $my = MySqlCM::getInstance($this->_instance);
       $i = 0;
       $fields = "";
       foreach ($this->_my as $k => $v) {
@@ -620,7 +621,7 @@ class MySqlObj
       } 
     $where = array('q' => $where, 'a' => $args);
 
-    $my = MySqlCM::getInstance();
+    $my = MySqlCM::getInstance($this->_instance);
       if (($data = $my->select($fields, $this->_table, $where)) === false) {
           return -1;
       } else {
@@ -648,7 +649,7 @@ class MySqlObj
       $args = array();
       $w = 0;
 
-      $my = MySqlCM::getInstance();
+      $my = MySqlCM::getInstance($this->_instance);
     /* Build index list */
     $ids = array_keys($this->_my, SQL_INDEX);
       if (count($ids) == 0) {
@@ -721,6 +722,11 @@ class MySqlObj
         return $this->_table;
     }
 
+    public function getDBInstance()
+    {
+        return $this->_instance;
+    }
+
     public function getIdx($f_array = false)
     {
         $rc = '';
@@ -754,7 +760,7 @@ class MySqlObj
             throw new SPXException("Rel association $name not found");
         }
 
-        $my = MySqlCM::getInstance();
+        $my = MySqlCM::getInstance($this->_instance);
 
         try {
             $rel = $this->_jt[$name];
@@ -827,7 +833,7 @@ class MySqlObj
             throw new SPXException("JT association $name not found");
         }
 
-        $my = MySqlCM::getInstance();
+        $my = MySqlCM::getInstance($this->_instance);
 
         try {
             $rel = $this->_jt[$name];
@@ -910,7 +916,7 @@ class MySqlObj
             throw new SPXException("JT association $name not found");
         }
 
-        $my = MySqlCM::getInstance();
+        $my = MySqlCM::getInstance($this->_instance);
 
         try {
             $rel = $this->_jt[$name];
@@ -969,7 +975,7 @@ class MySqlObj
             throw new SPXException("Rel association $name not found");
         }
 
-        $my = MySqlCM::getInstance();
+        $my = MySqlCM::getInstance($this->_instance);
 
         try {
             $rel = $this->_rel[$name];
@@ -1067,7 +1073,7 @@ class MySqlObj
         if ($l_count) {
             $limit .= " LIMIT $l_start, $l_count";
         }
-        $my = MysqlCM::getInstance();
+        $my = MysqlCM::getInstance($obj->getDBInstance());
 
         foreach ($s as $src) {
             if ($si) {
