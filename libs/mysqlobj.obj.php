@@ -27,6 +27,8 @@ class MySqlObj
     protected $_rel = array();
     protected $_jt = array();
 
+    private static $_a_cache = array();
+
   public function getKeys() {
       return array_keys($this->_my);
   }
@@ -582,12 +584,70 @@ class MySqlObj
       }
   }
 
+  public static function disableCache($c) {
+      unset(self::$_a_cache[$c]);
+  }
+
+  public static function enableCache($c) {
+      self::$_a_cache[$c] = array();
+  }
+
+    private function _addCache() {
+        $ids = array_keys($this->_my, SQL_INDEX);
+        $c = count($ids);
+
+        /* cache is only supported for single-index objects */
+        if ($c == 0 || $c > 1) {
+            return -1;
+        }
+
+        $id = $ids[0];
+        $cname = get_class($this);
+
+        if (!isset(self::$_a_cache[$cname])) {
+            return;
+        }
+        if (!isset(self::$_a_cache[$cname][$this->{$id}])) {
+            self::$_a_cache[$cname][$this->{$id}] = $this;
+        }
+    }
+
+  private function _lookupCache() {
+      static $i = 0;
+      $ids = array_keys($this->_my, SQL_INDEX);
+      $c = count($ids);
+      $cname = get_class($this);
+
+      /* cache is only supported for single-index objects */
+      if ($c == 0 || $c > 1) {
+          return null;
+      }
+
+      $id = $ids[0];
+
+      if (isset(self::$_a_cache[$cname])) {
+          if (isset(self::$_a_cache[$cname][$this->{$id}])) {
+              return self::$_a_cache[$cname][$this->{$id}];
+          }
+      }
+      return null;
+  }
+
   /**
    * Fetch object with INDEX
    * @return -1 on error
    */
   public function fetchFromId()
   {
+      if (isset(self::$_a_cache[get_class($this)])) {
+          $ret = $this->_lookupCache();
+          if ($ret) {
+              foreach($this->_myc as $field) {
+                  $this->{$field} = $ret->{$field};
+              }
+              return;
+          }
+      }
       $i = 0;
       $fields = "";
       foreach ($this->_my as $k => $v) {
@@ -630,6 +690,10 @@ class MySqlObj
                   if (array_key_exists($k, $this->_myc)) {
                       $this->{$this->_myc[$k]} = $v;
                   }
+              }
+              /* if we have caching enabled, put a copy of $this in the cache */
+              if (isset(self::$_a_cache[get_class($this)])) {
+                  $this->_addCache();
               }
           } else {
               return -1;

@@ -107,7 +107,7 @@ class Log extends MySqlObj
         $rc = array();
 
         try {
-            $this->fetchAll();
+            $this->fetchAll(0);
         } catch (Exception $e) {
             // do nothing
         }
