@@ -22,5 +22,6 @@ trait logTrait
       $lo->fk_what = $this->id;
       $lo->t_add = $when;
       $lo->insert();
+      SlackMSG::sendMessage('('.$lo->o_class.')['.$this.']: '.$msg);
   }
 }
