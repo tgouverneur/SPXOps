@@ -118,6 +118,17 @@ class Pool extends MySqlObj
         }
     }
 
+    public function color() {
+        $pc = $this->usedPc();
+        if ($pc < 80) return 'success';
+        if ($pc < 90) return 'warning';
+        return 'danger';
+    }
+
+    public function usedPc() {
+        return round(100*($this->used / $this->size), 0);
+    }
+
     public function __toString()
     {
         return $this->name;

@@ -7,6 +7,11 @@ class Utils
             return 'now';
         }
         $ret = '';
+        if ($i >= (3600*24)) {
+            $d = floor($i / (3600*24));
+            $ret .= $d.'d';
+            $i -= 3600*24*$d;
+        }
         if ($i >= 3600) {
             $h = floor($i / 3600);
             $ret .= $h.'h';

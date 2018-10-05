@@ -53,9 +53,15 @@ class Act extends MySqlObj
     {
         $act = new Act();
         $act->msg = $msg;
-        $act->fk_login = $obj->id;
+        if ($obj) {
+            $act->fk_login = $obj->id;
+        }
+        $txt = '';
+        if ($obj) {
+            $txt .= '['.$obj.'] '.$act->msg;
+        }
+        SlackMSG::sendMessage($txt);
         $act->insert();
-
         return $act;
     }
 
