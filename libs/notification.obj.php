@@ -138,6 +138,7 @@ class Notification
           }
           Notification::sendMail($admin->email, $short, $msg);
       }
+      SlackMSG::sendMessage('New user registered: '.$obj);
   }
 
     public static function sendMail($to, $short, $msg)
