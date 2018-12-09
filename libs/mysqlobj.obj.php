@@ -1192,6 +1192,9 @@ class MySqlObj
             } elseif (!strncmp('LIKE:', $src, 5)) {
                 $sstring = preg_replace('/^LIKE:/', '', $src);
                 $where .= "`".$dst."` LIKE ".$my->quote($sstring);
+            } elseif (!strncmp('LIKE:', $src, 5)) {
+                $sstring = preg_replace('/^RLIKE:/', '', $src);
+                $where .= "`".$dst."` RLIKE ".$my->quote($sstring);
             } else {
                 $where .= "`".$dst."`=";
                 if (is_int($src)) { $where .= $src; } else { $where .= $my->quote($src); }
