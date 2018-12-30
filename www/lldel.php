@@ -166,6 +166,7 @@ try {
           Act::add("Removed server $tobj from $obj group", $lm->o_login);
           $ret['rc'] = 0;
           $ret['id'] = $tobj->id;
+          $ret['idr'] = $obj->id;
           $ret['llist'] = 'server';
           $ret['msg'] = "Removed server $tobj from $obj group";
 
@@ -183,7 +184,9 @@ try {
           Act::add("Removed vm $tobj from $obj group", $lm->o_login);
           $ret['rc'] = 0;
           $ret['id'] = $tobj->id;
+          $ret['idr'] = $obj->id;
           $ret['llist'] = 'vm';
+          $ret['what'] = 'sgroup';
           $ret['msg'] = "Removed vm $tobj from $obj group";
 
         } else {

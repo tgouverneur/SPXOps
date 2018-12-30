@@ -299,6 +299,7 @@ try {
              $ret['llist'] = 'server';
              $ret['src'] = 'sgroup';
              $ret['srcid'] = $obj->id;
+             $ret['srcname'] = $obj->link();
              $ret['rc'] = 0;
              $ret['res'] = json_encode($res);
              $ret['msg'] = $nradd." Have been added to $obj group.";
@@ -324,6 +325,8 @@ try {
             $ret['llist'] = 'vm';
             $ret['src'] = 'sgroup';
             $ret['srcid'] = $obj->id;
+            $ret['srcname'] = $obj->link();
+            $ret['addid'] = $tobj->id;
             $ret['msg'] = "Added vm $tobj to $obj group";
 
           } else {

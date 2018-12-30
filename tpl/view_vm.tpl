@@ -87,6 +87,28 @@
                 </ul>
               </li>
             </ul>
+            <h3>Groups</h3>
+            <table id="LListvmTable" class="table table-condensed">
+             <tbody>
+              <?php foreach($obj->a_sgroup as $group) { ?>
+                <tr id="LListvm<?php echo $group->id; ?>">
+                  <td><?php echo $group->link(); ?></td>
+                  <td><a href="#" onClick="delLListReverse('sgroup', <?php echo $group->id; ?>, 'vm', <?php echo $obj->id; ?>);">Remove</a></td>
+                </tr>
+              <?php } ?>
+             </tbody>
+            </table>
+            <h3>Add Group</h3>
+            <form class="form-inline">
+            <div class="form-group">
+            <select class="form-control" id="selectGroup">
+              <option value="-1">Choose a group to add</option>
+              <?php foreach ($a_sgroup as $group) { ?>
+                <option value="<?php echo $group->id; ?>"><?php echo $group; ?></option>
+              <?php } ?>
+            </select> <button type="button" class="btn btn-primary" onClick="addLListReverse('sgroup', '#selectGroup', 'vm', <?php echo $obj->id; ?>);">Add</button>
+            </div>
+            </form>
 	  </div>
 	</div>
         <div class="row">

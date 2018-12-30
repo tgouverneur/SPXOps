@@ -2,6 +2,16 @@ $('.alert .close').live("click", function(e) {
     $(this).parent().hide();
 });
 
+function delLListReverse(from, idfrom, to, idto) {
+    $.ajax({
+        url: '/lldel/w/' + from + '/i/' + idfrom + '/o/' + to + '/t/' + idto,
+        dataType: 'json',
+        success: delSuccessReverse,
+        error: addError,
+        cache: false
+   });
+}
+
 function delLList(from, idfrom, to, idto) {
     $.ajax({
         url: '/lldel/w/' + from + '/i/' + idfrom + '/o/' + to + '/t/' + idto,
@@ -22,6 +32,16 @@ function addLListR(from, idfrom, to, idinput) {
    });
 }
 
+function addLListReverse(from, inputfrom, to, idto) {
+   $.ajax({
+        url: '/lladd/w/' + from + '/i/' + $(inputfrom).val() + '/o/' + to + '/t/' + idto + '/r/0',
+        dataType: 'json',
+        success: addSuccessReverse,
+        error: addError,
+        cache: false
+   });
+}
+
 function addLList(from, idfrom, to, idinput) {
    $.ajax({
         url: '/lladd/w/' + from + '/i/' + idfrom + '/o/' + to + '/t/' + $(idinput).val() + '/r/0',
@@ -33,6 +53,19 @@ function addLList(from, idfrom, to, idinput) {
 }
 
 // LListlogin
+
+function delSuccessReverse(data, textStatus, jqXHR) {
+
+  if (data['rc'] != 0) {
+    $("#error-msg").text(data['msg']);
+    $("#error-box").show();
+  } else {
+    $("#success-msg").text(data['msg']);
+    $("#success-box").show();
+    idname = '#LList' + data['llist'] + data['idr'];
+    $(idname).hide();
+  }
+}
 
 function delSuccess(data, textStatus, jqXHR) {
 
@@ -48,11 +81,31 @@ function delSuccess(data, textStatus, jqXHR) {
 }
 
 
+function addSuccessReverse(data, textStatus, jqXHR) {
+
+  if (data['rc'] != 0) {
+    $("#error-msg").text(data['msg']);
+    $("#error-box").show();
+  } else {
+    $("#success-msg").text(data['msg']);
+    $("#success-box").show();
+    llist = data['llist'];
+    srcid = data['srcid'];
+    srcname = data['srcname'];
+    table = '#LList' + llist + 'Table > tbody:last';
+    newtr = '<tr id="LList' + llist + srcid + '">';
+    newtr = newtr + '<td>' + srcname + '</td>';
+    newtr = newtr + '<td><a href="#" onClick="delLListReverse(\'' + data['src'] + '\', ' + srcid + ', \'' + llist + '\', ' + data['addid'] + ');">Remove</a></td>';
+    newtr = newtr + '</tr>';
+    $(table).append(newtr);
+  }
+}
+
 function addSuccess(data, textStatus, jqXHR) {
 
   if (data['rc'] != 0) {
     $("#error-msg").text(data['msg']);
-    $("#error-box").show();  
+    $("#error-box").show();
   } else {
     $("#success-msg").text(data['msg']);
     $("#success-box").show();

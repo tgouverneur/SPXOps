@@ -264,10 +264,12 @@ try {
        $obj->fetchAll(1);
        $obj->getNets();
        $obj->getDisks();
+       $a_sgroup = SGroup::getAll(true, array(), array('ASC:name'));
        $content = new Template('../tpl/view_vm.tpl');
        $page['title'] .= $what;
        $content->set('obj', $obj);
-       $js = array('jobs.js');
+       $content->set('a_sgroup', $a_sgroup);
+       $js = array('jobs.js', 'llist.js');
        $head->set('js', $js);
      break;
      case 'rrd':

@@ -115,6 +115,8 @@ class VM extends MySqlObj
                 $this->fetchRL('a_nfss');
                 $this->fetchRL('a_nfsm');
 
+                $this->fetchJT('a_sgroup');
+
                 if (!$this->o_suser && $this->fk_suser > 0) {
                     $this->fetchFK('fk_suser');
                 }
