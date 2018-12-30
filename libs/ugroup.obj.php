@@ -23,8 +23,8 @@ class UGroup extends MySqlObj
     public $a_right = array();
     public $level = array();
 
-  /* for alerts */
-  public $a_sgroup = array();
+    /* for alerts */
+    public $a_sgroup = array();
     public $a_alerttype = array();
 
     public function isSGroup($sg)
