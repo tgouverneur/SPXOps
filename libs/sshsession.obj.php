@@ -252,6 +252,7 @@ class SSHSession
                 }
                 if ((time() - $time_start) > $timeout) {
 
+                    if (defined('SSH_DEBUG')) { echo '[D] Timeout reached, closing'."\n"; }
                     fclose($stream);
                     throw new SPXException('Command Timeout');
                 }
