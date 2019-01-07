@@ -45,8 +45,10 @@ class LoginCM
     {
         $this->checkEnforceSSL();
         $a_param = session_get_cookie_params();
-        session_set_cookie_params($a_param['lifetime'], $a_param['path'], $a_param['domain'], true, true);
-        session_start();
+        session_set_cookie_params($a_param['lifetime'], $a_param['path'], $a_param['domain'], $this->isHTTPS(), true);
+        if !(session_start()) {
+            throw SPXException('session_start() failed to run');
+        }
         $this->checkLogin();
         $this->checkAPIKey();
         if ($this->o_login) {
