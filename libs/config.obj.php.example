@@ -37,6 +37,7 @@ class Config
 
     /* Logging */
     public static $spxopsd_log = FALSE;
+    public static $exception_log = FALSE;
 
     public static $start_time = -1;
 
