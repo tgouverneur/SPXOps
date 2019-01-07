@@ -19,5 +19,10 @@
         "sebastian/phpcpd": "2.0.*",
         "pdepend/pdepend": "2.0.*",
         "phploc/phploc": "2.0.*"
-    }
+    },
+    "config": {
+	"bin-dir": "bin",
+	"process-timeout": 3000
+    },
+    "minimum-stability": "stable"
 }
