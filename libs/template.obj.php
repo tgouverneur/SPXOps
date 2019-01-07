@@ -20,7 +20,7 @@ class Template
      *
      * @param $file string the file name you want to load
      */
-    public function Template($file = null)
+    public function __construct($file = null)
     {
         $this->file = $file;
     }

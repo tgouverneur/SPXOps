@@ -20,7 +20,7 @@ class Config
     /* database */
     public static $db_mysql = array(
                     'main' => array(
-                        'host' = 'localhost',
+                        'host' => 'localhost',
                         'user' => 'spxops',
                         'pass' => '',
                         'port' => 3306,
@@ -37,6 +37,7 @@ class Config
 
     /* Logging */
     public static $spxopsd_log = FALSE;
+    public static $exception_log = FALSE;
 
     public static $start_time = -1;
 
@@ -53,7 +54,10 @@ class Config
     public static $plugins_path = false;
     public static $plugins = array();
 
+    /* Slack integration */
+    public static $slackwhook = FALSE;
 
+    public static $version = '1.0-dev';
 }
 
 if (Config::$webgui_time) {
@@ -78,5 +82,10 @@ Logger::logLevel(LLOG_INFO);
 
 /* enable some plugins */
 // Config::$plugins['test'] = true; /* Enable plugin test */
+
+/* get version string */
+if (file_exists(Config::$rootpath.'/VERSION')) {
+    Config::$version = trim(file_get_contents(Config::$rootpath.'/VERSION'));
+}
 
 ?>
