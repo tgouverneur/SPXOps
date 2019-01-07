@@ -208,7 +208,7 @@ class SSHSession
 
         } else {
 
-            stream_set_blocking($stream, 1);
+            stream_set_blocking($stream, true);
             stream_set_chunk_size($stream, SSH_SESSION_RSIZE);
             stream_set_write_buffer($stream, 0);
             stream_set_read_buffer($stream, 0);
@@ -253,6 +253,7 @@ class SSHSession
                 if ((time() - $time_start) > $timeout) {
 
                     if (defined('SSH_DEBUG')) { echo '[D] Timeout reached, closing'."\n"; }
+                    stream_set_blocking($stream, false);
                     fclose($stream);
                     throw new SPXException('Command Timeout');
                 }
