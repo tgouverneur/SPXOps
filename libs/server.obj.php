@@ -446,6 +446,8 @@ class Server extends MySqlObj implements JsonSerializable
                   }
                   if ($this->o_os) {
                       $ret['os'] = ($this->o_os) ? $this->o_os->name : 'Unknown';
+                  } else {
+                      $ret['os'] = 'Unknown';
                   }
                 break;
                 case 'nrvms':
