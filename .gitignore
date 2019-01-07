@@ -1,9 +1,7 @@
-logs/
-rrd/
-keys/
-old/
-tmp/
-libs/config.obj.php
 *.swp
-plugins/*
-!plugins/test
+!build/phpmd.xml
+!build/phpunit.xml
+!build/phpdox.xml
+buid/*
+!app/plugins/test
+app/plugins/*
