@@ -20,7 +20,7 @@
     die($argv[0]." Error with SQL db: ".$m->getError()."\n");
   }
 
-  $id = 120; // default
+  $id = 1; // default
   if (count($argv) == 2) {
       $id = $argv[1];
   }
@@ -32,18 +32,22 @@
   $s->fetchAll(1);
 
   echo "[-] Connecting to ".$s->hostname."\n";
-  $s->connect();
   define('SSH_DEBUG', true);
+  $s->connect();
   echo "[-] Trying to transfer file\n";
   $ret = $s->recvFile('/etc/motd', '/tmp/motd.'.$id);
   echo "[-] Trying to run a small-return command (uname -a)\n";
-  $ret = $s->exec('/usr/bin/uname -a', null, 500);
+  $ret = $s->exec('/bin/uname -a', null, 500);
   echo "--------\n$ret\n--------\n";
   echo "[-] Trying to run a long-return command (prtconf -vvv)\n";
-  $ret = $s->exec('/usr/sbin/prtconf -vvv', null, 500);
+  try {
+	  $ret = $s->exec('/tmp/meh.sh', null, 5);
+  } catch (SPXException $e) {
+	  echo $e->getMessage();
+  }
   echo "[-] Return length: ".strlen($ret)."\n";
   echo "[-] Trying a command with a long pause in the output (sleep 5; echo plop)\n";
-  $ret = $s->exec('/usr/bin/sleep 5; /usr/bin/echo plop');
+  $ret = $s->exec('/bin/sleep 5; /bin/echo plop');
   echo "--------\n$ret\n--------\n";
   $s->disconnect();
 
