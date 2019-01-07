@@ -12,6 +12,7 @@
  * @license https://raw.githubusercontent.com/tgouverneur/SPXOps/master/LICENSE.md Revised BSD License
  */
 
+define('SSH_USTIMEOUT', 200000);
 define('SSH_SESSION_RSIZE', 32768);
 define('SSH_SFTP_RSIZE', 32768);
 define('SSH_EXEC_RETRY', 3);
@@ -181,16 +182,15 @@ class SSHSession
 
         return;
     }
-
-     
+ 
     public function execSecure($c, $timeout = 30)
     {
         if (!$this->_connected) {
             throw new SPXException('Cannot execSecure(): not connected');
         }
-        $c = $c.";echo \"__COMMAND_FINISHED__\"";
+        $c = $c.';echo "__COMMAND_FINISHED__"';
         $time_start = time();
-        $buf = "";
+        $buf = '';
         $stream = null;
         /* Try to run the command up to SSH_EXEC_RETRY in case we fail to get a stream */
         for ($t = 0; $t < SSH_EXEC_RETRY; $t++) {
@@ -209,6 +209,7 @@ class SSHSession
             stream_set_chunk_size($stream, SSH_SESSION_RSIZE);
             stream_set_write_buffer($stream, 0);
             stream_set_read_buffer($stream, 0);
+            stream_set_timeout($stream, 0, SSH_USTIMEOUT)
             while (true) {
                 if (defined('SSH_DEBUG')) { echo '[D] Current buf len='.strlen($buf)."\n"; }
                 if (strpos($buf, '__COMMAND_FINISHED__') !== false) {
@@ -218,102 +219,34 @@ class SSHSession
                     if (defined('SSH_DEBUG')) { echo '[D] Clean return'."\n"; }
                     return $buf;
                 }
-                $wa = null;
-                $ex = null;
-                $ra = array($stream);
-                $nc = stream_select($ra, $wa, $ex, 0, 200000);
  
-                if ($nc === false) {
-                    if (defined('SSH_DEBUG')) { echo '[D] Select() returned false'."\n"; }
-                    fclose($stream);
-                    return $buf;
-                } else if ($nc > 0) { /* something to read */
-                    $chunk = fread($stream, SSH_SESSION_RSIZE);
-                    $buf .= $chunk;
-                    if (defined('SSH_DEBUG')) { echo '[D] SSH Read len='.strlen($chunk)."\n"; }
+                while(($chunk = fread($stream, SSH_SESSION_RSIZE))) {
 
-                    if ((time()-$time_start) > $timeout) {
-                        fclose($stream);
-                        throw new SPXException('Command timeout');
-                    }
-                } else {
-                    /* work around a select/fread bug */
-                    /* I know... this is .. eeww. */
-                    if (defined('SSH_DEBUG')) {
-                        print_r(stream_get_meta_data($stream));
-                    }
-                    if (defined('SSH_DEBUG')) { echo '[D] stream_select == '; print_r($nc); echo "\n";}
-                    stream_set_blocking($stream, 0);
-                    $it_fread = 0;
-                    $it_cnt = 3;
-                    while(($chunk = fread($stream, SSH_SESSION_RSIZE)) || $it_cnt) {
-                        if ($chunk !== false && strlen($chunk)) {
-                            $buf .= $chunk;
-                            $it_cnt++;
-                        } else {
-                            $it_cnt--;
-                            usleep(1000);
-                        }
-                        $it_fread++;
-                        if (defined('SSH_DEBUG')) { echo '[D] fread bug == '.strlen($chunk)." ($it_cnt)\n";}
-                        //print_r(stream_get_meta_data($stream));
-                    }
-                    stream_set_blocking($stream, 1);
-                    if (defined('SSH_DEBUG')) { echo '[D] it_fread bug == '.$it_fread."\n"; }
-                    if ($it_fread) continue;
+                    if ($chunk === false) {
 
-                    if ((time()-$time_start) >= $timeout) {
                         fclose($stream);
-                        throw new SPXException('Command timeout');
-                    }
-                }
-            }
-        }
-    }
-
-    /* Commented, this is the ideal (with s/stream_get_line/fread/) one but there's a bug with stream_select and ssh2 ext right now... */
-    /*
-    public function execSecure($c, $timeout = 30)
-    {
-        if (!$this->_connected) {
-            throw new SPXException('Cannot execSecure(): not connected');
-        }
-        $c = $c.";echo \"__COMMAND_FINISHED__\"";
-        $time_start = time();
-        $buf = "";
-        if (!($stream = ssh2_exec($this->_con, $c))) {
-            throw new SPXException('Cannot get SSH Stream');
-        } else {
-            stream_set_blocking($stream, true);
-            while (true) {
-                $wa = null;
-                $ex = null;
-                $ra = array($stream);
-                $nc = stream_select($ra, $wa, $ex, 1);
-                if ($nc) {
-                    $line = stream_get_line($stream, 4096, PHP_EOL).PHP_EOL;
-                    $buf .= $line;
-                    if (defined('SSH_DEBUG')) { echo '[D] SSH Read: '.$line; }
-                    if (strpos($buf, "__COMMAND_FINISHED__") !== false) {
-                        fclose($stream);
-                        $buf = str_replace("__COMMAND_FINISHED__\n", "", $buf);
                         return $buf;
+
+                    } else if (strlen($chunk)) {
+
+                        if (defined('SSH_DEBUG')) { echo '[D] SSH Read len='.strlen($chunk)."\n"; }
+                        $buf .= $chunk;
+
                     }
-                    if ((time()-$time_start) > $timeout) {
-                        fclose($stream);
-                        throw new SPXException('Command timeout');
+                    $s_info = stream_get_meta_data($stream);
+
+                    /* still something to read */
+                    if ($s_info['unread_bytes'] > 0) {
+
+                        continue;
+
                     }
-                } else {
-                    if (defined('SSH_DEBUG')) { echo '[D] stream_set_blocking == false'."\n"; }
-                    if ((time()-$time_start) >= $timeout) {
-                        fclose($stream);
-                        throw new SPXException('Command timeout');
-                    }
+
+                    break;
                 }
             }
         }
     }
-    */
 
 
     public function exec($c)
@@ -335,13 +268,29 @@ class SSHSession
         }
     }
 
-    public function notifyDisconnect($reason, $message, $language)
-    {
+    private static function _ssh2_version_ge($ver) {
+        if (version_compare(phpversion('ssh2'), $ver) >= 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function disconnect() {
+        if ($this->_connected && SSHSession::_ssh2_version_ge('1.0')) {
+            ssh2_disconnect($this->_con);
+        }
+    }
+
+    public function notifyDisconnect($reason, $message, $language) {
         $this->_connected = false;
     }
 
-    public function __construct($h = "")
-    {
+    public function __destruct() {
+        $this->disconnect();
+    }
+
+    public function __construct($h = "") {
+
         if (!function_exists("ssh2_connect")) {
             throw new SPXException("SSHSession::__construct: ssh2_connect doesn't exist. please check your ssh2 php installation.");
         }
