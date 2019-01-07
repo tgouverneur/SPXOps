@@ -209,7 +209,7 @@ class SSHSession
             stream_set_chunk_size($stream, SSH_SESSION_RSIZE);
             stream_set_write_buffer($stream, 0);
             stream_set_read_buffer($stream, 0);
-            stream_set_timeout($stream, 0, SSH_USTIMEOUT)
+            stream_set_timeout($stream, 0, SSH_USTIMEOUT);
             while (true) {
                 if (defined('SSH_DEBUG')) { echo '[D] Current buf len='.strlen($buf)."\n"; }
                 if (strpos($buf, '__COMMAND_FINISHED__') !== false) {
