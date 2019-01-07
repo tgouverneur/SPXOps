@@ -79,4 +79,9 @@ Logger::logLevel(LLOG_INFO);
 /* enable some plugins */
 // Config::$plugins['test'] = true; /* Enable plugin test */
 
+/* get version string */
+if (file_exists(Config::$rootpath.'/VERSION')) {
+    Config::$version = trim(file_get_contents(Config::$rootpath.'/VERSION'));
+}
+
 ?>
