@@ -203,16 +203,23 @@ class SSHSession
             break;
         }
         if (!$stream) {
+
             throw new SPXException('Cannot get SSH Stream');
+
         } else {
+
             stream_set_blocking($stream, 1);
             stream_set_chunk_size($stream, SSH_SESSION_RSIZE);
             stream_set_write_buffer($stream, 0);
             stream_set_read_buffer($stream, 0);
             stream_set_timeout($stream, 0, SSH_USTIMEOUT);
+
             while (true) {
+
                 if (defined('SSH_DEBUG')) { echo '[D] Current buf len='.strlen($buf)."\n"; }
+
                 if (strpos($buf, '__COMMAND_FINISHED__') !== false) {
+
                     fclose($stream);
                     $buf = str_replace("__COMMAND_FINISHED__\n", '', $buf);
                     $buf = str_replace("__COMMAND_FINISHED__\r\n", '', $buf);
@@ -220,32 +227,37 @@ class SSHSession
                     return $buf;
                 }
  
-                while(($chunk = fread($stream, SSH_SESSION_RSIZE))) {
+                while(($chunk = @fread($stream, SSH_SESSION_RSIZE))) {
 
                     if ($chunk === false) {
 
                         fclose($stream);
-                        return $buf;
+                        throw new SPXException('SSHSession: fread returned false');
 
                     } else if (strlen($chunk)) {
 
                         if (defined('SSH_DEBUG')) { echo '[D] SSH Read len='.strlen($chunk)."\n"; }
                         $buf .= $chunk;
-
                     }
+
                     $s_info = stream_get_meta_data($stream);
 
                     /* still something to read */
                     if ($s_info['unread_bytes'] > 0) {
 
                         continue;
-
                     }
 
                     break;
                 }
+                if ((time() - $time_start) > $timeout) {
+
+                    fclose($stream);
+                    throw new SPXException('Command Timeout');
+                }
             }
         }
+
     }
 
 
