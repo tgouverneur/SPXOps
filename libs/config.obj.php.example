@@ -54,8 +54,10 @@ class Config
     public static $plugins_path = false;
     public static $plugins = array();
 
-    public static $version = '1.0-dev';
+    /* Slack integration */
+    public static $slackwhook = FALSE;
 
+    public static $version = '1.0-dev';
 }
 
 if (Config::$webgui_time) {
