@@ -20,7 +20,7 @@ class Config
     /* database */
     public static $db_mysql = array(
                     'main' => array(
-                        'host' = 'localhost',
+                        'host' => 'localhost',
                         'user' => 'spxops',
                         'pass' => '',
                         'port' => 3306,
