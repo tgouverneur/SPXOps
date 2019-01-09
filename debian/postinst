@@ -25,3 +25,5 @@ if [ $? -eq 0 -a ! -f /etc/php/7.0/mods-available/ssh2.so ]; then
     echo "extension=ssh2.so" > /etc/php/7.0/mods-available/ssh2.ini
     phpenmod -s ALL ssh2 > /dev/null 2>&1
 fi
+
+#DEBHELPER#

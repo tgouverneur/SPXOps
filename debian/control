@@ -6,5 +6,5 @@ Build-Depends: debhelper (>= 9)
 
 Package: spxops
 Architecture: all
-Depends: apache2, php, libapache2-mod-php7.0, php-cli, php-curl, php-mcrypt, php-pear, php-dev, php-xml, dh-php, git, liblua5.1-dev, libssh2-1-dev
+Depends: apache2, php, libapache2-mod-php7.0, php-cli, php-curl, php-mcrypt, php-pear, php-dev, php-xml, dh-php, git, liblua5.1-dev, libssh2-1-dev, ${misc:Depends}
 Description: SPXOps

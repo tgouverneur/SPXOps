@@ -1,4 +1,4 @@
-Copyright (c) 2015, Thomas Gouverneur
+Copyright (c) 2015-2018, Thomas Gouverneur
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
