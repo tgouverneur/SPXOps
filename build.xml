@@ -2,7 +2,7 @@
 <project name="SPXOps" default="build">
  <property name="toolsdir" value="bin/" />
  <target name="build"
-         depends="prepare,composer,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci"
+         depends="prepare,composer,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci,build-deb"
          description=""/>
 
  <target name="build-parallel"
@@ -10,7 +10,7 @@
          description=""/>
 
  <target name="tools-parallel" description="Run tools in parallel">
-  <parallel threadCount="2">
+  <parallel threadCount="4">
    <sequential>
     <antcall target="pdepend"/>
     <antcall target="phpmd-ci"/>
@@ -18,6 +18,7 @@
    <antcall target="phpcpd-ci"/>
    <antcall target="phpcs-ci"/>
    <antcall target="phploc-ci"/>
+   <antcall target="build-deb"/>
   </parallel>
  </target>
 
@@ -147,6 +148,14 @@
    <arg path="${basedir}/build/logs/pmd-cpd.xml" />
    <arg path="${basedir}/app" />
   </exec>
+ </target>
+
+ <target name="build" 
+     depends="prepare"
+     description="Build package">
+     <exec dir="${basedir}" executable="/usr/bin/make">
+         <arg value="Makefile"/>
+     </exec>
  </target>
 
 </project>
