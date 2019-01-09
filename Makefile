@@ -41,6 +41,9 @@ build_archive:
 
 build: build_deb_package
 
+publish:
+	dput -u $(APT_REPO_HOST) $(VERSION_NAME)*.changes
+
 clean:
 	rm -R -f "$(INSTALL_DIR)"
 	rm -R -f "$(TEMPLATE_TO_CLEAN_DEB)"

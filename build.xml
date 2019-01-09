@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="SPXOps" default="build">
  <property name="toolsdir" value="bin/" />
+ <property environment="env"/>
  <target name="build"
-         depends="prepare,composer,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci,build-deb"
+         depends="prepare,composer,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci,build-deb,publish-deb"
          description=""/>
 
  <target name="build-parallel"
@@ -161,9 +162,23 @@
      description="Build package">
      <exec dir="${basedir}" executable="/usr/bin/make">
          <arg value="-f"/>
-         <arg value="Makefile"/>
+         <arg value="makefile"/>
          <arg value="build"/>
      </exec>
  </target>
+
+ <target name="publish-deb" 
+     depends="build-deb"
+     description="Publish Package">
+     <exec dir="${basedir}" executable="/usr/bin/make">
+         <arg value="-f"/>
+         <arg value="makefile"/>
+         <arg value="publish"/>
+     </exec>
+ </target>
+
+
+
+
 
 </project>
