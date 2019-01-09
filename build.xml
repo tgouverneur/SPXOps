@@ -150,11 +150,13 @@
   </exec>
  </target>
 
- <target name="build" 
+ <target name="build-deb" 
      depends="prepare"
      description="Build package">
      <exec dir="${basedir}" executable="/usr/bin/make">
+         <arg value="-f"/>
          <arg value="Makefile"/>
+         <arg value="build"/>
      </exec>
  </target>
 
