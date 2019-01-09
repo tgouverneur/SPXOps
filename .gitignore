@@ -5,3 +5,8 @@
 buid/*
 !app/plugins/test
 app/plugins/*
+debian/.debhelper
+debian/spxops
+debian/files
+debian/spxops.*
+debian/debhelper*
