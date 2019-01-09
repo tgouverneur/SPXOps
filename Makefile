@@ -7,9 +7,9 @@ ARCHIVE=$(DEB_PACKAGE_NAME)_$(VERSION).tgz
 ARCHITECTURE=all
 TEMPLATE_TO_CLEAN_DEB=$(DEB_PACKAGE_NAME)*_$(VERSION)*
 COMMIT=$(or $(shell git stash create),HEAD)
-VERSION_NAME=$(DEB_PACKAGE_NAME)_$(VERSION).$(MY_BUILD_NUMBER)
-INSTALL_DIR=$(CURDIR)/$(DEB_PACKAGE_NAME)-$(VERSION).$(MY_BUILD_NUMBER)
-DEBIAN_DIR=$(CURDIR)/debian
+VERSION_NAME="$(DEB_PACKAGE_NAME)_$(VERSION).$(MY_BUILD_NUMBER)"
+INSTALL_DIR="$(CURDIR)/$(DEB_PACKAGE_NAME)-$(VERSION).$(MY_BUILD_NUMBER)"
+DEBIAN_DIR="$(CURDIR)/debian"
 DEBEMAIL=thomas@espix.net
 DEBFULLNAME="Thomas Gouverneur"
 DISTRIBUTION ?= "testing"
@@ -24,24 +24,24 @@ build_deb_package: $(INSTALL_DIR)
 	debuild -us -uc
 
 $(INSTALL_DIR): build_archive
-	mkdir -p $(INSTALL_DIR)
-	cp -R $(DEBIAN_DIR) $(INSTALL_DIR)/
-	mkdir -p $(INSTALL_DIR)/${ROOTDIR}
-	cp -R $(CURDIR)/app/bin $(INSTALL_DIR)/
-	cp -R $(CURDIR)/app/sbin $(INSTALL_DIR)/
-	cp -R $(CURDIR)/app/libs $(INSTALL_DIR)/
-	cp -R $(CURDIR)/app/plugins $(INSTALL_DIR)/
-	cp -R $(CURDIR)/app/tpl $(INSTALL_DIR)/
-	cp -R $(CURDIR)/www $(INSTALL_DIR)/
-	cp -R $(CURDIR)/doc $(INSTALL_DIR)/
-	cp -R $(CURDIR)/sql $(INSTALL_DIR)/
+	mkdir -p "$(INSTALL_DIR)"
+	cp -R "$(DEBIAN_DIR)" "$(INSTALL_DIR)/"
+	mkdir -p "$(INSTALL_DIR)/${ROOTDIR}"
+	cp -R "$(CURDIR)/app/bin" "$(INSTALL_DIR)/"
+	cp -R "$(CURDIR)/app/sbin" "$(INSTALL_DIR)/"
+	cp -R "$(CURDIR)/app/libs" "$(INSTALL_DIR)/"
+	cp -R "$(CURDIR)/app/plugins" "$(INSTALL_DIR)/"
+	cp -R "$(CURDIR)/app/tpl" "$(INSTALL_DIR)/"
+	cp -R "$(CURDIR)/www" "$(INSTALL_DIR)/"
+	cp -R "$(CURDIR)/doc" "$(INSTALL_DIR)/"
+	cp -R "$(CURDIR)/sql" "$(INSTALL_DIR)/"
 
 build_archive:
-	git archive --format tar.gz --output $(ARCHIVE) $(COMMIT)
+	git archive --format tar.gz --output "$(ARCHIVE)" $(COMMIT)
 
 build: build_deb_package
 
 clean:
-	rm -R -f $(INSTALL_DIR)
-	rm -R -f $(TEMPLATE_TO_CLEAN_DEB)
-	rm -f $(ARCHIVE)
+	rm -R -f "$(INSTALL_DIR)"
+	rm -R -f "$(TEMPLATE_TO_CLEAN_DEB)"
+	rm -f "$(ARCHIVE)"
