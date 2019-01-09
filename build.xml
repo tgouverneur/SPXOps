@@ -19,7 +19,10 @@
    <antcall target="phpcpd-ci"/>
    <antcall target="phpcs-ci"/>
    <antcall target="phploc-ci"/>
-   <antcall target="build-deb"/>
+   <sequential>
+    <antcall target="build-deb"/>
+    <antcall target="publish-deb"/>
+   </sequential>
   </parallel>
  </target>
 
@@ -162,7 +165,7 @@
      description="Build package">
      <exec dir="${basedir}" executable="/usr/bin/make">
          <arg value="-f"/>
-         <arg value="makefile"/>
+         <arg value="Makefile"/>
          <arg value="build"/>
      </exec>
  </target>
@@ -172,13 +175,9 @@
      description="Publish Package">
      <exec dir="${basedir}" executable="/usr/bin/make">
          <arg value="-f"/>
-         <arg value="makefile"/>
+         <arg value="Makefile"/>
          <arg value="publish"/>
      </exec>
  </target>
-
-
-
-
 
 </project>
