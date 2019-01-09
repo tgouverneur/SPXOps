@@ -29,6 +29,12 @@
   <delete dir="${basedir}/build/coverage"/>
   <delete dir="${basedir}/build/logs"/>
   <delete dir="${basedir}/build/pdepend"/>
+  <exec dir="${basedir}" executable="/usr/bin/make">
+      <arg value="-f"/>
+      <arg value="Makefile"/>
+      <arg value="clean"/>
+  </exec>
+ 
   <property name="clean.done" value="true"/>
  </target>
 
