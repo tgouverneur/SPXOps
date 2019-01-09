@@ -12,7 +12,7 @@ INSTALL_DIR="$(CURDIR)/$(DEB_PACKAGE_NAME)-$(VERSION).$(MY_BUILD_NUMBER)"
 DEBIAN_DIR="$(CURDIR)/debian"
 DEBEMAIL=thomas@espix.net
 DEBFULLNAME="Thomas Gouverneur"
-DISTRIBUTION ?= "testing"
+DISTRIBUTION ?= "spx-stretch"
 ROOTDIR=/opt/spxops
 
 build_deb_package: $(INSTALL_DIR)
