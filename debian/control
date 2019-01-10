@@ -3,7 +3,7 @@ Section: unknown
 Priority: optional
 Maintainer: Thomas Gouverneur <thomas@espix.net>
 Build-Depends: debhelper (>= 9)
-Standards-Version: 4.2.1
+Standards-Version: 3.9.8
 
 Package: spxops
 Architecture: all
