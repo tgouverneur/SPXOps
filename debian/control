@@ -8,4 +8,4 @@ Standards-Version: 3.9.8
 Package: spxops
 Architecture: all
 Depends: apache2, php, libapache2-mod-php7.0, php-cli, php-curl, php-mcrypt, php-pear, php-dev, php-xml, dh-php, git, liblua5.1-dev, libssh2-1-dev, ${misc:Depends}
-Description: SPXOps
+Description: Espix Operations, the simplest interface to manage and keep track of your UNIX servers.
