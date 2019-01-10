@@ -31,7 +31,7 @@
      <condition property="build.pkg" value="true" else="false">
         <and>
             <equals arg1="${env.GIT_BRANCH}" arg2="master"/>
-            <equals arg1="${env.GIT_PR}" arg2=""/>
+            <equals arg1="${env.GIT_PR}" arg2="0"/>
         </and>
      </condition>
  </target>
