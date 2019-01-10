@@ -46,5 +46,5 @@ publish:
 
 clean:
 	rm -R -f "$(INSTALL_DIR)"
-	rm -R -f "$(TEMPLATE_TO_CLEAN_DEB)"
+	rm -R -f $(TEMPLATE_TO_CLEAN_DEB)
 	rm -f "$(ARCHIVE)"
