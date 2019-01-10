@@ -2,6 +2,14 @@
 <project name="SPXOps" default="build">
  <property name="toolsdir" value="bin/" />
  <property environment="env"/>
+
+ <condition property="build.pkg" value="true" else="false">
+    <and>
+        <equals arg1="${env.git_branch}" arg2="master"/>
+        <equals arg1="${env.git_pr}" arg2=""/>
+    </and>
+ </condition>
+
  <target name="build"
          depends="prepare,composer,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci,build-deb,publish-deb"
          description=""/>
@@ -46,6 +54,8 @@
          unless="prepare.done"
          depends="clean"
          description="Prepare for build">
+  <echo>BRANCH=${env.git_branch}</echo>
+  <echo>PR=${env.git_pr}</echo>
   <mkdir dir="${basedir}/build/api"/>
   <mkdir dir="${basedir}/build/coverage"/>
   <mkdir dir="${basedir}/build/logs"/>
