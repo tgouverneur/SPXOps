@@ -59,8 +59,6 @@
          unless="prepare.done"
          depends="clean"
          description="Prepare for build">
-  <echo>BRANCH=${env.GIT_BRANCH}</echo>
-  <echo>PR=${env.GIT_PR}</echo>
   <mkdir dir="${basedir}/build/api"/>
   <mkdir dir="${basedir}/build/coverage"/>
   <mkdir dir="${basedir}/build/logs"/>

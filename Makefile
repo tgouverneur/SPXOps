@@ -1,6 +1,6 @@
 MY_BUILD_NUMBER=$(or $(BUILD_NUMBER),0)
 # @TODO: Set VERSION as needed
-VERSION=$(shell echo "0.9.4")
+VERSION=$(shell cat $(CURDIR)/VERSION)
 DEB_PACKAGE_NAME=spxops
 ARCHIVE=$(DEB_PACKAGE_NAME)_$(VERSION).tgz
 ARCHITECTURE=all
@@ -34,6 +34,7 @@ $(INSTALL_DIR): build_archive
 	cp -R "$(CURDIR)/www" "$(INSTALL_DIR)/"
 	cp -R "$(CURDIR)/doc" "$(INSTALL_DIR)/"
 	cp -R "$(CURDIR)/sql" "$(INSTALL_DIR)/"
+	echo "${VERSION}" > $(INSTALL_DIR)/VERSION
 
 build_archive:
 	git archive --format tar.gz --output "$(ARCHIVE)" $(COMMIT)
