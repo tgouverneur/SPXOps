@@ -89,7 +89,7 @@
 	</div>
         <div class="row">
           <div class="col-md-4">
-<?php if ($obj->o_os->f_zone) { ?>
+<?php if ($obj->o_os && $obj->o_os->f_zone) { ?>
            <h3>Zones</h3>
 	   <table class="table table-condensed">
              <thead>

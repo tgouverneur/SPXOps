@@ -1,0 +1,8 @@
+bin /opt/spxops/bin
+sbin /opt/spxops/sbin
+libs /opt/spxops/libs
+plugins /opt/spxops/plugins
+sql /opt/spxops/sql
+www /opt/spxops/www
+tpl /opt/spxops/tpl
+doc /opt/spxops/doc

@@ -590,7 +590,9 @@ class OSLinux extends OSType
 
             if ($po->fetchFromFields(array('name', $fk))) {
                 foreach ($f as $field) {
-                    $po->{$field} = $pkg[$field];
+                    if (isset($pkg[$field])) {
+                        $po->{$field} = $pkg[$field];
+                    }
                 }
                 $s->log('new package found: '.$po, LLOG_INFO);
                 $po->insert();

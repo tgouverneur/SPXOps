@@ -1,0 +1,29 @@
+#!/bin/bash
+
+## Fix for Lua lib so we can get PECL extension
+test ! -f /usr/lib/liblua.so && ln -s /usr/lib/x86_64-linux-gnu/liblua5.1.so /usr/lib/liblua.so
+test ! -d /usr/include/lua && ln -s /usr/include/lua5.1/ /usr/include/lua
+
+pecl list lua > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    pecl install -s lua
+fi
+
+pecl list lua > /dev/null 2>&1
+if [ $? -eq 0 -a ! -f /etc/php/7.0/mods-available/lua.so ]; then
+    echo "extension=lua.so" > /etc/php/7.0/mods-available/lua.ini
+    phpenmod -s ALL lua > /dev/null 2>&1
+fi
+
+pecl list ssh2-1.1.2 > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    pecl install -s ssh2-1.1.2 > /dev/null 2>&1
+fi
+
+pecl list ssh2-1.1.2 > /dev/null 2>&1
+if [ $? -eq 0 -a ! -f /etc/php/7.0/mods-available/ssh2.so ]; then
+    echo "extension=ssh2.so" > /etc/php/7.0/mods-available/ssh2.ini
+    phpenmod -s ALL ssh2 > /dev/null 2>&1
+fi
+
+#DEBHELPER#

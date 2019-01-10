@@ -1,0 +1,28 @@
+{
+    "name": "tgouverneur/SPXOps",
+    "description": "",
+    "keywords": ["spxops"],
+    "homepage": "http://github.com/tgouverneur/SPXOps",
+    "license": "BSD",
+    "authors": [
+        {
+            "name": "Thomas Gouverneur",
+            "email": "thomas@espix.net"
+        }
+    ],
+    "require": {
+        "php": "^7.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "1.5.*",
+        "phpmd/phpmd": "2.1.*",
+        "sebastian/phpcpd": "2.0.*",
+        "pdepend/pdepend": "2.0.*",
+        "phploc/phploc": "2.0.*"
+    },
+    "config": {
+	"bin-dir": "bin",
+	"process-timeout": 3000
+    },
+    "minimum-stability": "stable"
+}
