@@ -6,3 +6,4 @@ sql /opt/spxops/sql
 www /opt/spxops/www
 tpl /opt/spxops/tpl
 doc /opt/spxops/doc
+VERSION /opt/spxops/VERSION

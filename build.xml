@@ -34,6 +34,9 @@
             <equals arg1="${env.GIT_PR}" arg2="0"/>
         </and>
      </condition>
+     <condition property="build.distribution" value="spx-testing" else="spx-stretch">
+        <equals arg1="${env.GIT_BRANCH}" arg2="testing"/>
+     </condition>
  </target>
 
  <target name="clean"
@@ -56,8 +59,6 @@
          unless="prepare.done"
          depends="clean"
          description="Prepare for build">
-  <echo>BRANCH=${env.GIT_BRANCH}</echo>
-  <echo>PR=${env.GIT_PR}</echo>
   <mkdir dir="${basedir}/build/api"/>
   <mkdir dir="${basedir}/build/coverage"/>
   <mkdir dir="${basedir}/build/logs"/>
@@ -180,6 +181,7 @@
          <arg value="-f"/>
          <arg value="Makefile"/>
          <arg value="build"/>
+         <arg value="DISTRIBUTION=${build.distribution}"/>
      </exec>
  </target>
 
@@ -191,6 +193,7 @@
          <arg value="-f"/>
          <arg value="Makefile"/>
          <arg value="publish"/>
+         <arg value="DISTRIBUTION=${build.distribution}"/>
      </exec>
  </target>
 
