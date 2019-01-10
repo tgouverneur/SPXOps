@@ -1,5 +1,4 @@
 MY_BUILD_NUMBER=$(or $(BUILD_NUMBER),0)
-CONFIG_PATH="rmc_app/config/rmc_config.php"
 # @TODO: Set VERSION as needed
 VERSION=$(shell echo "0.9.4")
 DEB_PACKAGE_NAME=spxops
