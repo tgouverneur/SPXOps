@@ -3,15 +3,8 @@
  <property name="toolsdir" value="bin/" />
  <property environment="env"/>
 
- <condition property="build.pkg" value="true" else="false">
-    <and>
-        <equals arg1="${env.git_branch}" arg2="origin/master"/>
-        <equals arg1="${env.git_pr}" arg2=""/>
-    </and>
- </condition>
-
  <target name="build"
-         depends="prepare,composer,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci,build-deb,publish-deb"
+         depends="is.build.pkg,prepare,composer,lint,phploc-ci,pdepend,phpmd-ci,phpcs-ci,phpcpd-ci,build-deb,publish-deb"
          description=""/>
 
  <target name="build-parallel"
@@ -32,6 +25,15 @@
     <antcall target="publish-deb"/>
    </sequential>
   </parallel>
+ </target>
+
+ <target name="is.build.pkg">
+     <condition property="build.pkg" value="true" else="false">
+        <and>
+            <equals arg1="${env.git_branch}" arg2="origin/master"/>
+            <equals arg1="${env.git_pr}" arg2=""/>
+        </and>
+     </condition>
  </target>
 
  <target name="clean"
@@ -171,7 +173,8 @@
  </target>
 
  <target name="build-deb" 
-     depends="prepare"
+     depends="prepare,is.build.pkg"
+     if="build.pkg"
      description="Build package">
      <exec dir="${basedir}" executable="/usr/bin/make">
          <arg value="-f"/>
@@ -181,7 +184,8 @@
  </target>
 
  <target name="publish-deb" 
-     depends="build-deb"
+     if="build.pkg"
+     depends="build-deb,is.build.pkg"
      description="Publish Package">
      <exec dir="${basedir}" executable="/usr/bin/make">
          <arg value="-f"/>
