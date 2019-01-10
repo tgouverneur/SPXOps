@@ -30,8 +30,8 @@
  <target name="is.build.pkg">
      <condition property="build.pkg" value="true" else="false">
         <and>
-            <equals arg1="${env.git_branch}" arg2="origin/master"/>
-            <equals arg1="${env.git_pr}" arg2=""/>
+            <equals arg1="${env.GIT_BRANCH}" arg2="master"/>
+            <equals arg1="${env.GIT_PR}" arg2=""/>
         </and>
      </condition>
  </target>
@@ -56,8 +56,8 @@
          unless="prepare.done"
          depends="clean"
          description="Prepare for build">
-  <echo>BRANCH=${env.git_branch}</echo>
-  <echo>PR=${env.git_pr}</echo>
+  <echo>BRANCH=${env.GIT_BRANCH}</echo>
+  <echo>PR=${env.GIT_PR}</echo>
   <mkdir dir="${basedir}/build/api"/>
   <mkdir dir="${basedir}/build/coverage"/>
   <mkdir dir="${basedir}/build/logs"/>
