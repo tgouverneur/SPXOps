@@ -5,7 +5,7 @@
 
  <condition property="build.pkg" value="true" else="false">
     <and>
-        <equals arg1="${env.git_branch}" arg2="master"/>
+        <equals arg1="${env.git_branch}" arg2="origin/master"/>
         <equals arg1="${env.git_pr}" arg2=""/>
     </and>
  </condition>
