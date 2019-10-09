@@ -283,7 +283,6 @@ CREATE TABLE `list_job` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `class` varchar(100) NOT NULL,
   `fct` varchar(100) NOT NULL,
-  `pid` int(10) NOT NULL,
   `arg` text NOT NULL,
   `state` int(11) NOT NULL,
   `pc_progress` int(3) NOT NULL,
