@@ -341,7 +341,7 @@ class OSFreeBSD extends OSType
     public static function updatePackageFBsd(&$s)
     {
         $pkg = $s->findBin('pkg');
-        $cmd_pkg = "$pkg version";
+        $cmd_pkg = "$pkg query -a %n-%v";
         $out_pkg = $s->exec($cmd_pkg);
 
         $lines = explode(PHP_EOL, $out_pkg);
